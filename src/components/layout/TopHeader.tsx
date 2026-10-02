@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Role } from "@prisma/client";
+import type { Role } from "@prisma/client";
 import { Zap } from "lucide-react";
 
 interface TopHeaderUser {
@@ -22,7 +22,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ user }: TopHeaderProps) {
   const [logoError, setLogoError] = useState(false);
-  const role = user?.role || Role.ANGGOTA;
+  const role = user?.role || "ANGGOTA";
   const points = user?.totalPoints ?? user?.monthlyPoints ?? 0;
 
   const initials = user?.name
@@ -95,11 +95,11 @@ export function TopHeader({ user }: TopHeaderProps) {
             )}
             <span
               className={`absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full border-2 border-card ${
-                role === Role.OPERATOR
+                role === "OPERATOR"
                   ? "bg-purple-600"
-                  : role === Role.ADMIN
+                  : role === "ADMIN"
                   ? "bg-primary"
-                  : role === Role.BENDAHARA
+                  : role === "BENDAHARA"
                   ? "bg-amber-500"
                   : "bg-emerald-500"
               }`}
@@ -111,3 +111,4 @@ export function TopHeader({ user }: TopHeaderProps) {
     </header>
   );
 }
+
