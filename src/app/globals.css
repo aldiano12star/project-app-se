@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+/*
+ * Saba ExploIT UI Engine v2.1.0 (Google Stitch Standard)
+ *
+ * Pedoman Visual: DESIGN.md & doc/stitch/beranda/DESIGN.md
+ * - Solid Surface Container Elevation (tanpa glassmorphism/blur berat)
+ * - Border tegas 1px (`border-edge` / `border-border-light`)
+ * - Area sentuh minimal 44px (`min-h-[44px]` / `h-11`)
+ * - Warna primer: Saba Red (#E11D2A)
+ */
+
+/* ── Variabel runtime (Light & Dark Mode) ─────────────────────────── */
+:root {
+  /* Neutral — Light (Default) */
+  --saba-surface: #f8fafc;
+  --saba-card: #ffffff;
+  --saba-edge: #e2e8f0;
+  --saba-surface-container-low: #f1f5f9;
+  --saba-surface-container: #e2e8f0;
+  --saba-surface-container-high: #cbd5e1;
+  --saba-ink: #0f172a;
+  --saba-ink-secondary: #64748b;
+  --saba-ink-muted: #94a3b8;
+
+  /* Brand */
+  --saba-primary: #e11d2a;
+  --saba-primary-hover: #be123c;
+  --saba-primary-subtle: #ffe4e6;
+  --saba-on-primary: #ffffff;
+
+  /* Semantic Light */
+  --saba-success: #16a34a;
+  --saba-success-subtle: #dcfce7;
+  --saba-danger: #dc2626;
+  --saba-danger-subtle: #fee2e2;
+  --saba-warning: #d97706;
+  --saba-warning-subtle: #fef3c7;
+  --saba-info: #2563eb;
+  --saba-info-subtle: #eff6ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Neutral — Dark */
+    --saba-surface: #0b1120;
+    --saba-card: #131c31;
+    --saba-edge: #23304b;
+    --saba-surface-container-low: #1e293b;
+    --saba-surface-container: #334155;
+    --saba-surface-container-high: #475569;
+    --saba-ink: #f8fafc;
+    --saba-ink-secondary: #94a3b8;
+    --saba-ink-muted: #64748b;
+
+    /* Brand Dark */
+    --saba-primary: #e11d2a;
+    --saba-primary-hover: #be123c;
+    --saba-primary-subtle: #4c0519;
+    --saba-on-primary: #ffffff;
+
+    /* Semantic Dark */
+    --saba-success: #22c55e;
+    --saba-success-subtle: #052e16;
+    --saba-danger: #ef4444;
+    --saba-danger-subtle: #450a0a;
+    --saba-warning: #f59e0b;
+    --saba-warning-subtle: #451a03;
+    --saba-info: #3b82f6;
+    --saba-info-subtle: #172554;
+  }
+}
+
+/* ── Saba ExploIT Design Tokens ───────────────────────────────────── */
+@theme {
+  /* Brand */
+  --color-brand-primary: var(--saba-primary);
+  --color-brand-hover: var(--saba-primary-hover);
+  --color-brand-subtle: var(--saba-primary-subtle);
+  --color-primary: var(--saba-primary);
+  --color-primary-hover: var(--saba-primary-hover);
+  --color-primary-subtle: var(--saba-primary-subtle);
+  --color-on-primary: var(--saba-on-primary);
+
+  /* Surfaces & Neutrals */
+  --color-surface: var(--saba-surface);
+  --color-surface-bg-light: #f8fafc;
+  --color-surface-bg-dark: #0b1120;
+  --color-card: var(--saba-card);
+  --color-card-bg-light: #ffffff;
+  --color-card-bg-dark: #131c31;
+  --color-edge: var(--saba-edge);
+  --color-border-light: #e2e8f0;
+  --color-border-dark: #23304b;
+  --color-surface-container-low: var(--saba-surface-container-low);
+  --color-surface-container: var(--saba-surface-container);
+  --color-surface-container-high: var(--saba-surface-container-high);
+
+  /* Typography Colors */
+  --color-ink: var(--saba-ink);
+  --color-ink-secondary: var(--saba-ink-secondary);
+  --color-ink-muted: var(--saba-ink-muted);
+  --color-text-primary-light: #0f172a;
+  --color-text-secondary-light: #64748b;
+  --color-text-muted-light: #94a3b8;
+  --color-text-primary-dark: #f8fafc;
+  --color-text-secondary-dark: #94a3b8;
+  --color-text-muted-dark: #64748b;
+
+  /* Semantics */
+  --color-success: var(--saba-success);
+  --color-success-subtle: var(--saba-success-subtle);
+  --color-danger: var(--saba-danger);
+  --color-danger-subtle: var(--saba-danger-subtle);
+  --color-warning: var(--saba-warning);
+  --color-warning-subtle: var(--saba-warning-subtle);
+  --color-info: var(--saba-info);
+  --color-info-subtle: var(--saba-info-subtle);
+
+  /* Divisions */
+  --color-div-programming: #2563eb;
+  --color-div-programming-bg-light: #eff6ff;
+  --color-div-design: #9333ea;
+  --color-div-design-bg-light: #faf5ff;
+  --color-div-photography: #d97706;
+  --color-div-photography-bg-light: #fffbeb;
+  --color-div-cinematography: #e11d2a;
+  --color-div-cinematography-bg-light: #fff1f2;
+  --color-div-technopreneurship: #059669;
+  --color-div-technopreneurship-bg-light: #ecfdf5;
+
+  /* Spacing & Container */
+  --spacing-app-max: 430px;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────── */
+body {
+  background: var(--saba-surface);
+  color: var(--saba-ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────── */
+@utility app-shell {
+  width: 100%;
+  max-width: var(--spacing-app-max);
+  margin-inline: auto;
+  min-height: 100dvh;
+}
+
+@utility card-solid {
+  background-color: var(--saba-card);
+  border: 1px solid var(--saba-edge);
+  border-radius: 0.75rem;
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}

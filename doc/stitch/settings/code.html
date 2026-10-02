@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil & Pengaturan - Super App Saba ExploIT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              primary: '#E11D2A',
+              hover: '#BE123C',
+              subtle: '#FFE4E6',
+              darkRed: '#450a0a',
+            },
+            darkCanvas: '#090D16',
+            cardBg: '#0F172A',
+            cardBorder: '#1E293B',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Zero blur / Low spec compliance */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+    body {
+      background-color: #090D16;
+      font-family: 'Inter', sans-serif;
+      color: #F8FAFC;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#090D16] flex justify-center text-slate-100 antialiased selection:bg-red-500 selection:text-white">
+
+  <!-- Mobile Viewport Container: 390px max-w standard -->
+  <div class="w-full max-w-[390px] min-h-screen flex flex-col bg-[#090D16] border-x border-[#1E293B] shadow-2xl relative pb-8">
+
+    <!-- Top Navigation Bar (Fixed 44px min touch target) -->
+    <header class="sticky top-0 z-40 bg-[#090D16] border-b border-[#1E293B] px-4 py-2.5 flex items-center justify-between">
+      <!-- Back Button -->
+      <button onclick="history.back()" class="inline-flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Kembali</span>
+      </button>
+
+      <!-- Screen Title -->
+      <h1 class="text-base font-semibold text-slate-100 tracking-tight">Profil & Pengaturan</h1>
+
+      <!-- Right Indicator Badge -->
+      <div class="min-h-[44px] flex items-center justify-end">
+        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-950/80 border border-red-800 text-red-400">
+          Gen 20
+        </span>
+      </div>
+    </header>
+
+    <!-- Scrollable Main Content -->
+    <main class="flex-1 px-4 pt-4 space-y-4">
+
+      <!-- User Profile Card (Hero Banner) -->
+      <section class="bg-[#0F172A] border border-[#1E293B] rounded-2xl p-4 relative overflow-hidden">
+        <!-- Subtle accent glow banner background line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-amber-500"></div>
+
+        <div class="flex items-start gap-3.5 pt-1">
+          <!-- Avatar (64x64) with Glowing Red Border and Camera badge -->
+          <div class="relative shrink-0">
+            <div class="w-16 h-16 rounded-full ring-2 ring-[#E11D2A] ring-offset-2 ring-offset-[#0F172A] overflow-hidden bg-slate-800">
+              <img src="https://lh3.googleusercontent.com/aida/AEtjO1Xwac3ygcap5-eT2foDley4Pko6ERMlP03EYh_Cp70-gn-I3qiJzerQkHmDyXzoIYlvWCmb_7n54iN4eSun-h97kWutUbc56yunP4fC0c6j2y2SlRzfZJCGwGRhJMe3o6TcBHXFEldt_qERyKUYFjJiJ-y7j1cnT1rg4eP2w7q5VgKYDmT633kGuMeaQCSkw9pJS8vQtoFBMpn0uOi-T4Jo5bKxPGCMwh7_4xdGq2qbZdXtBv0E4OsP4h8" alt="Foto Profil Fauzan Ardiansyah" class="w-full h-full object-cover">
+            </div>
+            <!-- Edit photo icon badge -->
+            <button aria-label="Ubah Foto Profil" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#E11D2A] text-white flex items-center justify-center border-2 border-[#0F172A] shadow-sm hover:bg-red-700 active:scale-90 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- User Basic Details -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h2 class="text-lg font-bold text-white tracking-tight truncate">Fauzan Ardiansyah</h2>
+              <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+
+            <!-- Role Badge -->
+            <div class="mt-1 flex items-center gap-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-red-950/90 text-red-400 border border-red-600/70">
+                OPERATOR / ADMIN
+              </span>
+            </div>
+
+            <!-- Details Subtitle Row -->
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed font-medium">
+              Kelas XI RPL 1 • Angkatan 20 (Gen 20)
+            </p>
+          </div>
+        </div>
+
+        <!-- XP & Level Gamification Summary Box -->
+        <div class="mt-4 pt-3 border-t border-slate-800/80 bg-slate-900/60 rounded-xl p-3 border border-slate-800">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <!-- Left: Total XP -->
+            <div class="flex items-center gap-1.5 font-semibold text-amber-400">
+              <span class="w-5 h-5 rounded-full bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-amber-400 text-xs">
+                ⚡
+              </span>
+              <span class="text-sm font-bold text-white font-mono tracking-tight">340 XP</span>
+              <span class="text-slate-400 font-normal text-[11px]">(Peringkat #1)</span>
+            </div>
+
+            <!-- Right: Level Tier -->
+            <div class="flex items-center gap-1 text-[11px] font-semibold text-slate-300">
+              <span class="text-red-400">🛡️</span>
+              <span>Tech Vanguard <span class="text-red-400 font-mono font-bold">(Lv. 4)</span></span>
+            </div>
+          </div>
+
+          <!-- Progress Bar to Level 5 -->
+          <div class="space-y-1">
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700/60">
+              <div class="h-full bg-gradient-to-r from-red-600 to-amber-500 rounded-full w-[85%] transition-all duration-500"></div>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-400">
+              <span>Progres Level 5</span>
+              <span class="font-mono text-slate-300">85% (340 / 400 XP)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 1: Akun & Keanggotaan -->
+      <section class="space-y-1.5">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-1">Akun & Keanggotaan</h3>
+        <div class="bg-[#0F172A] border border-[#1E293B] rounded-2xl overflow-hidden divide-y divide-[#1E293B]">
+          
+          <!-- Row 1: Ubah Biodata & Kontak -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-950/70 border border-blue-800/60 text-blue-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Ubah Biodata & Kontak</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Row 2: Ganti Kata Sandi -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-amber-950/70 border border-amber-800/60 text-amber-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Ganti Kata Sandi</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Row 3: Kartu Tanda Anggota Digital (KTA) -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-purple-950/70 border border-purple-800/60 text-purple-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Kartu Tanda Anggota Digital (KTA)</span>
+                <span class="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-950 border border-emerald-700 text-emerald-400 rounded">Aktif</span>
+              </div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+        </div>
+      </section>
+
+      <!-- Section 2: Preferensi Sistem -->
+      <section class="space-y-1.5">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-1">Preferensi Sistem</h3>
+        <div class="bg-[#0F172A] border border-[#1E293B] rounded-2xl overflow-hidden divide-y divide-[#1E293B]">
+          
+          <!-- Row 1: Notifikasi Rapat & Acara (Toggle ON) -->
+          <div class="min-h-[48px] px-3.5 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-red-950/70 border border-red-800/60 text-red-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200">Notifikasi Rapat & Acara</span>
+            </div>
+            
+            <!-- Toggle Switch (ON State) min touch 44px -->
+            <label class="relative inline-flex items-center cursor-pointer min-h-[44px] min-w-[44px] justify-end">
+              <input type="checkbox" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#E11D2A] border border-slate-700"></div>
+            </label>
+          </div>
+
+          <!-- Row 2: Pengingat Iuran Kas Mingguan (Toggle ON) -->
+          <div class="min-h-[48px] px-3.5 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-950/70 border border-emerald-800/60 text-emerald-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200">Pengingat Iuran Kas Mingguan</span>
+            </div>
+
+            <!-- Toggle Switch (ON State) min touch 44px -->
+            <label class="relative inline-flex items-center cursor-pointer min-h-[44px] min-w-[44px] justify-end">
+              <input type="checkbox" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#E11D2A] border border-slate-700"></div>
+            </label>
+          </div>
+
+          <!-- Row 3: Mode Tampilan -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-indigo-950/70 border border-indigo-800/60 text-indigo-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Mode Tampilan</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs font-semibold text-red-400 bg-red-950/60 border border-red-800/50 px-2 py-0.5 rounded-full">Gelap (Saba OLED)</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Bantuan & Organisasi -->
+      <section class="space-y-1.5">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-1">Bantuan & Organisasi</h3>
+        <div class="bg-[#0F172A] border border-[#1E293B] rounded-2xl overflow-hidden divide-y divide-[#1E293B]">
+          
+          <!-- Row 1: SOP & Tata Tertib Organisasi -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-teal-950/70 border border-teal-800/60 text-teal-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">SOP & Tata Tertib Organisasi</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Row 2: Tentang Pengembang Super App -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-pink-950/70 border border-pink-800/60 text-pink-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Tentang Pengembang Super App</span>
+                <p class="text-[11px] text-slate-400 font-mono">v1.2.0-beta</p>
+              </div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Row 3: Laporkan Kendala Aplikasi -->
+          <button class="w-full min-h-[48px] px-3.5 py-3 flex items-center justify-between text-left hover:bg-slate-800/60 active:bg-slate-800 transition group">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-rose-950/70 border border-rose-800/60 text-rose-400 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-slate-200 group-hover:text-white transition">Laporkan Kendala Aplikasi</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+        </div>
+      </section>
+
+      <!-- Logout Action Section -->
+      <section class="pt-2">
+        <button class="w-full min-h-[48px] px-4 py-3 rounded-xl bg-red-950/50 hover:bg-red-900/60 active:bg-red-900 text-red-400 border border-red-700/80 font-semibold text-sm flex items-center justify-center gap-2.5 transition active:scale-[0.99] shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span>Keluar dari Akun</span>
+        </button>
+
+        <p class="text-center text-[11px] text-slate-500 mt-3 font-mono">
+          Saba ExploIT Mobile Suite • Build 2026.11
+        </p>
+      </section>
+
+    </main>
+
+  </div>
+
+</body>
+</html>
