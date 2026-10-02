@@ -36,10 +36,9 @@ export function AspirasiClientView({
   const [isCreateAspirationOpen, setIsCreateAspirationOpen] = useState(false);
   const [isCreatePollOpen, setIsCreatePollOpen] = useState(false);
 
-  // Filter untuk aspirasi
+  // Filter untuk aspirasi (Scope & Kategori - Status tiket telah dieliminasi agar ramah & non-birokratis)
   const [scopeFilter, setScopeFilter] = useState<"ALL" | "PUBLIC" | "PRIVATE">("ALL");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
   useEffect(() => {
     setIsMounted(true);
@@ -59,19 +58,14 @@ export function AspirasiClientView({
     const matchesCategory =
       categoryFilter === "ALL" || item.category === categoryFilter;
 
-    const matchesStatus =
-      statusFilter === "ALL"
-        ? true
-        : statusFilter === "OPEN"
-        ? item.status === "OPEN" || !item.status
-        : statusFilter === "RESPONDED"
-        ? item.status === "RESPONDED" || Boolean(item.adminReply)
-        : item.status === "RESOLVED";
-
-    return matchesScope && matchesCategory && matchesStatus;
+    return matchesScope && matchesCategory;
   });
 
-  const activePollsCount = polls.filter((p) => p.isActive).length;
+  const now = new Date();
+  const activePollsCount = polls.filter((p) => {
+    const isExpired = p.closesAt ? now > new Date(p.closesAt) : false;
+    return p.isActive && !isExpired;
+  }).length;
 
   if (!isMounted) {
     return (
@@ -231,33 +225,20 @@ export function AspirasiClientView({
             </button>
           </div>
 
-          {/* Filter Bar Kategori & Status */}
+          {/* Filter Bar Kategori Bersih */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            <div className="flex items-center gap-1 bg-card border border-edge rounded-lg px-2 py-1.5 text-xs shrink-0">
-              <Filter className="h-3 w-3 text-ink-muted" />
+            <div className="flex items-center gap-1.5 bg-card border border-edge rounded-lg px-2.5 py-1.5 text-xs shrink-0 shadow-2xs">
+              <Filter className="h-3.5 w-3.5 text-ink-muted" />
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="bg-transparent text-ink text-xs font-medium focus:outline-none cursor-pointer"
+                className="bg-transparent text-ink text-xs font-semibold focus:outline-none cursor-pointer"
               >
-                <option value="ALL">Semua Kategori</option>
+                <option value="ALL">Semua Kategori Usulan</option>
                 <option value="IDE_KEGIATAN">💡 Ide Kegiatan</option>
                 <option value="SARAN_PENGURUS">📢 Saran Pengurus</option>
                 <option value="DISKUSI_UMUM">💬 Diskusi Bebas</option>
                 <option value="BUG_SISTEM">🐞 Bug &amp; Sistem (Dev)</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-1 bg-card border border-edge rounded-lg px-2 py-1.5 text-xs shrink-0">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-transparent text-ink text-xs font-medium focus:outline-none cursor-pointer"
-              >
-                <option value="ALL">Semua Status</option>
-                <option value="OPEN">Belum Ditanggapi</option>
-                <option value="RESPONDED">Telah Ditanggapi</option>
-                <option value="RESOLVED">Selesai Ditangani</option>
               </select>
             </div>
           </div>
@@ -286,6 +267,7 @@ export function AspirasiClientView({
                 key={item.id}
                 aspiration={item}
                 currentUserRole={currentUser.role}
+                currentUserId={currentUser.id}
               />
             ))
           )}

@@ -1,5 +1,8 @@
-import React from "react";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Role } from "@prisma/client";
 import { Zap } from "lucide-react";
 
@@ -18,6 +21,7 @@ interface TopHeaderProps {
 }
 
 export function TopHeader({ user }: TopHeaderProps) {
+  const [logoError, setLogoError] = useState(false);
   const role = user?.role || Role.ANGGOTA;
   const points = user?.totalPoints ?? user?.monthlyPoints ?? 0;
 
@@ -34,16 +38,28 @@ export function TopHeader({ user }: TopHeaderProps) {
     <header className="sticky top-0 z-50 w-full border-b border-edge bg-card pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
       <div className="flex h-16 items-center justify-between px-4">
         {/* Logo & Brand Identity */}
-        <Link href="/dashboard" className="flex items-center gap-2.5 cursor-pointer">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white font-black text-sm shadow-sm">
-            SE
+        <Link href="/dashboard" className="flex items-center gap-2.5 cursor-pointer group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/40 transition-colors">
+            {!logoError ? (
+              <Image
+                src="/logo.png"
+                alt="Saba ExploIT Logo"
+                width={32}
+                height={32}
+                priority
+                onError={() => setLogoError(true)}
+                className="object-contain h-7 w-7"
+              />
+            ) : (
+              <span className="font-black text-xs text-primary">SE</span>
+            )}
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold tracking-tight text-ink leading-tight">
               Saba ExploIT
             </span>
-            <span className="text-[11px] font-medium text-ink-muted leading-tight">
-              Super App Organisasi
+            <span className="text-[11px] font-medium text-ink-muted tracking-wide leading-tight">
+              SMAN 1 Bantul
             </span>
           </div>
         </Link>

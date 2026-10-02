@@ -1,18 +1,32 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Calendar,
   CheckCircle2,
-  Trophy,
+  Clock,
   ArrowRight,
   Layers,
-  MousePointerClick,
+  Folder,
+  ListTodo,
+  Radio,
+  Zap,
+  Check,
+  MessageSquare,
+  Flag,
+  X,
 } from "lucide-react";
+import {
+  getLocalDateString,
+  getJakartaDateParts,
+  formatEventSchedule,
+  SHORT_MONTHS,
+  FULL_MONTHS,
+  INDONESIAN_DAYS,
+} from "@/utils/eventStatus";
 
 export interface CalendarEventItem {
   id: string;
@@ -32,109 +46,126 @@ interface SnakingPathCalendarProps {
   currentMonthIndex: number; // 0 = Jan, 11 = Des
   onMonthChange: (newMonthIndex: number, newYear: number) => void;
   events: CalendarEventItem[];
-  selectedDate: Date | null;
-  onSelectDate: (date: Date, dayEvents: CalendarEventItem[]) => void;
+  selectedDate?: Date | null;
+  onSelectDate?: (date: Date, dayEvents: CalendarEventItem[]) => void;
   onSelectEvent?: (event: CalendarEventItem) => void;
   onSelectMultipleEvents?: (date: Date, dayEvents: CalendarEventItem[]) => void;
 }
 
-const INDONESIAN_MONTHS = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
-const INDONESIAN_DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
-
-/**
- * Cek apakah targetDate berada dalam rentang start - end (inklusif per tanggal)
- */
-function isDateWithinRange(
-  targetDate: Date,
-  startDateStr: Date | string,
-  endDateStr: Date | string
-): boolean {
-  const target = new Date(
-    targetDate.getFullYear(),
-    targetDate.getMonth(),
-    targetDate.getDate()
-  ).getTime();
-
-  const start = new Date(startDateStr);
-  const startOnly = new Date(
-    start.getFullYear(),
-    start.getMonth(),
-    start.getDate()
-  ).getTime();
-
-  const end = new Date(endDateStr);
-  const endOnly = new Date(
-    end.getFullYear(),
-    end.getMonth(),
-    end.getDate()
-  ).getTime();
-
-  return target >= startOnly && target <= endOnly;
-}
+type TimelineEntry =
+  | {
+      type: "TODAY_CHECKPOINT";
+      id: "today-checkpoint";
+      date: Date;
+      dateStr: string;
+      dayNumber: number;
+      dayName: string;
+      dateLabel: string;
+    }
+  | {
+      type: "EVENT";
+      id: string;
+      event: CalendarEventItem;
+    };
 
 export function SnakingPathCalendar({
   currentYear,
   currentMonthIndex,
   onMonthChange,
   events,
-  selectedDate,
-  onSelectDate,
-  onSelectEvent,
-  onSelectMultipleEvents,
 }: SnakingPathCalendarProps) {
-  const today = new Date();
+  // State untuk Month-Year Picker Modal
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
+  const [pickerYear, setPickerYear] = useState<number>(currentYear);
+
+  // Ambil data hari ini berbasis zona waktu Jakarta (WIB)
+  const todayJakarta = getJakartaDateParts(new Date());
+  const todayStr = todayJakarta.dateString;
   const isCurrentMonthToday =
-    today.getFullYear() === currentYear && today.getMonth() === currentMonthIndex;
-  const todayDateNumber = today.getDate();
+    currentYear === todayJakarta.year &&
+    currentMonthIndex === todayJakarta.monthIndex;
+  const todayDateNumber = todayJakarta.day;
 
-  // Hitung total hari dalam bulan terpilih
-  const totalDaysInMonth = new Date(currentYear, currentMonthIndex + 1, 0).getDate();
-  const daysArray = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
+  // Tentukan rentang string tanggal untuk bulan yang dipilih (YYYY-MM-DD)
+  const monthStartStr = `${currentYear}-${String(
+    currentMonthIndex + 1
+  ).padStart(2, "0")}-01`;
+  const lastDayOfCurMonth = new Date(
+    currentYear,
+    currentMonthIndex + 1,
+    0
+  ).getDate();
+  const monthEndStr = `${currentYear}-${String(
+    currentMonthIndex + 1
+  ).padStart(2, "0")}-${String(lastDayOfCurMonth).padStart(2, "0")}`;
 
-  // Parameter Matematika Jalur Mengular S-Curve
-  const CONTAINER_WIDTH = 340;
-  const CENTER_X = CONTAINER_WIDTH / 2; // 170
-  const AMPLITUDE = 65; // Amplitudo gelombang X
-  const STEP_Y = 84; // Jarak vertikal antar node
-  const START_Y = 48; // Padding atas titik pertama
-  const TOTAL_HEIGHT = START_Y + (totalDaysInMonth - 1) * STEP_Y + 60;
+  // Filter & urutkan agenda kronologis pada rentang bulan terpilih
+  const eventsInMonth = events
+    .filter((ev) => {
+      const startStr = getLocalDateString(ev.startDate);
+      const endStr = getLocalDateString(ev.endDate);
+      return startStr <= monthEndStr && endStr >= monthStartStr;
+    })
+    .sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+    );
 
-  // Hitung koordinat (x, y) presisi untuk setiap hari (0 s/d totalDays-1)
-  const nodeCoordinates = daysArray.map((_, index) => {
-    // Pola sinusoidal 6-langkah: Center -> Kanan -> Kanan -> Center -> Kiri -> Kiri -> Center
-    const xOffset = Math.sin((index * Math.PI) / 3) * AMPLITUDE;
-    const x = Math.round(CENTER_X + xOffset);
-    const y = START_Y + index * STEP_Y;
-    return { x, y };
+  // Cek apakah ada agenda yang sedang berlangsung HARI INI
+  const hasAnyEventToday = eventsInMonth.some((ev) => {
+    const startStr = getLocalDateString(ev.startDate);
+    const endStr = getLocalDateString(ev.endDate);
+    return startStr <= todayStr && endStr >= todayStr;
   });
 
-  // Bangun path SVG Bézier kubik yang menghubungkan persis setiap titik (X_i, Y_i)
-  let svgDPath = "";
-  if (nodeCoordinates.length > 0) {
-    svgDPath = `M ${nodeCoordinates[0].x} ${nodeCoordinates[0].y}`;
-    for (let i = 0; i < nodeCoordinates.length - 1; i++) {
-      const p1 = nodeCoordinates[i];
-      const p2 = nodeCoordinates[i + 1];
-      const cy1 = p1.y + STEP_Y * 0.5;
-      const cy2 = p2.y - STEP_Y * 0.5;
-      svgDPath += ` C ${p1.x} ${cy1}, ${p2.x} ${cy2}, ${p2.x} ${p2.y}`;
+  // Susun daftar entri timeline (1 Kartu = 1 Node Terikat)
+  const timelineEntries: TimelineEntry[] = [];
+
+  if (isCurrentMonthToday && !hasAnyEventToday) {
+    let todayInserted = false;
+    eventsInMonth.forEach((ev) => {
+      const evStartStr = getLocalDateString(ev.startDate);
+      if (!todayInserted && evStartStr > todayStr) {
+        timelineEntries.push({
+          type: "TODAY_CHECKPOINT",
+          id: "today-checkpoint",
+          date: new Date(`${todayStr}T00:00:00+07:00`),
+          dateStr: todayStr,
+          dayNumber: todayDateNumber,
+          dayName: INDONESIAN_DAYS[todayJakarta.dayOfWeek],
+          dateLabel: `${todayDateNumber} ${SHORT_MONTHS[todayJakarta.monthIndex]}`,
+        });
+        todayInserted = true;
+      }
+      timelineEntries.push({
+        type: "EVENT",
+        id: ev.id,
+        event: ev,
+      });
+    });
+
+    if (!todayInserted) {
+      timelineEntries.push({
+        type: "TODAY_CHECKPOINT",
+        id: "today-checkpoint",
+        date: new Date(`${todayStr}T00:00:00+07:00`),
+        dateStr: todayStr,
+        dayNumber: todayDateNumber,
+        dayName: INDONESIAN_DAYS[todayJakarta.dayOfWeek],
+        dateLabel: `${todayDateNumber} ${SHORT_MONTHS[todayJakarta.monthIndex]}`,
+      });
     }
+  } else {
+    eventsInMonth.forEach((ev) => {
+      timelineEntries.push({
+        type: "EVENT",
+        id: ev.id,
+        event: ev,
+      });
+    });
   }
 
+  // Navigasi Bulan Cepat
   const handlePrevMonth = () => {
     if (currentMonthIndex === 0) {
       onMonthChange(11, currentYear - 1);
@@ -152,326 +183,465 @@ export function SnakingPathCalendar({
   };
 
   const handleResetToCurrentMonth = () => {
-    const now = new Date();
-    onMonthChange(now.getMonth(), now.getFullYear());
+    const nowParts = getJakartaDateParts(new Date());
+    onMonthChange(nowParts.monthIndex, nowParts.year);
+    setIsPickerOpen(false);
+  };
+
+  const handleSelectMonthYear = (monthIdx: number, year: number) => {
+    onMonthChange(monthIdx, year);
+    setIsPickerOpen(false);
   };
 
   return (
-    <section className="card-solid bg-card p-4 sm:p-5 shadow-sm space-y-4 relative overflow-hidden rounded-2xl border border-edge">
-      {/* Month Header Switcher */}
-      <div className="flex items-center justify-between gap-2 relative z-10">
-        <div className="flex flex-col">
-          <h2 className="text-base font-bold text-ink tracking-tight flex items-center gap-1.5">
-            <span>Kalender Jalur Acara</span>
-          </h2>
-          <span className="text-xs text-ink-muted">
-            Kelola Agenda &amp; Tugas Terpadu • {INDONESIAN_MONTHS[currentMonthIndex]} {currentYear}
-          </span>
-        </div>
+    <section className="card-solid bg-card p-4 sm:p-5 shadow-sm space-y-5 relative overflow-hidden rounded-2xl border border-edge">
+      {/* Header Smart Circuit Trail & Navigasi Bulan */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10 border-b border-edge pb-3.5">
+        <h2 className="text-base font-bold text-ink tracking-tight">
+          Timeline Agenda Kegiatan
+        </h2>
 
-        <div className="flex items-center gap-1 bg-surface-container-low rounded-lg p-1 border border-edge shadow-xs">
+        {/* Tombol Pengalih Bulan (< [📅 Bulan Tahun] >) */}
+        <div className="flex items-center gap-1 bg-surface-container-low rounded-xl p-1 border border-edge shadow-xs self-start sm:self-auto">
           <button
             type="button"
             aria-label="Bulan Sebelumnya"
             onClick={handlePrevMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-md text-ink-secondary hover:bg-card hover:text-ink transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-ink-secondary hover:bg-card hover:text-ink transition-colors cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
 
+          {/* Tombol Interaktif Pembuka Month-Year Picker Modal */}
           <button
             type="button"
-            onClick={handleResetToCurrentMonth}
-            title="Kembali ke Bulan Ini"
-            className="text-xs font-bold text-ink px-2.5 py-1 rounded hover:bg-card transition-colors select-none min-w-27.5 text-center cursor-pointer"
+            onClick={() => {
+              setPickerYear(currentYear);
+              setIsPickerOpen(true);
+            }}
+            title="Buka Pemilih Bulan & Tahun Cepat"
+            className="text-xs font-bold text-ink px-3 py-1.5 rounded-xl border border-slate-700/60 bg-surface-container-low hover:bg-slate-800/80 transition-colors select-none min-w-32.5 text-center cursor-pointer flex items-center justify-center gap-1.5 shadow-xs active:scale-95"
           >
-            {INDONESIAN_MONTHS[currentMonthIndex]} {currentYear}
+            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <span>
+              {FULL_MONTHS[currentMonthIndex]} {currentYear}
+            </span>
           </button>
 
           <button
             type="button"
             aria-label="Bulan Berikutnya"
             onClick={handleNextMonth}
-            className="w-8 h-8 flex items-center justify-center rounded-md text-ink-secondary hover:bg-card hover:text-ink transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-ink-secondary hover:bg-card hover:text-ink transition-colors cursor-pointer"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      {/* Hint banner Sesuai Stitch Reference */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-div-programming-bg-light dark:bg-blue-950/40 text-div-programming dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 shadow-xs">
-        <MousePointerClick className="h-4 w-4 shrink-0" />
-        <p className="text-xs leading-tight">
-          Sentuh lingkaran tanggal untuk membuka rincian agenda atau panitia.
-        </p>
-      </div>
-
-      {/* Legend & Milestone Info */}
-      <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface-container-low/60 border border-edge/60 text-[11px] text-ink-muted relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-primary ring-2 ring-red-200 dark:ring-red-950 inline-block" />
-            <span className="font-medium text-ink">Sedang Aktif</span>
+      {/* KONDISI 1: Belum ada agenda sama sekali di bulan terpilih */}
+      {eventsInMonth.length === 0 && !isCurrentMonthToday ? (
+        <div className="py-12 px-4 text-center space-y-4 max-w-sm mx-auto">
+          <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-surface-container-low border border-dashed border-edge/80 animate-spin-slow" />
+            <div className="h-12 w-12 rounded-2xl bg-surface-container border border-edge flex items-center justify-center shadow-xs text-ink-muted">
+              <Zap className="h-5 w-5 stroke-[1.5]" />
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
-            <span className="font-medium text-ink">Ada Agenda</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-1 text-[10px] text-ink-muted">
-          <Trophy className="h-3 w-3 text-amber-500" />
-          <span>Milestone Mingguan</span>
-        </div>
-      </div>
 
-      {/* Snaking Path Canvas Area (Sistem Koordinat Terpadu) */}
-      <div className="w-full flex justify-center py-2 select-none">
-        <div
-          className="relative"
-          style={{
-            width: `${CONTAINER_WIDTH}px`,
-            height: `${TOTAL_HEIGHT}px`,
-          }}
-        >
-          {/* S-curve Dotted Connecting Line SVG */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox={`0 0 ${CONTAINER_WIDTH} ${TOTAL_HEIGHT}`}
-            fill="none"
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-ink">
+              Belum ada agenda terencana di bulan ini
+            </h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Tidak ada kegiatan atau rapat yang terdaftar pada bulan{" "}
+              <span className="font-semibold text-ink">
+                {FULL_MONTHS[currentMonthIndex]} {currentYear}
+              </span>
+              .
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleResetToCurrentMonth}
+            className="h-9 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors cursor-pointer inline-flex items-center gap-1.5"
           >
-            {/* Garis Dasar Abu-Abu */}
-            <path
-              d={svgDPath}
-              stroke="#CBD5E1"
-              className="dark:stroke-slate-700"
-              strokeDasharray="6 6"
-              strokeLinecap="round"
-              strokeWidth="4"
-            />
-          </svg>
+            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <span>Lihat Bulan Ini</span>
+          </button>
+        </div>
+      ) : eventsInMonth.length === 0 && isCurrentMonthToday ? (
+        /* Kasus Khusus: Bulan ini belum ada acara, hanya penanda posisi Hari Ini */
+        <div className="space-y-6 py-2">
+          <div className="relative pl-7 sm:pl-9">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center">
+              <div className="h-5.5 w-5.5 rounded-full bg-primary ring-4 ring-primary/20 shadow-sm flex items-center justify-center text-white">
+                <Radio className="h-2.5 w-2.5" />
+              </div>
+            </div>
 
-          {/* Render Node per Tanggal (1 s/d N) */}
-          {daysArray.map((dayNumber, index) => {
-            const coord = nodeCoordinates[index];
-            const nodeDate = new Date(currentYear, currentMonthIndex, dayNumber);
-            const dayOfWeek = nodeDate.getDay();
-            const dayName = INDONESIAN_DAYS[dayOfWeek];
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            <div className="p-3.5 rounded-xl border border-edge bg-surface-container-low/60 flex flex-wrap items-center justify-between gap-2 shadow-xs">
+              <span className="text-xs font-medium text-ink">
+                📍 Hari Ini ({todayDateNumber}{" "}
+                {SHORT_MONTHS[todayJakarta.monthIndex]} {todayJakarta.year}) —
+                Tidak ada agenda kegiatan
+              </span>
+              <span className="text-[11px] text-ink-muted">
+                {INDONESIAN_DAYS[todayJakarta.dayOfWeek]}, {todayDateNumber}{" "}
+                {FULL_MONTHS[todayJakarta.monthIndex]} {todayJakarta.year}
+              </span>
+            </div>
+          </div>
 
-            // Status tanggal hari ini
-            const isToday = isCurrentMonthToday && dayNumber === todayDateNumber;
+          <div className="py-6 px-4 text-center space-y-2 max-w-sm mx-auto bg-surface-container-low/40 rounded-xl border border-dashed border-edge">
+            <Calendar className="h-5 w-5 text-ink-muted mx-auto" />
+            <h4 className="text-xs font-bold text-ink">
+              Belum ada agenda terencana di bulan ini
+            </h4>
+            <p className="text-[11px] text-ink-muted">
+              Agenda kegiatan baru akan langsung terhubung ke jalur sirkuit ini.
+            </p>
+          </div>
+        </div>
+      ) : (
+        /* KONDISI 2: Timeline Vertikal Terpadu (1 Kartu = 1 Node Terikat, Garis Solid Gelap) */
+        <div className="relative pl-6 sm:pl-8 space-y-4 pt-1 select-none">
+          {/* Garis Alur Vertikal Sirkuit Solid Gelap Murni (Tanpa Gradien) */}
+          <div className="absolute left-2.75 sm:left-3.75 top-4 bottom-4 w-0.5 bg-slate-800 pointer-events-none" />
 
-            // Status masa lalu
-            const todayReset = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate()
-            ).getTime();
-            const nodeReset = new Date(
-              currentYear,
-              currentMonthIndex,
-              dayNumber
-            ).getTime();
-            const isPast = nodeReset < todayReset;
+          {timelineEntries.map((entry) => {
+            if (entry.type === "TODAY_CHECKPOINT") {
+              return (
+                <div key={entry.id} className="relative group">
+                  {/* Node Checkpoint Hari Ini */}
+                  <div className="absolute -left-5.75 sm:-left-6.75 top-5 -translate-y-1/2 z-20">
+                    <div className="relative h-5.5 w-5.5 rounded-full bg-primary text-white shadow-sm ring-4 ring-primary/20 flex items-center justify-center">
+                      <Radio className="h-2.5 w-2.5" />
+                    </div>
+                  </div>
 
-            // Cek agenda pada tanggal ini
-            const dayEvents = events.filter((ev) =>
-              isDateWithinRange(nodeDate, ev.startDate, ev.endDate)
+                  <div className="p-3.5 rounded-xl border border-edge bg-surface-container-low/50 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-ink leading-snug">
+                        📍 Hari Ini ({entry.dayNumber}{" "}
+                        {SHORT_MONTHS[todayJakarta.monthIndex]}{" "}
+                        {currentYear}) — Tidak ada agenda kegiatan
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] text-ink-muted font-medium shrink-0">
+                      {entry.dayName}, {entry.dayNumber}{" "}
+                      {FULL_MONTHS[todayJakarta.monthIndex]} {currentYear}
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+
+            // Entry Acara: 1 Kartu = 1 Node Terikat
+            const ev = entry.event;
+            const now = new Date();
+            const startObj = new Date(ev.startDate);
+            const endObj = new Date(ev.endDate);
+
+            // Logika Status Ketat Sesuai Spesifikasi
+            const isFinished = now > endObj;
+            const isOngoing = now >= startObj && now <= endObj;
+            const isMultiDay =
+              startObj.toDateString() !== endObj.toDateString();
+
+            const startStr = getLocalDateString(ev.startDate);
+            const endStr = getLocalDateString(ev.endDate);
+            const isTodayEvent = startStr <= todayStr && endStr >= todayStr;
+
+            const formattedSchedule = formatEventSchedule(
+              ev.startDate,
+              ev.endDate,
+              { shortMonth: true }
             );
-            const hasEvents = dayEvents.length > 0;
-            const isMultipleEvents = dayEvents.length > 1;
-            const firstEvent = dayEvents[0];
 
-            // Node Aktif
-            const isActiveNode =
-              isToday ||
-              dayEvents.some((ev) => {
-                const s = new Date(ev.startDate).getTime();
-                const e = new Date(ev.endDate).getTime();
-                const nowT = today.getTime();
-                return nowT >= s && nowT <= e;
-              });
+            const hasSections = (ev.sectionsCount ?? 0) > 0;
+            const totalTasks = ev.totalTasksCount ?? 0;
+            const completedTasks = ev.completedTasksCount ?? 0;
+            const progressPct =
+              totalTasks > 0
+                ? Math.round((completedTasks / totalTasks) * 100)
+                : 0;
 
-            // Status Terpilih
-            const isSelected =
-              selectedDate !== null &&
-              selectedDate.getFullYear() === currentYear &&
-              selectedDate.getMonth() === currentMonthIndex &&
-              selectedDate.getDate() === dayNumber;
+            // Diferensiasi Border & Background Kartu Kegiatan (Single-Tone Indigo Tanpa Gradasi Merah)
+            const cardStyleClass = isFinished
+              ? "border border-emerald-500/25 bg-slate-900/60"
+              : isMultiDay
+              ? "border border-indigo-500/40 bg-slate-900/80 shadow-lg shadow-indigo-950/20"
+              : "border border-cyan-500/40 bg-slate-900/80 shadow-lg shadow-cyan-950/20";
 
-            const handleNodeClick = () => {
-              onSelectDate(nodeDate, dayEvents);
-              if (isMultipleEvents) {
-                if (onSelectMultipleEvents) {
-                  onSelectMultipleEvents(nodeDate, dayEvents);
-                }
-              } else if (hasEvents && onSelectEvent) {
-                onSelectEvent(dayEvents[0]);
-              }
-            };
+            const todayAccentClass = isTodayEvent ? "ring-2 ring-primary/30" : "";
 
             return (
-              <div
-                key={`day-${dayNumber}`}
-                style={{
-                  left: `${coord.x}px`,
-                  top: `${coord.y}px`,
-                  transform: "translate(-50%, -50%)",
-                }}
-                className="absolute flex flex-col items-center z-10"
-              >
-                {/* Lencana SEDANG AKTIF Sesuai Stitch Spec */}
-                {isActiveNode && (
-                  <div className="absolute -top-3.5 px-2 py-0.5 rounded-full bg-primary text-white text-[9px] font-bold shadow-md animate-pulse uppercase tracking-wider z-20 flex items-center gap-1 whitespace-nowrap">
-                    <Sparkles className="h-2.5 w-2.5" />
-                    <span>Sedang Aktif</span>
-                  </div>
-                )}
+              <div key={ev.id} className="relative group">
+                {/* TITIK CHECKPOINT NODE (1 KARTU = 1 NODE TERIKAT) */}
+                <div className="absolute -left-5.75 sm:-left-6.75 top-5 -translate-y-1/2 z-20">
+                  {isFinished ? (
+                    /* 1. Selesai (Past Event): Lingkaran Hijau Emerald dengan Ikon Check */
+                    <div className="h-5.5 w-5.5 rounded-full bg-emerald-500 text-slate-950 border border-emerald-400 flex items-center justify-center shadow-xs">
+                      <Check className="h-3 w-3 stroke-3" />
+                    </div>
+                  ) : isMultiDay ? (
+                    /* 2. Proker Multi-Hari: Lingkaran Ungu Indigo dengan Ikon Flag */
+                    <div
+                      className={`relative h-5.5 w-5.5 rounded-full bg-indigo-600 text-white border-2 border-indigo-400 flex items-center justify-center shadow-md ${
+                        isOngoing || isTodayEvent
+                          ? "ring-4 ring-indigo-500/25 animate-pulse"
+                          : ""
+                      }`}
+                    >
+                      <Flag className="h-2.5 w-2.5 fill-white" />
+                    </div>
+                  ) : (
+                    /* 3. Agenda Singkat: Lingkaran Biru/Cyan dengan Ikon Kilat Zap */
+                    <div
+                      className={`relative h-5.5 w-5.5 rounded-full bg-cyan-500 text-slate-950 border-2 border-cyan-300 flex items-center justify-center shadow-md ${
+                        isOngoing || isTodayEvent
+                          ? "ring-4 ring-cyan-500/25 animate-pulse"
+                          : ""
+                      }`}
+                    >
+                      <Zap className="h-2.5 w-2.5 fill-slate-950" />
+                    </div>
+                  )}
+                </div>
 
-                {/* Badge Indikator Multi-Agenda */}
-                {!isActiveNode && isMultipleEvents && (
-                  <div className="absolute -top-3.5 -right-2 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-extrabold z-20 shadow-md ring-2 ring-white dark:ring-slate-900 flex items-center gap-0.5 animate-bounce whitespace-nowrap">
-                    <Layers className="h-2.5 w-2.5" />
-                    <span>{dayEvents.length} Agenda</span>
-                  </div>
-                )}
-
-                {/* Bulatan Node Tanggal */}
-                {isMultipleEvents ? (
-                  <button
-                    type="button"
-                    onClick={handleNodeClick}
-                    className={`relative flex flex-col items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 w-12 h-12 rounded-full bg-amber-500 text-white shadow-md border-2 border-white dark:border-slate-900 ring-4 ring-amber-100 dark:ring-amber-950/80 hover:bg-amber-600 ${
-                      isSelected
-                        ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900"
-                        : ""
-                    }`}
-                    aria-label={`Tanggal ${dayNumber} memiliki ${dayEvents.length} kegiatan.`}
-                  >
-                    <span className="text-[13px] font-semibold leading-none">
-                      {dayNumber}
-                    </span>
-                    <span className="text-[9px] text-white/90 leading-none mt-0.5">
-                      {dayName}
-                    </span>
-                  </button>
-                ) : hasEvents ? (
-                  <Link
-                    href={`/acara/${firstEvent.id}`}
-                    onClick={handleNodeClick}
-                    className={`relative flex flex-col items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 ${
-                      isActiveNode
-                        ? "w-14 h-14 rounded-full bg-primary text-white shadow-lg border-2 border-white dark:border-slate-900 ring-4 ring-red-100 dark:ring-red-950/80"
-                        : isPast
-                        ? "w-11 h-11 rounded-full bg-blue-600 text-white shadow-md border-2 border-white dark:border-slate-900 hover:bg-blue-700"
-                        : "w-12 h-12 rounded-full bg-blue-600 text-white shadow-md border-2 border-white dark:border-slate-900 ring-2 ring-blue-100 dark:ring-blue-950/80 hover:bg-blue-700"
-                    } ${
-                      isSelected && !isActiveNode
-                        ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900"
-                        : ""
-                    }`}
-                    aria-label={`Tanggal ${dayNumber} ${dayName}. ${firstEvent.title}. Buka detail.`}
-                  >
-                    {isActiveNode ? (
-                      <div className="flex flex-col items-center">
-                        <span className="text-[13px] font-extrabold leading-none">
-                          {dayNumber}
-                        </span>
-                        <span className="text-[8px] uppercase tracking-wider text-white/90 leading-none mt-0.5">
-                          {dayName}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center">
-                        {isPast ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 mb-0.5 text-white/90" />
+                {/* KONTEN KARTU KEGIATAN */}
+                <div
+                  className={`p-4 rounded-2xl transition-all space-y-3 ${cardStyleClass} ${todayAccentClass}`}
+                >
+                  {/* Header Tag & Tanggal */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                        {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
+                        {isFinished ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400" />
+                            <span>✓ Selesai</span>
+                          </span>
+                        ) : isOngoing ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs">
+                            <Radio className="h-2.5 w-2.5 text-cyan-400 animate-pulse" />
+                            <span>Sedang Berlangsung</span>
+                          </span>
                         ) : (
-                          <span className="text-[13px] font-semibold leading-none">
-                            {dayNumber}
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                            <Clock className="h-2.5 w-2.5 text-slate-400" />
+                            <span>Mendatang</span>
                           </span>
                         )}
-                        <span className="text-[9px] text-white/90 leading-none mt-0.5">
-                          {dayName}
+
+                        {/* Tipe Acara: Indigo untuk Proker Multi-Hari, Amber untuk Agenda Singkat */}
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            isMultiDay
+                              ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                              : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                          }`}
+                        >
+                          {isMultiDay ? (
+                            <Layers className="h-3 w-3" />
+                          ) : (
+                            <MessageSquare className="h-3 w-3" />
+                          )}
+                          <span>
+                            {isMultiDay
+                              ? "Proker / Multi-Hari"
+                              : "Agenda Singkat"}
+                          </span>
+                        </span>
+
+                        {/* Penanda Insentif Poin Khusus Acara Hari Ini */}
+                        {isTodayEvent && !isFinished && (
+                          <Link
+                            href="/dashboard"
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 text-[10px] font-extrabold shadow-xs transition-colors cursor-pointer"
+                            title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
+                          >
+                            <span>⚡ Hadiri Presensi (+10 XP)</span>
+                          </Link>
+                        )}
+
+                        <span className="font-semibold text-ink text-[11px] flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-ink-muted" />
+                          <span>{formattedSchedule}</span>
                         </span>
                       </div>
-                    )}
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleNodeClick}
-                    className={`relative flex flex-col items-center justify-center transition-all duration-200 cursor-pointer active:scale-95 ${
-                      isActiveNode
-                        ? "w-14 h-14 rounded-full bg-primary text-white shadow-lg border-2 border-white dark:border-slate-900 ring-4 ring-red-100 dark:ring-red-950/80"
-                        : isPast
-                        ? "w-11 h-11 rounded-full bg-card border border-edge shadow-xs text-ink-muted hover:bg-surface-container-low"
-                        : isWeekend
-                        ? "w-11 h-11 rounded-full bg-card border border-edge/80 shadow-xs text-ink hover:border-amber-400/60"
-                        : "w-11 h-11 rounded-full bg-card border border-edge shadow-xs text-ink hover:bg-surface-container-low hover:border-primary/40"
-                    } ${
-                      isSelected && !isActiveNode
-                        ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-slate-900"
-                        : ""
-                    }`}
-                    aria-label={`Tanggal ${dayNumber} ${dayName}`}
-                  >
-                    <span
-                      className={`text-[13px] font-semibold leading-none ${
-                        isActiveNode
-                          ? "text-white font-extrabold"
-                          : isPast
-                          ? "text-ink-muted"
-                          : isWeekend
-                          ? "text-amber-600 dark:text-amber-400 font-bold"
-                          : "text-ink"
-                      }`}
-                    >
-                      {dayNumber}
-                    </span>
-                    <span
-                      className={`text-[9px] leading-none mt-0.5 ${
-                        isActiveNode ? "text-white/90" : "text-ink-muted"
-                      }`}
-                    >
-                      {dayName}
-                    </span>
-                  </button>
-                )}
 
-                {/* Judul Acara di Bawah Bulatan Node */}
-                {isMultipleEvents ? (
-                  <button
-                    type="button"
-                    onClick={handleNodeClick}
-                    className="flex flex-col items-center mt-1 cursor-pointer text-center max-w-[120px] group"
-                  >
-                    <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 truncate w-full group-hover:underline flex items-center justify-center gap-1">
-                      <span>{dayEvents.length} Agenda</span>
-                      <ArrowRight className="h-2.5 w-2.5 shrink-0 opacity-70" />
-                    </span>
-                  </button>
-                ) : hasEvents ? (
+                      <Link
+                        href={`/acara/${ev.id}`}
+                        className="text-sm font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
+                      >
+                        {ev.title}
+                      </Link>
+                    </div>
+
+                    {ev.driveUrl && (
+                      <a
+                        href={ev.driveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-secondary border border-edge transition-colors shrink-0"
+                        title="Buka Google Drive"
+                      >
+                        <Folder className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Deskripsi Singkat */}
+                  {ev.description && (
+                    <p className="text-xs text-ink-secondary line-clamp-2 leading-relaxed">
+                      {ev.description}
+                    </p>
+                  )}
+
+                  {/* Progress Bar Seksi / Tugas */}
+                  {hasSections && totalTasks > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-[11px] text-ink-muted">
+                        <span className="flex items-center gap-1">
+                          <ListTodo className="h-3 w-3" />
+                          <span>{ev.sectionsCount} Seksi Panitia</span>
+                        </span>
+                        <span className="font-semibold text-ink">
+                          {completedTasks}/{totalTasks} Tugas ({progressPct}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="bg-emerald-600 h-1.5 rounded-full transition-all duration-300"
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tombol Aksi Buka Detail & Kepanitiaan */}
                   <Link
-                    href={`/acara/${firstEvent.id}`}
-                    className="flex flex-col items-center mt-1 cursor-pointer text-center max-w-[120px] group"
+                    href={`/acara/${ev.id}`}
+                    className="w-full h-10 min-h-10 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-edge"
                   >
-                    <span
-                      className={`text-[11px] font-bold truncate w-full group-hover:underline flex items-center justify-center gap-0.5 ${
-                        isActiveNode
-                          ? "text-primary"
-                          : "text-blue-600 dark:text-blue-400"
-                      }`}
-                    >
-                      <span className="truncate">{firstEvent.title}</span>
-                    </span>
+                    <span>Buka Detail &amp; Kepanitiaan</span>
+                    <ArrowRight className="h-3.5 w-3.5 text-ink-muted" />
                   </Link>
-                ) : null}
+                </div>
               </div>
             );
           })}
         </div>
-      </div>
+      )}
+
+      {/* MODAL DIALOG PEMILIH BULAN & TAHUN CEPAT (MONTH-YEAR PICKER) */}
+      {isPickerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 space-y-4">
+            {/* Header Modal */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+                  <Calendar className="h-4 w-4" />
+                </div>
+                <h3 className="text-sm font-bold text-white">
+                  Pilih Bulan &amp; Tahun
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPickerOpen(false)}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Selektor Tahun dengan Panah Kiri/Kanan */}
+            <div className="flex items-center justify-between bg-slate-950/60 rounded-2xl p-1.5 border border-slate-800">
+              <button
+                type="button"
+                aria-label="Tahun Sebelumnya"
+                onClick={() => setPickerYear((prev) => prev - 1)}
+                className="h-8 w-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
+              <span className="text-sm font-black text-white font-mono tracking-wider">
+                {pickerYear}
+              </span>
+
+              <button
+                type="button"
+                aria-label="Tahun Berikutnya"
+                onClick={() => setPickerYear((prev) => prev + 1)}
+                className="h-8 w-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Grid 12 Bulan */}
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              {SHORT_MONTHS.map((monthName, idx) => {
+                const isSelected =
+                  idx === currentMonthIndex && pickerYear === currentYear;
+                const isCurrentCalendarMonth =
+                  idx === todayJakarta.monthIndex &&
+                  pickerYear === todayJakarta.year;
+
+                return (
+                  <button
+                    key={monthName}
+                    type="button"
+                    onClick={() => handleSelectMonthYear(idx, pickerYear)}
+                    className={`h-11 rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center relative ${
+                      isSelected
+                        ? "bg-primary text-white shadow-md ring-2 ring-primary/40 scale-[1.02]"
+                        : isCurrentCalendarMonth
+                        ? "bg-slate-800/90 text-primary border border-primary/30 hover:bg-slate-800"
+                        : "bg-slate-950/50 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800/80"
+                    }`}
+                  >
+                    <span>{monthName}</span>
+                    {isCurrentCalendarMonth && !isSelected && (
+                      <span className="text-[9px] font-normal text-primary/80 leading-none">
+                        Bulan Ini
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Footer Modal & Tombol Pintas Lompat ke Hari Ini */}
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={handleResetToCurrentMonth}
+                className="h-9 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Calendar className="h-3.5 w-3.5 text-primary" />
+                <span>Lompat ke Hari Ini</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsPickerOpen(false)}
+                className="h-9 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

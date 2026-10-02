@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState } from "react";
 import {
   ChevronDown,
   CheckCircle2,
@@ -16,8 +16,8 @@ import {
   Users,
   X,
   Loader2,
-  Sparkles,
   Check,
+  Trash2,
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import {
@@ -25,10 +25,12 @@ import {
   submitTaskCompletion,
   updateTaskStatus,
   verifyEventTask,
+  deleteTask,
   assignSectionPJ,
   addSectionMember,
   removeSectionMember,
 } from "@/actions/acara";
+import { getJakartaDateParts } from "@/utils/eventStatus";
 
 export interface CommitteeTask {
   id: string;
@@ -76,12 +78,103 @@ interface CommitteeSectionProps {
   onOpenAddTaskModal?: (sectionId?: string) => void;
 }
 
+const SHORT_MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "Mei",
+  "Jun",
+  "Jul",
+  "Agu",
+  "Sep",
+  "Okt",
+  "Nov",
+  "Des",
+];
+
 function formatGrade(grade?: string | null) {
   if (!grade) return "";
   if (grade === "KELAS_10") return "Gen 21";
   if (grade === "KELAS_11") return "Gen 20";
   if (grade === "KELAS_12") return "Gen 19";
   return grade.replace("_", " ");
+}
+
+interface DueDateStatus {
+  label: string;
+  badgeClass: string;
+  isOverdue: boolean;
+  isDueSoon: boolean;
+}
+
+function getDueDateStatus(
+  dueDateInput?: Date | string | null,
+  isDone?: boolean
+): DueDateStatus | null {
+  if (!dueDateInput) return null;
+
+  const dueParts = getJakartaDateParts(dueDateInput);
+  const nowParts = getJakartaDateParts(new Date());
+
+  // Hitung selisih hari berbasis tanggal lokal Jakarta
+  const dueDayStart = new Date(
+    `${dueParts.dateString}T00:00:00+07:00`
+  ).getTime();
+  const nowDayStart = new Date(
+    `${nowParts.dateString}T00:00:00+07:00`
+  ).getTime();
+  const diffDays = Math.round(
+    (dueDayStart - nowDayStart) / (1000 * 60 * 60 * 24)
+  );
+
+  const formattedDate = `${dueParts.day} ${SHORT_MONTHS[dueParts.monthIndex]}`;
+
+  if (isDone) {
+    return {
+      label: `Deadline: ${formattedDate}`,
+      badgeClass: "bg-surface-container text-ink-muted border-edge",
+      isOverdue: false,
+      isDueSoon: false,
+    };
+  }
+
+  if (diffDays < 0) {
+    // Melewati deadline (Overdue) jika belum dicentang selesai
+    return {
+      label: `⚠️ Lewat Deadline (${formattedDate})`,
+      badgeClass:
+        "bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/60 font-bold",
+      isOverdue: true,
+      isDueSoon: false,
+    };
+  } else if (diffDays === 0) {
+    // Hari ini (H-0)
+    return {
+      label: `⏰ Deadline Hari Ini (${formattedDate})`,
+      badgeClass:
+        "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800 animate-pulse font-bold",
+      isOverdue: false,
+      isDueSoon: true,
+    };
+  } else if (diffDays === 1) {
+    // Jatuh tempo besok (H-1) -> Kuning berkedip / menyala
+    return {
+      label: `⏳ Jatuh Tempo Besok (${formattedDate})`,
+      badgeClass:
+        "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800 animate-pulse font-bold",
+      isOverdue: false,
+      isDueSoon: true,
+    };
+  } else {
+    // Masih lama (> 2 hari) -> Abu-abu netral
+    return {
+      label: `Deadline: ${formattedDate} (${diffDays} hari lagi)`,
+      badgeClass: "bg-surface-container-low text-ink-muted border-edge",
+      isOverdue: false,
+      isDueSoon: false,
+    };
+  }
 }
 
 export function CommitteeSection({
@@ -92,16 +185,17 @@ export function CommitteeSection({
   onOpenAddSectionModal,
   onOpenAddTaskModal,
 }: CommitteeSectionProps) {
-  // Buka semua seksi secara default agar tugas langsung terlihat
+  // Buka 2 seksi pertama secara default agar tugas langsung terlihat
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     sections.forEach((sec, idx) => {
-      initial[sec.id] = idx < 2; // Buka 2 seksi pertama
+      initial[sec.id] = idx < 2;
     });
     return initial;
   });
 
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
+  const [confirmDeleteTaskId, setConfirmDeleteTaskId] = useState<string | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [feedbackType, setFeedbackType] = useState<"success" | "error">("error");
 
@@ -122,6 +216,27 @@ export function CommitteeSection({
   const isOfficer =
     currentUserRole === Role.ADMIN ||
     currentUserRole === Role.OPERATOR;
+
+  const handleDeleteTask = async (taskId: string) => {
+    setLoadingTaskId(taskId);
+    setFeedbackMessage(null);
+    try {
+      const res = await deleteTask(taskId);
+      if (!res.success) {
+        setFeedbackType("error");
+        setFeedbackMessage(res.message);
+      } else {
+        setFeedbackType("success");
+        setFeedbackMessage(res.message);
+        setConfirmDeleteTaskId(null);
+      }
+    } catch {
+      setFeedbackType("error");
+      setFeedbackMessage("Gagal menghapus tugas.");
+    } finally {
+      setLoadingTaskId(null);
+    }
+  };
 
   const handleClaimTask = async (taskId: string) => {
     setLoadingTaskId(taskId);
@@ -303,7 +418,7 @@ export function CommitteeSection({
             <button
               type="button"
               onClick={onOpenAddSectionModal}
-              className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer min-h-[44px]"
+              className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer min-h-11"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Tambah Seksi Pertama</span>
@@ -324,6 +439,11 @@ export function CommitteeSection({
           const canManageMembers =
             isOfficer || (section.pjId && section.pjId === currentUserId);
 
+          const canDeleteTaskPermission =
+            isOfficer ||
+            (section.pjId && section.pjId === currentUserId) ||
+            sectionMembers.some((m) => m.id === currentUserId);
+
           return (
             <div
               key={section.id}
@@ -334,7 +454,7 @@ export function CommitteeSection({
                 type="button"
                 aria-expanded={isExpanded}
                 onClick={() => toggleSection(section.id)}
-                className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between bg-surface-container-low/40 hover:bg-surface-container-low text-left transition-colors cursor-pointer"
+                className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between bg-surface-container-low/40 hover:bg-surface-container-low text-left transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -406,7 +526,7 @@ export function CommitteeSection({
                             setActivePJModalSectionId(section.id);
                             setSelectedPJUserId(section.pjId || "");
                           }}
-                          className="h-8 min-h-[32px] px-3 rounded-lg bg-surface hover:bg-card border border-edge text-[11px] font-bold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
+                          className="h-8 min-h-8 px-3 rounded-lg bg-surface hover:bg-card border border-edge text-[11px] font-bold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
                         >
                           {section.pj ? "Ganti PJ" : "+ Tunjuk PJ"}
                         </button>
@@ -504,7 +624,7 @@ export function CommitteeSection({
                         <button
                           type="button"
                           onClick={() => setActivePJModalSectionId(null)}
-                          className="h-9 min-h-[36px] px-3 rounded-lg border border-edge text-xs font-semibold text-ink-secondary cursor-pointer"
+                          className="h-9 min-h-9 px-3 rounded-lg border border-edge text-xs font-semibold text-ink-secondary cursor-pointer"
                         >
                           Tutup
                         </button>
@@ -513,7 +633,7 @@ export function CommitteeSection({
                             type="button"
                             disabled={!selectedPJUserId || isSubmittingMember}
                             onClick={() => handleAssignPJSubmit(section.id)}
-                            className="h-9 min-h-[36px] px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
+                            className="h-9 min-h-9 px-4 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                           >
                             {isSubmittingMember ? "Menyimpan..." : "Simpan PJ"}
                           </button>
@@ -549,7 +669,7 @@ export function CommitteeSection({
                         <button
                           type="button"
                           onClick={() => setActiveAddMemberSectionId(null)}
-                          className="h-9 min-h-[36px] px-3 rounded-lg border border-edge text-xs font-semibold text-ink-secondary cursor-pointer"
+                          className="h-9 min-h-9 px-3 rounded-lg border border-edge text-xs font-semibold text-ink-secondary cursor-pointer"
                         >
                           Batal
                         </button>
@@ -557,7 +677,7 @@ export function CommitteeSection({
                           type="button"
                           disabled={!selectedNewMemberUserId || isSubmittingMember}
                           onClick={() => handleAddMemberSubmit(section.id)}
-                          className="h-9 min-h-[36px] px-4 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
+                          className="h-9 min-h-9 px-4 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold disabled:opacity-50 cursor-pointer"
                         >
                           {isSubmittingMember ? "Menyimpan..." : "Tambahkan"}
                         </button>
@@ -578,6 +698,9 @@ export function CommitteeSection({
                         const isAssignedToMe = task.assigneeId === currentUserId;
                         const isTaskLoading = loadingTaskId === task.id;
                         const isVerified = Boolean(task.verifiedById);
+                        const dueStatus = getDueDateStatus(task.dueDate, isTaskDone);
+                        const canDeleteThisTask =
+                          canDeleteTaskPermission || task.assigneeId === currentUserId;
 
                         return (
                           <div
@@ -638,10 +761,20 @@ export function CommitteeSection({
 
                                 {/* Lencana Status Tugas Sesuai Spesifikasi */}
                                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                                  {/* Lencana 1: SOP Otomatis */}
+                                  {/* Lencana SOP Otomatis */}
                                   {task.isSOP && (
                                     <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-400 text-[10px] font-semibold border border-purple-500/30 font-mono">
                                       SOP
+                                    </span>
+                                  )}
+
+                                  {/* Lencana Batas Waktu / Deadline */}
+                                  {dueStatus && (
+                                    <span
+                                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] border font-mono ${dueStatus.badgeClass}`}
+                                    >
+                                      <Clock className="h-2.5 w-2.5 shrink-0" />
+                                      <span>{dueStatus.label}</span>
                                     </span>
                                   )}
 
@@ -675,6 +808,47 @@ export function CommitteeSection({
                                   )}
                                 </div>
                               </div>
+
+                              {/* Tombol Hapus Tugas Seksi */}
+                              {canDeleteThisTask && (
+                                <div className="shrink-0 flex items-center">
+                                  {confirmDeleteTaskId === task.id ? (
+                                    <div className="flex items-center gap-1 animate-in fade-in">
+                                      <button
+                                        type="button"
+                                        disabled={isTaskLoading}
+                                        onClick={() => handleDeleteTask(task.id)}
+                                        className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-lg shadow-xs cursor-pointer flex items-center gap-1"
+                                      >
+                                        {isTaskLoading ? (
+                                          <Loader2 className="h-3 w-3 animate-spin" />
+                                        ) : (
+                                          <Trash2 className="h-3 w-3" />
+                                        )}
+                                        <span>Hapus</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        disabled={isTaskLoading}
+                                        onClick={() => setConfirmDeleteTaskId(null)}
+                                        className="px-1.5 py-1 text-[10px] text-ink-muted hover:text-ink cursor-pointer"
+                                      >
+                                        Batal
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      disabled={isTaskLoading}
+                                      onClick={() => setConfirmDeleteTaskId(task.id)}
+                                      className="p-1.5 rounded-lg text-ink-muted hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                      title="Hapus tugas ini"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              )}
                             </div>
 
                             {/* Tombol Aksi Tugas (Ambil, Tandai Selesai, atau Verifikasi PJ) */}
@@ -685,7 +859,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleClaimTask(task.id)}
-                                  className="h-10 min-h-[44px] px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+                                  className="h-10 min-h-11 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
                                 >
                                   {isTaskLoading ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -702,7 +876,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleSubmitDone(task.id)}
-                                  className="h-10 min-h-[44px] px-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+                                  className="h-10 min-h-11 px-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
                                 >
                                   {isTaskLoading ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -719,7 +893,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleVerifyTask(task.id)}
-                                  className="h-11 min-h-[44px] px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50 border border-emerald-500/30"
+                                  className="h-11 min-h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50 border border-emerald-500/30"
                                   title="Verifikasi pekerjaan & berikan +20 XP"
                                 >
                                   {isTaskLoading ? (
@@ -749,7 +923,7 @@ export function CommitteeSection({
           <button
             type="button"
             onClick={onOpenAddSectionModal}
-            className="min-h-[44px] h-11 px-3.5 bg-card hover:bg-surface-container-low text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all border border-edge shadow-xs cursor-pointer"
+            className="min-h-11 h-11 px-3.5 bg-card hover:bg-surface-container-low text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all border border-edge shadow-xs cursor-pointer"
           >
             <FolderPlus className="h-4 w-4 text-ink-secondary" />
             <span>+ Seksi Baru</span>
@@ -759,7 +933,7 @@ export function CommitteeSection({
         <button
           type="button"
           onClick={() => onOpenAddTaskModal?.()}
-          className={`min-h-[44px] h-11 px-3.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-xs cursor-pointer ${
+          className={`min-h-11 h-11 px-3.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-xs cursor-pointer ${
             !isOfficer ? "col-span-2" : ""
           }`}
         >

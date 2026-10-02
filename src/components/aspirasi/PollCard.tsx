@@ -9,10 +9,12 @@ import {
   Users,
   Check,
   Crown,
-  CheckCheck,
+  Trash2,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { Role } from "@prisma/client";
-import { votePoll, closePoll } from "@/actions/aspirasi";
+import { votePoll, closePoll, deletePoll } from "@/actions/aspirasi";
 
 export interface PollOptionData {
   id: string;
@@ -43,6 +45,8 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
     poll.userVotedOptionId || ""
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
@@ -103,6 +107,27 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
     }
   };
 
+  const handleDeletePoll = async () => {
+    setIsDeleting(true);
+    setFeedback(null);
+
+    try {
+      const res = await deletePoll(poll.id);
+      if (res.success) {
+        setIsDeleteModalOpen(false);
+      } else {
+        setFeedback({ type: "error", message: res.message });
+      }
+    } catch {
+      setFeedback({
+        type: "error",
+        message: "Gagal menghapus polling usang.",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formattedClosesAt = poll.closesAt
     ? new Date(poll.closesAt).toLocaleDateString("id-ID", {
         day: "numeric",
@@ -159,16 +184,30 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
           </h3>
         </div>
 
-        {/* Tombol Tutup Poll Khusus Pengurus jika masih aktif */}
-        {isOfficer && !isClosed && (
-          <button
-            type="button"
-            onClick={handleClosePoll}
-            disabled={isLoading}
-            className="text-[11px] font-semibold text-ink-muted hover:text-primary transition-colors cursor-pointer shrink-0 border border-edge px-2.5 py-1 rounded-lg hover:bg-surface-container-low"
-          >
-            Tutup Poll
-          </button>
+        {/* Tombol Aksi Khusus Pengurus */}
+        {isOfficer && (
+          <div className="flex items-center gap-1.5 shrink-0">
+            {!isClosed && (
+              <button
+                type="button"
+                onClick={handleClosePoll}
+                disabled={isLoading || isDeleting}
+                className="text-[11px] font-semibold text-ink-muted hover:text-ink transition-colors cursor-pointer border border-edge px-2.5 py-1 rounded-lg hover:bg-surface-container-low"
+              >
+                Tutup Poll
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsDeleteModalOpen(true)}
+              disabled={isLoading || isDeleting}
+              title="Hapus Polling Usang"
+              className="p-1.5 rounded-lg text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 border border-transparent hover:border-red-200 dark:hover:border-red-900 transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         )}
       </div>
 
@@ -351,6 +390,56 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
           </span>
         )}
       </div>
+
+      {/* Modal Konfirmasi Hapus Polling Usang */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-sm font-bold text-ink">
+                Hapus Polling Ini?
+              </h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                Tindakan ini akan menghapus polling <span className="font-semibold text-ink">&quot;{poll.question}&quot;</span> beserta seluruh opsi dan riwayat <span className="font-semibold text-primary">{poll.totalVotes} suara</span> yang telah masuk.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-edge">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-9 px-3.5 rounded-lg border border-edge text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleDeletePoll}
+                disabled={isDeleting}
+                className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Menghapus..." : "Hapus Permanen"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

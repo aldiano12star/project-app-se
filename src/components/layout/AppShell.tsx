@@ -33,7 +33,7 @@ export function AppShell({
         {showHeader && <TopHeader user={user} />}
 
         {/* Slot Konten Utama */}
-        <main className={`flex-1 px-4 py-4 ${showNav ? "pb-24" : "pb-8"}`}>
+        <main className={`flex-1 px-4 py-4 ${showNav ? "pb-28" : "pb-8"}`}>
           {children}
         </main>
 

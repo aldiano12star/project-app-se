@@ -318,7 +318,7 @@ export function EventRABSection({
       </div>
 
       {/* Ringkasan Total Box */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-red-950/20 via-card to-amber-950/20 border border-edge flex items-center justify-between">
+      <div className="p-4 rounded-xl bg-surface-container-low/60 border border-edge flex items-center justify-between shadow-xs">
         <div className="space-y-0.5">
           <span className="text-[10px] uppercase font-bold text-ink-muted font-mono tracking-wider">
             Total Estimasi Anggaran Pengajuan

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import {
   X,
@@ -13,6 +12,10 @@ import {
   ListTodo,
 } from "lucide-react";
 import { CalendarEventItem } from "./SnakingPathCalendar";
+import {
+  getLocalDateString,
+  formatEventSchedule,
+} from "@/utils/eventStatus";
 
 interface MultiEventSelectorModalProps {
   isOpen: boolean;
@@ -94,25 +97,15 @@ export function MultiEventSelectorModal({
 
           <div className="space-y-2.5">
             {events.map((item) => {
-              const startDate = new Date(item.startDate);
-              const endDate = new Date(item.endDate);
-
               const isSingleDay =
-                startDate.toDateString() === endDate.toDateString();
+                getLocalDateString(item.startDate) ===
+                getLocalDateString(item.endDate);
 
-              const timeString = `${startDate
-                .getHours()
-                .toString()
-                .padStart(2, "0")}:${startDate
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")} - ${endDate
-                .getHours()
-                .toString()
-                .padStart(2, "0")}:${endDate
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")} WIB`;
+              const formattedSchedule = formatEventSchedule(
+                item.startDate,
+                item.endDate,
+                { shortMonth: true }
+              );
 
               const hasSections = (item.sectionsCount ?? 0) > 0;
               const isRapat = !hasSections || isSingleDay;
@@ -126,22 +119,24 @@ export function MultiEventSelectorModal({
                   <div className="flex items-center justify-between">
                     <span
                       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        isRapat
-                          ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60"
-                          : "bg-red-50 dark:bg-red-950/40 text-primary border border-red-200 dark:border-red-900/60"
+                        isSingleDay
+                          ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                          : "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
                       }`}
                     >
-                      {isRapat ? (
+                      {isSingleDay ? (
                         <MessageSquare className="h-3 w-3" />
                       ) : (
                         <Layers className="h-3 w-3" />
                       )}
-                      <span>{isRapat ? "Rapat Singkat" : "Program Kerja"}</span>
+                      <span>
+                        {isSingleDay ? "Agenda Singkat" : "Proker / Multi-Hari"}
+                      </span>
                     </span>
 
                     <span className="text-[11px] text-ink-muted flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      <span>{timeString}</span>
+                      <span>{formattedSchedule}</span>
                     </span>
                   </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Role } from "@prisma/client";
 import {
   ArrowLeft,
@@ -9,6 +10,9 @@ import {
   Plus,
   MessageSquare,
   Layers,
+  Trash2,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { EventDetailCard, EventDetailData } from "./EventDetailCard";
 import { CommitteeSection } from "./CommitteeSection";
@@ -17,6 +21,7 @@ import { AddTaskModal } from "./AddTaskModal";
 import { AddSectionModal } from "./AddSectionModal";
 import { EventRABSection } from "./EventRABSection";
 import { BudgetItemData } from "./PrintRABModal";
+import { deleteEvent } from "@/actions/acara";
 
 interface EventDetailClientViewProps {
   currentUser: {
@@ -43,10 +48,16 @@ export function EventDetailClientView({
   allMembers = [],
   latestMeeting,
 }: EventDetailClientViewProps) {
+  const router = useRouter();
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isAddSectionModalOpen, setIsAddSectionModalOpen] = useState(false);
   const [targetSectionId, setTargetSectionId] = useState<string | undefined>();
   const [isDriveAlertOpen, setIsDriveAlertOpen] = useState(false);
+
+  // State untuk Modal Hapus Acara di Bagian Paling Bawah Halaman Detail
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null);
 
   const isOfficer =
     currentUser.role === Role.ADMIN ||
@@ -61,6 +72,25 @@ export function EventDetailClientView({
   const handleOpenAddTask = (sectionId?: string) => {
     setTargetSectionId(sectionId || event.sections[0]?.id);
     setIsAddTaskModalOpen(true);
+  };
+
+  const handleDeleteEvent = async () => {
+    setIsDeleting(true);
+    setDeleteErrorMessage(null);
+
+    try {
+      const res = await deleteEvent(event.id);
+      if (res.success) {
+        setIsDeleteModalOpen(false);
+        router.push("/acara");
+      } else {
+        setDeleteErrorMessage(res.message);
+      }
+    } catch {
+      setDeleteErrorMessage("Gagal menghapus kegiatan. Terjadi kesalahan internal server.");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -153,6 +183,32 @@ export function EventDetailClientView({
         </div>
       )}
 
+      {/* SECTION 6 (Paling Bawah): Zona Bahaya / Hapus Acara Khusus Pengurus */}
+      {isOfficer && (
+        <div className="pt-4 border-t border-edge">
+          <div className="p-4 rounded-2xl bg-red-50/20 dark:bg-red-950/15 border border-red-200/60 dark:border-red-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <h4 className="text-xs font-bold text-ink flex items-center gap-1.5">
+                <Trash2 className="h-4 w-4 text-red-500" />
+                <span>Pengaturan Kegiatan &amp; Zona Bahaya</span>
+              </h4>
+              <p className="text-[11px] text-ink-muted leading-relaxed">
+                Hapus seluruh kepanitiaan, data rincian anggaran, notulensi, dan tugas acara ini secara permanen.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="h-10 min-h-[40px] px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Hapus Acara Ini</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Modal Dialog Tambah Tugas Ad-Hoc */}
       <AddTaskModal
         isOpen={isAddTaskModalOpen}
@@ -186,6 +242,62 @@ export function EventDetailClientView({
             >
               Mengerti
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus Acara */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-sm font-bold text-ink">
+                Hapus Acara Ini?
+              </h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                Apakah Anda yakin ingin menghapus acara ini? Data presensi dan agenda terkait akan ikut terhapus.
+              </p>
+            </div>
+
+            {deleteErrorMessage && (
+              <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-xs text-primary font-medium">
+                {deleteErrorMessage}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-edge">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-9 px-3.5 rounded-lg border border-edge text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteEvent}
+                disabled={isDeleting}
+                className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Menghapus..." : "Hapus Acara"}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

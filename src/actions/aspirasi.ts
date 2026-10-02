@@ -375,3 +375,108 @@ export async function respondAspiration(
     };
   }
 }
+
+/**
+ * Menghapus Polling beserta opsi dan riwayat suara (Cascade Delete)
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function deletePoll(pollId: string): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    const poll = await prisma.poll.findUnique({
+      where: { id: pollId },
+    });
+
+    if (!poll) {
+      return {
+        success: false,
+        message: "Polling tidak ditemukan.",
+      };
+    }
+
+    // Jalankan transaksi penghapusan kaskade eksplisit untuk keandalan maksimal
+    await prisma.$transaction(async (tx) => {
+      await tx.pollVote.deleteMany({
+        where: { pollId },
+      });
+      await tx.pollOption.deleteMany({
+        where: { pollId },
+      });
+      await tx.poll.delete({
+        where: { id: pollId },
+      });
+    });
+
+    revalidatePath("/aspirasi");
+    revalidatePath("/suara");
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Polling dan seluruh riwayat suara berhasil dibersihkan.",
+    };
+  } catch (error) {
+    console.error("Gagal menghapus polling:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Menghapus Kotak Aspirasi
+ * Wewenang: OPERATOR, ADMIN, atau Pemilik Aspirasi (Sender)
+ */
+export async function deleteAspiration(
+  aspirationId: string
+): Promise<ActionResponse> {
+  try {
+    const user = await assertActiveMember();
+
+    const aspiration = await prisma.aspiration.findUnique({
+      where: { id: aspirationId },
+    });
+
+    if (!aspiration) {
+      return {
+        success: false,
+        message: "Aspirasi tidak ditemukan.",
+      };
+    }
+
+    const isOfficer =
+      user.role === Role.ADMIN || user.role === Role.OPERATOR;
+    const isOwner = aspiration.senderId === user.id;
+
+    if (!isOfficer && !isOwner) {
+      return {
+        success: false,
+        message: "Anda tidak memiliki wewenang untuk menghapus aspirasi ini.",
+      };
+    }
+
+    await prisma.aspiration.delete({
+      where: { id: aspirationId },
+    });
+
+    revalidatePath("/aspirasi");
+    revalidatePath("/suara");
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Aspirasi berhasil dihapus.",
+    };
+  } catch (error) {
+    console.error("Gagal menghapus aspirasi:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+

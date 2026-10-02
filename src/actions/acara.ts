@@ -757,6 +757,72 @@ export async function updateTaskStatus(
 }
 
 /**
+ * Menghapus tugas dari suatu seksi panitia
+ * Wewenang: OPERATOR, ADMIN, PJ Seksi, atau panitia terkait
+ */
+export async function deleteTask(taskId: string): Promise<ActionResponse> {
+  try {
+    const currentUser = await assertActiveMember();
+
+    const task = await prisma.eventTask.findUnique({
+      where: { id: taskId },
+      include: {
+        section: {
+          include: {
+            members: true,
+          },
+        },
+      },
+    });
+
+    if (!task) {
+      return {
+        success: false,
+        message: "Tugas tidak ditemukan.",
+      };
+    }
+
+    const isOfficer =
+      currentUser.role === Role.ADMIN || currentUser.role === Role.OPERATOR;
+    const isSectionPJ = task.section.pjId === currentUser.id;
+    const isSectionMember = task.section.members.some(
+      (m) => m.id === currentUser.id
+    );
+    const isAssignee = task.assigneeId === currentUser.id;
+
+    if (!isOfficer && !isSectionPJ && !isSectionMember && !isAssignee) {
+      return {
+        success: false,
+        message:
+          "Hanya Penanggung Jawab (PJ) seksi, panitia terkait, atau Pengurus yang dapat menghapus tugas ini.",
+      };
+    }
+
+    await prisma.eventTask.delete({
+      where: { id: taskId },
+    });
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/${task.section.eventId}`);
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Tugas berhasil dihapus dari seksi.",
+    };
+  } catch (error) {
+    console.error("Gagal menghapus tugas:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+export const deleteEventTask = deleteTask;
+
+/**
  * Memverifikasi penyelesaian tugas oleh Penanggung Jawab (PJ) Seksi (+20 XP)
  * Aturan Otorisasi: HANYA PJ Seksi yang boleh memverifikasi tugas di seksinya (OPERATOR / ADMIN memiliki bypass).
  */
@@ -1003,4 +1069,77 @@ export async function deleteBudgetItem(
     };
   }
 }
+
+/**
+ * Menghapus Acara / Kegiatan beserta seluruh seksi, tugas, dan RAB (Cascade Delete)
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function deleteEvent(eventId: string): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        sections: {
+          include: {
+            tasks: true,
+          },
+        },
+        budgetItems: true,
+      },
+    });
+
+    if (!event) {
+      return {
+        success: false,
+        message: "Kegiatan tidak ditemukan.",
+      };
+    }
+
+    // Jalankan transaksi kaskade eksplisit untuk keandalan maksimal
+    await prisma.$transaction(async (tx) => {
+      // 1. Hapus semua budget items (RAB)
+      await tx.eventBudgetItem.deleteMany({
+        where: { eventId },
+      });
+
+      // 2. Ambil semua ID seksi
+      const sectionIds = event.sections.map((s) => s.id);
+      if (sectionIds.length > 0) {
+        // Hapus semua task di seksi
+        await tx.eventTask.deleteMany({
+          where: { sectionId: { in: sectionIds } },
+        });
+        // Hapus semua seksi
+        await tx.eventSection.deleteMany({
+          where: { eventId },
+        });
+      }
+
+      // 3. Hapus event utama
+      await tx.event.delete({
+        where: { id: eventId },
+      });
+    });
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/${eventId}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+
+    return {
+      success: true,
+      message: `Kegiatan "${event.title}" berhasil dihapus.`,
+    };
+  } catch (error) {
+    console.error("Gagal menghapus kegiatan:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
 

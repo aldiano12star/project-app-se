@@ -13,10 +13,14 @@ import {
   MessagesSquare,
   Bug,
   Sparkles,
+  Trash2,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import {
   respondAspiration,
+  deleteAspiration,
   AspirationCategoryType,
   AspirationStatusType,
   AspirationScopeType,
@@ -42,6 +46,7 @@ export interface AspirationCardData {
 interface AspirationCardProps {
   aspiration: AspirationCardData;
   currentUserRole?: Role;
+  currentUserId?: string;
 }
 
 const CATEGORY_META: Record<
@@ -81,6 +86,7 @@ const CATEGORY_META: Record<
 export function AspirationCard({
   aspiration,
   currentUserRole,
+  currentUserId,
 }: AspirationCardProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyInput, setReplyInput] = useState(aspiration.adminReply || "");
@@ -88,10 +94,18 @@ export function AspirationCard({
     aspiration.status === "RESOLVED" ? "RESOLVED" : "RESPONDED"
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const isOfficer =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
+
+  const isOwner = Boolean(
+    currentUserId && aspiration.sender && aspiration.sender.id === currentUserId
+  );
+
+  const canDelete = isOfficer || isOwner;
 
   const isPrivate = aspiration.targetScope === "PRIVATE_ADMIN";
 
@@ -126,6 +140,24 @@ export function AspirationCard({
     }
   };
 
+  const handleDeleteAspiration = async () => {
+    setIsDeleting(true);
+    setFeedback(null);
+
+    try {
+      const res = await deleteAspiration(aspiration.id);
+      if (res.success) {
+        setIsDeleteModalOpen(false);
+      } else {
+        setFeedback(res.message);
+      }
+    } catch {
+      setFeedback("Gagal menghapus aspirasi.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formattedDate = new Date(aspiration.createdAt).toLocaleDateString("id-ID", {
     day: "numeric",
     month: "short",
@@ -144,7 +176,7 @@ export function AspirationCard({
           : "border-edge"
       }`}
     >
-      {/* Header Kartu: Kategori & Status Ringkas */}
+      {/* Header Kartu: Kategori & Tanggal (Tanpa Status Tiket Birokratis) */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           {/* Badge Scope Privat jika ada */}
@@ -155,29 +187,33 @@ export function AspirationCard({
             </span>
           )}
 
+          {/* Badge Kategori Usulan */}
           <span
             className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
           >
             <CategoryIcon className="h-3 w-3" />
             <span>{categoryMeta.label}</span>
           </span>
-
-          {isResponded ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-              <CheckCircle2 className="h-3 w-3" />
-              <span>{isPrivate ? "Selesai Ditangani" : "Telah Ditanggapi"}</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container-low text-ink-muted border border-edge">
-              <span>Terbuka</span>
-            </span>
-          )}
         </div>
 
-        <span className="text-[11px] text-ink-muted shrink-0 flex items-center gap-1">
-          <Clock className="h-3 w-3" />
-          <span>{formattedDate}</span>
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[11px] text-ink-muted flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            <span>{formattedDate}</span>
+          </span>
+
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => setIsDeleteModalOpen(true)}
+              disabled={isLoading || isDeleting}
+              title="Hapus Aspirasi"
+              className="p-1 rounded-md text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Judul & Isi Aspirasi */}
@@ -296,6 +332,56 @@ export function AspirationCard({
           </button>
         )}
       </div>
+
+      {/* Modal Konfirmasi Hapus Aspirasi */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-sm font-bold text-ink">
+                Hapus Aspirasi Ini?
+              </h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                Apakah kamu yakin ingin menghapus usulan <span className="font-semibold text-ink">&quot;{aspiration.title}&quot;</span>? Aspirasi yang dihapus tidak dapat dipulihkan kembali.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-edge">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-9 px-3.5 rounded-lg border border-edge text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAspiration}
+                disabled={isDeleting}
+                className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Menghapus..." : "Hapus Aspirasi"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
