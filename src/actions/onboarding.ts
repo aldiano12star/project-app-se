@@ -59,24 +59,35 @@ export async function saveOnboardingData(
       classGrade = ClassGrade.KELAS_12;
     }
 
-    // Mapping divisi string ke Enum Division
+    // Mapping 5 divisi resmi ke Enum Division
     let mainDivision: Division = Division.PROGRAMMING;
-    const divLower = input.divisi.toLowerCase();
-    if (divLower.includes("desain") || divLower.includes("multimedia")) {
-      mainDivision = Division.DESIGN;
-    } else if (divLower.includes("foto") || divLower.includes("photography")) {
-      mainDivision = Division.PHOTOGRAPHY;
-    } else if (divLower.includes("sinema") || divLower.includes("cinematography")) {
-      mainDivision = Division.CINEMATOGRAPHY;
-    } else if (
-      divLower.includes("humas") ||
-      divLower.includes("techno") ||
-      divLower.includes("hardware") ||
-      divLower.includes("jaringan")
-    ) {
-      mainDivision = Division.TECHNOPRENEURSHIP;
-    } else {
-      mainDivision = Division.PROGRAMMING;
+    let normalizedDivisi = "Programming";
+
+    switch (input.divisi) {
+      case "Programming":
+        mainDivision = Division.PROGRAMMING;
+        normalizedDivisi = "Programming";
+        break;
+      case "Technopreneurship":
+        mainDivision = Division.TECHNOPRENEURSHIP;
+        normalizedDivisi = "Technopreneurship";
+        break;
+      case "Desain":
+        mainDivision = Division.DESIGN;
+        normalizedDivisi = "Desain";
+        break;
+      case "Fotografi":
+        mainDivision = Division.PHOTOGRAPHY;
+        normalizedDivisi = "Fotografi";
+        break;
+      case "Cinematografi":
+        mainDivision = Division.CINEMATOGRAPHY;
+        normalizedDivisi = "Cinematografi";
+        break;
+      default:
+        mainDivision = Division.PROGRAMMING;
+        normalizedDivisi = "Programming";
+        break;
     }
 
     await prisma.user.update({
@@ -86,7 +97,7 @@ export async function saveOnboardingData(
         fullName,
         kelas: input.kelas,
         gen,
-        divisi: input.divisi,
+        divisi: normalizedDivisi,
         classGrade,
         mainDivision,
         isProfileCompleted: true,

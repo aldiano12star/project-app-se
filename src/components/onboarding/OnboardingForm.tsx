@@ -182,10 +182,11 @@ export function OnboardingForm({
             onChange={(e) => setDivisi(e.target.value)}
             className="w-full h-11 px-3.5 rounded-xl bg-[#070A11] border border-slate-800 text-white text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-medium cursor-pointer"
           >
-            <option value="Programming">Programming &amp; Software Development</option>
-            <option value="Multimedia & Desain">Multimedia &amp; UI/UX Desain</option>
-            <option value="Hardware/Jaringan">Hardware, IoT &amp; Jaringan Komputer</option>
-            <option value="Humas/Technopreneur">Humas, Event &amp; Technopreneurship</option>
+            <option value="Programming">Programming</option>
+            <option value="Technopreneurship">Technopreneurship</option>
+            <option value="Desain">Desain</option>
+            <option value="Fotografi">Fotografi</option>
+            <option value="Cinematografi">Cinematografi</option>
           </select>
         </div>
 

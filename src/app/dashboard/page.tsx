@@ -158,17 +158,35 @@ export default async function DashboardPage() {
   const getDivisionBadge = (division?: Division) => {
     switch (division) {
       case Division.PROGRAMMING:
-        return "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400";
-      case Division.DESIGN:
-        return "bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400";
-      case Division.PHOTOGRAPHY:
-        return "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400";
-      case Division.CINEMATOGRAPHY:
-        return "bg-red-50 dark:bg-red-950/50 text-brand-primary";
+        return {
+          label: "Programming",
+          style: "bg-cyan-950/60 text-cyan-400 border border-cyan-500/40",
+        };
       case Division.TECHNOPRENEURSHIP:
-        return "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400";
+        return {
+          label: "Technopreneurship",
+          style: "bg-amber-950/60 text-amber-400 border border-amber-500/40",
+        };
+      case Division.DESIGN:
+        return {
+          label: "Desain",
+          style: "bg-purple-950/60 text-purple-400 border border-purple-500/40",
+        };
+      case Division.PHOTOGRAPHY:
+        return {
+          label: "Fotografi",
+          style: "bg-emerald-950/60 text-emerald-400 border border-emerald-500/40",
+        };
+      case Division.CINEMATOGRAPHY:
+        return {
+          label: "Cinematografi",
+          style: "bg-rose-950/60 text-rose-400 border border-rose-500/40",
+        };
       default:
-        return "bg-surface-container-low text-ink-secondary";
+        return {
+          label: division || "Anggota",
+          style: "bg-surface-container-low text-ink-secondary border border-edge",
+        };
     }
   };
 
@@ -249,13 +267,16 @@ export default async function DashboardPage() {
             >
               {roleMeta.label}
             </span>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getDivisionBadge(
-                dbUser.mainDivision
-              )}`}
-            >
-              Divisi {dbUser.mainDivision}
-            </span>
+            {(() => {
+              const divMeta = getDivisionBadge(dbUser.mainDivision);
+              return (
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ${divMeta.style}`}
+                >
+                  Divisi {divMeta.label}
+                </span>
+              );
+            })()}
           </div>
 
           {/* Tombol Presensi QR Rapat / Scanner Cepat */}

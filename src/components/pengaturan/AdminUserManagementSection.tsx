@@ -66,6 +66,46 @@ function getRoleLabel(role: Role) {
   }
 }
 
+function getDivisionMeta(division?: Division | string | null) {
+  switch (division) {
+    case Division.PROGRAMMING:
+    case "Programming":
+      return {
+        label: "Programming",
+        style: "bg-cyan-950/60 text-cyan-400 border-cyan-500/50",
+      };
+    case Division.TECHNOPRENEURSHIP:
+    case "Technopreneurship":
+      return {
+        label: "Technopreneurship",
+        style: "bg-amber-950/60 text-amber-400 border-amber-500/50",
+      };
+    case Division.DESIGN:
+    case "Desain":
+      return {
+        label: "Desain",
+        style: "bg-purple-950/60 text-purple-400 border-purple-500/50",
+      };
+    case Division.PHOTOGRAPHY:
+    case "Fotografi":
+      return {
+        label: "Fotografi",
+        style: "bg-emerald-950/60 text-emerald-400 border-emerald-500/50",
+      };
+    case Division.CINEMATOGRAPHY:
+    case "Cinematografi":
+      return {
+        label: "Cinematografi",
+        style: "bg-rose-950/60 text-rose-400 border-rose-500/50",
+      };
+    default:
+      return {
+        label: division || "Programming",
+        style: "bg-surface-container text-ink-muted border-edge",
+      };
+  }
+}
+
 export function AdminUserManagementSection({
   currentUserRole,
   users,
@@ -225,7 +265,7 @@ export function AdminUserManagementSection({
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs font-bold text-ink truncate">
                           {u.name}
                         </span>
@@ -236,6 +276,15 @@ export function AdminUserManagementSection({
                         >
                           {getRoleLabel(u.role)}
                         </span>
+                        {u.mainDivision && (
+                          <span
+                            className={`px-2 py-0.2 rounded-full text-[10px] font-bold border ${
+                              getDivisionMeta(u.mainDivision).style
+                            }`}
+                          >
+                            {getDivisionMeta(u.mainDivision).label}
+                          </span>
+                        )}
                       </div>
                       <p className="text-[11px] text-ink-muted truncate mt-0.5">
                         {u.email}

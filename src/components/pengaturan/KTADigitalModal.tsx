@@ -4,6 +4,7 @@ import React from "react";
 import { X, ShieldCheck, Sparkles, QrCode, Cpu, CheckCircle2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { UserProfileData } from "./ProfileHeroCard";
+import { Division } from "@prisma/client";
 
 interface KTADigitalModalProps {
   isOpen: boolean;
@@ -17,6 +18,46 @@ function formatGrade(grade?: string | null) {
   if (grade === "KELAS_11") return "Kelas 11 (Gen 20)";
   if (grade === "KELAS_12") return "Kelas 12 (Gen 19)";
   return grade.replace("_", " ");
+}
+
+function getDivisionMeta(division?: Division | string | null) {
+  switch (division) {
+    case Division.PROGRAMMING:
+    case "Programming":
+      return {
+        label: "Programming",
+        style: "bg-cyan-500/15 text-cyan-400 border-cyan-500/30",
+      };
+    case Division.TECHNOPRENEURSHIP:
+    case "Technopreneurship":
+      return {
+        label: "Technopreneurship",
+        style: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+      };
+    case Division.DESIGN:
+    case "Desain":
+      return {
+        label: "Desain",
+        style: "bg-purple-500/15 text-purple-400 border-purple-500/30",
+      };
+    case Division.PHOTOGRAPHY:
+    case "Fotografi":
+      return {
+        label: "Fotografi",
+        style: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+      };
+    case Division.CINEMATOGRAPHY:
+    case "Cinematografi":
+      return {
+        label: "Cinematografi",
+        style: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+      };
+    default:
+      return {
+        label: division || "Programming",
+        style: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+      };
+  }
 }
 
 export function KTADigitalModal({
@@ -140,9 +181,16 @@ export function KTADigitalModal({
                   {formatGrade(user.classGrade)}
                 </p>
                 <div className="flex items-center gap-1.5 pt-0.5">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">
-                    Divisi {user.mainDivision}
-                  </span>
+                  {(() => {
+                    const divMeta = getDivisionMeta(user.mainDivision);
+                    return (
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded border ${divMeta.style}`}
+                      >
+                        Divisi {divMeta.label}
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

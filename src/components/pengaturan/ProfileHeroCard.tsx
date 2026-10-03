@@ -34,6 +34,29 @@ function formatGrade(grade?: string | null) {
   return grade.replace("_", " ");
 }
 
+function formatDivision(division?: Division | string | null) {
+  if (!division) return "Programming";
+  switch (division) {
+    case Division.PROGRAMMING:
+    case "Programming":
+      return "Programming";
+    case Division.TECHNOPRENEURSHIP:
+    case "Technopreneurship":
+      return "Technopreneurship";
+    case Division.DESIGN:
+    case "Desain":
+      return "Desain";
+    case Division.PHOTOGRAPHY:
+    case "Fotografi":
+      return "Fotografi";
+    case Division.CINEMATOGRAPHY:
+    case "Cinematografi":
+      return "Cinematografi";
+    default:
+      return division;
+  }
+}
+
 /**
  * Sistem Pangkat Gamifikasi Berbasis totalPoints:
  * - Lv. 1 Novice (0 - 99 XP)
@@ -215,7 +238,7 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
 
           {/* Details Grade & Division */}
           <p className="text-xs text-ink-muted mt-1 leading-relaxed font-medium">
-            {formatGrade(user.classGrade)} • Divisi {user.mainDivision}
+            {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
           </p>
         </div>
       </div>

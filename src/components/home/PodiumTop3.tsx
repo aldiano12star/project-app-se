@@ -37,17 +37,34 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
   const getDivisionBadgeColor = (division?: Division) => {
     switch (division) {
       case Division.PROGRAMMING:
-        return "text-blue-400";
+        return "text-cyan-400";
+      case Division.TECHNOPRENEURSHIP:
+        return "text-amber-400";
       case Division.DESIGN:
         return "text-purple-400";
       case Division.PHOTOGRAPHY:
-        return "text-amber-400";
+        return "text-emerald-400";
       case Division.CINEMATOGRAPHY:
         return "text-rose-400";
-      case Division.TECHNOPRENEURSHIP:
-        return "text-emerald-400";
       default:
         return "text-slate-400";
+    }
+  };
+
+  const getDivisionLabel = (division?: Division) => {
+    switch (division) {
+      case Division.PROGRAMMING:
+        return "Programming";
+      case Division.TECHNOPRENEURSHIP:
+        return "Technopreneurship";
+      case Division.DESIGN:
+        return "Desain";
+      case Division.PHOTOGRAPHY:
+        return "Fotografi";
+      case Division.CINEMATOGRAPHY:
+        return "Cinematografi";
+      default:
+        return division || "Anggota";
     }
   };
 
@@ -161,7 +178,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
                 rank2?.mainDivision
               )}`}
             >
-              {rank2?.classGrade ? formatGrade(rank2.classGrade) : rank2?.mainDivision || "Anggota"}
+              {rank2?.classGrade ? formatGrade(rank2.classGrade) : getDivisionLabel(rank2?.mainDivision)}
             </span>
 
             {/* Pilar Perak Berjejang */}
@@ -196,7 +213,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
                 rank1?.mainDivision
               )}`}
             >
-              {rank1?.classGrade ? formatGrade(rank1.classGrade) : rank1?.mainDivision || "Anggota"}
+              {rank1?.classGrade ? formatGrade(rank1.classGrade) : getDivisionLabel(rank1?.mainDivision)}
             </span>
 
             {/* Pilar Emas Tertinggi */}
@@ -232,7 +249,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
                 rank3?.mainDivision
               )}`}
             >
-              {rank3?.classGrade ? formatGrade(rank3.classGrade) : rank3?.mainDivision || "Anggota"}
+              {rank3?.classGrade ? formatGrade(rank3.classGrade) : getDivisionLabel(rank3?.mainDivision)}
             </span>
 
             {/* Pilar Perunggu Berjejang */}
