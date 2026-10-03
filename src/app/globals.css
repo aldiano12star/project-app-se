@@ -10,65 +10,37 @@
  * - Warna primer: Saba Red (#E11D2A)
  */
 
-/* ── Variabel runtime (Light & Dark Mode) ─────────────────────────── */
-:root {
-  /* Neutral — Light (Default) */
-  --saba-surface: #f8fafc;
-  --saba-card: #ffffff;
-  --saba-edge: #e2e8f0;
-  --saba-surface-container-low: #f1f5f9;
-  --saba-surface-container: #e2e8f0;
-  --saba-surface-container-high: #cbd5e1;
-  --saba-ink: #0f172a;
-  --saba-ink-secondary: #64748b;
-  --saba-ink-muted: #94a3b8;
+/* ── Variabel runtime (Permanent Dark Mode: Cyber-Academic) ───────── */
+:root,
+.dark {
+  color-scheme: dark;
 
-  /* Brand */
+  /* Neutral — Dark (#070A11 baseline) */
+  --saba-surface: #070a11;
+  --saba-card: #0d121f;
+  --saba-edge: #1e293b;
+  --saba-surface-container-low: #131c31;
+  --saba-surface-container: #1e293b;
+  --saba-surface-container-high: #334155;
+  --saba-ink: #f8fafc;
+  --saba-ink-secondary: #94a3b8;
+  --saba-ink-muted: #64748b;
+
+  /* Brand Dark */
   --saba-primary: #e11d2a;
   --saba-primary-hover: #be123c;
-  --saba-primary-subtle: #ffe4e6;
+  --saba-primary-subtle: #4c0519;
   --saba-on-primary: #ffffff;
 
-  /* Semantic Light */
-  --saba-success: #16a34a;
-  --saba-success-subtle: #dcfce7;
-  --saba-danger: #dc2626;
-  --saba-danger-subtle: #fee2e2;
-  --saba-warning: #d97706;
-  --saba-warning-subtle: #fef3c7;
-  --saba-info: #2563eb;
-  --saba-info-subtle: #eff6ff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Neutral — Dark */
-    --saba-surface: #0b1120;
-    --saba-card: #131c31;
-    --saba-edge: #23304b;
-    --saba-surface-container-low: #1e293b;
-    --saba-surface-container: #334155;
-    --saba-surface-container-high: #475569;
-    --saba-ink: #f8fafc;
-    --saba-ink-secondary: #94a3b8;
-    --saba-ink-muted: #64748b;
-
-    /* Brand Dark */
-    --saba-primary: #e11d2a;
-    --saba-primary-hover: #be123c;
-    --saba-primary-subtle: #4c0519;
-    --saba-on-primary: #ffffff;
-
-    /* Semantic Dark */
-    --saba-success: #22c55e;
-    --saba-success-subtle: #052e16;
-    --saba-danger: #ef4444;
-    --saba-danger-subtle: #450a0a;
-    --saba-warning: #f59e0b;
-    --saba-warning-subtle: #451a03;
-    --saba-info: #3b82f6;
-    --saba-info-subtle: #172554;
-  }
+  /* Semantic Dark */
+  --saba-success: #22c55e;
+  --saba-success-subtle: #052e16;
+  --saba-danger: #ef4444;
+  --saba-danger-subtle: #450a0a;
+  --saba-warning: #f59e0b;
+  --saba-warning-subtle: #451a03;
+  --saba-info: #3b82f6;
+  --saba-info-subtle: #172554;
 }
 
 /* ── Saba ExploIT Design Tokens ───────────────────────────────────── */

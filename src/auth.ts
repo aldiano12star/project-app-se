@@ -23,6 +23,7 @@ declare module "next-auth" {
       classGrade: ClassGrade | null;
       mainDivision: Division | null;
       status: MemberStatus;
+      isProfileCompleted: boolean;
     } & DefaultSession["user"];
   }
 
@@ -31,6 +32,7 @@ declare module "next-auth" {
     classGrade?: ClassGrade;
     mainDivision?: Division;
     status?: MemberStatus;
+    isProfileCompleted?: boolean;
   }
 }
 
@@ -42,6 +44,7 @@ declare module "next-auth/jwt" {
     classGrade: ClassGrade | null;
     mainDivision: Division | null;
     status: MemberStatus;
+    isProfileCompleted?: boolean;
   }
 }
 
@@ -132,6 +135,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.classGrade = dbUser.classGrade;
           token.mainDivision = dbUser.mainDivision;
           token.status = dbUser.status;
+          token.isProfileCompleted = dbUser.isProfileCompleted;
         }
       }
       return token;
@@ -144,6 +148,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.classGrade = token.classGrade as ClassGrade;
         session.user.mainDivision = token.mainDivision as Division;
         session.user.status = token.status as MemberStatus;
+        session.user.isProfileCompleted = Boolean(token.isProfileCompleted);
       }
       return session;
     },

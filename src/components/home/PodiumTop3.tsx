@@ -124,7 +124,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             Panggung apresiasi kontribusi aktif, presensi &amp; karya teratas
           </p>
         </div>
-        <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-[11px] font-bold text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
           <Trophy className="h-3.5 w-3.5" />
           <span>Top 3</span>
         </div>
@@ -135,20 +135,18 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
         {/* Ambient Glow Emas di belakang Juara 1 */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-amber-500/15 blur-3xl rounded-full pointer-events-none" />
 
-        {/* Banner Penanganan Data Kosong / Musim Baru */}
-        {isSeasonFresh && (
-          <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2.5 relative z-10">
-            <span className="text-base shrink-0">🌱</span>
-            <div className="min-w-0 flex-1">
-              <span className="font-bold block text-amber-200">
-                🌱 Musim Baru Dimulai - Kumpulkan XP pertama dari Presensi &amp; Kegiatan!
-              </span>
-              <p className="text-[11px] text-amber-300/80 leading-tight mt-0.5">
-                Raih posisi puncak panggung dengan aktif dalam presensi QR rapat, kepanitiaan acara, dan publikasi karya.
-              </p>
-            </div>
+        {/* Banner Motivasi Kontribusi Komunitas */}
+        <div className="mb-4 p-3.5 rounded-xl bg-[#0D121F] border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5 relative z-10">
+          <span className="text-base shrink-0">⚡</span>
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <span className="font-bold block text-amber-200">
+              ⚡ Kontribusi &amp; Keaktifan Komunitas
+            </span>
+            <p className="text-[11px] text-amber-300/80 leading-relaxed">
+              Tingkatkan XP kontribusi melalui presensi rapat, kepanitiaan kegiatan, dan submit karya inovasi.
+            </p>
           </div>
-        )}
+        </div>
 
         {/* 3 Pilar Fisik Podium Berjejang (Juara 2 - Juara 1 - Juara 3) */}
         <div className="flex items-end justify-center gap-2 sm:gap-3 pt-4 pb-1 relative z-10">

@@ -84,6 +84,11 @@ model User {
   password           String?
   nisn               String?      @unique
   mustChangePassword Boolean      @default(true)
+  fullName           String?
+  kelas              String?
+  gen                Int?
+  divisi             String?
+  isProfileCompleted Boolean      @default(false)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 

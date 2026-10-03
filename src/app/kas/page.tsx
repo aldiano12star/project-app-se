@@ -39,6 +39,7 @@ export default async function KasPage() {
         status: true,
         monthlyPoints: true,
         totalPoints: true,
+        isProfileCompleted: true,
       },
     }),
     prisma.kasPeriod.findMany({
@@ -111,6 +112,10 @@ export default async function KasPage() {
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   // Gatekeeper: Akun GUEST tidak dapat melihat data sensitif keuangan

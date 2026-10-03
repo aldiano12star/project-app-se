@@ -56,6 +56,7 @@ export default async function DashboardPage() {
           status: true,
           monthlyPoints: true,
           totalPoints: true,
+          isProfileCompleted: true,
         },
       }),
       prisma.user.findMany({
@@ -129,6 +130,10 @@ export default async function DashboardPage() {
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   const nowParts = getJakartaDateParts(new Date());

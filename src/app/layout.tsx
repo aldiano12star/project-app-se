@@ -14,6 +14,7 @@ const inter = Inter({
 
 export const viewport: Viewport = {
   themeColor: "#070A11",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -42,8 +43,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-surface text-ink">
+    <html
+      lang="id"
+      className={`${inter.variable} dark h-full antialiased`}
+      style={{ colorScheme: "dark" }}
+    >
+      <body className="min-h-screen bg-[#070A11] text-slate-100 flex flex-col antialiased">
         <ServiceWorkerRegister />
         {children}
         <InstallPWAPrompt />

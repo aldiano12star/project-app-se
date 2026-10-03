@@ -43,6 +43,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
         mainDivision: true,
         monthlyPoints: true,
         totalPoints: true,
+        isProfileCompleted: true,
       },
     }),
     prisma.academicYear.findFirst({
@@ -52,6 +53,10 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   // Fallback jika belum ada tahun ajaran dengan isCurrent = true

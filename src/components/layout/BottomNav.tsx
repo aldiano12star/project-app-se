@@ -50,9 +50,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navigasi Utama Bawah"
-      className="fixed bottom-4 inset-x-3 z-40 mx-auto w-auto max-w-md"
+      className="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-50 bg-[#0D121F] border border-slate-800 rounded-2xl px-3 py-2 shadow-lg shadow-black/50"
     >
-      <div className="rounded-full bg-slate-900 border border-slate-800 shadow-2xl shadow-black/80 px-2 py-1.5 flex items-center justify-between min-h-14">
+      <div className="flex items-center justify-between min-h-12 w-full">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -78,9 +78,9 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                className="bg-primary/15 text-primary border border-primary/25 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11"
+                className="bg-primary/20 text-primary border border-primary/30 rounded-xl px-3 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-[40px]"
               >
-                <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
+                <Icon className="h-4.5 w-4.5 stroke-[2.2] shrink-0" />
                 <span className="text-xs font-bold leading-none tracking-tight">
                   {item.label}
                 </span>
@@ -95,7 +95,7 @@ export function BottomNav() {
               prefetch={true}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-400 hover:text-slate-200 p-2 rounded-full transition-all active:scale-90 active:text-white flex items-center justify-center min-h-11 min-w-11"
+              className="text-slate-400 hover:text-slate-200 p-2 rounded-xl transition-all active:scale-90 active:text-white flex items-center justify-center min-h-[40px] min-w-[40px]"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

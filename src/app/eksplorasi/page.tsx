@@ -29,11 +29,16 @@ export default async function EksplorasiPage() {
       mainDivision: true,
       monthlyPoints: true,
       totalPoints: true,
+      isProfileCompleted: true,
     },
   });
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   let formattedProjects: ProjectCardData[] = [];

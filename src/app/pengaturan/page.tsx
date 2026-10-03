@@ -43,6 +43,7 @@ export default async function PengaturanPage() {
         noWhatsapp: true,
         portfolioUrl: true,
         nisn: true,
+        isProfileCompleted: true,
         createdAt: true,
       },
     }),
@@ -73,6 +74,10 @@ export default async function PengaturanPage() {
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;

@@ -34,11 +34,16 @@ export default async function AspirasiPage() {
       mainDivision: true,
       monthlyPoints: true,
       totalPoints: true,
+      isProfileCompleted: true,
     },
   });
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
   }
 
   const isOperator = dbUser.role === Role.OPERATOR;
