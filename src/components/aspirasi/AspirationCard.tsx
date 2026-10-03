@@ -98,16 +98,18 @@ export function AspirationCard({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
+  const isPrivate = aspiration.targetScope === "PRIVATE_ADMIN";
+  const isOperator = currentUserRole === Role.OPERATOR;
   const isOfficer =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
+
+  const canReply = isPrivate ? isOperator : isOfficer;
 
   const isOwner = Boolean(
     currentUserId && aspiration.sender && aspiration.sender.id === currentUserId
   );
 
-  const canDelete = isOfficer || isOwner;
-
-  const isPrivate = aspiration.targetScope === "PRIVATE_ADMIN";
+  const canDelete = isPrivate ? isOperator || isOwner : isOfficer || isOwner;
 
   const categoryMeta =
     CATEGORY_META[aspiration.category] || CATEGORY_META.DISKUSI_UMUM;
@@ -239,8 +241,8 @@ export function AspirationCard({
         </div>
       )}
 
-      {/* Form Tanggapan untuk Pengurus (Admin/Operator) */}
-      {isOfficer && isReplying && (
+      {/* Form Tanggapan untuk Pengurus / Operator */}
+      {canReply && isReplying && (
         <form
           onSubmit={handleSendReply}
           className="p-3.5 rounded-xl bg-surface-container-low border border-edge space-y-3 animate-in fade-in"
@@ -248,7 +250,11 @@ export function AspirationCard({
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-ink flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              <span>Tulis Tanggapan Resmi Pengurus</span>
+              <span>
+                {isPrivate
+                  ? "Tulis Tanggapan Khusus Operator"
+                  : "Tulis Tanggapan Resmi Pengurus"}
+              </span>
             </span>
             <button
               type="button"
@@ -321,7 +327,7 @@ export function AspirationCard({
           </span>
         </div>
 
-        {isOfficer && !isReplying && (
+        {canReply && !isReplying && (
           <button
             type="button"
             onClick={() => setIsReplying(true)}

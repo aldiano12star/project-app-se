@@ -11,6 +11,10 @@ import {
 } from "./PersonalSummarySection";
 import { SettingsSection } from "./SettingsSection";
 import { AdminBackupSection } from "./AdminBackupSection";
+import {
+  AdminUserManagementSection,
+  ManagedUser,
+} from "./AdminUserManagementSection";
 import { LogoutButton } from "./LogoutButton";
 import { KTADigitalModal } from "./KTADigitalModal";
 
@@ -18,6 +22,7 @@ interface PengaturanClientViewProps {
   user: UserProfileData;
   kasSummary: KasSummaryData;
   attendanceSummary: AttendanceSummaryData;
+  managedUsers?: ManagedUser[];
 }
 
 function formatGrade(grade?: string | null) {
@@ -32,6 +37,7 @@ export function PengaturanClientView({
   user,
   kasSummary,
   attendanceSummary,
+  managedUsers = [],
 }: PengaturanClientViewProps) {
   const [isKTAOpen, setIsKTAOpen] = useState(false);
 
@@ -72,16 +78,22 @@ export function PengaturanClientView({
           attendanceSummary={attendanceSummary}
         />
 
-        {/* 3. Panel Cadangan Data Khusus Role ADMIN & OPERATOR */}
+        {/* 3. Panel Aktivasi Akun GUEST & Manajemen Role (Khusus Admin & Operator) */}
+        <AdminUserManagementSection
+          currentUserRole={user.role}
+          users={managedUsers}
+        />
+
+        {/* 4. Panel Cadangan Data Khusus Role ADMIN & OPERATOR */}
         <AdminBackupSection currentUserRole={user.role} />
 
-        {/* 4. Structured Settings Sections (Kontak, Password, Preferensi, Bantuan) */}
+        {/* 5. Structured Settings Sections (Kontak, Password, Preferensi, Bantuan) */}
         <SettingsSection
           user={user}
           onOpenKTA={() => setIsKTAOpen(true)}
         />
 
-        {/* 5. Official Danger Logout Action */}
+        {/* 6. Official Danger Logout Action */}
         <LogoutButton />
       </div>
 

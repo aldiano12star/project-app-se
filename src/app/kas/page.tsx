@@ -7,7 +7,7 @@ import { PersonalDuesCard } from "@/components/kas/PersonalDuesCard";
 import { CashComplianceCard } from "@/components/kas/CashComplianceCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
 import { TreasurerPanel } from "@/components/kas/TreasurerPanel";
-import { Wallet } from "lucide-react";
+import { Wallet, Lock } from "lucide-react";
 
 export default async function KasPage() {
   const session = await auth();
@@ -111,6 +111,39 @@ export default async function KasPage() {
 
   if (!dbUser) {
     redirect("/login");
+  }
+
+  // Gatekeeper: Akun GUEST tidak dapat melihat data sensitif keuangan
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-4">
+          <section className="flex items-center justify-between pt-1">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-ink">
+                Kas Organisasi
+              </h1>
+              <p className="text-xs text-ink-muted">
+                Transparansi pembukuan, iuran rutin, &amp; kepatuhan anggota
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-ink-muted border border-edge shadow-sm">
+              <Wallet className="h-5 w-5" />
+            </div>
+          </section>
+
+          <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
+            <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center">
+              <Lock className="h-6 w-6" />
+            </div>
+            <h3 className="text-sm font-bold text-ink">Akses Data Kas Terbatas</h3>
+            <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
+              Akun Anda saat ini berstatus <span className="font-semibold text-ink">Menunggu Verifikasi (GUEST)</span>. Informasi transparansi kas dan buku besar organisasi hanya dapat diakses oleh anggota resmi terverifikasi.
+            </p>
+          </div>
+        </div>
+      </AppShell>
+    );
   }
 
   const isTreasurer =

@@ -46,27 +46,35 @@ export function DashboardMeetingWidget({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full pt-1">
-          {/* Tombol Utama Scan QR Mandiri (Semua Anggota) */}
-          <button
-            type="button"
-            onClick={() => setIsScannerOpen(true)}
-            className="w-full flex-1 h-11 min-h-[44px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-          >
-            <QrCode className="h-4 w-4" />
-            <span>Pindai QR Rapat (+10 XP)</span>
-          </button>
+          {userRole === Role.GUEST ? (
+            <div className="w-full p-3 rounded-xl bg-surface-container-low border border-edge text-center text-xs text-ink-muted">
+              🔒 <span className="font-semibold text-ink">Fitur Presensi Terkunci</span> — Menunggu aktivasi role akun oleh pengurus.
+            </div>
+          ) : (
+            <>
+              {/* Tombol Utama Scan QR Mandiri (Semua Anggota Terverifikasi) */}
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                className="w-full flex-1 h-11 min-h-[44px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+              >
+                <QrCode className="h-4 w-4" />
+                <span>Pindai QR Rapat (+10 XP)</span>
+              </button>
 
-          {/* Tombol Khusus Pengurus: Tampilkan QR Sesi */}
-          {canShowQr && (
-            <button
-              type="button"
-              onClick={() => setIsQrModalOpen(true)}
-              className="w-full sm:w-auto h-11 min-h-[44px] px-4 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              title="Tampilkan QR Code untuk dipindai anggota"
-            >
-              <Eye className="h-4 w-4 text-primary" />
-              <span>Tampilkan QR Sesi</span>
-            </button>
+              {/* Tombol Khusus Pengurus: Tampilkan QR Sesi */}
+              {canShowQr && (
+                <button
+                  type="button"
+                  onClick={() => setIsQrModalOpen(true)}
+                  className="w-full sm:w-auto h-11 min-h-[44px] px-4 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  title="Tampilkan QR Code untuk dipindai anggota"
+                >
+                  <Eye className="h-4 w-4 text-primary" />
+                  <span>Tampilkan QR Sesi</span>
+                </button>
+              )}
+            </>
           )}
         </div>
       </section>

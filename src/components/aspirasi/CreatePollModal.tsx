@@ -104,7 +104,7 @@ export function CreatePollModal({
             </div>
             <div>
               <h2 className="text-sm font-bold text-ink">Buat Polling Organisasi</h2>
-              <p className="text-[11px] text-ink-muted">Khusus Pengurus &amp; Operator</p>
+              <p className="text-[11px] text-ink-muted">Suara &amp; Musyawarah Anggota</p>
             </div>
           </div>
           <button

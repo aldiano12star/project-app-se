@@ -38,13 +38,18 @@ export interface SubmitAspirationInput {
 
 /**
  * Membuat Polling Baru
- * Wewenang: OPERATOR, ADMIN
+ * Wewenang: OPERATOR, ADMIN, BENDAHARA, MEMBER
  */
 export async function createPoll(
   input: CreatePollInput
 ): Promise<ActionResponse<{ id: string }>> {
   try {
-    const user = await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const user = await assertRole([
+      Role.MEMBER,
+      Role.BENDAHARA,
+      Role.ADMIN,
+      Role.OPERATOR,
+    ]);
 
     if (!input.question || input.question.trim() === "") {
       return {
@@ -207,11 +212,17 @@ export async function votePoll(
 
 /**
  * Menutup polling aktif
- * Wewenang: OPERATOR, ADMIN
+ * Wewenang: Pembuat Polling (Author), OPERATOR, ADMIN
  */
 export async function closePoll(pollId: string): Promise<ActionResponse> {
   try {
-    await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const user = await assertAuthenticated();
+    if (user.role === Role.GUEST) {
+      return {
+        success: false,
+        message: "Akun tamu tidak memiliki wewenang untuk menutup polling.",
+      };
+    }
 
     const poll = await prisma.poll.findUnique({
       where: { id: pollId },
@@ -221,6 +232,18 @@ export async function closePoll(pollId: string): Promise<ActionResponse> {
       return {
         success: false,
         message: "Polling tidak ditemukan.",
+      };
+    }
+
+    const isAuthor = poll.createdById === user.id;
+    const isPrivileged =
+      user.role === Role.ADMIN || user.role === Role.OPERATOR;
+
+    if (!isAuthor && !isPrivileged) {
+      return {
+        success: false,
+        message:
+          "Hanya pembuat polling atau pengurus (Admin/Operator) yang dapat menutup polling ini.",
       };
     }
 
@@ -326,7 +349,9 @@ export async function submitAspiration(
 
 /**
  * Memberikan tanggapan resmi pengurus dan memperbarui status aspirasi
- * Wewenang: OPERATOR, ADMIN
+ * Wewenang:
+ * - Aspirasi Publik: OPERATOR, ADMIN
+ * - Aspirasi Privat (Kode Rahasia / Bug): KHUSUS OPERATOR
  */
 export async function respondAspiration(
   aspirationId: string,
@@ -334,7 +359,7 @@ export async function respondAspiration(
   status?: AspirationStatusType
 ): Promise<ActionResponse> {
   try {
-    await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const user = await assertAuthenticated();
 
     const aspiration = await prisma.aspiration.findUnique({
       where: { id: aspirationId },
@@ -345,6 +370,23 @@ export async function respondAspiration(
         success: false,
         message: "Aspirasi tidak ditemukan.",
       };
+    }
+
+    if (aspiration.targetScope === "PRIVATE_ADMIN") {
+      if (user.role !== Role.OPERATOR) {
+        return {
+          success: false,
+          message:
+            "FORBIDDEN: Hanya Operator/Pengembang yang memiliki akses membaca dan merespon aspirasi berkategori privat.",
+        };
+      }
+    } else {
+      if (user.role !== Role.ADMIN && user.role !== Role.OPERATOR) {
+        return {
+          success: false,
+          message: "FORBIDDEN: Hanya Admin atau Operator yang dapat menanggapi aspirasi.",
+        };
+      }
     }
 
     const finalStatus =
@@ -364,7 +406,7 @@ export async function respondAspiration(
 
     return {
       success: true,
-      message: "Tanggapan resmi pengurus berhasil disimpan.",
+      message: "Tanggapan resmi berhasil disimpan.",
     };
   } catch (error) {
     console.error("Gagal menanggapi aspirasi:", error);
@@ -378,11 +420,17 @@ export async function respondAspiration(
 
 /**
  * Menghapus Polling beserta opsi dan riwayat suara (Cascade Delete)
- * Wewenang: OPERATOR, ADMIN
+ * Wewenang: Pembuat Polling (Author), OPERATOR, ADMIN
  */
 export async function deletePoll(pollId: string): Promise<ActionResponse> {
   try {
-    await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const user = await assertAuthenticated();
+    if (user.role === Role.GUEST) {
+      return {
+        success: false,
+        message: "Akun tamu tidak memiliki wewenang untuk menghapus polling.",
+      };
+    }
 
     const poll = await prisma.poll.findUnique({
       where: { id: pollId },
@@ -392,6 +440,18 @@ export async function deletePoll(pollId: string): Promise<ActionResponse> {
       return {
         success: false,
         message: "Polling tidak ditemukan.",
+      };
+    }
+
+    const isAuthor = poll.createdById === user.id;
+    const isPrivileged =
+      user.role === Role.ADMIN || user.role === Role.OPERATOR;
+
+    if (!isAuthor && !isPrivileged) {
+      return {
+        success: false,
+        message:
+          "Hanya pembuat polling atau pengurus (Admin/Operator) yang dapat menghapus polling ini.",
       };
     }
 
@@ -428,13 +488,15 @@ export async function deletePoll(pollId: string): Promise<ActionResponse> {
 
 /**
  * Menghapus Kotak Aspirasi
- * Wewenang: OPERATOR, ADMIN, atau Pemilik Aspirasi (Sender)
+ * Wewenang:
+ * - Aspirasi Publik: OPERATOR, ADMIN, atau Pemilik Aspirasi (Sender)
+ * - Aspirasi Privat: KHUSUS OPERATOR atau Pemilik Aspirasi (Sender)
  */
 export async function deleteAspiration(
   aspirationId: string
 ): Promise<ActionResponse> {
   try {
-    const user = await assertActiveMember();
+    const user = await assertAuthenticated();
 
     const aspiration = await prisma.aspiration.findUnique({
       where: { id: aspirationId },
@@ -447,11 +509,13 @@ export async function deleteAspiration(
       };
     }
 
-    const isOfficer =
-      user.role === Role.ADMIN || user.role === Role.OPERATOR;
+    const isPrivate = aspiration.targetScope === "PRIVATE_ADMIN";
+    const isPrivileged = isPrivate
+      ? user.role === Role.OPERATOR
+      : user.role === Role.ADMIN || user.role === Role.OPERATOR;
     const isOwner = aspiration.senderId === user.id;
 
-    if (!isOfficer && !isOwner) {
+    if (!isPrivileged && !isOwner) {
       return {
         success: false,
         message: "Anda tidak memiliki wewenang untuk menghapus aspirasi ini.",

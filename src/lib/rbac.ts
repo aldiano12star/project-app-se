@@ -24,6 +24,10 @@ export async function assertActiveMember() {
   const user = await assertAuthenticated();
   if (user.role === Role.OPERATOR) return user;
 
+  if (user.role === Role.GUEST) {
+    throw new Error("FORBIDDEN: Akun Anda sedang menunggu verifikasi pengurus.");
+  }
+
   if (user.status !== MemberStatus.ACTIVE) {
     throw new Error("FORBIDDEN: Akun demisioner/alumni hanya memiliki hak baca.");
   }

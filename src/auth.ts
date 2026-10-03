@@ -82,13 +82,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!existingUser) {
-          // Buat akun baru otomatis dengan role ANGGOTA atau OPERATOR
+          // Buat akun baru otomatis dengan role GUEST atau OPERATOR
           await prisma.user.create({
             data: {
               email,
               name: user.name || "Anggota Saba ExploIT",
               image: user.image,
-              role: isOperator ? Role.OPERATOR : Role.ANGGOTA,
+              role: isOperator ? Role.OPERATOR : Role.GUEST,
               mainDivision: Division.PROGRAMMING,
               classGrade: ClassGrade.KELAS_10,
               status: MemberStatus.ACTIVE,

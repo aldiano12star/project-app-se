@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated } from "@/lib/rbac";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { Role } from "@prisma/client";
 
 export interface ProfileActionResponse<T = unknown> {
   success: boolean;
@@ -162,6 +163,77 @@ export async function updatePassword(
         error instanceof Error
           ? error.message
           : "Gagal memperbarui kata sandi.",
+    };
+  }
+}
+
+export interface PromoteUserRolePayload {
+  targetUserId: string;
+  newRole: Role;
+}
+
+/**
+ * Mengubah role pengguna (Aktivasi GUEST -> MEMBER / BENDAHARA / ADMIN).
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function promoteUserRole(
+  payload: PromoteUserRolePayload
+): Promise<ProfileActionResponse> {
+  try {
+    const sessionUser = await assertAuthenticated();
+
+    if (
+      sessionUser.role !== Role.ADMIN &&
+      sessionUser.role !== Role.OPERATOR
+    ) {
+      return {
+        success: false,
+        message: "FORBIDDEN: Hanya Admin atau Operator yang dapat mengubah role akun.",
+      };
+    }
+
+    // Role OPERATOR hanya bisa diberikan oleh sesama OPERATOR
+    if (payload.newRole === Role.OPERATOR && sessionUser.role !== Role.OPERATOR) {
+      return {
+        success: false,
+        message: "FORBIDDEN: Hanya Operator yang dapat mengangkat akun Operator baru.",
+      };
+    }
+
+    const target = await prisma.user.findUnique({
+      where: { id: payload.targetUserId },
+      select: { id: true, name: true, role: true },
+    });
+
+    if (!target) {
+      return {
+        success: false,
+        message: "Pengguna tidak ditemukan dalam sistem.",
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: payload.targetUserId },
+      data: {
+        role: payload.newRole,
+      },
+    });
+
+    revalidatePath("/pengaturan");
+    revalidatePath("/kas");
+    revalidatePath("/dashboard");
+    revalidatePath("/acara");
+
+    return {
+      success: true,
+      message: `Berhasil mengubah role ${target.name} menjadi ${payload.newRole}.`,
+    };
+  } catch (error) {
+    console.error("[Profile Action] promoteUserRole error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal mengubah role pengguna.",
     };
   }
 }

@@ -8,10 +8,11 @@ generator client {
 }
 
 enum Role {
+  OPERATOR
   ADMIN
   BENDAHARA
-  ANGGOTA
-  OPERATOR // Pengembang aplikasi / God-Mode Debugger
+  MEMBER
+  GUEST
 }
 
 enum ClassGrade {
@@ -72,7 +73,7 @@ model User {
   name          String
   email         String       @unique
   image         String?
-  role          Role         @default(ANGGOTA)
+  role          Role         @default(GUEST)
   classGrade    ClassGrade   @default(KELAS_10)
   mainDivision  Division
   status        MemberStatus @default(ACTIVE)

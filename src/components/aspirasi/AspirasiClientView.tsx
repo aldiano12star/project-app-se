@@ -44,8 +44,10 @@ export function AspirasiClientView({
     setIsMounted(true);
   }, []);
 
+  const isOperator = currentUser.role === Role.OPERATOR;
   const isOfficer =
     currentUser.role === Role.ADMIN || currentUser.role === Role.OPERATOR;
+  const canCreate = currentUser.role !== Role.GUEST;
 
   const filteredAspirations = aspirations.filter((item) => {
     const matchesScope =
@@ -90,24 +92,26 @@ export function AspirasiClientView({
           </p>
         </div>
 
-        {activeTab === "POLL" && isOfficer ? (
-          <button
-            type="button"
-            onClick={() => setIsCreatePollOpen(true)}
-            className="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer min-h-[44px] relative z-10"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Buat Polling</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setIsCreateAspirationOpen(true)}
-            className="h-10 px-3.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer min-h-[44px] relative z-10"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Tulis Aspirasi</span>
-          </button>
+        {canCreate && (
+          activeTab === "POLL" ? (
+            <button
+              type="button"
+              onClick={() => setIsCreatePollOpen(true)}
+              className="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer min-h-[44px] relative z-10"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Buat Polling</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsCreateAspirationOpen(true)}
+              className="h-10 px-3.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer min-h-[44px] relative z-10"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Tulis Aspirasi</span>
+            </button>
+          )
         )}
       </div>
 
@@ -160,7 +164,7 @@ export function AspirasiClientView({
               <p className="text-xs text-ink-muted max-w-xs mx-auto">
                 Saat ini belum ada pemungutan suara atau polling kebijakan yang sedang dibuka.
               </p>
-              {isOfficer && (
+              {canCreate && (
                 <button
                   type="button"
                   onClick={() => setIsCreatePollOpen(true)}
@@ -177,6 +181,7 @@ export function AspirasiClientView({
                 key={poll.id}
                 poll={poll}
                 currentUserRole={currentUser.role}
+                currentUserId={currentUser.id}
               />
             ))
           )}
@@ -221,7 +226,7 @@ export function AspirasiClientView({
               }`}
             >
               <Lock className="h-3 w-3" />
-              <span>Privat Admin</span>
+              <span>{isOperator ? "Privat Operator" : "Privat Saya"}</span>
             </button>
           </div>
 

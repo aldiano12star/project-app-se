@@ -209,7 +209,7 @@ async function main() {
         nisn: m.nisn,
         email,
         name: m.name,
-        role: Role.ANGGOTA,
+        role: Role.MEMBER,
         mainDivision: m.division,
         classGrade: m.classGrade,
         status: MemberStatus.ACTIVE,

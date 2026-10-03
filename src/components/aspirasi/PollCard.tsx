@@ -30,6 +30,7 @@ export interface PollCardData {
   isActive: boolean;
   closesAt?: Date | string | null;
   createdAt: Date | string;
+  createdById?: string | null;
   options: PollOptionData[];
   totalVotes: number;
   userVotedOptionId?: string | null;
@@ -38,9 +39,10 @@ export interface PollCardData {
 interface PollCardProps {
   poll: PollCardData;
   currentUserRole?: Role;
+  currentUserId?: string;
 }
 
-export function PollCard({ poll, currentUserRole }: PollCardProps) {
+export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string>(
     poll.userVotedOptionId || ""
   );
@@ -52,8 +54,12 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
     message: string;
   } | null>(null);
 
-  const isOfficer =
+  const isAuthor = Boolean(
+    currentUserId && poll.createdById && poll.createdById === currentUserId
+  );
+  const isPrivileged =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
+  const canManage = isAuthor || isPrivileged;
 
   const hasVoted = Boolean(poll.userVotedOptionId);
   const isExpired = poll.closesAt ? new Date() > new Date(poll.closesAt) : false;
@@ -184,8 +190,8 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
           </h3>
         </div>
 
-        {/* Tombol Aksi Khusus Pengurus */}
-        {isOfficer && (
+        {/* Tombol Aksi Khusus Pembuat Polling & Pengurus */}
+        {canManage && (
           <div className="flex items-center gap-1.5 shrink-0">
             {!isClosed && (
               <button
@@ -202,7 +208,7 @@ export function PollCard({ poll, currentUserRole }: PollCardProps) {
               type="button"
               onClick={() => setIsDeleteModalOpen(true)}
               disabled={isLoading || isDeleting}
-              title="Hapus Polling Usang"
+              title="Hapus Polling"
               className="p-1.5 rounded-lg text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 border border-transparent hover:border-red-200 dark:hover:border-red-900 transition-colors cursor-pointer"
             >
               <Trash2 className="h-4 w-4" />

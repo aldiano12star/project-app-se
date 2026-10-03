@@ -22,7 +22,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ user }: TopHeaderProps) {
   const [logoError, setLogoError] = useState(false);
-  const role = user?.role || "ANGGOTA";
+  const role = user?.role || "GUEST";
   const points = user?.totalPoints ?? user?.monthlyPoints ?? 0;
 
   const initials = user?.name
@@ -98,10 +98,12 @@ export function TopHeader({ user }: TopHeaderProps) {
                 role === "OPERATOR"
                   ? "bg-purple-600"
                   : role === "ADMIN"
-                  ? "bg-primary"
+                  ? "bg-red-600"
                   : role === "BENDAHARA"
-                  ? "bg-amber-500"
-                  : "bg-emerald-500"
+                  ? "bg-emerald-500"
+                  : role === "MEMBER"
+                  ? "bg-blue-500"
+                  : "bg-slate-500"
               }`}
               title={`Role: ${role}`}
             />

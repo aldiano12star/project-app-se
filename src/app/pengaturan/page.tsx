@@ -8,6 +8,7 @@ import {
   KasSummaryData,
   AttendanceSummaryData,
 } from "@/components/pengaturan/PersonalSummarySection";
+import { Role } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,29 @@ export default async function PengaturanPage() {
     redirect("/login");
   }
 
+  const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
+
+  const allUsersForAdmin = isOfficer
+    ? await prisma.user.findMany({
+        orderBy: [{ role: "asc" }, { name: "asc" }],
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          classGrade: true,
+          mainDivision: true,
+          createdAt: true,
+        },
+      })
+    : [];
+
+  const formattedManagedUsers = allUsersForAdmin.map((u) => ({
+    ...u,
+    createdAt: u.createdAt.toISOString(),
+  }));
+
   // Hitung Status Tunggakan Kas Mandiri
   const paidPeriodIds = new Set(userKasPayments.map((p) => p.kasPeriodId));
   const unpaidPeriods = kasPeriods.filter((p) => !paidPeriodIds.has(p.id));
@@ -125,6 +149,7 @@ export default async function PengaturanPage() {
         user={serializedUser}
         kasSummary={kasSummary}
         attendanceSummary={attendanceSummary}
+        managedUsers={formattedManagedUsers}
       />
     </AppShell>
   );

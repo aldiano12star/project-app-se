@@ -41,10 +41,12 @@ export default async function AspirasiPage() {
     redirect("/login");
   }
 
-  const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
+  const isOperator = dbUser.role === Role.OPERATOR;
 
-  // Filter keamanan: User biasa hanya dapat melihat aspirasi publik dan laporan privat miliknya sendiri
-  const aspirationWhereFilter = isOfficer
+  // Filter keamanan:
+  // Khusus 'OPERATOR' yang dapat membaca seluruh aspirasi privat/kode rahasia.
+  // Admin, Bendahara, Member, Guest hanya dapat melihat aspirasi publik dan laporan privat miliknya sendiri.
+  const aspirationWhereFilter = isOperator
     ? undefined
     : {
         OR: [
@@ -116,6 +118,7 @@ export default async function AspirasiPage() {
       isActive: poll.isActive,
       closesAt: poll.closesAt ? poll.closesAt.toISOString() : null,
       createdAt: poll.createdAt.toISOString(),
+      createdById: poll.createdById,
       options,
       totalVotes,
       userVotedOptionId,

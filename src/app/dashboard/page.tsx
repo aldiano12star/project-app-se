@@ -167,6 +167,43 @@ export default async function DashboardPage() {
     }
   };
 
+  const getRoleBadge = (role: Role) => {
+    switch (role) {
+      case Role.OPERATOR:
+        return {
+          label: "Operator",
+          style: "bg-purple-950/60 text-purple-300 border-purple-500/50 shadow-xs",
+        };
+      case Role.ADMIN:
+        return {
+          label: "Admin",
+          style: "bg-red-950/60 text-red-400 border-red-500/50",
+        };
+      case Role.BENDAHARA:
+        return {
+          label: "Bendahara",
+          style: "bg-emerald-950/60 text-emerald-400 border-emerald-500/50",
+        };
+      case Role.MEMBER:
+        return {
+          label: "Member",
+          style: "bg-blue-950/60 text-blue-400 border-blue-500/50",
+        };
+      case Role.GUEST:
+        return {
+          label: "Menunggu Verifikasi",
+          style: "bg-slate-800 text-slate-400 border-slate-700",
+        };
+      default:
+        return {
+          label: role,
+          style: "bg-surface-container text-ink-muted border-edge",
+        };
+    }
+  };
+
+  const roleMeta = getRoleBadge(dbUser.role);
+
   return (
     <AppShell user={dbUser}>
       <div className="flex flex-col gap-4">
@@ -202,14 +239,10 @@ export default async function DashboardPage() {
             <span className="inline-flex items-center rounded-full bg-surface-container-low px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border border-edge">
               {formatGrade(dbUser.classGrade)}
             </span>
-            <span className="inline-flex items-center rounded-full bg-primary-subtle px-2.5 py-0.5 text-[11px] font-semibold text-primary border border-primary/20">
-              {dbUser.role === Role.ADMIN
-                ? "Admin Pengurus Inti"
-                : dbUser.role === Role.BENDAHARA
-                ? "Bendahara Organisasi"
-                : dbUser.role === Role.OPERATOR
-                ? "Developer & Operator"
-                : "Anggota Aktif"}
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${roleMeta.style}`}
+            >
+              {roleMeta.label}
             </span>
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getDivisionBadge(

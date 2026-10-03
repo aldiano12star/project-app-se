@@ -102,16 +102,37 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
     .join("")
     .toUpperCase();
 
+  const getRoleBadgeStyle = (role: Role) => {
+    switch (role) {
+      case Role.OPERATOR:
+        return "bg-purple-950/60 text-purple-300 border-purple-500/50";
+      case Role.ADMIN:
+        return "bg-red-950/60 text-red-400 border-red-500/50";
+      case Role.BENDAHARA:
+        return "bg-emerald-950/60 text-emerald-400 border-emerald-500/50";
+      case Role.MEMBER:
+        return "bg-blue-950/60 text-blue-400 border-blue-500/50";
+      case Role.GUEST:
+        return "bg-slate-800 text-slate-400 border-slate-700";
+      default:
+        return "bg-primary-subtle text-primary border-primary/30";
+    }
+  };
+
   const getRoleLabel = (role: Role) => {
     switch (role) {
       case Role.OPERATOR:
-        return "Developer & Operator";
+        return "Operator";
       case Role.ADMIN:
-        return "Admin Pengurus Inti";
+        return "Admin";
       case Role.BENDAHARA:
-        return "Bendahara Organisasi";
+        return "Bendahara";
+      case Role.MEMBER:
+        return "Member";
+      case Role.GUEST:
+        return "Menunggu Verifikasi";
       default:
-        return "Anggota Aktif";
+        return role;
     }
   };
 
@@ -161,10 +182,12 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
               user.role === Role.OPERATOR
                 ? "bg-purple-600"
                 : user.role === Role.ADMIN
-                ? "bg-primary"
+                ? "bg-red-600"
                 : user.role === Role.BENDAHARA
-                ? "bg-amber-500"
-                : "bg-emerald-500"
+                ? "bg-emerald-500"
+                : user.role === Role.MEMBER
+                ? "bg-blue-500"
+                : "bg-slate-500"
             }`}
             title={`Status Role: ${user.role}`}
           />
@@ -181,7 +204,11 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
 
           {/* Role Badge */}
           <div className="mt-1 flex items-center gap-1.5">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-primary-subtle text-primary border border-primary/30">
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase border ${getRoleBadgeStyle(
+                user.role
+              )}`}
+            >
               {getRoleLabel(user.role)}
             </span>
           </div>
