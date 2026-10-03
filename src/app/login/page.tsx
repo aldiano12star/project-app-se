@@ -1,7 +1,17 @@
 import Image from "next/image";
 import { signIn } from "@/auth";
+import { AlertTriangle } from "lucide-react";
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams?: Promise<{
+    error?: string;
+  }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const errorType = resolvedSearchParams?.error;
+
   return (
     <main className="app-shell flex min-h-screen flex-col justify-center px-6 py-12">
       <div className="card-solid p-8 text-center shadow-none rounded-3xl border border-edge">
@@ -32,8 +42,22 @@ export default function LoginPage() {
           Portal Kegiatan, Presensi &amp; Kolaborasi Anggota
         </p>
 
+        {/* Alert Error Konfigurasi / Login */}
+        {errorType && (
+          <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-500 flex items-center gap-2 text-left">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
+            <span>
+              {errorType === "Configuration"
+                ? "Konfigurasi OAuth Google atau Secret belum lengkap di Environment Variables."
+                : errorType === "AccessDenied"
+                ? "Akses login ditolak. Pastikan akun email Anda aktif."
+                : `Terjadi kendala autentikasi (${errorType}).`}
+            </span>
+          </div>
+        )}
+
         {/* Login Action via Server Action */}
-        <div className="mt-8">
+        <div className="mt-6">
           <form
             action={async () => {
               "use server";

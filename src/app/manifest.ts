@@ -2,36 +2,37 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Saba ExploIT - Super App Organisasi",
-    short_name: "ExploIT",
-    description: "Aplikasi mobile-first resmi ekstrakurikuler IT Saba ExploIT",
+    name: "Saba ExploIT",
+    short_name: "SabaExploIT",
+    description: "Portal Ekosistem & Komunitas IT SMAN 1 Bantul",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#090D16",
-    theme_color: "#090D16",
+    background_color: "#070A11",
+    theme_color: "#070A11",
+    scope: "/",
     categories: ["education", "productivity", "utilities"],
     icons: [
       {
-        src: "/icons/icon-192.png",
+        src: "/logo.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/logo.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/icon-192.png",
+        src: "/logo.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/logo.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",

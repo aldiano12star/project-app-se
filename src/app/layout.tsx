@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#090D16",
+  themeColor: "#070A11",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -23,15 +23,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Saba ExploIT - Super App Organisasi",
-  description: "Aplikasi mobile-first resmi ekstrakurikuler IT Saba ExploIT",
+  description: "Portal Ekosistem & Komunitas IT SMAN 1 Bantul",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "ExploIT",
+    title: "SabaExploIT",
   },
   icons: {
-    icon: "/icons/icon-192.png",
-    apple: "/icons/apple-touch-icon.png",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
