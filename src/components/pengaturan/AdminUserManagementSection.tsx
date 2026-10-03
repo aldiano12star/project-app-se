@@ -35,15 +35,15 @@ interface AdminUserManagementSectionProps {
 function getRoleBadgeStyle(role: Role) {
   switch (role) {
     case Role.OPERATOR:
-      return "bg-purple-950/60 text-purple-300 border-purple-500/50 shadow-xs";
+      return "bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/50 shadow-xs";
     case Role.ADMIN:
-      return "bg-red-950/60 text-red-400 border-red-500/50";
+      return "bg-rose-100 dark:bg-red-950/60 text-rose-700 dark:text-red-400 border-rose-300 dark:border-red-500/50";
     case Role.BENDAHARA:
-      return "bg-emerald-950/60 text-emerald-400 border-emerald-500/50";
+      return "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/50";
     case Role.MEMBER:
-      return "bg-blue-950/60 text-blue-400 border-blue-500/50";
+      return "bg-sky-100 dark:bg-blue-950/60 text-sky-700 dark:text-blue-400 border-sky-300 dark:border-blue-500/50";
     case Role.GUEST:
-      return "bg-slate-800 text-slate-400 border-slate-700";
+      return "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700";
     default:
       return "bg-surface-container text-ink-muted border-edge";
   }

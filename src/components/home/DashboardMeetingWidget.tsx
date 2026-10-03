@@ -22,7 +22,7 @@ export function DashboardMeetingWidget({
 
   return (
     <>
-      <section className="card-solid bg-sky-950/20 border-sky-500/30 p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+      <section className="card-solid bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-500/30 p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
         {/* Header Widget */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -40,14 +40,14 @@ export function DashboardMeetingWidget({
           </span>
         </div>
 
-        <p className="text-sm text-slate-400 leading-relaxed">
+        <p className="text-sm text-ink-secondary leading-relaxed">
           Pindai QR Code di layar proyektor ruang rapat untuk mencatat kehadiran otomatis dan mengklaim poin presensi.
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full pt-1">
           {userRole === Role.GUEST ? (
-            <div className="w-full p-4 rounded-xl bg-surface-container-low border border-edge text-center text-sm text-slate-400">
+            <div className="w-full p-4 rounded-xl bg-surface-container-low border border-edge text-center text-sm text-ink-muted">
               🔒 <span className="font-semibold text-ink">Fitur Presensi Terkunci</span> — Menunggu aktivasi role akun oleh pengurus.
             </div>
           ) : (

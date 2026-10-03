@@ -58,7 +58,7 @@ export function TopHeader({ user }: TopHeaderProps) {
             <span className="text-base font-semibold tracking-tight text-ink leading-tight">
               Saba ExploIT
             </span>
-            <span className="text-xs text-slate-400 tracking-normal leading-tight mt-0.5">
+            <span className="text-xs text-ink-muted tracking-normal leading-tight mt-0.5">
               SMAN 1 Bantul
             </span>
           </div>
@@ -68,10 +68,10 @@ export function TopHeader({ user }: TopHeaderProps) {
         <div className="flex items-center gap-3">
           {/* XP Pill */}
           <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-[36px]">
-            <Zap className="h-4 w-4 fill-amber-400 text-amber-500" />
+            <Zap className="h-4 w-4 fill-amber-500 text-amber-600 dark:fill-amber-400 dark:text-amber-500" />
             <span className="text-xs font-semibold text-ink tabular-nums">
               {points.toLocaleString("id-ID")}{" "}
-              <span className="text-[11px] font-normal text-slate-400">XP</span>
+              <span className="text-[11px] font-normal text-ink-muted">XP</span>
             </span>
           </div>
 

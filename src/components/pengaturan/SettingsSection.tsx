@@ -9,6 +9,7 @@ import {
   Bell,
   Wallet,
   Moon,
+  Sun,
   BookOpen,
   Code2,
   AlertTriangle,
@@ -25,6 +26,7 @@ import {
 import { UserProfileData } from "./ProfileHeroCard";
 import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface SettingsSectionProps {
   user: UserProfileData;
@@ -32,6 +34,9 @@ interface SettingsSectionProps {
 }
 
 export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
+  // Theme Switching
+  const { resolvedTheme, setTheme } = useTheme();
+
   // Notifikasi & Preferensi
   const [notifMeeting, setNotifMeeting] = useState(true);
   const [notifKas, setNotifKas] = useState(true);
@@ -441,19 +446,57 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             </label>
           </div>
 
-          {/* Row 3: Mode Tampilan */}
-          <div className="min-h-[48px] px-4 py-3.5 flex items-center justify-between">
+          {/* Row 3: Mode Tampilan / Tema Antarmuka */}
+          <div className="min-h-[52px] px-4 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center shrink-0">
-                <Moon className="w-4 h-4" />
+                {resolvedTheme === "dark" ? (
+                  <Moon className="w-4 h-4" />
+                ) : (
+                  <Sun className="w-4 h-4 text-amber-500" />
+                )}
               </div>
-              <span className="text-xs sm:text-sm font-semibold text-ink">
-                Tema Antarmuka
-              </span>
+              <div>
+                <span className="text-xs sm:text-sm font-semibold text-ink">
+                  Tema Antarmuka
+                </span>
+                <p className="text-[10px] text-ink-muted">
+                  {resolvedTheme === "dark"
+                    ? "Mode Gelap (Eye-Friendly Charcoal)"
+                    : "Mode Terang (Soft Slate White)"}
+                </p>
+              </div>
             </div>
-            <span className="text-xs font-bold text-primary bg-primary-subtle border border-primary/20 px-2.5 py-1 rounded-full font-mono">
-              Dark Cyber-Academic
-            </span>
+
+            {/* Segmented Button Dual-Theme Switch */}
+            <div className="flex items-center p-1 bg-surface-container-low rounded-xl border border-edge shrink-0">
+              <button
+                type="button"
+                onClick={() => setTheme("light")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
+                  resolvedTheme === "light"
+                    ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+                title="Aktifkan Mode Terang"
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="text-[11px]">Terang</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme("dark")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
+                  resolvedTheme === "dark"
+                    ? "bg-[#151D2E] text-white shadow-xs border border-[#222F46]"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+                title="Aktifkan Mode Gelap"
+              >
+                <Moon className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span className="text-[11px]">Gelap</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -508,8 +551,8 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 <span className="text-xs sm:text-sm font-semibold text-ink">
                   Saba ExploIT App
                 </span>
-                <p className="text-xs text-slate-400 font-mono">
-                  v1.1.0 • Build 2026
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                  v1.2.0 • Build 2026
                 </p>
               </div>
             </div>

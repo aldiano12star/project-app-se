@@ -134,7 +134,7 @@ verify_only() {
     echo -e "${BLUE}→ Verifikasi: $target${NC}"
     if [ ! -d "$target" ]; then
       echo -e "  ${RED}✗${NC} Direktori $target tidak ada"
-      ((missing++))
+      missing=$((missing + 1))
       continue
     fi
 
@@ -142,10 +142,10 @@ verify_only() {
       local link_path="$target/$skill"
       if [ -L "$link_path" ] && [ -e "$link_path" ]; then
         echo "  ${GREEN}✓${NC} $skill"
-        ((ok++))
+        ok=$((ok + 1))
       else
         echo -e "  ${RED}✗${NC} $skill (rusak / hilang)"
-        ((broken++))
+        broken=$((broken + 1))
       fi
     done
     echo ""
@@ -168,7 +168,7 @@ clean_broken() {
       if [ ! -e "$link" ]; then
         echo "  ${RED}-${NC} Hapus: $link"
         rm "$link"
-        ((removed++))
+        removed=$((removed + 1))
       fi
     done < <(find "$target" -mindepth 1 -maxdepth 1 -type l -print0)
   done

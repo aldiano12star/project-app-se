@@ -1,21 +1,52 @@
 @import "tailwindcss";
 
 /*
- * Saba ExploIT UI Engine v2.1.0 (Google Stitch Standard)
+ * Saba ExploIT UI Engine v2.2.0 (Dual-Theme Calibrated)
  *
  * Pedoman Visual: DESIGN.md & doc/stitch/beranda/DESIGN.md
  * - Solid Surface Container Elevation (tanpa glassmorphism/blur berat)
  * - Border tegas 1px (`border-edge` / `border-border-light`)
  * - Area sentuh minimal 44px (`min-h-[44px]` / `h-11`)
- * - Warna primer: Saba Red (#E11D2A)
+ * - Dual-Theme: Eye-Friendly Charcoal Slate (Dark) & Soft Slate Light (Light)
  */
 
-/* ── Variabel runtime (Permanent Dark Mode: Eye-Friendly Charcoal Slate) ── */
-:root,
+/* ── Variabel runtime Mode Terang (Default :root) ─────────────────── */
+:root {
+  color-scheme: light;
+
+  /* Neutral — Soft Slate Baseline (#F8FAFC) */
+  --saba-surface: #f8fafc;
+  --saba-card: #ffffff;
+  --saba-edge: #e2e8f0;
+  --saba-surface-container-low: #f1f5f9;
+  --saba-surface-container: #e2e8f0;
+  --saba-surface-container-high: #cbd5e1;
+  --saba-ink: #0f172a;
+  --saba-ink-secondary: #475569;
+  --saba-ink-muted: #64748b;
+
+  /* Brand Action — Rose Crimson (#E11D48) */
+  --saba-primary: #e11d48;
+  --saba-primary-hover: #be123c;
+  --saba-primary-subtle: #ffe4e6;
+  --saba-on-primary: #ffffff;
+
+  /* Semantic Refresh (Light Mode High-Contrast) */
+  --saba-success: #059669;
+  --saba-success-subtle: #d1fae5;
+  --saba-danger: #dc2626;
+  --saba-danger-subtle: #fee2e2;
+  --saba-warning: #d97706;
+  --saba-warning-subtle: #fef3c7;
+  --saba-info: #0284c7;
+  --saba-info-subtle: #e0f2fe;
+}
+
+/* ── Variabel runtime Mode Gelap (.dark) ──────────────────────────── */
 .dark {
   color-scheme: dark;
 
-  /* Neutral — Eye-Friendly Deep Charcoal Slate (#0B0F19 baseline) */
+  /* Neutral — Deep Charcoal Slate Baseline (#0B0F19) */
   --saba-surface: #0b0f19;
   --saba-card: #151d2e;
   --saba-edge: #222f46;
@@ -26,13 +57,13 @@
   --saba-ink-secondary: #94a3b8;
   --saba-ink-muted: #64748b;
 
-  /* Brand Vibrant Coral Rose (#F43F5E) */
+  /* Brand Action — Coral Rose (#F43F5E) */
   --saba-primary: #f43f5e;
   --saba-primary-hover: #e11d48;
   --saba-primary-subtle: #881337;
   --saba-on-primary: #ffffff;
 
-  /* Semantic Refresh */
+  /* Semantic Refresh (Dark Mode High-Contrast) */
   --saba-success: #10b981;
   --saba-success-subtle: #064e3b;
   --saba-danger: #ef4444;
@@ -73,8 +104,8 @@
   --color-ink-secondary: var(--saba-ink-secondary);
   --color-ink-muted: var(--saba-ink-muted);
   --color-text-primary-light: #0f172a;
-  --color-text-secondary-light: #64748b;
-  --color-text-muted-light: #94a3b8;
+  --color-text-secondary-light: #475569;
+  --color-text-muted-light: #64748b;
   --color-text-primary-dark: #f8fafc;
   --color-text-secondary-dark: #94a3b8;
   --color-text-muted-dark: #64748b;
@@ -90,15 +121,15 @@
   --color-info-subtle: var(--saba-info-subtle);
 
   /* Divisions */
-  --color-div-programming: #38bdf8;
+  --color-div-programming: #0284c7;
   --color-div-programming-bg-light: #0c4a6e;
   --color-div-design: #c084fc;
   --color-div-design-bg-light: #581c87;
-  --color-div-photography: #10b981;
+  --color-div-photography: #059669;
   --color-div-photography-bg-light: #064e3b;
-  --color-div-cinematography: #f43f5e;
+  --color-div-cinematography: #e11d48;
   --color-div-cinematography-bg-light: #881337;
-  --color-div-technopreneurship: #f59e0b;
+  --color-div-technopreneurship: #d97706;
   --color-div-technopreneurship-bg-light: #451a03;
 
   /* Spacing & Container */

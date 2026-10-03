@@ -44,7 +44,7 @@ export function PengaturanClientView({
   return (
     <div className="space-y-4">
       {/* Sub-Header Navigasi Atas ("← Kembali ke Beranda") */}
-      <header className="sticky top-0 z-40 -mx-4 -mt-4 px-4 py-2.5 bg-card/95 backdrop-blur-md border-b border-edge flex items-center justify-between shadow-xs">
+      <header className="sticky top-0 z-40 -mx-4 -mt-4 px-4 py-2.5 bg-card border-b border-edge flex items-center justify-between shadow-xs">
         {/* Back Button to Dashboard */}
         <Link
           href="/dashboard"

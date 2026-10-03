@@ -130,13 +130,13 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
         <div>
           <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
             <span>Podium Apresiasi Kontributor</span>
-            <Sparkles className="h-4 w-4 text-amber-400 fill-amber-400" />
+            <Sparkles className="h-4 w-4 text-amber-500 dark:text-amber-400 fill-amber-500 dark:fill-amber-400" />
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-ink-muted mt-0.5">
             Panggung apresiasi kontribusi aktif, presensi &amp; karya teratas
           </p>
         </div>
-        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
+        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
           <Trophy className="h-4 w-4" />
           <span>Top 3</span>
         </div>

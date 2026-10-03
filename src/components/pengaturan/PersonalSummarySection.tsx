@@ -74,12 +74,12 @@ export function PersonalSummarySection({
             </div>
 
             {kasSummary.isPaid ? (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/30 shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/30 shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Kas Lunas</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 bg-amber-950/60 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-500/30 shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-300 dark:border-amber-500/30 shrink-0">
                 <AlertCircle className="w-4 h-4" />
                 <span>Tunggakan Rp {kasSummary.totalArrears.toLocaleString("id-ID")}</span>
               </span>
@@ -93,14 +93,14 @@ export function PersonalSummarySection({
                 <p className="text-ink font-semibold flex items-center gap-1.5 text-sm">
                   <span>✅ Seluruh iuran kas tercatat lunas.</span>
                 </p>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-ink-secondary leading-relaxed">
                   Terima kasih sudah tertib kas organisasi! Pembukuan Anda bersih ({kasSummary.paidPeriodCount}/{kasSummary.totalPeriodCount} periode terbayar).
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-amber-400 font-semibold text-xs flex items-center gap-1">
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold text-xs flex items-center gap-1">
                     <AlertTriangle className="w-4 h-4" />
                     <span>Perlu Diselesaikan</span>
                   </span>
@@ -108,9 +108,9 @@ export function PersonalSummarySection({
                     Rp {kasSummary.totalArrears.toLocaleString("id-ID")}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-ink-secondary leading-relaxed">
                   Terdapat {kasSummary.unpaidPeriodNames.length} periode belum disetor:{" "}
-                  <strong>{kasSummary.unpaidPeriodNames.join(", ")}</strong>. Silakan melakukan pembayaran tunai ke Bendahara Organisasi.
+                  <strong className="text-ink">{kasSummary.unpaidPeriodNames.join(", ")}</strong>. Silakan melakukan pembayaran tunai ke Bendahara Organisasi.
                 </p>
               </div>
             )}
@@ -126,8 +126,8 @@ export function PersonalSummarySection({
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
                   attendanceSummary.isCompliant
-                    ? "bg-sky-500/10 border-sky-500/20 text-sky-400"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                    ? "bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400"
+                    : "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
                 }`}
               >
                 <CalendarCheck className="w-5 h-5" />
@@ -136,19 +136,19 @@ export function PersonalSummarySection({
                 <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
                   Rekapitulasi Presensi Saya
                 </h4>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-ink-muted mt-0.5">
                   Kehadiran rapat pleno &amp; kegiatan resmi
                 </p>
               </div>
             </div>
 
             {attendanceSummary.isCompliant ? (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/30 shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/30 shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Aktif &amp; Memenuhi Syarat</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 bg-amber-950/60 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-500/30 shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-300 dark:border-amber-500/30 shrink-0">
                 <AlertTriangle className="w-4 h-4" />
                 <span>Perlu Ditingkatkan</span>
               </span>
@@ -163,7 +163,7 @@ export function PersonalSummarySection({
               </span>
               <span className="font-mono font-bold text-ink text-sm">
                 {attendanceSummary.attendanceRate}%{" "}
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-xs font-normal text-ink-muted">
                   ({attendanceSummary.attendedCount}/{attendanceSummary.totalMeetings} Pertemuan Hadir)
                 </span>
               </span>
@@ -180,7 +180,7 @@ export function PersonalSummarySection({
               />
             </div>
 
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
+            <div className="flex items-center justify-between text-xs text-ink-muted pt-1">
               <span>Standar Keaktifan Minimum: 75%</span>
               <span className="font-normal text-slate-300">
                 {attendanceSummary.isCompliant

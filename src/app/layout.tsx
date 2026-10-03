@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { InstallPWAPrompt } from "@/components/pwa/InstallPWAPrompt";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 /* Inter — font default Saba ExploIT (DESIGN.md).
    next/font self-hosting: nol request ke Google saat runtime, tanpa layout shift. */
@@ -13,8 +14,10 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+  ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -28,7 +31,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "SabaExploIT",
   },
   icons: {
@@ -45,13 +48,37 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${inter.variable} dark h-full antialiased`}
-      style={{ colorScheme: "dark" }}
+      className={`${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-screen bg-[#0B0F19] text-slate-100 flex flex-col antialiased">
-        <ServiceWorkerRegister />
-        {children}
-        <InstallPWAPrompt />
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var theme = saved || (prefersDark ? 'dark' : 'light');
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.style.colorScheme = 'light';
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-surface text-ink flex flex-col antialiased">
+        <ThemeProvider>
+          <ServiceWorkerRegister />
+          {children}
+          <InstallPWAPrompt />
+        </ThemeProvider>
       </body>
     </html>
   );
