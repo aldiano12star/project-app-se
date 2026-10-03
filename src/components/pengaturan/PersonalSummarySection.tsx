@@ -37,78 +37,78 @@ export function PersonalSummarySection({
   attendanceSummary,
 }: PersonalSummarySectionProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between px-1">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono">
           Rekapitulasi Mandiri (Privat)
         </h3>
-        <span className="text-[10px] text-ink-muted flex items-center gap-1 font-mono">
+        <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
           🔒 Hanya Terlihat Oleh Anda
         </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-4">
         {/* ========================================================= */}
         {/* KARTU 1: STATUS KAS SAYA                                  */}
         {/* ========================================================= */}
-        <div className="card-solid p-4 rounded-2xl bg-card border border-edge shadow-xs flex flex-col gap-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2.5">
+        <div className="card-solid p-6 rounded-2xl bg-card border border-edge shadow-xs flex flex-col gap-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
               <div
-                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
                   kasSummary.isPaid
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-500"
+                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                    : "bg-amber-500/10 border-amber-500/20 text-amber-400"
                 }`}
               >
-                <Wallet className="w-4 h-4" />
+                <Wallet className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
+                <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
                   Status Iuran Kas Saya
                 </h4>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Kepatuhan iuran kas rutin periode aktif
                 </p>
               </div>
             </div>
 
             {kasSummary.isPaid ? (
-              <span className="inline-flex items-center gap-1 bg-success-subtle text-success px-2.5 py-1 rounded-full text-[11px] font-bold border border-success/30 shrink-0">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Kas Bulan Ini Lunas</span>
+              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/30 shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Kas Lunas</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-500 px-2.5 py-1 rounded-full text-[11px] font-bold border border-amber-500/30 shrink-0">
-                <AlertCircle className="w-3.5 h-3.5" />
-                <span>Ada Tunggakan Rp {kasSummary.totalArrears.toLocaleString("id-ID")}</span>
+              <span className="inline-flex items-center gap-1.5 bg-amber-950/60 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-500/30 shrink-0">
+                <AlertCircle className="w-4 h-4" />
+                <span>Tunggakan Rp {kasSummary.totalArrears.toLocaleString("id-ID")}</span>
               </span>
             )}
           </div>
 
           {/* Rincian Keterangan Kas */}
-          <div className="bg-surface-container-low rounded-xl p-3 border border-edge/60 text-xs">
+          <div className="bg-surface-container-low rounded-xl p-4 border border-edge/60 text-sm">
             {kasSummary.isPaid ? (
               <div className="space-y-1">
-                <p className="text-ink font-semibold flex items-center gap-1.5 text-xs">
+                <p className="text-ink font-semibold flex items-center gap-1.5 text-sm">
                   <span>✅ Seluruh iuran kas tercatat lunas.</span>
                 </p>
-                <p className="text-[11px] text-ink-secondary">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   Terima kasih sudah tertib kas organisasi! Pembukuan Anda bersih ({kasSummary.paidPeriodCount}/{kasSummary.totalPeriodCount} periode terbayar).
                 </p>
               </div>
             ) : (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-amber-500 font-bold text-xs flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" />
+                  <span className="text-amber-400 font-semibold text-xs flex items-center gap-1">
+                    <AlertTriangle className="w-4 h-4" />
                     <span>Perlu Diselesaikan</span>
                   </span>
-                  <span className="font-mono font-bold text-ink text-xs">
+                  <span className="font-mono font-bold text-ink text-sm">
                     Rp {kasSummary.totalArrears.toLocaleString("id-ID")}
                   </span>
                 </div>
-                <p className="text-[11px] text-ink-secondary leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   Terdapat {kasSummary.unpaidPeriodNames.length} periode belum disetor:{" "}
                   <strong>{kasSummary.unpaidPeriodNames.join(", ")}</strong>. Silakan melakukan pembayaran tunai ke Bendahara Organisasi.
                 </p>
@@ -120,69 +120,69 @@ export function PersonalSummarySection({
         {/* ========================================================= */}
         {/* KARTU 2: REKAPITULASI PRESENSI SAYA                       */}
         {/* ========================================================= */}
-        <div className="card-solid p-4 rounded-2xl bg-card border border-edge shadow-xs flex flex-col gap-3">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2.5">
+        <div className="card-solid p-6 rounded-2xl bg-card border border-edge shadow-xs flex flex-col gap-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
               <div
-                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
                   attendanceSummary.isCompliant
-                    ? "bg-blue-500/10 border-blue-500/20 text-blue-500"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-500"
+                    ? "bg-sky-500/10 border-sky-500/20 text-sky-400"
+                    : "bg-amber-500/10 border-amber-500/20 text-amber-400"
                 }`}
               >
-                <CalendarCheck className="w-4 h-4" />
+                <CalendarCheck className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
+                <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
                   Rekapitulasi Presensi Saya
                 </h4>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Kehadiran rapat pleno &amp; kegiatan resmi
                 </p>
               </div>
             </div>
 
             {attendanceSummary.isCompliant ? (
-              <span className="inline-flex items-center gap-1 bg-success-subtle text-success px-2.5 py-1 rounded-full text-[11px] font-bold border border-success/30 shrink-0">
-                <CheckCircle2 className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/30 shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
                 <span>Aktif &amp; Memenuhi Syarat</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-500 px-2.5 py-1 rounded-full text-[11px] font-bold border border-amber-500/30 shrink-0">
-                <AlertTriangle className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-1.5 bg-amber-950/60 text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-500/30 shrink-0">
+                <AlertTriangle className="w-4 h-4" />
                 <span>Perlu Ditingkatkan</span>
               </span>
             )}
           </div>
 
           {/* Progress Bar & Indikator Angka */}
-          <div className="bg-surface-container-low rounded-xl p-3 border border-edge/60 space-y-2">
+          <div className="bg-surface-container-low rounded-xl p-4 border border-edge/60 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-ink">
                 Persentase Kehadiran:
               </span>
               <span className="font-mono font-bold text-ink text-sm">
                 {attendanceSummary.attendanceRate}%{" "}
-                <span className="text-[11px] font-normal text-ink-muted">
+                <span className="text-xs font-normal text-slate-400">
                   ({attendanceSummary.attendedCount}/{attendanceSummary.totalMeetings} Pertemuan Hadir)
                 </span>
               </span>
             </div>
 
-            <div className="w-full h-2 bg-surface-container rounded-full overflow-hidden border border-edge/40">
+            <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/40">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
                   attendanceSummary.isCompliant
                     ? "bg-gradient-to-r from-emerald-500 to-teal-400"
-                    : "bg-gradient-to-r from-amber-500 to-red-500"
+                    : "bg-gradient-to-r from-amber-500 to-rose-500"
                 }`}
                 style={{ width: `${Math.min(attendanceSummary.attendanceRate, 100)}%` }}
               />
             </div>
 
-            <div className="flex items-center justify-between text-[10px] text-ink-muted pt-0.5">
+            <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
               <span>Standar Keaktifan Minimum: 75%</span>
-              <span className="font-medium text-ink-secondary">
+              <span className="font-normal text-slate-300">
                 {attendanceSummary.isCompliant
                   ? "Status kuorum terpenuhi untuk kepanitiaan."
                   : "Tingkatkan kehadiran pada sesi rapat berikutnya."}

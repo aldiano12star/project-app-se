@@ -35,11 +35,11 @@ export function TopHeader({ user }: TopHeaderProps) {
     : "SE";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-edge bg-card pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <header className="sticky top-0 z-50 w-full border-b border-edge bg-card pt-safe shadow-sm">
       <div className="flex h-16 items-center justify-between px-4">
         {/* Logo & Brand Identity */}
-        <Link href="/dashboard" className="flex items-center gap-2.5 cursor-pointer group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/40 transition-colors">
+        <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer group min-h-[44px]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
             {!logoError ? (
               <Image
                 src="/logo.png"
@@ -51,34 +51,34 @@ export function TopHeader({ user }: TopHeaderProps) {
                 className="object-contain h-7 w-7"
               />
             ) : (
-              <span className="font-black text-xs text-primary">SE</span>
+              <span className="font-bold text-xs text-primary">SE</span>
             )}
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-ink leading-tight">
+            <span className="text-base font-semibold tracking-tight text-ink leading-tight">
               Saba ExploIT
             </span>
-            <span className="text-[11px] font-medium text-ink-muted tracking-wide leading-tight">
+            <span className="text-xs text-slate-400 tracking-normal leading-tight mt-0.5">
               SMAN 1 Bantul
             </span>
           </div>
         </Link>
 
         {/* Action Widgets & User Profile Avatar */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* XP Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-2.5 py-1">
-            <Zap className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
-            <span className="text-xs font-bold text-ink tabular-nums">
+          <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-[36px]">
+            <Zap className="h-4 w-4 fill-amber-400 text-amber-500" />
+            <span className="text-xs font-semibold text-ink tabular-nums">
               {points.toLocaleString("id-ID")}{" "}
-              <span className="text-[10px] font-normal text-ink-muted">XP</span>
+              <span className="text-[11px] font-normal text-slate-400">XP</span>
             </span>
           </div>
 
           {/* Avatar Profil dengan Role Ring (Pintu Navigasi Langsung ke /pengaturan) */}
           <Link
             href="/pengaturan"
-            className="relative flex h-11 w-11 items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            className="relative flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center cursor-pointer active:scale-95 transition-transform"
             title="Akun & Pengaturan Profil"
           >
             {user?.image ? (
@@ -86,23 +86,23 @@ export function TopHeader({ user }: TopHeaderProps) {
                 src={user.image}
                 alt={user.name || "User Avatar"}
                 referrerPolicy="no-referrer"
-                className="h-8 w-8 rounded-full border border-edge object-cover ring-2 ring-primary/20"
+                className="h-9 w-9 rounded-full border border-edge object-cover ring-2 ring-primary/20"
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-edge bg-surface text-xs font-bold text-ink ring-2 ring-primary/20">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-edge bg-surface text-xs font-semibold text-ink ring-2 ring-primary/20">
                 {initials}
               </div>
             )}
             <span
-              className={`absolute bottom-1.5 right-1.5 h-2.5 w-2.5 rounded-full border-2 border-card ${
+              className={`absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-card ${
                 role === "OPERATOR"
-                  ? "bg-purple-600"
+                  ? "bg-purple-500"
                   : role === "ADMIN"
-                  ? "bg-red-600"
+                  ? "bg-rose-500"
                   : role === "BENDAHARA"
                   ? "bg-emerald-500"
                   : role === "MEMBER"
-                  ? "bg-blue-500"
+                  ? "bg-sky-500"
                   : "bg-slate-500"
               }`}
               title={`Role: ${role}`}

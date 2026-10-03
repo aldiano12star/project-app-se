@@ -43,28 +43,28 @@ export function MeetingQrModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-none">
-      <div className="card-solid relative w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl border border-edge flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-none animate-in fade-in duration-150">
+      <div className="card-solid relative w-full max-w-sm rounded-2xl bg-[#151D2E] p-6 shadow-2xl border border-[#222F46] flex flex-col items-center gap-4">
         {/* Tombol Tutup */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-ink-muted hover:text-ink transition-colors"
+          className="absolute top-4 right-4 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-full bg-[#0B0F19] text-slate-400 hover:text-white transition-colors cursor-pointer"
           aria-label="Tutup dialog"
         >
           <X className="h-4 w-4" />
         </button>
 
         {/* Header Modal */}
-        <div className="flex flex-col items-center text-center gap-1 pr-6 pl-6 pt-1">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-subtle px-3 py-1 text-[11px] font-bold text-primary border border-primary/20">
+        <div className="flex flex-col items-center text-center gap-1.5 pr-6 pl-6 pt-1">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary border border-primary/30">
             <Sparkles className="h-3.5 w-3.5" />
             Sesi Rapat Pleno Aktif
           </span>
-          <h3 className="text-base font-bold text-ink mt-1">
+          <h3 className="text-lg font-semibold text-ink mt-1">
             {sessionData?.title || "Presensi Rapat Organisasi"}
           </h3>
-          <p className="text-xs text-ink-muted">
+          <p className="text-xs text-slate-400 leading-relaxed">
             Tunjukkan kode QR ini kepada seluruh anggota rapat untuk memindai presensi (+10 XP).
           </p>
         </div>
@@ -72,27 +72,27 @@ export function MeetingQrModal({
         {/* Kontainer Gambar QR Code */}
         <div className="flex flex-col items-center justify-center w-full py-2">
           {isPending ? (
-            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-xl border border-edge bg-surface">
+            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-2xl border border-[#222F46] bg-[#0B0F19]">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="text-xs font-semibold text-ink-muted mt-2">
+              <span className="text-xs font-semibold text-slate-400 mt-2">
                 Menyiapkan Kode QR...
               </span>
             </div>
           ) : errorMsg ? (
-            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-xl border border-danger/30 bg-danger-subtle p-4 text-center">
-              <AlertCircle className="h-8 w-8 text-danger" />
-              <p className="text-xs font-bold text-danger mt-2">{errorMsg}</p>
+            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-950/20 p-4 text-center">
+              <AlertCircle className="h-8 w-8 text-rose-400" />
+              <p className="text-xs font-semibold text-rose-300 mt-2">{errorMsg}</p>
               <button
                 type="button"
                 onClick={fetchSession}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-danger underline hover:opacity-80"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-rose-300 underline hover:opacity-80 cursor-pointer min-h-[36px]"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Coba Lagi
               </button>
             </div>
           ) : sessionData?.qrToken ? (
-            <div className="rounded-xl border border-edge bg-white p-4 shadow-sm flex flex-col items-center">
+            <div className="rounded-2xl border border-slate-700 bg-white p-4 shadow-md flex flex-col items-center">
               <QRCodeSVG
                 value={sessionData.qrToken}
                 size={200}
@@ -100,17 +100,17 @@ export function MeetingQrModal({
                 includeMargin={true}
                 className="h-auto w-full max-w-[200px]"
               />
-              <span className="text-[10px] font-semibold text-slate-500 mt-2 tracking-wide uppercase">
-                Pindai melalui Super App Saba ExploIT
+              <span className="text-[10px] font-mono font-bold text-slate-600 mt-2 tracking-wide uppercase">
+                Pindai melalui App Saba ExploIT
               </span>
             </div>
           ) : (
-            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-xl border border-edge bg-surface">
-              <QrCode className="h-10 w-10 text-ink-muted opacity-40" />
+            <div className="flex h-56 w-56 flex-col items-center justify-center rounded-2xl border border-[#222F46] bg-[#0B0F19]">
+              <QrCode className="h-10 w-10 text-slate-600" />
               <button
                 type="button"
                 onClick={fetchSession}
-                className="mt-3 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white shadow-sm"
+                className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary-hover transition-colors cursor-pointer min-h-[40px]"
               >
                 Buat Sesi QR
               </button>
@@ -122,7 +122,7 @@ export function MeetingQrModal({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-full items-center justify-center rounded-lg bg-surface-container-low border border-edge text-xs font-bold text-ink hover:bg-surface-container transition-colors"
+          className="flex h-11 min-h-[44px] w-full items-center justify-center rounded-xl bg-[#0B0F19] border border-[#222F46] text-xs font-semibold text-slate-300 hover:bg-surface-container hover:text-white transition-colors cursor-pointer"
         >
           Tutup
         </button>

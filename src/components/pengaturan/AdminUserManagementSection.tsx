@@ -148,46 +148,46 @@ export function AdminUserManagementSection({
   };
 
   return (
-    <section className="space-y-1.5">
+    <section className="space-y-2">
       <div className="flex items-center justify-between px-1">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-500 font-mono flex items-center gap-1.5">
-          <Shield className="w-3.5 h-3.5" />
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400 font-mono flex items-center gap-2">
+          <Shield className="w-4 h-4" />
           <span>Aktivasi Akun &amp; Manajemen Role</span>
         </h3>
         {guestUsers.length > 0 && (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse">
             {guestUsers.length} Menunggu
           </span>
         )}
       </div>
 
-      <div className="bg-card border border-edge rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
+      <div className="bg-card border border-edge rounded-2xl p-6 shadow-xs space-y-4">
         {/* Tab Switcher & Search Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-1 p-1 bg-surface-container-low rounded-xl border border-edge">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-xl border border-edge">
             <button
               type="button"
               onClick={() => setActiveTab("GUEST")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3.5 py-2 min-h-[40px] rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                 activeTab === "GUEST"
                   ? "bg-card text-ink shadow-xs border border-edge"
-                  : "text-ink-muted hover:text-ink"
+                  : "text-slate-400 hover:text-ink"
               }`}
             >
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
-              <span>Menunggu Verifikasi ({guestUsers.length})</span>
+              <Clock className="w-4 h-4 text-amber-400" />
+              <span>Menunggu ({guestUsers.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3.5 py-2 min-h-[40px] rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                 activeTab === "ALL"
                   ? "bg-card text-ink shadow-xs border border-edge"
-                  : "text-ink-muted hover:text-ink"
+                  : "text-slate-400 hover:text-ink"
               }`}
             >
-              <Users className="w-3.5 h-3.5 text-blue-500" />
-              <span>Semua Pengguna ({users.length})</span>
+              <Users className="w-4 h-4 text-sky-400" />
+              <span>Semua ({users.length})</span>
             </button>
           </div>
 
@@ -196,14 +196,14 @@ export function AdminUserManagementSection({
             placeholder="Cari nama / email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-9 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
 
         {/* Feedback Alert */}
         {feedback && (
           <div
-            className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-in fade-in ${
+            className={`p-4 rounded-xl text-xs flex items-center gap-2.5 border animate-in fade-in ${
               feedback.type === "success"
                 ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300"
                 : "bg-red-950/40 border-red-500/40 text-red-300"
@@ -219,16 +219,16 @@ export function AdminUserManagementSection({
         )}
 
         {/* User List */}
-        <div className="space-y-2 max-h-[380px] overflow-y-auto pr-0.5">
+        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-0.5">
           {displayedUsers.length === 0 ? (
-            <div className="p-6 rounded-xl bg-surface-container-low/40 border border-edge text-center space-y-1">
-              <UserCheck className="w-6 h-6 text-ink-muted mx-auto" />
-              <p className="text-xs font-semibold text-ink">
+            <div className="p-8 rounded-2xl bg-surface-container-low/40 border border-edge text-center space-y-2">
+              <UserCheck className="w-8 h-8 text-slate-500 mx-auto" />
+              <p className="text-sm font-semibold text-ink">
                 {activeTab === "GUEST"
                   ? "Tidak ada akun yang menunggu verifikasi."
                   : "Tidak ada data pengguna ditemukan."}
               </p>
-              <p className="text-[11px] text-ink-muted">
+              <p className="text-xs text-slate-400">
                 {activeTab === "GUEST"
                   ? "Semua akun terdaftar sudah memiliki role aktif."
                   : "Coba gunakan kata kunci pencarian yang berbeda."}
@@ -247,10 +247,10 @@ export function AdminUserManagementSection({
               return (
                 <div
                   key={u.id}
-                  className="p-3 rounded-xl bg-surface-container-low/70 border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all"
+                  className="p-4 rounded-2xl bg-surface-container-low/70 border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-full bg-slate-900 border border-edge overflow-hidden shrink-0 flex items-center justify-center">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-11 h-11 rounded-full bg-slate-900 border border-edge overflow-hidden shrink-0 flex items-center justify-center">
                       {u.image ? (
                         <img
                           src={u.image}
@@ -259,18 +259,18 @@ export function AdminUserManagementSection({
                           referrerPolicy="no-referrer"
                         />
                       ) : (
-                        <span className="text-xs font-bold text-white">
+                        <span className="text-xs font-semibold text-white font-mono">
                           {initials}
                         </span>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-bold text-ink truncate">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-semibold text-ink truncate">
                           {u.name}
                         </span>
                         <span
-                          className={`px-2 py-0.2 rounded-full text-[10px] font-bold border ${getRoleBadgeStyle(
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getRoleBadgeStyle(
                             u.role
                           )}`}
                         >
@@ -278,7 +278,7 @@ export function AdminUserManagementSection({
                         </span>
                         {u.mainDivision && (
                           <span
-                            className={`px-2 py-0.2 rounded-full text-[10px] font-bold border ${
+                            className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                               getDivisionMeta(u.mainDivision).style
                             }`}
                           >
@@ -286,26 +286,26 @@ export function AdminUserManagementSection({
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
+                      <p className="text-xs text-slate-400 truncate mt-1">
                         {u.email}
                       </p>
                     </div>
                   </div>
 
                   {/* Action Buttons for Role Promotion */}
-                  <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                     {u.role === Role.GUEST ? (
                       <>
                         <button
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handlePromote(u.id, Role.MEMBER)}
-                          className="h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                          className="h-11 min-h-[44px] px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           {isProcessing ? (
-                            <Loader2 className="w-3 h-3 animate-spin" />
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           ) : (
-                            <UserCheck className="w-3 h-3" />
+                            <UserCheck className="w-3.5 h-3.5" />
                           )}
                           <span>Aktivasi Member</span>
                         </button>
@@ -314,7 +314,7 @@ export function AdminUserManagementSection({
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handlePromote(u.id, Role.BENDAHARA)}
-                          className="h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                          className="h-11 min-h-[44px] px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           <span>Bendahara</span>
                         </button>
@@ -326,7 +326,7 @@ export function AdminUserManagementSection({
                         onChange={(e) =>
                           handlePromote(u.id, e.target.value as Role)
                         }
-                        className="h-8 px-2 rounded-lg bg-card border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                        className="h-11 min-h-[44px] px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
                       >
                         <option value={Role.MEMBER}>Set: Member</option>
                         <option value={Role.BENDAHARA}>Set: Bendahara</option>

@@ -30,14 +30,10 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
   const rank2 = contributors[1] || null;
   const rank3 = contributors[2] || null;
 
-  const isSeasonFresh =
-    contributors.length === 0 ||
-    contributors.every((c) => (c.totalPoints ?? 0) === 0);
-
   const getDivisionBadgeColor = (division?: Division) => {
     switch (division) {
       case Division.PROGRAMMING:
-        return "text-cyan-400";
+        return "text-sky-400";
       case Division.TECHNOPRENEURSHIP:
         return "text-amber-400";
       case Division.DESIGN:
@@ -70,25 +66,24 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
 
   const renderAvatar = (
     user: ContributorItem | null,
-    rank: number,
     ringColor: string,
     badgeText: string,
     isFirst: boolean = false
   ) => {
-    const sizeClasses = isFirst ? "h-14 w-14" : "h-11 w-11";
+    const sizeClasses = isFirst ? "h-16 w-16" : "h-12 w-12";
 
     if (!user) {
       return (
-        <div className="relative mb-2 flex flex-col items-center">
+        <div className="relative mb-3 flex flex-col items-center">
           {isFirst && (
-            <span className="text-xl -mb-1 animate-bounce duration-1000">👑</span>
+            <span className="text-2xl -mb-1 animate-bounce duration-1000">👑</span>
           )}
           <div
-            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-slate-800 text-xs font-bold text-slate-400 shadow-md ring-2 ${ringColor}`}
+            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-slate-900 text-xs font-semibold text-slate-400 shadow-md ring-2 ${ringColor}`}
           >
             -
           </div>
-          <span className="absolute -bottom-1.5 -right-1 text-xs px-1.5 py-0.2 rounded-full bg-slate-900 border border-slate-700 font-black text-white shadow-xs font-mono">
+          <span className="absolute -bottom-1.5 -right-1 text-xs px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-bold text-white shadow-sm font-mono">
             {badgeText}
           </span>
         </div>
@@ -103,9 +98,9 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
       .toUpperCase();
 
     return (
-      <div className="relative mb-2 flex flex-col items-center">
+      <div className="relative mb-3 flex flex-col items-center">
         {isFirst && (
-          <span className="text-xl -mb-1 animate-bounce duration-1000">👑</span>
+          <span className="text-2xl -mb-1 animate-bounce duration-1000">👑</span>
         )}
         {user.image ? (
           <img
@@ -116,12 +111,12 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
           />
         ) : (
           <div
-            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-slate-800 text-xs font-bold text-white ring-2 ${ringColor} shadow-lg`}
+            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-slate-900 text-sm font-bold text-white ring-2 ${ringColor} shadow-lg`}
           >
             {initials}
           </div>
         )}
-        <span className="absolute -bottom-1.5 -right-1 text-xs px-1.5 py-0.2 rounded-full bg-slate-900 border border-slate-700 font-black text-white shadow-xs font-mono">
+        <span className="absolute -bottom-1.5 -right-1 text-xs px-2 py-0.5 rounded-full bg-[#151D2E] border border-slate-700 font-bold text-white shadow-sm font-mono">
           {badgeText}
         </span>
       </div>
@@ -129,52 +124,52 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
   };
 
   return (
-    <section className="flex flex-col gap-2.5">
+    <section className="flex flex-col gap-3">
       {/* Header Seksi */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold text-ink flex items-center gap-1.5">
+          <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
             <span>Podium Apresiasi Kontributor</span>
-            <Sparkles className="h-4 w-4 text-amber-500 fill-amber-400" />
+            <Sparkles className="h-4 w-4 text-amber-400 fill-amber-400" />
           </h2>
-          <p className="text-[11px] text-ink-muted mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Panggung apresiasi kontribusi aktif, presensi &amp; karya teratas
           </p>
         </div>
-        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-[11px] font-bold text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
-          <Trophy className="h-3.5 w-3.5" />
+        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
+          <Trophy className="h-4 w-4" />
           <span>Top 3</span>
         </div>
       </div>
 
       {/* Kartu Utama Podium Panggung Turnamen */}
-      <div className="card-solid relative overflow-hidden p-4 sm:p-5 shadow-md flex flex-col bg-slate-950 text-white border-slate-800 rounded-2xl">
+      <div className="card-solid relative overflow-hidden p-6 shadow-md flex flex-col bg-[#151D2E] text-white border-[#222F46] rounded-2xl">
         {/* Ambient Glow Emas di belakang Juara 1 */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 bg-amber-500/15 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
 
         {/* Banner Motivasi Kontribusi Komunitas */}
-        <div className="mb-4 p-3.5 rounded-xl bg-[#0D121F] border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5 relative z-10">
-          <span className="text-base shrink-0">⚡</span>
-          <div className="min-w-0 flex-1 space-y-0.5">
-            <span className="font-bold block text-amber-200">
+        <div className="mb-6 p-4 rounded-2xl bg-[#101624] border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 relative z-10">
+          <span className="text-xl shrink-0">⚡</span>
+          <div className="min-w-0 flex-1 space-y-1">
+            <span className="font-semibold block text-amber-200 text-sm">
               ⚡ Kontribusi &amp; Keaktifan Komunitas
             </span>
-            <p className="text-[11px] text-amber-300/80 leading-relaxed">
+            <p className="text-xs text-slate-300 leading-relaxed">
               Tingkatkan XP kontribusi melalui presensi rapat, kepanitiaan kegiatan, dan submit karya inovasi.
             </p>
           </div>
         </div>
 
         {/* 3 Pilar Fisik Podium Berjejang (Juara 2 - Juara 1 - Juara 3) */}
-        <div className="flex items-end justify-center gap-2 sm:gap-3 pt-4 pb-1 relative z-10">
+        <div className="flex items-end justify-center gap-3 sm:gap-4 pt-4 pb-2 relative z-10">
           {/* Juara 2 (Perak/Silver - Kiri) */}
           <div className="w-[30%] max-w-[110px] flex flex-col items-center">
-            {renderAvatar(rank2, 2, "ring-slate-300 ring-offset-2 ring-offset-slate-950", "🥈")}
-            <span className="text-xs font-bold text-slate-100 truncate text-center w-full block">
+            {renderAvatar(rank2, "ring-slate-300 ring-offset-2 ring-offset-[#151D2E]", "🥈")}
+            <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate text-center w-full block">
               {rank2 ? rank2.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
-              className={`text-[10px] font-medium truncate max-w-full ${getDivisionBadgeColor(
+              className={`text-xs font-normal truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
                 rank2?.mainDivision
               )}`}
             >
@@ -182,34 +177,33 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             </span>
 
             {/* Pilar Perak Berjejang */}
-            <div className="w-full h-32 sm:h-36 bg-gradient-to-b from-slate-400/20 via-slate-900/90 to-slate-950 border border-slate-400/30 rounded-t-xl mt-2 flex flex-col items-center justify-center p-2 shadow-lg backdrop-blur-xs">
-              <span className="text-lg font-black text-slate-300">2</span>
-              <div className="flex items-center gap-1 mt-1">
+            <div className="w-full h-32 sm:h-36 bg-gradient-to-b from-slate-400/20 via-slate-900/90 to-slate-950 border border-slate-400/30 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
+              <span className="text-xl font-extrabold text-slate-300">2</span>
+              <div className="flex items-center gap-1 mt-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700">
                 <Zap className="h-3 w-3 text-slate-300 fill-slate-300" />
-                <span className="text-xs font-bold text-slate-200 tabular-nums">
+                <span className="text-xs font-semibold text-slate-200 tabular-nums">
                   {rank2 ? rank2.totalPoints : 0}
                 </span>
               </div>
-              <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
                 XP
               </span>
             </div>
           </div>
 
-          {/* Juara 1 (Emas/Gold - Tengah: Pilar Tertinggi) */}
-          <div className="w-[36%] max-w-[130px] flex flex-col items-center">
+          {/* Juara 1 (Emas/Gold - Tengah: Pilar Tertinggi & Paling Dominan) */}
+          <div className="w-[38%] max-w-[140px] flex flex-col items-center">
             {renderAvatar(
               rank1,
-              1,
-              "ring-amber-400 ring-offset-2 ring-offset-slate-950 shadow-amber-500/50 shadow-lg",
+              "ring-[#F59E0B] ring-offset-2 ring-offset-[#151D2E] shadow-amber-500/30 shadow-lg",
               "🥇",
               true
             )}
-            <span className="text-xs sm:text-sm font-black text-amber-200 truncate text-center w-full block">
+            <span className="text-sm sm:text-base font-bold text-amber-200 truncate text-center w-full block">
               {rank1 ? rank1.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
-              className={`text-[10px] font-bold truncate max-w-full ${getDivisionBadgeColor(
+              className={`text-xs font-semibold truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
                 rank1?.mainDivision
               )}`}
             >
@@ -217,17 +211,17 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             </span>
 
             {/* Pilar Emas Tertinggi */}
-            <div className="w-full h-40 sm:h-44 bg-gradient-to-b from-amber-500/25 via-slate-900 to-slate-950 border-2 border-amber-500/50 rounded-t-xl mt-2 flex flex-col items-center justify-center p-2 shadow-2xl relative overflow-hidden backdrop-blur-xs">
-              <div className="absolute top-0 inset-x-0 h-1 bg-amber-400 shadow-sm" />
-              <span className="text-2xl font-black text-amber-400">1</span>
-              <div className="flex items-center gap-1 mt-1 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
+            <div className="w-full h-44 sm:h-48 bg-gradient-to-b from-amber-500/25 via-slate-900 to-slate-950 border-2 border-[#F59E0B] rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-[#F59E0B] shadow-sm" />
+              <span className="text-3xl font-black text-amber-400">1</span>
+              <div className="flex items-center gap-1 mt-1.5 bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/40">
                 <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                <span className="text-xs font-extrabold text-amber-300 tabular-nums">
+                <span className="text-xs font-bold text-amber-300 tabular-nums">
                   {rank1 ? rank1.totalPoints : 0}
                 </span>
                 <span className="text-[10px] font-bold text-amber-400">XP</span>
               </div>
-              <span className="text-[9px] font-black text-amber-400/90 uppercase tracking-widest mt-1">
+              <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest mt-1.5">
                 JUARA 1
               </span>
             </div>
@@ -237,15 +231,14 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
           <div className="w-[30%] max-w-[110px] flex flex-col items-center">
             {renderAvatar(
               rank3,
-              3,
-              "ring-amber-700 ring-offset-2 ring-offset-slate-950",
+              "ring-amber-700 ring-offset-2 ring-offset-[#151D2E]",
               "🥉"
             )}
-            <span className="text-xs font-bold text-slate-100 truncate text-center w-full block">
+            <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate text-center w-full block">
               {rank3 ? rank3.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
-              className={`text-[10px] font-medium truncate max-w-full ${getDivisionBadgeColor(
+              className={`text-xs font-normal truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
                 rank3?.mainDivision
               )}`}
             >
@@ -253,15 +246,15 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             </span>
 
             {/* Pilar Perunggu Berjejang */}
-            <div className="w-full h-28 sm:h-30 bg-gradient-to-b from-amber-700/20 via-slate-900/90 to-slate-950 border border-amber-700/30 rounded-t-xl mt-2 flex flex-col items-center justify-center p-2 shadow-lg backdrop-blur-xs">
-              <span className="text-lg font-black text-amber-600">3</span>
-              <div className="flex items-center gap-1 mt-1">
+            <div className="w-full h-28 sm:h-32 bg-gradient-to-b from-amber-700/20 via-slate-900/90 to-slate-950 border border-amber-700/30 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
+              <span className="text-xl font-extrabold text-amber-600">3</span>
+              <div className="flex items-center gap-1 mt-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700">
                 <Zap className="h-3 w-3 text-amber-500 fill-amber-500" />
-                <span className="text-xs font-bold text-amber-200 tabular-nums">
+                <span className="text-xs font-semibold text-amber-200 tabular-nums">
                   {rank3 ? rank3.totalPoints : 0}
                 </span>
               </div>
-              <span className="text-[9px] font-semibold text-amber-500/80 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
                 XP
               </span>
             </div>
@@ -269,7 +262,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
         </div>
 
         {/* Footer Info Transparan */}
-        <div className="pt-3 border-t border-slate-800/80 mt-2 flex items-center justify-between text-[10px] text-slate-400 relative z-10">
+        <div className="pt-4 border-t border-[#222F46] mt-4 flex items-center justify-between text-xs text-slate-400 relative z-10">
           <span>Klasemen Peringkat Akumulasi XP</span>
           <span className="text-amber-400 font-semibold">Kompetisi Terbuka &amp; Transparan</span>
         </div>

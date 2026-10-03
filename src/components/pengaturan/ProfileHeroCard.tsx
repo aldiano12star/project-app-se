@@ -128,13 +128,13 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
   const getRoleBadgeStyle = (role: Role) => {
     switch (role) {
       case Role.OPERATOR:
-        return "bg-purple-950/60 text-purple-300 border-purple-500/50";
+        return "bg-purple-950/60 text-purple-300 border-purple-500/40";
       case Role.ADMIN:
-        return "bg-red-950/60 text-red-400 border-red-500/50";
+        return "bg-rose-950/60 text-rose-400 border-rose-500/40";
       case Role.BENDAHARA:
-        return "bg-emerald-950/60 text-emerald-400 border-emerald-500/50";
+        return "bg-emerald-950/60 text-emerald-400 border-emerald-500/40";
       case Role.MEMBER:
-        return "bg-blue-950/60 text-blue-400 border-blue-500/50";
+        return "bg-sky-950/60 text-sky-400 border-sky-500/40";
       case Role.GUEST:
         return "bg-slate-800 text-slate-400 border-slate-700";
       default:
@@ -160,19 +160,19 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
   };
 
   return (
-    <section className="bg-card border border-edge rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-sm space-y-4">
-      {/* Accent Header Ribbon Cyber */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 via-brand-primary to-amber-500" />
+    <section className="bg-card border border-edge rounded-2xl p-6 relative overflow-hidden shadow-sm space-y-6">
+      {/* Accent Header Ribbon */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-primary to-amber-500" />
 
       {/* Banner Peringatan Wajib Ganti Kata Sandi Default */}
       {user.mustChangePassword && (
-        <div className="p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-2.5 animate-in fade-in">
-          <span className="text-base shrink-0">⚠️</span>
-          <div className="space-y-0.5 min-w-0 flex-1">
-            <span className="font-bold block text-amber-200">
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 animate-in fade-in">
+          <span className="text-xl shrink-0">⚠️</span>
+          <div className="space-y-1 min-w-0 flex-1">
+            <span className="font-semibold block text-amber-200 text-sm">
               Ganti Kata Sandi Bawaan Akun
             </span>
-            <p className="text-[11px] text-amber-300/80 leading-relaxed">
+            <p className="text-xs text-slate-300 leading-relaxed">
               Demi keamanan akunmu, segera ganti kata sandi bawaan (default) dengan kata sandi pribadimu pada formulir di bawah.
             </p>
           </div>
@@ -181,9 +181,9 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
 
       {/* User Header Info: Large Avatar w-20 h-20 & Details */}
       <div className="flex items-start gap-4 pt-1">
-        {/* Large Avatar (w-20 h-20) berbingkai ring gradien Saba Red (#E11D2A) ke Amber */}
+        {/* Large Avatar */}
         <div className="relative shrink-0">
-          <div className="w-20 h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-[#E11D2A] via-rose-500 to-amber-500 shadow-md">
+          <div className="w-20 h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-primary via-rose-500 to-amber-500 shadow-md">
             <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center">
               {user.image ? (
                 <img
@@ -203,13 +203,13 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           <span
             className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card ${
               user.role === Role.OPERATOR
-                ? "bg-purple-600"
+                ? "bg-purple-500"
                 : user.role === Role.ADMIN
-                ? "bg-red-600"
+                ? "bg-rose-500"
                 : user.role === Role.BENDAHARA
                 ? "bg-emerald-500"
                 : user.role === Role.MEMBER
-                ? "bg-blue-500"
+                ? "bg-sky-500"
                 : "bg-slate-500"
             }`}
             title={`Status Role: ${user.role}`}
@@ -218,17 +218,17 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
 
         {/* User Identity Details */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <h2 className="text-lg sm:text-xl font-bold text-ink tracking-tight truncate">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight truncate">
               {user.name}
             </h2>
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           </div>
 
           {/* Role Badge */}
-          <div className="mt-1 flex items-center gap-1.5">
+          <div className="mt-2 flex items-center gap-2">
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase border ${getRoleBadgeStyle(
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase border ${getRoleBadgeStyle(
                 user.role
               )}`}
             >
@@ -237,28 +237,28 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           </div>
 
           {/* Details Grade & Division */}
-          <p className="text-xs text-ink-muted mt-1 leading-relaxed font-medium">
+          <p className="text-sm text-slate-400 mt-2 leading-relaxed font-normal">
             {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
           </p>
         </div>
       </div>
 
       {/* Gamification Summary Box (Total XP, Tier & Progress Bar) */}
-      <div className="mt-4 pt-3 border-t border-edge bg-surface-container-low/60 rounded-xl p-3 border">
-        <div className="flex items-center justify-between text-xs mb-2">
+      <div className="pt-4 border-t border-edge bg-surface-container-low/60 rounded-2xl p-4 border space-y-3">
+        <div className="flex items-center justify-between text-sm">
           {/* Total Points */}
-          <div className="flex items-center gap-1.5 font-semibold text-amber-500">
-            <span className="w-5 h-5 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 text-xs">
-              <Zap className="h-3 w-3 fill-amber-500" />
+          <div className="flex items-center gap-2 font-semibold text-amber-400">
+            <span className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs">
+              <Zap className="h-3.5 w-3.5 fill-amber-400" />
             </span>
-            <span className="text-sm font-bold text-ink font-mono tracking-tight">
+            <span className="text-base font-bold text-ink font-mono tracking-tight">
               {user.totalPoints} XP
             </span>
-            <span className="text-ink-muted font-normal text-[11px]">Total</span>
+            <span className="text-slate-400 font-normal text-xs">Total</span>
           </div>
 
           {/* Level Tier */}
-          <div className="flex items-center gap-1 text-[11px] font-semibold text-ink">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
             <span>{levelInfo.icon}</span>
             <span>
               Lv. {levelInfo.level} {levelInfo.title}{" "}
@@ -267,16 +267,16 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
         </div>
 
         {/* Progress Bar to Next Level */}
-        <div className="space-y-1">
-          <div className="w-full h-2 bg-surface-container rounded-full overflow-hidden border border-edge/60">
+        <div className="space-y-1.5">
+          <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/60">
             <div
               className="h-full bg-gradient-to-r from-primary to-amber-500 rounded-full transition-all duration-500"
               style={{ width: `${levelInfo.progress}%` }}
             />
           </div>
-          <div className="flex justify-between items-center text-[10px] text-ink-muted">
+          <div className="flex justify-between items-center text-xs text-slate-400">
             <span>Progres Menuju Lv. {levelInfo.level + 1}</span>
-            <span className="font-mono text-ink font-medium">
+            <span className="font-mono text-slate-300 font-medium">
               {levelInfo.progress}% ({user.totalPoints} / {levelInfo.nextLevelXp} XP)
             </span>
           </div>
@@ -285,13 +285,13 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
 
       {/* Tombol Aksi Utama: Buka KTA Digital */}
       {onOpenKTA && (
-        <div className="mt-3">
+        <div>
           <button
             type="button"
             onClick={onOpenKTA}
-            className="w-full min-h-[44px] px-4 py-2.5 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-900/30 active:scale-[0.98] text-red-300 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="w-full min-h-[48px] px-5 py-3 rounded-xl border border-rose-500/30 bg-rose-950/20 hover:bg-rose-900/30 active:scale-[0.99] text-rose-300 font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
           >
-            <IdCard className="w-4 h-4 text-primary" />
+            <IdCard className="w-5 h-5 text-primary" />
             <span>🪪 Buka KTA Digital</span>
           </button>
         </div>

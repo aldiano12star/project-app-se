@@ -10,37 +10,37 @@
  * - Warna primer: Saba Red (#E11D2A)
  */
 
-/* ── Variabel runtime (Permanent Dark Mode: Cyber-Academic) ───────── */
+/* ── Variabel runtime (Permanent Dark Mode: Eye-Friendly Charcoal Slate) ── */
 :root,
 .dark {
   color-scheme: dark;
 
-  /* Neutral — Dark (#070A11 baseline) */
-  --saba-surface: #070a11;
-  --saba-card: #0d121f;
-  --saba-edge: #1e293b;
-  --saba-surface-container-low: #131c31;
-  --saba-surface-container: #1e293b;
-  --saba-surface-container-high: #334155;
-  --saba-ink: #f8fafc;
+  /* Neutral — Eye-Friendly Deep Charcoal Slate (#0B0F19 baseline) */
+  --saba-surface: #0b0f19;
+  --saba-card: #151d2e;
+  --saba-edge: #222f46;
+  --saba-surface-container-low: #101624;
+  --saba-surface-container: #1b263b;
+  --saba-surface-container-high: #2d3b55;
+  --saba-ink: #f1f5f9;
   --saba-ink-secondary: #94a3b8;
   --saba-ink-muted: #64748b;
 
-  /* Brand Dark */
-  --saba-primary: #e11d2a;
-  --saba-primary-hover: #be123c;
-  --saba-primary-subtle: #4c0519;
+  /* Brand Vibrant Coral Rose (#F43F5E) */
+  --saba-primary: #f43f5e;
+  --saba-primary-hover: #e11d48;
+  --saba-primary-subtle: #881337;
   --saba-on-primary: #ffffff;
 
-  /* Semantic Dark */
-  --saba-success: #22c55e;
-  --saba-success-subtle: #052e16;
+  /* Semantic Refresh */
+  --saba-success: #10b981;
+  --saba-success-subtle: #064e3b;
   --saba-danger: #ef4444;
   --saba-danger-subtle: #450a0a;
   --saba-warning: #f59e0b;
   --saba-warning-subtle: #451a03;
-  --saba-info: #3b82f6;
-  --saba-info-subtle: #172554;
+  --saba-info: #38bdf8;
+  --saba-info-subtle: #0c4a6e;
 }
 
 /* ── Saba ExploIT Design Tokens ───────────────────────────────────── */
@@ -90,16 +90,16 @@
   --color-info-subtle: var(--saba-info-subtle);
 
   /* Divisions */
-  --color-div-programming: #2563eb;
-  --color-div-programming-bg-light: #eff6ff;
-  --color-div-design: #9333ea;
-  --color-div-design-bg-light: #faf5ff;
-  --color-div-photography: #d97706;
-  --color-div-photography-bg-light: #fffbeb;
-  --color-div-cinematography: #e11d2a;
-  --color-div-cinematography-bg-light: #fff1f2;
-  --color-div-technopreneurship: #059669;
-  --color-div-technopreneurship-bg-light: #ecfdf5;
+  --color-div-programming: #38bdf8;
+  --color-div-programming-bg-light: #0c4a6e;
+  --color-div-design: #c084fc;
+  --color-div-design-bg-light: #581c87;
+  --color-div-photography: #10b981;
+  --color-div-photography-bg-light: #064e3b;
+  --color-div-cinematography: #f43f5e;
+  --color-div-cinematography-bg-light: #881337;
+  --color-div-technopreneurship: #f59e0b;
+  --color-div-technopreneurship-bg-light: #451a03;
 
   /* Spacing & Container */
   --spacing-app-max: 430px;

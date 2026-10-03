@@ -172,35 +172,35 @@ export function AspirationCard({
 
   return (
     <div
-      className={`card-solid bg-card p-4 sm:p-5 rounded-2xl border shadow-sm space-y-3.5 transition-all ${
+      className={`card-solid bg-card p-6 rounded-2xl border shadow-sm space-y-4 transition-all ${
         isPrivate
-          ? "border-indigo-200 dark:border-indigo-900/80 bg-indigo-50/10 dark:bg-indigo-950/10"
+          ? "border-purple-500/30 bg-purple-950/10"
           : "border-edge"
       }`}
     >
-      {/* Header Kartu: Kategori & Tanggal (Tanpa Status Tiket Birokratis) */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-1.5">
+      {/* Header Kartu: Kategori & Tanggal */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Badge Scope Privat jika ada */}
           {isPrivate && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
-              <Lock className="h-3 w-3" />
-              <span>Privat Admin/Dev</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-950/60 text-purple-300 border border-purple-500/40">
+              <Lock className="h-3.5 w-3.5" />
+              <span>Privat Operator/Dev</span>
             </span>
           )}
 
           {/* Badge Kategori Usulan */}
           <span
-            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
           >
-            <CategoryIcon className="h-3 w-3" />
+            <CategoryIcon className="h-3.5 w-3.5" />
             <span>{categoryMeta.label}</span>
           </span>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[11px] text-ink-muted flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs text-slate-400 flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
             <span>{formattedDate}</span>
           </span>
 
@@ -210,32 +210,32 @@ export function AspirationCard({
               onClick={() => setIsDeleteModalOpen(true)}
               disabled={isLoading || isDeleting}
               title="Hapus Aspirasi"
-              className="p-1 rounded-md text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-950/40 transition-colors cursor-pointer"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             </button>
           )}
         </div>
       </div>
 
       {/* Judul & Isi Aspirasi */}
-      <div className="space-y-1.5">
-        <h3 className="text-sm sm:text-base font-bold text-ink leading-snug">
+      <div className="space-y-2">
+        <h3 className="text-base sm:text-lg font-semibold text-ink leading-snug">
           {aspiration.title}
         </h3>
-        <p className="text-xs text-ink-secondary leading-relaxed whitespace-pre-line bg-surface-container-low/30 p-3 rounded-xl border border-edge/60">
+        <p className="text-base text-slate-300 leading-relaxed whitespace-pre-line bg-surface-container-low/50 p-4 rounded-xl border border-edge/60">
           {aspiration.content}
         </p>
       </div>
 
       {/* Kotak Tanggapan Resmi Pengurus jika ada */}
       {aspiration.adminReply && (
-        <div className="p-3.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs">
-            <Quote className="h-3.5 w-3.5" />
-            <span>Tanggapan Resmi Pengurus:</span>
+        <div className="p-4 rounded-xl bg-sky-950/30 border border-sky-500/30 space-y-2">
+          <div className="flex items-center gap-2 text-sky-400 font-semibold text-xs uppercase tracking-wider">
+            <Quote className="h-4 w-4" />
+            <span>Tanggapan Resmi:</span>
           </div>
-          <p className="text-xs text-ink leading-relaxed whitespace-pre-line pl-5 italic">
+          <p className="text-base text-slate-200 leading-relaxed whitespace-pre-line pl-6 italic">
             &quot;{aspiration.adminReply}&quot;
           </p>
         </div>

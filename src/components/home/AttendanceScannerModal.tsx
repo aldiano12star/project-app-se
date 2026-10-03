@@ -79,25 +79,25 @@ export function AttendanceScannerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-none">
-      <div className="card-solid relative w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl border border-edge flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-none animate-in fade-in duration-150">
+      <div className="card-solid relative w-full max-w-sm rounded-2xl bg-[#151D2E] p-6 shadow-2xl border border-[#222F46] flex flex-col items-center gap-4">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-ink-muted hover:text-ink transition-colors"
+          className="absolute top-4 right-4 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-full bg-[#0B0F19] text-slate-400 hover:text-white transition-colors cursor-pointer"
           aria-label="Tutup dialog"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="flex flex-col items-center text-center gap-1 pr-6 pl-6 pt-1">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-subtle text-primary border border-primary/20">
+        <div className="flex flex-col items-center text-center gap-1.5 pr-6 pl-6 pt-1">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/20 text-primary border border-primary/30">
             <QrCode className="h-5 w-5" />
           </div>
-          <h3 className="text-base font-bold text-ink mt-1">
+          <h3 className="text-lg font-semibold text-ink mt-1">
             Pindai QR Presensi Rapat
           </h3>
-          <p className="text-xs text-ink-muted">
+          <p className="text-xs text-slate-400 leading-relaxed">
             Arahkan kamera ke layar proyektor rapat untuk klaim kehadiran otomatis (+10 XP).
           </p>
         </div>
@@ -106,28 +106,28 @@ export function AttendanceScannerModal({
         <div className="w-full flex flex-col items-center justify-center">
           {feedback ? (
             <div
-              className={`flex flex-col items-center justify-center rounded-xl p-5 text-center w-full border ${
+              className={`flex flex-col items-center justify-center rounded-2xl p-6 text-center w-full border ${
                 feedback.type === "success"
-                  ? "bg-success-subtle border-success/30 text-success"
-                  : "bg-danger-subtle border-danger/30 text-danger"
+                  ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300"
+                  : "bg-rose-950/40 border-rose-500/40 text-rose-300"
               }`}
             >
               {feedback.type === "success" ? (
-                <CheckCircle2 className="h-10 w-10 mb-2" />
+                <CheckCircle2 className="h-10 w-10 mb-2 text-emerald-400" />
               ) : (
-                <AlertCircle className="h-10 w-10 mb-2" />
+                <AlertCircle className="h-10 w-10 mb-2 text-rose-400" />
               )}
-              <span className="text-xs font-bold">{feedback.text}</span>
+              <span className="text-sm font-semibold">{feedback.text}</span>
             </div>
           ) : isPending ? (
-            <div className="flex h-52 w-full flex-col items-center justify-center rounded-xl border border-edge bg-surface">
+            <div className="flex h-52 w-full flex-col items-center justify-center rounded-2xl border border-[#222F46] bg-[#0B0F19]">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="text-xs font-bold text-ink-muted mt-2">
+              <span className="text-xs font-semibold text-slate-400 mt-2">
                 Memverifikasi Presensi...
               </span>
             </div>
           ) : (
-            <div className="w-full overflow-hidden rounded-xl border border-edge bg-black">
+            <div className="w-full overflow-hidden rounded-2xl border border-[#222F46] bg-black">
               <div id="qr-reader-container" className="w-full min-h-[240px]" />
             </div>
           )}
@@ -136,7 +136,7 @@ export function AttendanceScannerModal({
         <button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-full items-center justify-center rounded-lg bg-surface-container-low border border-edge text-xs font-bold text-ink hover:bg-surface-container transition-colors"
+          className="flex h-11 min-h-[44px] w-full items-center justify-center rounded-xl bg-[#0B0F19] border border-[#222F46] text-xs font-semibold text-slate-300 hover:bg-surface-container hover:text-white transition-colors cursor-pointer"
         >
           Tutup
         </button>

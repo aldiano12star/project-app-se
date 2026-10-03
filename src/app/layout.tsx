@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#070A11",
+  themeColor: "#0B0F19",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -48,7 +48,7 @@ export default function RootLayout({
       className={`${inter.variable} dark h-full antialiased`}
       style={{ colorScheme: "dark" }}
     >
-      <body className="min-h-screen bg-[#070A11] text-slate-100 flex flex-col antialiased">
+      <body className="min-h-screen bg-[#0B0F19] text-slate-100 flex flex-col antialiased">
         <ServiceWorkerRegister />
         {children}
         <InstallPWAPrompt />

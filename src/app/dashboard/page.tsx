@@ -229,41 +229,41 @@ export default async function DashboardPage() {
 
   return (
     <AppShell user={dbUser}>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {/* ========================================================= */}
         {/* MODUL 1: Sapaan Singkat & Tombol Presensi QR Sesi Rapat   */}
         {/* ========================================================= */}
-        <section className="flex flex-col gap-2 pt-1">
+        <section className="flex flex-col gap-4 pt-1">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-ink">
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
                 Halo, {dbUser.name.split(" ")[0]}! 👋
               </h1>
-              <p className="text-xs text-ink-muted mt-0.5">
+              <p className="text-sm text-slate-400 mt-1">
                 Pusat Aktivitas &amp; Operasional Digital Saba ExploIT
               </p>
             </div>
 
             {todayAttendance ? (
-              <span className="inline-flex items-center gap-1.5 bg-success-subtle text-success px-2.5 py-1 rounded-full text-[11px] font-bold border border-success/30 shrink-0">
-                <CheckCircle2 className="h-3.5 w-3.5" />
+              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/40 shrink-0">
+                <CheckCircle2 className="h-4 w-4" />
                 <span>Presensi Hadir</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 bg-surface-container-low text-ink-secondary px-2.5 py-1 rounded-full text-[11px] font-semibold border border-edge shrink-0">
-                <Clock className="h-3.5 w-3.5 text-ink-muted" />
+              <span className="inline-flex items-center gap-1.5 bg-surface-container-low text-slate-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-edge shrink-0">
+                <Clock className="h-4 w-4 text-slate-500" />
                 <span>Siap Rapat</span>
               </span>
             )}
           </div>
 
           {/* Role, Grade & Division Badges */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-            <span className="inline-flex items-center rounded-full bg-surface-container-low px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border border-edge">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-surface-container-low px-3 py-1 text-xs font-semibold text-slate-300 border border-edge">
               {formatGrade(dbUser.classGrade)}
             </span>
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${roleMeta.style}`}
+              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${roleMeta.style}`}
             >
               {roleMeta.label}
             </span>
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
               const divMeta = getDivisionBadge(dbUser.mainDivision);
               return (
                 <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold ${divMeta.style}`}
+                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${divMeta.style}`}
                 >
                   Divisi {divMeta.label}
                 </span>
@@ -280,13 +280,13 @@ export default async function DashboardPage() {
           </div>
 
           {/* Tombol Presensi QR Rapat / Scanner Cepat */}
-          <div className="mt-1">
+          <div>
             <DashboardMeetingWidget userRole={dbUser.role} />
           </div>
 
           {/* Pengingat Tugas Panitia H-1 / Mendesak */}
           {urgentTasks.length > 0 && (
-            <div className="flex flex-col gap-2 mt-2">
+            <div className="flex flex-col gap-3 mt-2">
               {urgentTasks.map((task) => {
                 const dueParts = getJakartaDateParts(task.dueDate!);
                 const dueDayStart = new Date(
@@ -315,29 +315,29 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={task.id}
-                    className={`p-3.5 rounded-2xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
+                    className={`p-4 rounded-2xl border text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${
                       isOverdue
-                        ? "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400"
-                        : "bg-amber-500/10 border-amber-500/30"
+                        ? "bg-red-950/30 border-red-500/40 text-red-300"
+                        : "bg-amber-950/30 border-amber-500/40 text-amber-200"
                     }`}
                   >
-                    <div className="flex items-start sm:items-center gap-2.5 min-w-0">
-                      <span className="h-8 w-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
-                        <AlertTriangle className="h-4 w-4 animate-bounce" />
+                    <div className="flex items-start sm:items-center gap-3 min-w-0">
+                      <span className="h-9 w-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                        <AlertTriangle className="h-5 w-5 animate-bounce" />
                       </span>
                       <div className="min-w-0">
-                        <p className="font-bold text-ink leading-snug">
+                        <p className="font-semibold text-ink leading-relaxed">
                           {reminderPrefix}{" "}
-                          <span className="text-amber-600 dark:text-amber-400 font-extrabold">
+                          <span className="text-amber-400 font-bold">
                             {task.title}
                           </span>{" "}
                           pada seksi{" "}
-                          <span className="font-bold text-ink">
+                          <span className="font-semibold text-ink">
                             {task.section.name}
                           </span>{" "}
                           {reminderSuffix}
                         </p>
-                        <p className="text-[11px] text-ink-muted truncate mt-0.5">
+                        <p className="text-xs text-slate-400 truncate mt-1">
                           Acara: {task.section.event.title}
                         </p>
                       </div>
@@ -345,10 +345,10 @@ export default async function DashboardPage() {
 
                     <Link
                       href={`/acara/${task.section.event.id}`}
-                      className="h-9 px-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center justify-center gap-1 shrink-0 transition-colors shadow-xs self-end sm:self-auto cursor-pointer"
+                      className="h-11 min-h-[44px] px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-colors shadow-sm self-end sm:self-auto cursor-pointer"
                     >
                       <span>Buka Tugas</span>
-                      <ChevronRight className="h-3.5 w-3.5" />
+                      <ChevronRight className="h-4 w-4" />
                     </Link>
                   </div>
                 );
@@ -365,39 +365,39 @@ export default async function DashboardPage() {
         {/* ========================================================= */}
         {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
         {/* ========================================================= */}
-        <section className="card-solid p-4 sm:p-5 shadow-sm flex flex-col gap-3">
+        <section className="card-solid p-6 shadow-sm flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
-                <CalendarDays className="h-4 w-4" />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-950/50 text-sky-400 border border-sky-500/30">
+                <CalendarDays className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-xs font-bold text-ink uppercase tracking-wider">
+                <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
                   Agenda Acara Terdekat
                 </h2>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Workspace &amp; kepanitiaan acara organisasi
                 </p>
               </div>
             </div>
             <Link
               href="/acara"
-              className="text-xs text-primary font-bold hover:underline flex items-center gap-1"
+              className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-[44px] px-2"
             >
               <span>Semua Acara</span>
-              <ChevronRight className="h-3.5 w-3.5" />
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
 
           {recentEvents.length === 0 ? (
-            <div className="p-4 rounded-xl bg-surface-container-low/40 border border-edge text-center space-y-1.5">
-              <p className="text-xs font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
-              <p className="text-[11px] text-ink-muted">
+            <div className="p-6 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
+              <p className="text-sm font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
+              <p className="text-xs text-slate-400">
                 Agenda kegiatan ekskul akan dijadwalkan oleh pengurus inti.
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
               {recentEvents.map((evt) => {
                 const isSingleDay =
                   getLocalDateString(evt.startDate) ===
@@ -426,34 +426,34 @@ export default async function DashboardPage() {
                   <Link
                     key={evt.id}
                     href={`/acara/${evt.id}`}
-                    className="p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-3 group active:scale-[0.99]"
+                    className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
                   >
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                        {/* Status Badge (Cyan: Berlangsung, Slate: Mendatang, Emerald: Selesai) */}
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        {/* Status Badge */}
                         {timeStatus === "ACTIVE" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs">
-                            <Radio className="h-2.5 w-2.5 text-cyan-400 animate-pulse" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 shadow-xs">
+                            <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
                             <span>Sedang Berlangsung</span>
                           </span>
                         ) : timeStatus === "UPCOMING" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
-                            <Clock className="h-2.5 w-2.5 text-slate-400" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                            <Clock className="h-3 w-3 text-slate-400" />
                             <span>Mendatang</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400" />
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
                             <span>✓ Selesai</span>
                           </span>
                         )}
 
-                        {/* Tipe Acara: Indigo untuk Proker Multi-Hari, Amber untuk Agenda Singkat */}
+                        {/* Tipe Acara */}
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                             isSingleDay
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                              : "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                              ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
+                              : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
                           }`}
                         >
                           {isSingleDay ? (
@@ -468,23 +468,23 @@ export default async function DashboardPage() {
                           </span>
                         </span>
 
-                        <span className="text-[10px] font-mono text-ink-muted">
+                        <span className="text-xs font-mono text-slate-400">
                           {formattedSchedule}
                         </span>
                       </div>
 
-                      <h3 className="text-xs font-bold text-ink truncate group-hover:text-primary transition-colors">
+                      <h3 className="text-sm sm:text-base font-semibold text-ink truncate group-hover:text-primary transition-colors">
                         {evt.title}
                       </h3>
 
                       {totalTasks > 0 && (
-                        <p className="text-[10px] text-ink-secondary">
+                        <p className="text-xs text-slate-400">
                           Progress: {completedTasks}/{totalTasks} Tugas Selesai ({evt.sections.length} Seksi)
                         </p>
                       )}
                     </div>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-card border border-edge text-ink-secondary group-hover:text-primary shrink-0">
-                      <ChevronRight className="h-4 w-4" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge text-slate-400 group-hover:text-primary shrink-0">
+                      <ChevronRight className="h-5 w-5" />
                     </div>
                   </Link>
                 );

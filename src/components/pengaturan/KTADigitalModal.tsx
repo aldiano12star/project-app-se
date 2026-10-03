@@ -88,20 +88,20 @@ export function KTADigitalModal({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#090D16] border border-slate-800 shadow-2xl overflow-hidden flex flex-col text-slate-100">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-sm rounded-3xl bg-[#151D2E] border border-[#222F46] shadow-2xl overflow-hidden flex flex-col text-slate-100">
         {/* Header Modal Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800/80 bg-slate-900/60">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#222F46] bg-[#0B0F19]/80">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
+            <span className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono">
               KTA Digital Resmi • Cyber ID
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="h-9 w-9 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="h-10 w-10 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Tutup KTA"
           >
             <X className="h-4 w-4" />
@@ -109,24 +109,24 @@ export function KTADigitalModal({
         </div>
 
         {/* Modal Body / The Digital Card */}
-        <div className="p-4 sm:p-5 flex flex-col items-center gap-4">
-          {/* Cyber Academic Card Container (16:9 / ID Pass Sturdy Layout) */}
-          <div className="w-full bg-gradient-to-br from-slate-900 via-[#0b1222] to-slate-950 border border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-2xl relative overflow-hidden flex flex-col justify-between gap-4">
+        <div className="p-5 flex flex-col items-center gap-4">
+          {/* Card Container */}
+          <div className="w-full bg-gradient-to-br from-[#151D2E] via-[#101624] to-[#0B0F19] border border-[#222F46] rounded-2xl p-5 shadow-2xl relative overflow-hidden flex flex-col justify-between gap-4">
             {/* Holographic Top Accent Strip */}
-            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#E11D2A] via-amber-400 via-rose-500 to-emerald-400" />
+            <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary via-amber-400 to-emerald-400" />
 
             {/* Background Circuit & Glow Matrix Accent */}
-            <div className="absolute -top-10 -right-10 w-36 h-36 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-10 -right-10 w-36 h-36 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* Card Brand Header */}
-            <div className="flex items-center justify-between border-b border-slate-800/90 pb-3 relative z-10">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 relative z-10">
               <div className="flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xs shadow-md border border-red-400/30">
+                <div className="h-8 w-8 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-xs shadow-md border border-rose-400/30">
                   SE
                 </div>
                 <div>
-                  <span className="text-xs font-black tracking-widest text-white block leading-none font-mono">
+                  <span className="text-xs font-bold tracking-widest text-white block leading-none font-mono">
                     SABA EXPLOIT
                   </span>
                   <span className="text-[9px] font-mono text-slate-400 leading-tight">
@@ -142,9 +142,9 @@ export function KTADigitalModal({
 
             {/* Middle Section: Member Photo & Details */}
             <div className="flex items-center gap-3.5 relative z-10">
-              {/* Member Photo with Saba Red + Amber Border */}
+              {/* Member Photo */}
               <div className="relative shrink-0">
-                <div className="w-16 h-16 rounded-xl p-[2px] bg-gradient-to-tr from-[#E11D2A] to-amber-400 shadow-md">
+                <div className="w-16 h-16 rounded-xl p-[2px] bg-gradient-to-tr from-primary to-amber-400 shadow-md">
                   <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-900 flex items-center justify-center">
                     {user.image ? (
                       <img
@@ -164,28 +164,28 @@ export function KTADigitalModal({
 
               {/* Member Identity Fields */}
               <div className="min-w-0 flex-1 space-y-0.5">
-                <h3 className="text-sm sm:text-base font-bold text-white truncate leading-tight">
+                <h3 className="text-base font-semibold text-white truncate leading-tight">
                   {user.name}
                 </h3>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-mono text-primary font-bold">
+                  <span className="text-xs font-mono text-primary font-bold">
                     {memberIdCode}
                   </span>
                   {user.nisn && (
-                    <span className="text-[10px] font-mono text-slate-400">
+                    <span className="text-xs font-mono text-slate-400">
                       • {user.nisn}
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-slate-300 font-medium">
+                <p className="text-xs text-slate-300 font-normal">
                   {formatGrade(user.classGrade)}
                 </p>
-                <div className="flex items-center gap-1.5 pt-0.5">
+                <div className="flex items-center gap-1.5 pt-1">
                   {(() => {
                     const divMeta = getDivisionMeta(user.mainDivision);
                     return (
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded border ${divMeta.style}`}
+                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${divMeta.style}`}
                       >
                         Divisi {divMeta.label}
                       </span>
@@ -196,16 +196,16 @@ export function KTADigitalModal({
             </div>
 
             {/* Bottom Section: QR Code & Auth Verification Badge */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-800/90 bg-slate-950/70 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 p-3 sm:p-4 rounded-b-2xl relative z-10">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-800 bg-slate-950/70 -mx-5 -mb-5 p-4 rounded-b-2xl relative z-10">
               <div className="flex flex-col">
-                <span className="text-[9px] font-mono text-slate-400">
+                <span className="text-[10px] font-mono text-slate-400">
                   OTORITAS &amp; ROLE
                 </span>
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wide font-mono">
                   {user.role}
                 </span>
-                <span className="text-[9px] font-mono text-slate-500 mt-1">
-                  ORGANIZATIONAL DIGITAL PASS
+                <span className="text-[9px] font-mono text-slate-500 mt-0.5">
+                  ORGANIZATIONAL PASS
                 </span>
               </div>
 
@@ -214,19 +214,19 @@ export function KTADigitalModal({
                 <div className="p-1.5 bg-white rounded-lg shadow-md">
                   <QRCodeSVG
                     value={verificationPayload}
-                    size={62}
+                    size={64}
                     level="M"
                     marginSize={0}
                   />
                 </div>
                 <span className="text-[8px] font-mono font-bold text-slate-400 tracking-tight text-center">
-                  AUTHENTIC SABA MEMBER
+                  AUTHENTIC MEMBER
                 </span>
               </div>
             </div>
           </div>
 
-          <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+          <p className="text-xs text-slate-400 text-center leading-relaxed">
             KTA digital ini diterbitkan secara otomatis dan dapat diverifikasi melalui pemindaian resmi sistem Saba ExploIT.
           </p>
 
@@ -234,7 +234,7 @@ export function KTADigitalModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full h-11 min-h-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center shadow-xs"
+            className="w-full h-11 min-h-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-white text-xs font-semibold transition-all cursor-pointer flex items-center justify-center shadow-sm"
           >
             Tutup KTA
           </button>
