@@ -6,30 +6,27 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "SabaExploIT",
     description: "Portal Ekosistem & Komunitas IT SMAN 1 Bantul",
     start_url: "/",
+    id: "/?source=pwa",
     display: "standalone",
     orientation: "portrait",
     background_color: "#070A11",
     theme_color: "#070A11",
     scope: "/",
+    lang: "id",
+    dir: "ltr",
     categories: ["education", "productivity", "utilities"],
     icons: [
       {
         src: "/logo.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "maskable",
-      },
-      {
-        src: "/logo.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
+        purpose: "any",
       },
       {
         src: "/logo.png",
         sizes: "192x192",
         type: "image/png",
-        purpose: "any",
+        purpose: "maskable",
       },
       {
         src: "/logo.png",
@@ -37,6 +34,22 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/png",
         purpose: "any",
       },
+      {
+        src: "/logo.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+    screenshots: [
+      {
+        src: "/screenshot-mobile.png",
+        sizes: "1080x1920",
+        type: "image/png",
+        form_factor: "narrow",
+        label: "Beranda Saba ExploIT Mobile",
+      },
     ],
   };
 }
+
