@@ -31,8 +31,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || 'Ada pembaruan penting di Saba ExploIT',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    icon: '/logo.png',
+    badge: '/logo.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/',

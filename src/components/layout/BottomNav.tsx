@@ -50,7 +50,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navigasi Utama Bawah"
-      className="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-50 bg-[#0D121F] border border-slate-800 rounded-2xl px-3 py-2 shadow-lg shadow-black/50"
+      className="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 bg-[#0D121F] border border-slate-800 rounded-2xl px-3 py-2 shadow-lg shadow-black/50"
     >
       <div className="flex items-center justify-between min-h-12 w-full">
         {NAV_ITEMS.map((item) => {

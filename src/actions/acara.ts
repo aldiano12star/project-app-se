@@ -911,6 +911,56 @@ export async function verifyEventTask(taskId: string): Promise<ActionResponse> {
 export const verifyTaskCompletion = verifyEventTask;
 
 /**
+ * Menyimpan atau memperbarui teks notulensi acara / rapat
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function updateNotulensi(
+  eventId: string,
+  notulensiText: string,
+  meetingId?: string
+): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    const trimmedNotes = notulensiText.trim() || null;
+
+    // Update notulensi pada Event
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        notulensiText: trimmedNotes,
+      },
+    });
+
+    // Update notulensi pada Meeting jika meetingId ada
+    if (meetingId) {
+      await prisma.meeting.update({
+        where: { id: meetingId },
+        data: {
+          notes: trimmedNotes,
+        },
+      });
+    }
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/${eventId}`);
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Notulensi berhasil disimpan dan diperbarui!",
+    };
+  } catch (error) {
+    console.error("Gagal memperbarui notulensi:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal memperbarui notulensi.",
+    };
+  }
+}
+
+/**
  * Menandai notulensi rapat/kegiatan telah dibaca dan memberikan reward (+5 XP)
  * Wewenang: Anggota aktif
  */

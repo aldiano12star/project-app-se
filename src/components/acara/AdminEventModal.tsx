@@ -162,8 +162,8 @@ export function AdminEventModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-2xl bg-card border border-edge shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/40">
           <div className="flex items-center gap-2">
@@ -369,19 +369,19 @@ export function AdminEventModal({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-2 flex items-center justify-end gap-2">
+                <div className="pt-3 mt-2 border-t border-edge bg-card flex items-center justify-end gap-2.5">
                   <button
                     type="button"
                     onClick={handleResetAndClose}
                     disabled={isLoading}
-                    className="h-11 min-h-11 px-4 rounded-lg border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
+                    className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="h-11 min-h-11 px-5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="h-11 min-h-[44px] px-5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white text-xs font-bold shadow-lg shadow-blue-950/50 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <MessageSquare className="h-4 w-4" />
                     <span>{isLoading ? "Menyimpan..." : "Simpan Jadwal Rapat"}</span>
@@ -506,19 +506,19 @@ export function AdminEventModal({
                 </label>
 
                 {/* Action Buttons */}
-                <div className="pt-2 flex items-center justify-end gap-2">
+                <div className="pt-3 mt-2 border-t border-edge bg-card flex items-center justify-end gap-2.5">
                   <button
                     type="button"
                     onClick={handleResetAndClose}
                     disabled={isLoading}
-                    className="h-11 min-h-11 px-4 rounded-lg border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
+                    className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="h-11 min-h-11 px-5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="h-11 min-h-[44px] px-5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-xs font-bold shadow-lg shadow-red-950/50 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>{isLoading ? "Menyimpan..." : "Buat Program Kerja"}</span>

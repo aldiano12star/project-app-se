@@ -65,7 +65,7 @@ export function MultiEventSelectorModal({
   const formattedDate = `${dayName}, ${dayNum} ${monthName} ${yearNum}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/50">

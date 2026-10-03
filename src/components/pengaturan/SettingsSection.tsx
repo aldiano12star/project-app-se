@@ -509,7 +509,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                   Saba ExploIT App
                 </span>
                 <p className="text-[10px] text-ink-muted font-mono">
-                  v1.0.0-beta • Build 2026
+                  v1.0.1 • Build 2026
                 </p>
               </div>
             </div>

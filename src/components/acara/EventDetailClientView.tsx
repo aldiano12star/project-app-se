@@ -123,30 +123,15 @@ export function EventDetailClientView({
         onOpenDriveModal={() => setIsDriveAlertOpen(true)}
       />
 
-      {/* SECTION 2: Jika Rapat Singkat Tanpa Seksi, Utamakan Notulensi */}
-      {isRapat && !hasSections && (
-        <div className="p-3.5 rounded-2xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/60 text-xs text-ink-secondary flex items-start gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 mt-0.5">
-            <MessageSquare className="h-4 w-4" />
-          </div>
-          <div className="space-y-1 min-w-0">
-            <h4 className="text-xs font-bold text-ink">
-              Agenda Rapat &amp; Pembahasan Singkat
-            </h4>
-            <p className="text-[11px] text-ink-muted leading-relaxed">
-              Agenda ini berfokus pada notulensi kesepakatan rapat dan presensi anggota. Pengurus dapat menambahkan seksi kepanitiaan jika dibutuhkan pembagian tugas lanjutan.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* SECTION 3: Notulensi Acara & Rapat */}
+      {/* SECTION 2: Notulensi Acara & Rapat */}
       <NotulensiCard
+        eventId={event.id}
         meetingId={latestMeeting?.id}
         title={`Notulensi: ${event.title}`}
         notes={event.notulensiText || latestMeeting?.notes}
         date={event.startDate}
         isRead={latestMeeting?.isRead}
+        currentUserRole={currentUser.role}
       />
 
       {/* SECTION 4: Modul Rancangan Anggaran Biaya (RAB Acara Siap Cetak Proposal) */}

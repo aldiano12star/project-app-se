@@ -44,8 +44,8 @@ export function NotificationSettingsCard() {
         const registration = await navigator.serviceWorker.ready;
         await registration.showNotification("Saba ExploIT Notifikasi", {
           body: "Selamat! Notifikasi rapat & iuran kas Saba ExploIT telah aktif di perangkat Anda. 🚀",
-          icon: "/icons/icon-192.png",
-          badge: "/icons/icon-192.png",
+          icon: "/logo.png",
+          badge: "/logo.png",
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ...({ vibrate: [100, 50, 100] } as any),
         });
@@ -67,15 +67,15 @@ export function NotificationSettingsCard() {
           const registration = await navigator.serviceWorker.ready;
           await registration.showNotification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/icons/icon-192.png",
-            badge: "/icons/icon-192.png",
+            icon: "/logo.png",
+            badge: "/logo.png",
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...({ vibrate: [100, 50, 100] } as any),
           });
         } else {
           new Notification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/icons/icon-192.png",
+            icon: "/logo.png",
           });
         }
       } catch (err) {
