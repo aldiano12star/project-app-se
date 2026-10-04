@@ -21,6 +21,18 @@ enum ClassGrade {
   KELAS_12
 }
 
+enum FeedbackType {
+  PUBLIC_ISSUE
+  PRIVATE_ASPIRATION
+}
+
+enum IssueStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 enum MemberStatus {
   ACTIVE
   DEMISIONER
@@ -114,6 +126,10 @@ model User {
   projectLikes            ProjectLike[]
   createdWikis            WikiArticle[]       @relation("CreatedWikis")
   updatedWikis            WikiArticle[]       @relation("UpdatedWikis")
+
+  // Kotak Suara Hibrida (Feedback & Issue Tracker)
+  feedbackIssues          FeedbackIssue[]     @relation("UserFeedbackIssues")
+  upvotedIssues           FeedbackIssue[]     @relation("IssueUpvotes")
 
   @@index([email])
   @@index([role])
@@ -487,3 +503,34 @@ model WikiArticle {
   @@index([slug])
   @@index([authorId])
 }
+
+// ==========================================
+// MODUL KOTAK SUARA HIBRIDA (ISSUE & FEEDBACK)
+// ==========================================
+
+model FeedbackIssue {
+  id            String        @id @default(cuid())
+  title         String
+  description   String        @db.Text
+  type          FeedbackType  @default(PUBLIC_ISSUE)
+  status        IssueStatus   @default(PENDING)
+  isAnonymous   Boolean       @default(false)
+  category      String?       // Misal: "Bug Aplikasi", "Usulan Fitur", "Kritik Acara"
+
+  userId        String
+  user          User          @relation("UserFeedbackIssues", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Upvote relasi banyak-ke-banyak
+  upvoters      User[]        @relation("IssueUpvotes")
+
+  // Kolom respon catatan resmi dari Operator
+  operatorNotes String?       @db.Text
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([userId])
+}
+

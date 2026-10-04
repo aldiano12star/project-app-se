@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole, assertActiveMember } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
-import { Role } from "@prisma/client";
+import { Role, FeedbackType, IssueStatus } from "@prisma/client";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -540,6 +540,287 @@ export async function deleteAspiration(
       success: false,
       message:
         error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+// ==========================================
+// KOTAK SUARA HIBRIDA (FEEDBACK & ISSUE TRACKER)
+// ==========================================
+
+export interface SubmitFeedbackIssueInput {
+  title: string;
+  description: string;
+  type: FeedbackType;
+  category?: string;
+  isAnonymous?: boolean;
+}
+
+/**
+ * Mengirim isu sistem publik atau aspirasi rahasia ke Operator (+10 XP)
+ * Wewenang: Semua akun login
+ */
+export async function submitFeedbackIssue(
+  input: SubmitFeedbackIssueInput
+): Promise<ActionResponse<{ id: string }>> {
+  try {
+    const user = await assertAuthenticated();
+
+    if (!input.title || input.title.trim() === "") {
+      return {
+        success: false,
+        message: "Judul laporan atau aspirasi wajib diisi.",
+      };
+    }
+
+    if (!input.description || input.description.trim() === "") {
+      return {
+        success: false,
+        message: "Deskripsi lengkap tidak boleh kosong.",
+      };
+    }
+
+    const type =
+      input.type === FeedbackType.PRIVATE_ASPIRATION
+        ? FeedbackType.PRIVATE_ASPIRATION
+        : FeedbackType.PUBLIC_ISSUE;
+
+    const newIssue = await prisma.feedbackIssue.create({
+      data: {
+        title: input.title.trim(),
+        description: input.description.trim(),
+        type,
+        category:
+          input.category?.trim() ||
+          (type === FeedbackType.PUBLIC_ISSUE
+            ? "Bug Aplikasi"
+            : "Aspirasi Organisasi"),
+        isAnonymous: Boolean(input.isAnonymous),
+        status: IssueStatus.PENDING,
+        userId: user.id,
+      },
+    });
+
+    // Tambahkan reward +10 XP
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        monthlyPoints: { increment: 10 },
+        totalPoints: { increment: 10 },
+      },
+    });
+
+    revalidatePath("/aspirasi");
+
+    return {
+      success: true,
+      message:
+        type === FeedbackType.PRIVATE_ASPIRATION
+          ? "Aspirasi rahasia berhasil dikirim ke Operator! (+10 XP)"
+          : "Laporan isu publik berhasil dipublikasikan ke papan sistem! (+10 XP)",
+      data: { id: newIssue.id },
+    };
+  } catch (error) {
+    console.error("Gagal mengirim feedback issue:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Memberikan / mencabut upvote dukungan pada Isu Publik (+1 Saya Mengalami Ini)
+ * Wewenang: Semua anggota login
+ */
+export async function toggleUpvoteIssue(
+  issueId: string
+): Promise<ActionResponse<{ upvoted: boolean; count: number }>> {
+  try {
+    const user = await assertAuthenticated();
+
+    const issue = await prisma.feedbackIssue.findUnique({
+      where: { id: issueId },
+      include: {
+        upvoters: {
+          where: { id: user.id },
+          select: { id: true },
+        },
+        _count: {
+          select: { upvoters: true },
+        },
+      },
+    });
+
+    if (!issue) {
+      return {
+        success: false,
+        message: "Laporan isu tidak ditemukan.",
+      };
+    }
+
+    const hasUpvoted = issue.upvoters.length > 0;
+
+    let updatedIssue;
+    if (hasUpvoted) {
+      updatedIssue = await prisma.feedbackIssue.update({
+        where: { id: issueId },
+        data: {
+          upvoters: {
+            disconnect: { id: user.id },
+          },
+        },
+        include: {
+          _count: {
+            select: { upvoters: true },
+          },
+        },
+      });
+    } else {
+      updatedIssue = await prisma.feedbackIssue.update({
+        where: { id: issueId },
+        data: {
+          upvoters: {
+            connect: { id: user.id },
+          },
+        },
+        include: {
+          _count: {
+            select: { upvoters: true },
+          },
+        },
+      });
+    }
+
+    revalidatePath("/aspirasi");
+
+    return {
+      success: true,
+      message: hasUpvoted
+        ? "Upvote dibatalkan."
+        : "Terima kasih! Dukungan Anda tercatat.",
+      data: {
+        upvoted: !hasUpvoted,
+        count: updatedIssue._count.upvoters,
+      },
+    };
+  } catch (error) {
+    console.error("Gagal toggle upvote issue:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Memperbarui status isu publik / catatan resmi balasan Operator
+ * Wewenang: Khusus OPERATOR dan ADMIN
+ */
+export async function updateIssueStatusAndNotes(input: {
+  issueId: string;
+  status?: IssueStatus;
+  operatorNotes?: string;
+}): Promise<ActionResponse> {
+  try {
+    const user = await assertRole([Role.OPERATOR, Role.ADMIN]);
+
+    const issue = await prisma.feedbackIssue.findUnique({
+      where: { id: input.issueId },
+    });
+
+    if (!issue) {
+      return {
+        success: false,
+        message: "Laporan isu tidak ditemukan.",
+      };
+    }
+
+    await prisma.feedbackIssue.update({
+      where: { id: input.issueId },
+      data: {
+        status: input.status !== undefined ? input.status : undefined,
+        operatorNotes:
+          input.operatorNotes !== undefined
+            ? input.operatorNotes.trim() || null
+            : undefined,
+      },
+    });
+
+    revalidatePath("/aspirasi");
+
+    return {
+      success: true,
+      message: "Status & respon operator berhasil diperbarui.",
+    };
+  } catch (error) {
+    console.error("Gagal memperbarui status isu:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Menghapus Isu / Aspirasi Feedback
+ * Wewenang: Pembuat Laporan atau OPERATOR
+ */
+export async function deleteFeedbackIssue(
+  issueId: string
+): Promise<ActionResponse> {
+  try {
+    const user = await assertAuthenticated();
+
+    const issue = await prisma.feedbackIssue.findUnique({
+      where: { id: issueId },
+    });
+
+    if (!issue) {
+      return {
+        success: false,
+        message: "Laporan isu tidak ditemukan.",
+      };
+    }
+
+    const isAuthor = issue.userId === user.id;
+    const isOperator = user.role === Role.OPERATOR || user.role === Role.ADMIN;
+
+    if (!isAuthor && !isOperator) {
+      return {
+        success: false,
+        message:
+          "Hanya pembuat laporan atau Operator yang dapat menghapus laporan ini.",
+      };
+    }
+
+    await prisma.feedbackIssue.delete({
+      where: { id: issueId },
+    });
+
+    revalidatePath("/aspirasi");
+
+    return {
+      success: true,
+      message: "Laporan berhasil dihapus.",
+    };
+  } catch (error) {
+    console.error("Gagal menghapus feedback issue:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan internal server.",
     };
   }
 }

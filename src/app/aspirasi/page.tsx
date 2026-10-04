@@ -3,14 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
 import { AspirasiClientView } from "@/components/aspirasi/AspirasiClientView";
+import { FeedbackIssueData } from "@/components/aspirasi/FeedbackIssueCard";
 import { PollCardData } from "@/components/aspirasi/PollCard";
-import { AspirationCardData } from "@/components/aspirasi/AspirationCard";
-import {
-  AspirationCategoryType,
-  AspirationStatusType,
-  AspirationScopeType,
-} from "@/actions/aspirasi";
-import { Role } from "@prisma/client";
+import { Role, FeedbackType } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -46,22 +41,53 @@ export default async function AspirasiPage() {
     redirect("/onboarding");
   }
 
-  const isOperator = dbUser.role === Role.OPERATOR;
+  const isOperator =
+    dbUser.role === Role.OPERATOR || dbUser.role === Role.ADMIN;
 
-  // Filter keamanan:
-  // Khusus 'OPERATOR' yang dapat membaca seluruh aspirasi privat/kode rahasia.
-  // Admin, Bendahara, Member, Guest hanya dapat melihat aspirasi publik dan laporan privat miliknya sendiri.
-  const aspirationWhereFilter = isOperator
-    ? undefined
-    : {
-        OR: [
-          { targetScope: "PUBLIC" },
-          { targetScope: "PRIVATE_ADMIN", senderId: dbUser.id },
-        ],
-      };
-
-  // Fetching data polls dan aspirations secara paralel
-  const [dbPolls, dbAspirations] = await Promise.all([
+  // Fetching data issues (public & private) dan polls secara paralel
+  const [dbPublicIssues, dbPrivateIssues, dbPolls] = await Promise.all([
+    prisma.feedbackIssue.findMany({
+      where: { type: FeedbackType.PUBLIC_ISSUE },
+      orderBy: [{ createdAt: "desc" }],
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            classGrade: true,
+          },
+        },
+        upvoters: {
+          where: { id: dbUser.id },
+          select: { id: true },
+        },
+        _count: {
+          select: { upvoters: true },
+        },
+      },
+    }),
+    prisma.feedbackIssue.findMany({
+      where: isOperator
+        ? { type: FeedbackType.PRIVATE_ASPIRATION }
+        : { type: FeedbackType.PRIVATE_ASPIRATION, userId: dbUser.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            classGrade: true,
+          },
+        },
+        upvoters: {
+          where: { id: dbUser.id },
+          select: { id: true },
+        },
+        _count: {
+          select: { upvoters: true },
+        },
+      },
+    }),
     prisma.poll.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -79,22 +105,49 @@ export default async function AspirasiPage() {
         },
       },
     }),
-    prisma.aspiration.findMany({
-      where: aspirationWhereFilter,
-      orderBy: { createdAt: "desc" },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            name: true,
-            classGrade: true,
-          },
-        },
-      },
-    }),
   ]);
 
-  // Format data polls dengan serialisasi ISO string yang aman dari hydration mismatch
+  // Format data public issues dengan serialisasi ISO string
+  const formattedPublicIssues: FeedbackIssueData[] = dbPublicIssues.map(
+    (issue) => ({
+      id: issue.id,
+      title: issue.title,
+      description: issue.description,
+      type: issue.type,
+      status: issue.status,
+      isAnonymous: issue.isAnonymous,
+      category: issue.category,
+      userId: issue.userId,
+      user: issue.user,
+      upvotesCount: issue._count.upvoters,
+      hasUpvoted: issue.upvoters.length > 0,
+      operatorNotes: issue.operatorNotes,
+      createdAt: issue.createdAt.toISOString(),
+      updatedAt: issue.updatedAt.toISOString(),
+    })
+  );
+
+  // Format data private issues dengan serialisasi ISO string
+  const formattedPrivateIssues: FeedbackIssueData[] = dbPrivateIssues.map(
+    (issue) => ({
+      id: issue.id,
+      title: issue.title,
+      description: issue.description,
+      type: issue.type,
+      status: issue.status,
+      isAnonymous: issue.isAnonymous,
+      category: issue.category,
+      userId: issue.userId,
+      user: issue.user,
+      upvotesCount: issue._count.upvoters,
+      hasUpvoted: issue.upvoters.length > 0,
+      operatorNotes: issue.operatorNotes,
+      createdAt: issue.createdAt.toISOString(),
+      updatedAt: issue.updatedAt.toISOString(),
+    })
+  );
+
+  // Format data polls
   const formattedPolls: PollCardData[] = dbPolls.map((poll) => {
     const totalVotes = poll.options.reduce(
       (sum, opt) => sum + opt._count.votes,
@@ -130,19 +183,6 @@ export default async function AspirasiPage() {
     };
   });
 
-  const formattedAspirations: AspirationCardData[] = dbAspirations.map((item) => ({
-    id: item.id,
-    title: item.title,
-    content: item.content,
-    category: (item.category as AspirationCategoryType) || "DISKUSI_UMUM",
-    status: (item.status as AspirationStatusType) || "OPEN",
-    targetScope: (item.targetScope as AspirationScopeType) || "PUBLIC",
-    adminReply: item.adminReply,
-    isAnonymous: item.isAnonymous,
-    sender: item.sender,
-    createdAt: item.createdAt.toISOString(),
-  }));
-
   return (
     <AppShell user={dbUser}>
       <AspirasiClientView
@@ -151,8 +191,9 @@ export default async function AspirasiPage() {
           name: dbUser.name,
           role: dbUser.role,
         }}
+        publicIssues={formattedPublicIssues}
+        privateIssues={formattedPrivateIssues}
         polls={formattedPolls}
-        aspirations={formattedAspirations}
       />
     </AppShell>
   );
