@@ -14,12 +14,12 @@
 :root {
   color-scheme: light;
 
-  /* Neutral — Soft Slate Baseline (#F8FAFC) */
-  --saba-surface: #f8fafc;
+  /* Neutral — Soft Alabaster Slate Baseline (#F4F6F9) */
+  --saba-surface: #f4f6f9;
   --saba-card: #ffffff;
-  --saba-edge: #e2e8f0;
-  --saba-surface-container-low: #f1f5f9;
-  --saba-surface-container: #e2e8f0;
+  --saba-edge: #cbd5e1;
+  --saba-surface-container-low: #e9eef4;
+  --saba-surface-container: #dfe5ed;
   --saba-surface-container-high: #cbd5e1;
   --saba-ink: #0f172a;
   --saba-ink-secondary: #475569;

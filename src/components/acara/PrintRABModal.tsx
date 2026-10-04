@@ -62,12 +62,12 @@ export function PrintRABModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
       {/* Container Dialog */}
-      <div className="relative w-full max-w-3xl rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[95vh] text-slate-100 print:max-h-none print:overflow-visible print:border-none print:shadow-none print:bg-white print:text-black">
+      <div className="relative w-full max-w-3xl rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[95vh] text-ink print:max-h-none print:overflow-visible print:border-none print:shadow-none print:bg-white print:text-black">
         {/* Modal Toolbar (Disembunyikan saat dicetak) */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-slate-800 bg-slate-950 print:hidden shrink-0">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-edge bg-surface-container-low print:hidden shrink-0">
           <div className="flex items-center gap-2">
             <FileSpreadsheet className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-200 font-mono">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink font-mono">
               Pratinjau Lembar Cetak RAB Proposal Kesiswaan
             </span>
           </div>
@@ -76,7 +76,7 @@ export function PrintRABModal({
             <button
               type="button"
               onClick={handlePrint}
-              className="h-9 min-h-[36px] px-3.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+              className="h-9 min-h-[36px] px-3.5 bg-primary hover:bg-primary-hover active:scale-95 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
             >
               <Printer className="h-4 w-4" />
               <span>Cetak / Simpan PDF</span>
@@ -84,7 +84,7 @@ export function PrintRABModal({
             <button
               type="button"
               onClick={onClose}
-              className="h-9 w-9 min-h-[36px] min-w-[36px] rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              className="h-9 w-9 min-h-[36px] min-w-[36px] rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
               aria-label="Tutup pratinjau"
             >
               <X className="h-4 w-4" />
@@ -93,7 +93,7 @@ export function PrintRABModal({
         </div>
 
         {/* Scrollable Printable A4 Sheet Body */}
-        <div className="p-4 sm:p-8 overflow-y-auto flex-1 bg-slate-950/60 print:p-0 print:bg-white print:overflow-visible">
+        <div className="p-4 sm:p-8 overflow-y-auto flex-1 bg-surface-container-low/50 print:p-0 print:bg-white print:overflow-visible">
           {/* Formal Sheet Paper Container */}
           <div
             id="printable-rab-document"

@@ -220,7 +220,7 @@ export function SnakingPathCalendar({
               setIsPickerOpen(true);
             }}
             title="Buka Pemilih Bulan & Tahun Cepat"
-            className="text-xs font-bold text-ink px-3 py-1.5 rounded-xl border border-slate-700/60 bg-surface-container-low hover:bg-slate-800/80 transition-colors select-none min-w-32.5 text-center cursor-pointer flex items-center justify-center gap-1.5 shadow-xs active:scale-95"
+            className="text-xs font-bold text-ink px-3 py-1.5 rounded-xl border border-edge bg-surface-container-low hover:bg-surface-container transition-colors select-none min-w-32.5 text-center cursor-pointer flex items-center justify-center gap-1.5 shadow-xs active:scale-95"
           >
             <Calendar className="h-3.5 w-3.5 text-primary" />
             <span>
@@ -305,10 +305,10 @@ export function SnakingPathCalendar({
           </div>
         </div>
       ) : (
-        /* KONDISI 2: Timeline Vertikal Terpadu (1 Kartu = 1 Node Terikat, Garis Solid Gelap) */
+        /* KONDISI 2: Timeline Vertikal Terpadu (1 Kartu = 1 Node Terikat, Garis Solid) */
         <div className="relative pl-6 sm:pl-8 space-y-4 pt-1 select-none">
-          {/* Garis Alur Vertikal Sirkuit Solid Gelap Murni (Tanpa Gradien) */}
-          <div className="absolute left-2.75 sm:left-3.75 top-4 bottom-4 w-0.5 bg-slate-800 pointer-events-none" />
+          {/* Garis Alur Vertikal Sirkuit Solid */}
+          <div className="absolute left-2.75 sm:left-3.75 top-4 bottom-4 w-0.5 bg-edge pointer-events-none" />
 
           {timelineEntries.map((entry) => {
             if (entry.type === "TODAY_CHECKPOINT") {
@@ -369,12 +369,12 @@ export function SnakingPathCalendar({
                 ? Math.round((completedTasks / totalTasks) * 100)
                 : 0;
 
-            // Diferensiasi Border & Background Kartu Kegiatan (Single-Tone Indigo Tanpa Gradasi Merah)
+            // Diferensiasi Border & Background Kartu Kegiatan
             const cardStyleClass = isFinished
-              ? "border border-emerald-500/25 bg-slate-900/60"
+              ? "border border-emerald-500/25 bg-card"
               : isMultiDay
-              ? "border border-indigo-500/40 bg-slate-900/80 shadow-lg shadow-indigo-950/20"
-              : "border border-cyan-500/40 bg-slate-900/80 shadow-lg shadow-cyan-950/20";
+              ? "border border-indigo-500/40 bg-card shadow-sm"
+              : "border border-cyan-500/40 bg-card shadow-sm";
 
             const todayAccentClass = isTodayEvent ? "ring-2 ring-primary/30" : "";
 
@@ -432,8 +432,8 @@ export function SnakingPathCalendar({
                             <span>Sedang Berlangsung</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">
-                            <Clock className="h-2.5 w-2.5 text-slate-400" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-secondary border border-edge">
+                            <Clock className="h-2.5 w-2.5 text-ink-muted" />
                             <span>Mendatang</span>
                           </span>
                         )}
@@ -542,38 +542,38 @@ export function SnakingPathCalendar({
       {/* MODAL DIALOG PEMILIH BULAN & TAHUN CEPAT (MONTH-YEAR PICKER) */}
       {isPickerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-5 space-y-4">
+          <div className="relative w-full max-w-sm rounded-3xl bg-card border border-edge shadow-2xl p-5 space-y-4">
             {/* Header Modal */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-edge pb-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
                   <Calendar className="h-4 w-4" />
                 </div>
-                <h3 className="text-sm font-bold text-white">
+                <h3 className="text-sm font-bold text-ink">
                   Pilih Bulan &amp; Tahun
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsPickerOpen(false)}
-                className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Selektor Tahun dengan Panah Kiri/Kanan */}
-            <div className="flex items-center justify-between bg-slate-950/60 rounded-2xl p-1.5 border border-slate-800">
+            <div className="flex items-center justify-between bg-surface-container-low rounded-2xl p-1.5 border border-edge">
               <button
                 type="button"
                 aria-label="Tahun Sebelumnya"
                 onClick={() => setPickerYear((prev) => prev - 1)}
-                className="h-8 w-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="h-8 w-8 rounded-xl flex items-center justify-center text-ink-secondary hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
 
-              <span className="text-sm font-black text-white font-mono tracking-wider">
+              <span className="text-sm font-black text-ink font-mono tracking-wider">
                 {pickerYear}
               </span>
 
@@ -581,7 +581,7 @@ export function SnakingPathCalendar({
                 type="button"
                 aria-label="Tahun Berikutnya"
                 onClick={() => setPickerYear((prev) => prev + 1)}
-                className="h-8 w-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                className="h-8 w-8 rounded-xl flex items-center justify-center text-ink-secondary hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -605,8 +605,8 @@ export function SnakingPathCalendar({
                       isSelected
                         ? "bg-primary text-white shadow-md ring-2 ring-primary/40 scale-[1.02]"
                         : isCurrentCalendarMonth
-                        ? "bg-slate-800/90 text-primary border border-primary/30 hover:bg-slate-800"
-                        : "bg-slate-950/50 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800/80"
+                        ? "bg-surface-container text-primary border border-primary/30 hover:bg-surface-container-high"
+                        : "bg-surface-container-low hover:bg-surface-container text-ink-secondary hover:text-ink border border-edge"
                     }`}
                   >
                     <span>{monthName}</span>
@@ -621,11 +621,11 @@ export function SnakingPathCalendar({
             </div>
 
             {/* Footer Modal & Tombol Pintas Lompat ke Hari Ini */}
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+            <div className="pt-2 border-t border-edge flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={handleResetToCurrentMonth}
-                className="h-9 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+                className="h-9 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <Calendar className="h-3.5 w-3.5 text-primary" />
                 <span>Lompat ke Hari Ini</span>
@@ -634,7 +634,7 @@ export function SnakingPathCalendar({
               <button
                 type="button"
                 onClick={() => setIsPickerOpen(false)}
-                className="h-9 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 transition-colors cursor-pointer"
+                className="h-9 px-4 rounded-xl bg-surface hover:bg-surface-container text-ink-muted text-xs font-semibold border border-edge transition-colors cursor-pointer"
               >
                 Batal
               </button>
