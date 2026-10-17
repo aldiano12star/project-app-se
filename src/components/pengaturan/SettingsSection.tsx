@@ -29,6 +29,7 @@ import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { RolloverConfirmationModal } from "./RolloverConfirmationModal";
+import { PanduanOrganisasiModal } from "./PanduanOrganisasiModal";
 import { Role } from "@prisma/client";
 
 interface SettingsSectionProps {
@@ -42,6 +43,8 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
 
   // Modal Rollover (hanya Operator)
   const [isRolloverModalOpen, setIsRolloverModalOpen] = useState(false);
+  // Modal Panduan & Knowledge Base
+  const [isPanduanOpen, setIsPanduanOpen] = useState(false);
 
   // Notifikasi & Preferensi
   const [notifMeeting, setNotifMeeting] = useState(true);
@@ -556,8 +559,9 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
         </h3>
         <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
           {/* Row 1: Panduan & Modul Organisasi */}
-          <Link
-            href="/eksplorasi"
+          <button
+            type="button"
+            onClick={() => setIsPanduanOpen(true)}
             className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors group cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -569,7 +573,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               </span>
             </div>
             <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          </button>
 
           {/* Row 2: Laporkan Kendala / Bug Sistem */}
           <Link
@@ -614,6 +618,13 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
     <RolloverConfirmationModal
       isOpen={isRolloverModalOpen}
       onClose={() => setIsRolloverModalOpen(false)}
+    />
+
+    {/* Modal Panduan & Knowledge Base */}
+    <PanduanOrganisasiModal
+      isOpen={isPanduanOpen}
+      onClose={() => setIsPanduanOpen(false)}
+      userRole={user.role}
     />
     </>
   );
