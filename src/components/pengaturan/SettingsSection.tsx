@@ -22,11 +22,14 @@ import {
   Globe,
   Lock,
   Save,
+  RefreshCcw,
 } from "lucide-react";
 import { UserProfileData } from "./ProfileHeroCard";
 import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { RolloverConfirmationModal } from "./RolloverConfirmationModal";
+import { Role } from "@prisma/client";
 
 interface SettingsSectionProps {
   user: UserProfileData;
@@ -36,6 +39,9 @@ interface SettingsSectionProps {
 export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
   // Theme Switching
   const { resolvedTheme, setTheme } = useTheme();
+
+  // Modal Rollover (hanya Operator)
+  const [isRolloverModalOpen, setIsRolloverModalOpen] = useState(false);
 
   // Notifikasi & Preferensi
   const [notifMeeting, setNotifMeeting] = useState(true);
@@ -123,7 +129,8 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <>
+      <div className="space-y-4">
       {/* ========================================================= */}
       {/* GRUP 1: AKUN, KONTAK & KEAMANAN                           */}
       {/* ========================================================= */}
@@ -502,6 +509,45 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
       </section>
 
       {/* ========================================================= */}
+      {/* GRUP OPERATOR: MANAJEMEN SISTEM KEPENGURUSAN             */}
+      {/* ========================================================= */}
+      {user.role === Role.OPERATOR && (
+        <section className="space-y-1.5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
+            ⚙️ Manajemen Sistem Operator
+          </h3>
+          <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
+            {/* Row: Ganti Periode Kepengurusan (Rollover) */}
+            <button
+              type="button"
+              onClick={() => setIsRolloverModalOpen(true)}
+              className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between text-left hover:bg-danger-subtle active:bg-danger-subtle/60 transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
+                  <RefreshCcw className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
+                    Ganti Periode Kepengurusan
+                  </span>
+                  <p className="text-[10px] text-ink-muted leading-relaxed">
+                    Rollover tahunan: tutup buku kas & promosikan kelas anggota
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
+                  Bahaya
+                </span>
+                <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
+              </div>
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================= */}
       {/* GRUP 3: TENTANG & BANTUAN                                 */}
       {/* ========================================================= */}
       <section className="space-y-1.5">
@@ -552,7 +598,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                   Saba ExploIT App
                 </span>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                  v1.2.1 • Build 2026
+                  v1.3.0 • Build 2026
                 </p>
               </div>
             </div>
@@ -563,5 +609,12 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
         </div>
       </section>
     </div>
+
+    {/* Modal Rollover - di luar div utama agar full-screen overlay */}
+    <RolloverConfirmationModal
+      isOpen={isRolloverModalOpen}
+      onClose={() => setIsRolloverModalOpen(false)}
+    />
+    </>
   );
 }

@@ -13,7 +13,7 @@ import {
   ChevronDown,
   Clock,
 } from "lucide-react";
-import { Role, Division, ClassGrade } from "@prisma/client";
+import { Role, Division } from "@prisma/client";
 import { promoteUserRole } from "@/actions/profile";
 
 export interface ManagedUser {
@@ -22,7 +22,7 @@ export interface ManagedUser {
   email: string;
   image?: string | null;
   role: Role;
-  classGrade?: ClassGrade | null;
+  classGrade?: string | null;
   mainDivision?: Division | null;
   createdAt: string;
 }

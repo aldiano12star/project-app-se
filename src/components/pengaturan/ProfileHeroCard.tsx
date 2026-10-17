@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Zap, ShieldCheck, CheckCircle2, IdCard, Sparkles } from "lucide-react";
-import { Role, Division, ClassGrade } from "@prisma/client";
+import { Role, Division } from "@prisma/client";
 
 export interface UserProfileData {
   id: string;
@@ -10,7 +10,7 @@ export interface UserProfileData {
   email: string;
   image?: string | null;
   role: Role;
-  classGrade: ClassGrade;
+  classGrade: string | null;
   mainDivision: Division;
   totalPoints: number;
   monthlyPoints: number;

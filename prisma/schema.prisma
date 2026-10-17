@@ -86,7 +86,8 @@ model User {
   email         String       @unique
   image         String?
   role          Role         @default(GUEST)
-  classGrade    ClassGrade   @default(KELAS_10)
+  classGrade    String?      // "X", "XI", "XII", "ALUMNI"
+  generationNumber Int?      // Misal: 20, 21, 22
   mainDivision  Division
   status        MemberStatus @default(ACTIVE)
   monthlyPoints Int          @default(0) // Direset tiap awal bulan untuk Podium
@@ -532,5 +533,44 @@ model FeedbackIssue {
   @@index([type])
   @@index([status])
   @@index([userId])
+}
+
+model OrganizationalPeriod {
+  id                   String              @id @default(cuid())
+  name                 String              // Contoh: "Periode 2025/2026 (Gen 20)"
+  generationYear       Int                 // 20
+  isActive             Boolean             @default(true)
+  startDate            DateTime            @default(now())
+  endDate              DateTime?
+  closingCashBalance   Int                 @default(0)
+  startingCashBalance  Int                 @default(0)
+  notes                String?             @db.Text
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model SeasonHallOfFame {
+  id             String   @id @default(cuid())
+  periodName     String   // "Gen 20 (2025/2026)"
+  generationYear Int      // 20
+  // Snapshot Juara 1
+  rank1Name      String
+  rank1Division  String?
+  rank1Points    Int
+  rank1Avatar    String?
+  // Snapshot Juara 2
+  rank2Name      String
+  rank2Division  String?
+  rank2Points    Int
+  rank2Avatar    String?
+  // Snapshot Juara 3
+  rank3Name      String
+  rank3Division  String?
+  rank3Points    Int
+  rank3Avatar    String?
+
+  totalMeetings  Int      @default(0)
+  totalCashFlow  Int      @default(0)
+  archivedAt     DateTime @default(now())
 }
 

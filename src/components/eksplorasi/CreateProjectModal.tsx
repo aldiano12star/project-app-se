@@ -91,7 +91,7 @@ export function CreateProjectModal({
       !formData.contributorIds.includes(m.id) &&
       (memberSearch.trim() === "" ||
         m.name.toLowerCase().includes(memberSearch.toLowerCase()) ||
-        m.classGrade.toLowerCase().includes(memberSearch.toLowerCase()))
+        (m.classGrade && m.classGrade.toLowerCase().includes(memberSearch.toLowerCase())))
   );
 
   const selectedMembers = membersList.filter((m) =>

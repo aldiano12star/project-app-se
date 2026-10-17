@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { assertAuthenticated } from "@/lib/rbac";
-import { ClassGrade, Division } from "@prisma/client";
+import { Division } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export interface OnboardingInput {
@@ -46,17 +46,17 @@ export async function saveOnboardingData(
 
     // Hitung Generasi dan ClassGrade otomatis
     let gen = 21;
-    let classGrade: ClassGrade = ClassGrade.KELAS_10;
+    let classGrade: string = "KELAS_10";
 
     if (input.kelas === "X") {
       gen = 21;
-      classGrade = ClassGrade.KELAS_10;
+      classGrade = "KELAS_10";
     } else if (input.kelas === "XI") {
       gen = 20;
-      classGrade = ClassGrade.KELAS_11;
+      classGrade = "KELAS_11";
     } else if (input.kelas === "XII") {
       gen = 19;
-      classGrade = ClassGrade.KELAS_12;
+      classGrade = "KELAS_12";
     }
 
     // Mapping 5 divisi resmi ke Enum Division

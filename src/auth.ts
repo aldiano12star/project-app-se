@@ -12,7 +12,7 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import "next-auth/jwt"; // Wajib di-import agar augmentasi modul di bawah dikenali TypeScript
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
-import { Role, MemberStatus, Division, ClassGrade } from "@prisma/client";
+import { Role, MemberStatus, Division } from "@prisma/client";
 
 // Augmentasi tipe Session dan User pada next-auth
 declare module "next-auth" {
@@ -20,7 +20,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: Role;
-      classGrade: ClassGrade | null;
+      classGrade: string | null;
       mainDivision: Division | null;
       status: MemberStatus;
       isProfileCompleted: boolean;
@@ -29,7 +29,7 @@ declare module "next-auth" {
 
   interface User {
     role?: Role;
-    classGrade?: ClassGrade;
+    classGrade?: string;
     mainDivision?: Division;
     status?: MemberStatus;
     isProfileCompleted?: boolean;
@@ -41,7 +41,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role: Role;
-    classGrade: ClassGrade | null;
+    classGrade: string | null;
     mainDivision: Division | null;
     status: MemberStatus;
     isProfileCompleted?: boolean;
@@ -93,7 +93,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               image: user.image,
               role: isOperator ? Role.OPERATOR : Role.GUEST,
               mainDivision: Division.PROGRAMMING,
-              classGrade: ClassGrade.KELAS_10,
+              classGrade: "KELAS_10",
               status: MemberStatus.ACTIVE,
             },
           });
@@ -145,7 +145,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user && token) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
-        session.user.classGrade = token.classGrade as ClassGrade;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).classGrade = token.classGrade ?? null;
         session.user.mainDivision = token.mainDivision as Division;
         session.user.status = token.status as MemberStatus;
         session.user.isProfileCompleted = Boolean(token.isProfileCompleted);

@@ -45,7 +45,7 @@ export interface SubmitWikiInput {
 export interface MemberOption {
   id: string;
   name: string;
-  classGrade: string;
+  classGrade: string | null;
   image?: string | null;
 }
 

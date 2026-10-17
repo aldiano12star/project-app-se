@@ -21,7 +21,6 @@ import {
 } from "@/utils/whatsappShare";
 import {
   Role,
-  ClassGrade,
   Division,
   TransactionType,
   IncomeCategory,
@@ -39,7 +38,7 @@ export interface MemberKasData {
   email: string;
   image?: string | null;
   role: Role;
-  classGrade: ClassGrade;
+  classGrade: string | null;
   mainDivision: Division;
   payments: {
     kasPeriodId: string;
@@ -117,8 +116,8 @@ export function TreasurerPanel({
     const isNunggak = periods.some((p) => !paidPeriodIds.has(p.id));
 
     if (filterClass === "ALL") return true;
-    if (filterClass === "KELAS_10") return m.classGrade === ClassGrade.KELAS_10;
-    if (filterClass === "KELAS_11") return m.classGrade === ClassGrade.KELAS_11;
+    if (filterClass === "KELAS_10") return m.classGrade === "KELAS_10";
+    if (filterClass === "KELAS_11") return m.classGrade === "KELAS_11";
     if (filterClass === "NUNGGAK") return isNunggak;
 
     return true;
@@ -387,7 +386,7 @@ export function TreasurerPanel({
                         {member.name}
                       </h4>
                       <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-ink-muted">
-                        <span>{member.classGrade.replace("_", " ")}</span>
+                        <span>{(member.classGrade || "").replace("_", " ")}</span>
                         <span>•</span>
                         <span className="text-primary font-medium">
                           {member.mainDivision}
@@ -634,7 +633,7 @@ export function TreasurerPanel({
                 >
                   {allMembers.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.name} ({m.classGrade.replace("_", " ")} - {m.mainDivision})
+                      {m.name} ({(m.classGrade || "").replace("_", " ")} - {m.mainDivision})
                     </option>
                   ))}
                 </select>
