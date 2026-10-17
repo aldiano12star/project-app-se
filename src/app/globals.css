@@ -1,77 +1,77 @@
 @import "tailwindcss";
 
 /*
- * Saba ExploIT UI Engine v2.2.0 (Dual-Theme Calibrated)
+ * Saba ExploIT UI Engine v2.3.0 (Matte Pebble Finish & Anti-Glare Calibration)
  *
  * Pedoman Visual: DESIGN.md & doc/stitch/beranda/DESIGN.md
  * - Solid Surface Container Elevation (tanpa glassmorphism/blur berat)
  * - Border tegas 1px (`border-edge` / `border-border-light`)
  * - Area sentuh minimal 44px (`min-h-[44px]` / `h-11`)
- * - Dual-Theme: Eye-Friendly Charcoal Slate (Dark) & Soft Slate Light (Light)
+ * - Dual-Theme: Matte Pebble Light (#E5E9F0 / #F1F4F8) & Deep Navy Dark (#0B0F17 / #151D2A)
  */
 
 /* ── Variabel runtime Mode Terang (Default :root) ─────────────────── */
 :root {
   color-scheme: light;
 
-  /* Neutral — Soft Alabaster Slate Baseline (#F4F6F9) */
-  --saba-surface: #f4f6f9;
-  --saba-card: #ffffff;
-  --saba-edge: #cbd5e1;
-  --saba-surface-container-low: #e9eef4;
-  --saba-surface-container: #dfe5ed;
-  --saba-surface-container-high: #cbd5e1;
-  --saba-ink: #0f172a;
+  /* Neutral — Matte Pebble Finish (Anti-Silau #FFFFFF) */
+  --saba-surface: #E5E9F0;
+  --saba-card: #F1F4F8;
+  --saba-edge: #CBD5E1;
+  --saba-surface-container-low: #E9EEF4;
+  --saba-surface-container: #D9E1EB;
+  --saba-surface-container-high: #CBD5E1;
+  --saba-ink: #0F172A;
   --saba-ink-secondary: #475569;
-  --saba-ink-muted: #64748b;
+  --saba-ink-muted: #64748B;
 
   /* Brand Action — Rose Crimson (#E11D48) */
-  --saba-primary: #e11d48;
-  --saba-primary-hover: #be123c;
-  --saba-primary-subtle: #ffe4e6;
-  --saba-on-primary: #ffffff;
+  --saba-primary: #E11D48;
+  --saba-primary-hover: #BE123C;
+  --saba-primary-subtle: #FFE4E6;
+  --saba-on-primary: #FFFFFF;
 
   /* Semantic Refresh (Light Mode High-Contrast) */
   --saba-success: #059669;
-  --saba-success-subtle: #d1fae5;
-  --saba-danger: #dc2626;
-  --saba-danger-subtle: #fee2e2;
-  --saba-warning: #d97706;
-  --saba-warning-subtle: #fef3c7;
-  --saba-info: #0284c7;
-  --saba-info-subtle: #e0f2fe;
+  --saba-success-subtle: #D1FAE5;
+  --saba-danger: #DC2626;
+  --saba-danger-subtle: #FEE2E2;
+  --saba-warning: #D97706;
+  --saba-warning-subtle: #FEF3C7;
+  --saba-info: #0284C7;
+  --saba-info-subtle: #E0F2FE;
 }
 
 /* ── Variabel runtime Mode Gelap (.dark) ──────────────────────────── */
 .dark {
   color-scheme: dark;
 
-  /* Neutral — Deep Charcoal Slate Baseline (#0B0F19) */
-  --saba-surface: #0b0f19;
-  --saba-card: #151d2e;
-  --saba-edge: #222f46;
-  --saba-surface-container-low: #101624;
-  --saba-surface-container: #1b263b;
-  --saba-surface-container-high: #2d3b55;
-  --saba-ink: #f1f5f9;
-  --saba-ink-secondary: #94a3b8;
-  --saba-ink-muted: #64748b;
+  /* Neutral — Deep Navy & Steel Slate (Kontras Tinggi) */
+  --saba-surface: #0B0F17;
+  --saba-card: #151D2A;
+  --saba-edge: #27344A;
+  --saba-surface-container-low: #101622;
+  --saba-surface-container: #1D2738;
+  --saba-surface-container-high: #2E3D56;
+  --saba-ink: #E2E8F0;
+  --saba-ink-secondary: #94A3B8;
+  --saba-ink-muted: #64748B;
 
   /* Brand Action — Coral Rose (#F43F5E) */
-  --saba-primary: #f43f5e;
-  --saba-primary-hover: #e11d48;
+  --saba-primary: #F43F5E;
+  --saba-primary-hover: #E11D48;
   --saba-primary-subtle: #881337;
-  --saba-on-primary: #ffffff;
+  --saba-on-primary: #FFFFFF;
 
   /* Semantic Refresh (Dark Mode High-Contrast) */
-  --saba-success: #10b981;
-  --saba-success-subtle: #064e3b;
-  --saba-danger: #ef4444;
-  --saba-danger-subtle: #450a0a;
-  --saba-warning: #f59e0b;
-  --saba-warning-subtle: #451a03;
-  --saba-info: #38bdf8;
-  --saba-info-subtle: #0c4a6e;
+  --saba-success: #10B981;
+  --saba-success-subtle: #064E3B;
+  --saba-danger: #EF4444;
+  --saba-danger-subtle: #450A0A;
+  --saba-warning: #F59E0B;
+  --saba-warning-subtle: #451A03;
+  --saba-info: #38BDF8;
+  --saba-info-subtle: #0C4A6E;
 }
 
 /* ── Saba ExploIT Design Tokens ───────────────────────────────────── */
@@ -87,14 +87,14 @@
 
   /* Surfaces & Neutrals */
   --color-surface: var(--saba-surface);
-  --color-surface-bg-light: #f8fafc;
-  --color-surface-bg-dark: #0b1120;
+  --color-surface-bg-light: #E5E9F0;
+  --color-surface-bg-dark: #0B0F17;
   --color-card: var(--saba-card);
-  --color-card-bg-light: #ffffff;
-  --color-card-bg-dark: #131c31;
+  --color-card-bg-light: #F1F4F8;
+  --color-card-bg-dark: #151D2A;
   --color-edge: var(--saba-edge);
-  --color-border-light: #e2e8f0;
-  --color-border-dark: #23304b;
+  --color-border-light: #CBD5E1;
+  --color-border-dark: #27344A;
   --color-surface-container-low: var(--saba-surface-container-low);
   --color-surface-container: var(--saba-surface-container);
   --color-surface-container-high: var(--saba-surface-container-high);
@@ -103,12 +103,12 @@
   --color-ink: var(--saba-ink);
   --color-ink-secondary: var(--saba-ink-secondary);
   --color-ink-muted: var(--saba-ink-muted);
-  --color-text-primary-light: #0f172a;
+  --color-text-primary-light: #0F172A;
   --color-text-secondary-light: #475569;
-  --color-text-muted-light: #64748b;
-  --color-text-primary-dark: #f8fafc;
-  --color-text-secondary-dark: #94a3b8;
-  --color-text-muted-dark: #64748b;
+  --color-text-muted-light: #64748B;
+  --color-text-primary-dark: #E2E8F0;
+  --color-text-secondary-dark: #94A3B8;
+  --color-text-muted-dark: #64748B;
 
   /* Semantics */
   --color-success: var(--saba-success);
@@ -121,16 +121,16 @@
   --color-info-subtle: var(--saba-info-subtle);
 
   /* Divisions */
-  --color-div-programming: #0284c7;
-  --color-div-programming-bg-light: #0c4a6e;
-  --color-div-design: #c084fc;
-  --color-div-design-bg-light: #581c87;
+  --color-div-programming: #0284C7;
+  --color-div-programming-bg-light: #0C4A6E;
+  --color-div-design: #C084FC;
+  --color-div-design-bg-light: #581C87;
   --color-div-photography: #059669;
-  --color-div-photography-bg-light: #064e3b;
-  --color-div-cinematography: #e11d48;
+  --color-div-photography-bg-light: #064E3B;
+  --color-div-cinematography: #E11D48;
   --color-div-cinematography-bg-light: #881337;
-  --color-div-technopreneurship: #d97706;
-  --color-div-technopreneurship-bg-light: #451a03;
+  --color-div-technopreneurship: #D97706;
+  --color-div-technopreneurship-bg-light: #451A03;
 
   /* Spacing & Container */
   --spacing-app-max: 430px;

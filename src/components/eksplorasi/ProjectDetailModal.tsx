@@ -6,14 +6,11 @@ import {
   ExternalLink,
   GitBranch,
   Heart,
-  User,
   Users,
-  Calendar,
   Trash2,
   Loader2,
   Sparkles,
   Share2,
-  Tag,
   Code2,
   Briefcase,
   Palette,
@@ -47,77 +44,77 @@ const CATEGORY_META: Record<
   PROGRAMMING: {
     label: "Programming & Web",
     bg: "bg-blue-500/15",
-    text: "text-blue-400",
+    text: "text-blue-500 dark:text-blue-400",
     border: "border-blue-500/30",
     icon: Code2,
   },
   TECHNOPRENEUR: {
     label: "Technopreneurship",
     bg: "bg-emerald-500/15",
-    text: "text-emerald-400",
+    text: "text-emerald-600 dark:text-emerald-400",
     border: "border-emerald-500/30",
     icon: Briefcase,
   },
   DESAIN: {
     label: "Desain Grafis & UI/UX",
     bg: "bg-purple-500/15",
-    text: "text-purple-400",
+    text: "text-purple-600 dark:text-purple-400",
     border: "border-purple-500/30",
     icon: Palette,
   },
   FOTOGRAFI: {
     label: "Fotografi",
     bg: "bg-amber-500/15",
-    text: "text-amber-400",
+    text: "text-amber-600 dark:text-amber-400",
     border: "border-amber-500/30",
     icon: Camera,
   },
   SINEMATOGRAFI: {
     label: "Sinematografi",
     bg: "bg-rose-500/15",
-    text: "text-rose-400",
+    text: "text-rose-600 dark:text-rose-400",
     border: "border-rose-500/30",
     icon: Film,
   },
   LAINNYA: {
     label: "Karya Kreatif Lainnya",
     bg: "bg-slate-500/15",
-    text: "text-slate-400",
+    text: "text-slate-600 dark:text-slate-400",
     border: "border-slate-500/30",
     icon: Sparkles,
   },
   WEB: {
     label: "Programming & Web",
     bg: "bg-blue-500/15",
-    text: "text-blue-400",
+    text: "text-blue-500 dark:text-blue-400",
     border: "border-blue-500/30",
     icon: Code2,
   },
   UI_UX: {
     label: "Desain Grafis & UI/UX",
     bg: "bg-purple-500/15",
-    text: "text-purple-400",
+    text: "text-purple-600 dark:text-purple-400",
     border: "border-purple-500/30",
     icon: Palette,
   },
   IOT: {
     label: "Technopreneurship",
     bg: "bg-emerald-500/15",
-    text: "text-emerald-400",
+    text: "text-emerald-600 dark:text-emerald-400",
     border: "border-emerald-500/30",
     icon: Briefcase,
   },
   GAME: {
     label: "Karya Kreatif Lainnya",
     bg: "bg-slate-500/15",
-    text: "text-slate-400",
+    text: "text-slate-600 dark:text-slate-400",
     border: "border-slate-500/30",
     icon: Sparkles,
   },
   OTHER: {
     label: "Karya Kreatif Lainnya",
     bg: "bg-slate-500/15",
-    text: "text-slate-400",
+    text: "text-slate-600 dark:text-slate-400",
     border: "border-slate-500/30",
     icon: Sparkles,
   },
@@ -216,10 +213,10 @@ export function ProjectDetailModal({
     Array.isArray(project.contributors) && project.contributors.length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-3xl bg-[#090D16] border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-3xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[92vh] text-ink">
         {/* Header Modal Bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800/80 bg-slate-900/60">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-edge bg-surface-container-low/60">
           <div className="flex items-center gap-2.5 min-w-0 pr-2">
             <span
               className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
@@ -227,7 +224,7 @@ export function ProjectDetailModal({
               <CategoryIcon className="h-3 w-3" />
               <span>{categoryMeta.label}</span>
             </span>
-            <span className="text-[10px] font-mono text-slate-400">
+            <span className="text-[10px] font-mono text-ink-muted">
               {formattedDate}
             </span>
           </div>
@@ -235,7 +232,7 @@ export function ProjectDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 w-9 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            className="h-9 w-9 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer shrink-0"
             aria-label="Tutup modal"
           >
             <X className="h-4 w-4" />
@@ -246,13 +243,13 @@ export function ProjectDetailModal({
         <div className="p-5 space-y-4 overflow-y-auto flex-1">
           {/* Judul Karya */}
           <div className="space-y-1">
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+            <h2 className="text-base sm:text-lg font-bold text-ink tracking-tight leading-snug">
               {project.title}
             </h2>
           </div>
 
           {/* Pratinjau Gambar / Banner Besar */}
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950 shadow-md">
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-edge bg-surface shadow-md">
             {project.imageUrl ? (
               <img
                 src={project.imageUrl}
@@ -260,13 +257,13 @@ export function ProjectDetailModal({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-[#0c1322] p-4 flex flex-col justify-between">
+              <div className="absolute inset-0 bg-surface-container p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-rose-500" />
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span className="ml-1.5 text-[9px] font-mono text-slate-400">
+                    <span className="ml-1.5 text-[9px] font-mono text-ink-muted">
                       saba-exploit.app/showcase/{project.id.slice(-6)}
                     </span>
                   </div>
@@ -279,14 +276,14 @@ export function ProjectDetailModal({
                   <div className="h-12 w-12 rounded-2xl bg-primary/20 border border-primary/40 text-primary flex items-center justify-center mb-1.5 shadow-lg">
                     <CategoryIcon className="h-6 w-6" />
                   </div>
-                  <span className="text-sm font-bold text-white font-mono px-4 line-clamp-1">
+                  <span className="text-sm font-bold text-ink font-mono px-4 line-clamp-1">
                     {project.title}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[9px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">
+                <div className="flex items-center justify-between text-[9px] font-mono text-ink-muted border-t border-edge pt-2">
                   <span>SABA EXPLOIT VERIFIED REPO</span>
-                  <span className="text-emerald-400">AUTONOMOUS PROJECT</span>
+                  <span className="text-emerald-500 dark:text-emerald-400 font-bold">AUTONOMOUS PROJECT</span>
                 </div>
               </div>
             )}
@@ -311,9 +308,9 @@ export function ProjectDetailModal({
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto h-11 min-h-[44px] px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition-all text-xs font-semibold cursor-pointer"
+                className="w-full sm:w-auto h-11 min-h-[44px] px-4 rounded-xl bg-surface hover:bg-surface-container active:scale-[0.98] text-ink border border-edge flex items-center justify-center gap-2 transition-all text-xs font-semibold cursor-pointer"
               >
-                <GitBranch className="h-4 w-4 text-slate-300" />
+                <GitBranch className="h-4 w-4 text-ink-muted" />
                 <span>💻 Lihat Source Code / Repo</span>
               </a>
             )}
@@ -321,24 +318,24 @@ export function ProjectDetailModal({
 
           {/* Deskripsi Lengkap Karya */}
           <div className="space-y-1.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono">
               Deskripsi &amp; Rincian Karya
             </h3>
-            <div className="p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-xs text-slate-300 leading-relaxed whitespace-pre-line font-sans shadow-inner">
+            <div className="p-4 rounded-2xl bg-surface border border-edge text-xs text-ink-secondary leading-relaxed whitespace-pre-line font-sans shadow-inner">
               {project.description}
             </div>
           </div>
 
           {/* Tim Pengembang & Kreator */}
           <div className="space-y-2.5 pt-1">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono">
               Tim Pengembang &amp; Kreator
             </h3>
 
             {/* Author Utama */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-900 border border-slate-800">
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-surface border border-edge">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-full ring-2 ring-primary/40 overflow-hidden bg-slate-800 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full ring-2 ring-primary/40 overflow-hidden bg-surface-container flex items-center justify-center shrink-0">
                   {project.author.image ? (
                     <img
                       src={project.author.image}
@@ -347,39 +344,39 @@ export function ProjectDetailModal({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-xs font-bold text-white font-mono">
+                    <span className="text-xs font-bold text-ink font-mono">
                       {project.author.name.slice(0, 2).toUpperCase()}
                     </span>
                   )}
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-white text-xs sm:text-sm truncate">
+                    <span className="font-bold text-ink text-xs sm:text-sm truncate">
                       {project.author.name}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary/20 border border-primary/40 text-primary">
                       Ketua Tim / Submitter
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 font-mono">
+                  <p className="text-[11px] text-ink-muted font-mono">
                     {formatGrade(project.author.classGrade)}
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-mono font-bold text-amber-400 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 shrink-0">
+              <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 shrink-0">
                 +50 XP
               </span>
             </div>
 
             {/* Seluruh Kontributor Tim */}
             {hasContributors && (
-              <div className="space-y-1.5 p-3 rounded-2xl bg-slate-900/60 border border-slate-800">
-                <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-800/80">
-                  <span className="text-slate-300 font-semibold flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5 text-purple-400" />
+              <div className="space-y-1.5 p-3 rounded-2xl bg-surface/60 border border-edge">
+                <div className="flex items-center justify-between text-xs pb-1 border-b border-edge">
+                  <span className="text-ink font-semibold flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
                     <span>Anggota &amp; Kontributor Tim ({project.contributors?.length})</span>
                   </span>
-                  <span className="text-[10px] font-mono text-purple-400 font-bold">
+                  <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold">
                     +50 XP per orang
                   </span>
                 </div>
@@ -388,9 +385,9 @@ export function ProjectDetailModal({
                   {project.contributors?.map((c) => (
                     <div
                       key={c.id}
-                      className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/70 border border-slate-800"
+                      className="flex items-center gap-2 p-2 rounded-xl bg-surface border border-edge"
                     >
-                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono">
+                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono">
                         {c.image ? (
                           <img
                             src={c.image}
@@ -403,10 +400,10 @@ export function ProjectDetailModal({
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-xs font-semibold text-slate-200 block truncate">
+                        <span className="text-xs font-semibold text-ink block truncate">
                           {c.name}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-ink-muted font-mono">
                           {formatGrade(c.classGrade)}
                         </span>
                       </div>
@@ -419,7 +416,7 @@ export function ProjectDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/70 flex items-center justify-between gap-2 flex-wrap">
+        <div className="p-4 border-t border-edge bg-surface-container-low/60 flex items-center justify-between gap-2 flex-wrap">
           {/* Sisi Kiri: Tombol Like & Share & Delete */}
           <div className="flex items-center gap-2">
             <button
@@ -428,8 +425,8 @@ export function ProjectDetailModal({
               disabled={isLiking}
               className={`h-11 min-h-[44px] px-4 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer active:scale-90 border ${
                 isLiked
-                  ? "bg-rose-950/60 text-rose-400 border-rose-800/80"
-                  : "bg-slate-800 text-slate-300 hover:text-rose-400 border-slate-700"
+                  ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30"
+                  : "bg-surface text-ink hover:text-primary border-edge"
               }`}
             >
               <Heart
@@ -441,7 +438,7 @@ export function ProjectDetailModal({
             <button
               type="button"
               onClick={handleShare}
-              className="h-11 min-h-[44px] px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="h-11 min-h-[44px] px-3.5 rounded-xl bg-surface hover:bg-surface-container text-ink border border-edge text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Share2 className="h-3.5 w-3.5" />
               <span>{copied ? "Disalin!" : "Bagikan"}</span>
@@ -451,12 +448,12 @@ export function ProjectDetailModal({
             {canDelete && (
               <>
                 {isConfirmingDelete ? (
-                  <div className="flex items-center gap-1 bg-black/90 p-1 rounded-xl border border-red-500/40">
+                  <div className="flex items-center gap-1 bg-surface-container p-1 rounded-xl border border-danger/40">
                     <button
                       type="button"
                       onClick={handleDelete}
                       disabled={isDeleting}
-                      className="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      className="px-2.5 py-1.5 rounded-lg bg-danger hover:bg-danger/90 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
                     >
                       {isDeleting ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -468,7 +465,7 @@ export function ProjectDetailModal({
                       type="button"
                       onClick={() => setIsConfirmingDelete(false)}
                       disabled={isDeleting}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-[11px] hover:text-white cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg bg-surface text-ink text-[11px] hover:text-ink cursor-pointer border border-edge"
                     >
                       Batal
                     </button>
@@ -477,7 +474,7 @@ export function ProjectDetailModal({
                   <button
                     type="button"
                     onClick={() => setIsConfirmingDelete(true)}
-                    className="h-11 min-h-[44px] px-3 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-900/40 text-red-400 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    className="h-11 min-h-[44px] px-3 rounded-xl border border-danger/30 bg-danger-subtle hover:bg-danger-subtle/80 text-danger text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
                     title="Hapus Karya dari Showcase"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -492,7 +489,7 @@ export function ProjectDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-11 min-h-[44px] px-5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+            className="h-11 min-h-[44px] px-5 rounded-xl bg-surface hover:bg-surface-container active:scale-[0.98] text-ink text-xs font-bold border border-edge transition-all cursor-pointer shadow-xs"
           >
             Tutup
           </button>
