@@ -1,10 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { QrCode, Sparkles, Eye } from "lucide-react";
 import { Role } from "@prisma/client";
-import { MeetingQrModal } from "./MeetingQrModal";
-import { AttendanceScannerModal } from "./AttendanceScannerModal";
+
+const MeetingQrModal = dynamic(
+  () => import("./MeetingQrModal").then((mod) => mod.MeetingQrModal),
+  { ssr: false }
+);
+
+const AttendanceScannerModal = dynamic(
+  () => import("./AttendanceScannerModal").then((mod) => mod.AttendanceScannerModal),
+  { ssr: false }
+);
 
 interface DashboardMeetingWidgetProps {
   userRole: Role;

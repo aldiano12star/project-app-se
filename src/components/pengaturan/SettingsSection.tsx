@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   User,
@@ -28,9 +29,17 @@ import { UserProfileData } from "./ProfileHeroCard";
 import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
 import { useTheme } from "@/components/theme/ThemeProvider";
-import { RolloverConfirmationModal } from "./RolloverConfirmationModal";
-import { PanduanOrganisasiModal } from "./PanduanOrganisasiModal";
 import { Role } from "@prisma/client";
+
+const RolloverConfirmationModal = dynamic(
+  () => import("./RolloverConfirmationModal").then((mod) => mod.RolloverConfirmationModal),
+  { ssr: false }
+);
+
+const PanduanOrganisasiModal = dynamic(
+  () => import("./PanduanOrganisasiModal").then((mod) => mod.PanduanOrganisasiModal),
+  { ssr: false }
+);
 
 interface SettingsSectionProps {
   user: UserProfileData;
@@ -485,7 +494,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 onClick={() => setTheme("light")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
                   resolvedTheme === "light"
-                    ? "bg-white text-slate-900 shadow-xs border border-slate-200"
+                    ? "bg-card text-ink shadow-xs border border-edge"
                     : "text-ink-muted hover:text-ink"
                 }`}
                 title="Aktifkan Mode Terang"
@@ -498,7 +507,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 onClick={() => setTheme("dark")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
                   resolvedTheme === "dark"
-                    ? "bg-[#151D2E] text-white shadow-xs border border-[#222F46]"
+                    ? "bg-card text-white shadow-xs border border-edge"
                     : "text-ink-muted hover:text-ink"
                 }`}
                 title="Aktifkan Mode Gelap"

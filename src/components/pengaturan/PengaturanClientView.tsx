@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ProfileHeroCard, UserProfileData } from "./ProfileHeroCard";
@@ -16,7 +17,11 @@ import {
   ManagedUser,
 } from "./AdminUserManagementSection";
 import { LogoutButton } from "./LogoutButton";
-import { KTADigitalModal } from "./KTADigitalModal";
+
+const KTADigitalModal = dynamic(
+  () => import("./KTADigitalModal").then((mod) => mod.KTADigitalModal),
+  { ssr: false }
+);
 
 interface PengaturanClientViewProps {
   user: UserProfileData;

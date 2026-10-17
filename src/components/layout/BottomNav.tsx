@@ -73,7 +73,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full border shadow-xl flex items-center justify-between bg-[#FFFFFF] border-slate-200 shadow-slate-300/60 dark:bg-[#151D2E] dark:border-[#222F46] dark:shadow-black/60 transition-colors ${
+      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full border shadow-xl flex items-center justify-between bg-surface-container/90 backdrop-blur-xl border-edge text-ink-secondary shadow-lg dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 transition-colors ${
         isModalActive ? "hidden" : ""
       }`}
     >
@@ -103,7 +103,7 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                className="bg-primary/10 text-primary border border-primary/20 dark:bg-primary/20 dark:border-primary/30 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-[44px] shrink-0"
+                className="bg-primary/15 text-primary border border-primary/30 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-[44px] shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs font-semibold leading-none tracking-tight">
@@ -120,7 +120,7 @@ export function BottomNav() {
               prefetch={true}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-[44px] min-w-[44px] shrink-0"
+              className="text-ink-muted hover:text-ink p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-[44px] min-w-[44px] shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

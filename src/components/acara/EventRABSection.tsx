@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import {
   FileSpreadsheet,
   Plus,
@@ -13,7 +14,12 @@ import {
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import { addBudgetItem, deleteBudgetItem } from "@/actions/acara";
-import { PrintRABModal, BudgetItemData } from "./PrintRABModal";
+import { BudgetItemData } from "./PrintRABModal";
+
+const PrintRABModal = dynamic(
+  () => import("./PrintRABModal").then((mod) => mod.PrintRABModal),
+  { ssr: false }
+);
 
 interface EventRABSectionProps {
   eventId: string;
@@ -59,17 +65,17 @@ export function EventRABSection({
     const priceNum = parseFloat(estimatedPrice);
 
     if (!name.trim()) {
-      setErrorMessage("Nama barang/kebutuhan wajib diisi.");
+      setErrorMessage("Nama barang wajib diisi.");
       return;
     }
 
-    if (isNaN(qtyNum) || qtyNum < 1) {
-      setErrorMessage("Jumlah volume minimal 1.");
+    if (isNaN(qtyNum) || qtyNum <= 0) {
+      setErrorMessage("Jumlah quantity harus bernilai positif.");
       return;
     }
 
     if (isNaN(priceNum) || priceNum < 0) {
-      setErrorMessage("Estimasi harga satuan tidak valid.");
+      setErrorMessage("Harga estimasi tidak valid.");
       return;
     }
 
@@ -77,7 +83,7 @@ export function EventRABSection({
       const res = await addBudgetItem(eventId, {
         name: name.trim(),
         quantity: qtyNum,
-        unit: unit.trim() || "pcs",
+        unit,
         estimatedPrice: priceNum,
       });
 
@@ -85,7 +91,6 @@ export function EventRABSection({
         setName("");
         setQuantity("1");
         setEstimatedPrice("");
-        setUnit("pcs");
         setShowAddForm(false);
       } else {
         setErrorMessage(res.message);
@@ -93,248 +98,247 @@ export function EventRABSection({
     });
   };
 
-  const handleDeleteItem = (itemId: string) => {
-    if (!confirm("Hapus item anggaran ini dari RAB?")) return;
+  const handleDeleteItem = async (itemId: string) => {
+    if (!confirm("Hapus item RAB ini?")) return;
+    const res = await deleteBudgetItem(eventId, itemId);
+    if (!res.success) {
+      alert(res.message);
+    }
+  };
 
-    startTransition(async () => {
-      const res = await deleteBudgetItem(itemId, eventId);
-      if (!res.success) {
-        alert(res.message);
-      }
-    });
+  const formatRupiah = (val: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(val);
   };
 
   return (
-    <section className="card-solid p-4 sm:p-5 rounded-2xl bg-card border border-edge shadow-xs space-y-4">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-edge">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex items-center justify-center shrink-0">
-            <FileSpreadsheet className="w-4 h-4" />
+    <section className="card-solid p-6 shadow-sm flex flex-col gap-5">
+      {/* Header RAB */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center">
+            <FileSpreadsheet className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider">
-              Rancangan Anggaran Biaya (RAB Acara)
-            </h3>
-            <p className="text-[11px] text-ink-muted">
-              Estimasi belanja &amp; proposal pengajuan dana kesiswaan
+            <h2 className="text-base font-bold text-ink flex items-center gap-2">
+              <span>Rencana Anggaran Biaya (RAB)</span>
+              <Sparkles className="w-4 h-4 text-emerald-500" />
+            </h2>
+            <p className="text-xs text-ink-muted">
+              Estimasi kebutuhan finansial &amp; perlengkapan acara
             </p>
           </div>
         </div>
 
-        {/* Action Buttons: Tambah Item (Admin) & Cetak Proposal */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {isOfficer && (
+        <div className="flex items-center gap-2">
+          {budgetItems.length > 0 && (
             <button
               type="button"
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="h-10 min-h-[40px] px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              onClick={() => setIsPrintModalOpen(true)}
+              className="h-11 min-h-[44px] px-4 rounded-xl bg-surface-container hover:bg-surface-container-high border border-edge text-ink text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
             >
-              <Plus className="w-3.5 h-3.5 text-primary" />
-              <span>{showAddForm ? "Tutup Form" : "+ Tambah Item"}</span>
+              <Printer className="w-4 h-4 text-primary" />
+              <span>Cetak / Ekspor RAB</span>
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => setIsPrintModalOpen(true)}
-            className="h-10 min-h-[44px] px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer"
-          >
-            <Printer className="w-4 h-4" />
-            <span>📄 Cetak Lembar RAB Proposal</span>
-          </button>
+          {isOfficer && !showAddForm && (
+            <button
+              type="button"
+              onClick={() => setShowAddForm(true)}
+              className="h-11 min-h-[44px] px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Tambah Item RAB</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Form Tambah Item Anggaran Baru (Khusus Pengurus) */}
+      {/* Summary Total Anggaran */}
+      <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-container-low border border-edge">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold font-mono">
+            Rp
+          </div>
+          <div>
+            <span className="text-xs text-ink-muted block font-medium">Total Anggaran Ditetapkan</span>
+            <span className="text-lg sm:text-xl font-black text-ink font-mono">
+              {formatRupiah(totalBudget)}
+            </span>
+          </div>
+        </div>
+        <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+          {budgetItems.length} Item Kebutuhan
+        </span>
+      </div>
+
+      {/* Form Tambah Item RAB (Khusus Officer) */}
       {showAddForm && isOfficer && (
         <form
           onSubmit={handleAddItem}
-          className="p-4 rounded-xl bg-surface-container-low/60 border border-edge space-y-3 animate-in fade-in"
+          className="p-5 rounded-2xl bg-surface-container-low/80 border border-edge space-y-4 animate-in fade-in"
         >
-          <div className="flex items-center justify-between pb-1 border-b border-edge/60">
-            <span className="text-xs font-bold text-ink flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Input Item Anggaran Baru</span>
-            </span>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-ink font-mono">
+              Tambah Kebutuhan Logistik / Konsumsi Baru
+            </h3>
+            <button
+              type="button"
+              onClick={() => setShowAddForm(false)}
+              className="text-xs text-ink-muted hover:text-ink cursor-pointer"
+            >
+              Batal
+            </button>
           </div>
 
           {errorMessage && (
-            <div className="p-2.5 rounded-lg bg-danger-subtle text-danger border border-danger/30 text-xs flex items-center gap-1.5">
+            <div className="p-3 rounded-xl bg-danger-subtle border border-danger/30 text-danger text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-            <div className="sm:col-span-2 space-y-1">
-              <label className="text-[11px] font-semibold text-ink-muted">
-                Nama Barang / Uraian Kebutuhan *
-              </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Nama Barang */}
+            <div className="space-y-1 sm:col-span-2">
+              <label className="text-[11px] font-semibold text-ink">Nama Kebutuhan / Barang</label>
               <input
                 type="text"
                 required
-                placeholder="Contoh: Konsumsi Snack Pemateri (15 Box)"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-edge bg-card text-ink text-xs focus:outline-none focus:border-primary"
+                placeholder="Contoh: Konsumsi Pemateri & Plakat"
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
 
+            {/* Quantity */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-ink-muted">
-                Volume / Qty *
-              </label>
+              <label className="text-[11px] font-semibold text-ink">Jumlah (Qty)</label>
               <input
                 type="number"
-                required
                 min="1"
-                placeholder="1"
+                required
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-edge bg-card text-ink text-xs focus:outline-none focus:border-primary font-mono"
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-mono"
               />
             </div>
 
+            {/* Unit / Satuan */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-ink-muted">
-                Satuan Unit
-              </label>
-              <input
-                type="text"
-                placeholder="pcs, box, paket, orang"
+              <label className="text-[11px] font-semibold text-ink">Satuan (Unit)</label>
+              <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-edge bg-card text-ink text-xs focus:outline-none focus:border-primary"
-              />
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer font-mono"
+              >
+                <option value="pcs">pcs</option>
+                <option value="paket">paket</option>
+                <option value="box">box</option>
+                <option value="orang">orang</option>
+                <option value="lembar">lembar</option>
+                <option value="rim">rim</option>
+              </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-end">
-            <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-ink-muted">
-                Estimasi Harga Satuan (Rp) *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                placeholder="Contoh: 15000"
-                value={estimatedPrice}
-                onChange={(e) => setEstimatedPrice(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-edge bg-card text-ink text-xs focus:outline-none focus:border-primary font-mono"
-              />
-            </div>
+          <div className="space-y-1">
+            <label className="text-[11px] font-semibold text-ink">Harga Estimasi Satuan (Rp)</label>
+            <input
+              type="number"
+              min="0"
+              required
+              value={estimatedPrice}
+              onChange={(e) => setEstimatedPrice(e.target.value)}
+              placeholder="Contoh: 50000"
+              className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-mono"
+            />
+          </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => setShowAddForm(false)}
-                className="h-10 px-3 rounded-lg border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                disabled={isPending}
-                className="h-10 px-4 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1.5 shadow-sm disabled:opacity-50 cursor-pointer"
-              >
-                {isPending ? (
+          <div className="pt-1 flex justify-end gap-2">
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-11 min-h-[44px] px-6 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+            >
+              {isPending ? (
+                <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
+                  <span>Menyimpan Item...</span>
+                </>
+              ) : (
+                <>
                   <Plus className="w-4 h-4" />
-                )}
-                <span>Simpan Item</span>
-              </button>
-            </div>
+                  <span>Simpan Item RAB</span>
+                </>
+              )}
+            </button>
           </div>
         </form>
       )}
 
-      {/* Tabel Rincian Anggaran */}
-      <div className="overflow-x-auto rounded-xl border border-edge bg-surface-container-low/30">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr className="border-b border-edge bg-surface-container-low text-ink-muted font-mono text-[10px] uppercase">
-              <th className="p-3 w-8 text-center">No</th>
-              <th className="p-3">Uraian Kebutuhan</th>
-              <th className="p-3 text-center w-16">Vol</th>
-              <th className="p-3 text-center w-16">Satuan</th>
-              <th className="p-3 text-right w-28">Harga Satuan</th>
-              <th className="p-3 text-right w-32">Subtotal</th>
-              {isOfficer && <th className="p-3 text-center w-12">Aksi</th>}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-edge/60 font-sans">
-            {budgetItems.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={isOfficer ? 7 : 6}
-                  className="p-6 text-center text-ink-muted italic text-xs"
-                >
-                  Belum ada rincian item anggaran yang dicatat untuk kegiatan ini.
-                </td>
-              </tr>
-            ) : (
-              budgetItems.map((item, index) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-surface-container-low/60 transition-colors"
-                >
-                  <td className="p-3 text-center font-mono text-ink-muted">
-                    {index + 1}
-                  </td>
-                  <td className="p-3 font-semibold text-ink">{item.name}</td>
-                  <td className="p-3 text-center font-mono text-ink">
-                    {item.quantity}
-                  </td>
-                  <td className="p-3 text-center text-ink-secondary">
-                    {item.unit}
-                  </td>
-                  <td className="p-3 text-right font-mono text-ink-secondary">
-                    Rp {item.estimatedPrice.toLocaleString("id-ID")}
-                  </td>
-                  <td className="p-3 text-right font-mono font-bold text-ink">
-                    Rp {item.totalPrice.toLocaleString("id-ID")}
-                  </td>
-                  {isOfficer && (
-                    <td className="p-3 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteItem(item.id)}
-                        disabled={isPending}
-                        className="h-7 w-7 rounded-lg text-ink-muted hover:text-danger hover:bg-danger-subtle inline-flex items-center justify-center transition-colors cursor-pointer"
-                        title="Hapus item anggaran"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Ringkasan Total Box */}
-      <div className="p-4 rounded-xl bg-surface-container-low/60 border border-edge flex items-center justify-between shadow-xs">
-        <div className="space-y-0.5">
-          <span className="text-[10px] uppercase font-bold text-ink-muted font-mono tracking-wider">
-            Total Estimasi Anggaran Pengajuan
-          </span>
-          <p className="text-[11px] text-ink-secondary">
-            {budgetItems.length} item kebutuhan operasional
+      {/* Tabel Daftar RAB */}
+      {budgetItems.length === 0 ? (
+        <div className="p-8 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
+          <p className="text-sm font-semibold text-ink">Belum ada rincian RAB yang dicatat.</p>
+          <p className="text-xs text-ink-muted">
+            Pengurus dapat menambahkan item anggaran untuk keperluan proposal atau LPJ acara.
           </p>
         </div>
-        <div className="text-right">
-          <span className="text-base sm:text-lg font-black text-primary font-mono tracking-tight">
-            Rp {totalBudget.toLocaleString("id-ID")}
-          </span>
+      ) : (
+        <div className="rounded-2xl border border-edge overflow-hidden bg-surface shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-surface-container-low border-b border-edge text-[11px] font-mono text-ink-muted uppercase">
+                  <th className="px-4 py-3 font-semibold">No</th>
+                  <th className="px-4 py-3 font-semibold">Nama Kebutuhan</th>
+                  <th className="px-4 py-3 font-semibold text-center">Qty</th>
+                  <th className="px-4 py-3 font-semibold text-right">Harga Satuan</th>
+                  <th className="px-4 py-3 font-semibold text-right">Total Harga</th>
+                  {isOfficer && <th className="px-4 py-3 font-semibold text-center">Aksi</th>}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-edge text-xs">
+                {budgetItems.map((item, idx) => (
+                  <tr key={item.id} className="hover:bg-surface-container-low/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-ink-muted">{idx + 1}</td>
+                    <td className="px-4 py-3 font-semibold text-ink">{item.name}</td>
+                    <td className="px-4 py-3 font-mono text-center text-ink-secondary">
+                      {item.quantity} {item.unit}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-right text-ink-secondary">
+                      {formatRupiah(item.estimatedPrice)}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-right font-bold text-ink">
+                      {formatRupiah(item.totalPrice)}
+                    </td>
+                    {isOfficer && (
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteItem(item.id)}
+                          className="p-2 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          title="Hapus Item"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Modal Siap Cetak Dokumen Resmi Kesiswaan */}
+      {/* Modal Cetak & Ekspor RAB */}
       <PrintRABModal
         isOpen={isPrintModalOpen}
         onClose={() => setIsPrintModalOpen(false)}

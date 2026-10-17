@@ -1,10 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { FileText, CheckCircle2, Sparkles, Clock, Edit3 } from "lucide-react";
 import { markNotulensiRead } from "@/actions/acara";
 import { Role } from "@prisma/client";
-import { EditNotulensiModal } from "./EditNotulensiModal";
+
+const EditNotulensiModal = dynamic(
+  () => import("./EditNotulensiModal").then((mod) => mod.EditNotulensiModal),
+  { ssr: false }
+);
 
 interface NotulensiCardProps {
   eventId?: string;
@@ -120,51 +125,45 @@ export function NotulensiCard({
             </span>
           </div>
 
-          {notes && notes.trim() !== "" ? (
-            <p className="whitespace-pre-line text-ink leading-relaxed">
-              {notes}
-            </p>
-          ) : (
-            <div className="py-2 text-center text-ink-muted text-xs italic">
-              Belum ada notulensi untuk rapat ini.
-            </div>
-          )}
+          <div className="whitespace-pre-line font-sans text-ink">
+            {notes || "Belum ada notulensi atau ringkasan rapat yang dicatat untuk acara ini."}
+          </div>
         </div>
 
-        {/* Tombol Aksi Konfirmasi Baca Notulensi */}
-        {notes && notes.trim() !== "" && (
-          hasRead ? (
-            <div className="h-11 min-h-[44px] w-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4" />
-              <span>Notulensi Sudah Dibaca (+5 XP Telah Diklaim)</span>
-            </div>
-          ) : (
+        {/* Action Mark as Read */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center gap-1.5 text-xs text-ink-muted">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <span>Wajib dibaca oleh panitia dan peserta terkait</span>
+          </div>
+
+          {!hasRead ? (
             <button
               type="button"
               disabled={isLoading}
               onClick={handleMarkAsRead}
-              className="min-h-[44px] h-11 w-full bg-card hover:bg-surface-container-low text-primary border border-primary/30 hover:border-primary rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+              className="h-9 px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs disabled:opacity-50"
             >
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span>
-                {isLoading
-                  ? "Menyimpan..."
-                  : "Tandai Notulensi Dibaca (+5 Poin)"}
-              </span>
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>{isLoading ? "Menandai..." : "Tandai Telah Dibaca"}</span>
             </button>
-          )
-        )}
+          ) : (
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Sudah Dibaca</span>
+            </span>
+          )}
+        </div>
       </section>
 
-      {/* Modal Dialog Edit Notulensi */}
+      {/* Modal Edit Notulensi */}
       {eventId && (
         <EditNotulensiModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           eventId={eventId}
-          meetingId={meetingId}
-          initialNotes={notes}
           eventTitle={title}
+          initialNotes={notes}
           onSuccess={(newNotes) => setNotes(newNotes)}
         />
       )}
