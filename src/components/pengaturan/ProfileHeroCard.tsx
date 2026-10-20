@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Zap, ShieldCheck, CheckCircle2, IdCard, Sparkles } from "lucide-react";
+import { Zap, CheckCircle2, IdCard } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 
 export interface UserProfileData {
@@ -162,17 +161,17 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
   return (
     <section className="bg-card border border-edge rounded-2xl p-6 relative overflow-hidden shadow-sm space-y-6">
       {/* Accent Header Ribbon */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-primary to-amber-500" />
+      <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-rose-500 via-primary to-amber-500" />
 
       {/* Banner Peringatan Wajib Ganti Kata Sandi Default */}
       {user.mustChangePassword && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 animate-in fade-in">
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-500/30 text-sm flex items-start gap-3 animate-in fade-in">
           <span className="text-xl shrink-0">⚠️</span>
           <div className="space-y-1 min-w-0 flex-1">
-            <span className="font-semibold block text-amber-200 text-sm">
+            <span className="font-semibold block text-amber-800 dark:text-amber-200 text-sm">
               Ganti Kata Sandi Bawaan Akun
             </span>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-amber-700 dark:text-amber-300/80 leading-relaxed">
               Demi keamanan akunmu, segera ganti kata sandi bawaan (default) dengan kata sandi pribadimu pada formulir di bawah.
             </p>
           </div>
@@ -183,8 +182,8 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
       <div className="flex items-start gap-4 pt-1">
         {/* Large Avatar */}
         <div className="relative shrink-0">
-          <div className="w-20 h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-primary via-rose-500 to-amber-500 shadow-md">
-            <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full p-[2.5px] bg-linear-to-tr from-primary via-rose-500 to-amber-500 shadow-md">
+            <div className="w-full h-full rounded-full overflow-hidden bg-surface flex items-center justify-center">
               {user.image ? (
                 <img
                   src={user.image}
@@ -237,7 +236,7 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           </div>
 
           {/* Details Grade & Division */}
-          <p className="text-sm text-slate-400 mt-2 leading-relaxed font-normal">
+          <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
             {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
           </p>
         </div>
@@ -254,7 +253,7 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
             <span className="text-base font-bold text-ink font-mono tracking-tight">
               {user.totalPoints} XP
             </span>
-            <span className="text-slate-400 font-normal text-xs">Total</span>
+            <span className="text-ink-muted font-normal text-xs">Total</span>
           </div>
 
           {/* Level Tier */}
@@ -269,14 +268,13 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
         {/* Progress Bar to Next Level */}
         <div className="space-y-1.5">
           <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/60">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-amber-500 rounded-full transition-all duration-500"
+            <div className="h-full bg-linear-to-r from-primary to-amber-500 rounded-full transition-all duration-500"
               style={{ width: `${levelInfo.progress}%` }}
             />
           </div>
-          <div className="flex justify-between items-center text-xs text-slate-400">
+          <div className="flex justify-between items-center text-xs text-ink-muted">
             <span>Progres Menuju Lv. {levelInfo.level + 1}</span>
-            <span className="font-mono text-slate-300 font-medium">
+            <span className="font-mono text-ink-secondary font-medium">
               {levelInfo.progress}% ({user.totalPoints} / {levelInfo.nextLevelXp} XP)
             </span>
           </div>
@@ -289,7 +287,7 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           <button
             type="button"
             onClick={onOpenKTA}
-            className="w-full min-h-[48px] px-5 py-3 rounded-xl border border-rose-500/30 bg-rose-950/20 hover:bg-rose-900/30 active:scale-[0.99] text-rose-300 font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            className="w-full min-h-12 px-5 py-3 rounded-xl border border-edge bg-surface-container hover:bg-surface-container-high active:scale-[0.99] text-ink font-semibold text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
           >
             <IdCard className="w-5 h-5 text-primary" />
             <span>🪪 Buka KTA Digital</span>

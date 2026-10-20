@@ -2,7 +2,6 @@
 
 import {
   Clock,
-  MapPin,
   Folder,
   ExternalLink,
   CheckCircle2,
@@ -72,21 +71,6 @@ interface EventDetailCardProps {
   onOpenDriveModal?: () => void;
 }
 
-const INDONESIAN_MONTHS = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
 export function EventDetailCard({
   event,
   onOpenDriveModal,
@@ -149,8 +133,8 @@ export function EventDetailCard({
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
                   isSingleDay
-                    ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
-                    : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
+                    ? "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60"
+                    : "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60"
                 }`}
               >
                 {isSingleDay ? (
@@ -161,7 +145,7 @@ export function EventDetailCard({
                 <span>{isSingleDay ? "Agenda Singkat / Rapat" : "Program Kerja / Acara"}</span>
               </span>
 
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-ink-muted">
                 ID: EVT-{event.id.slice(-6).toUpperCase()}
               </span>
             </div>
@@ -169,18 +153,18 @@ export function EventDetailCard({
             <div className="flex items-center gap-2">
               {/* Badge Status Waktu Dinamis */}
               {timeStatus === "ACTIVE" ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 text-xs font-semibold shadow-xs animate-pulse">
-                  <Radio className="h-3.5 w-3.5 text-cyan-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/60 text-xs font-semibold shadow-xs animate-pulse">
+                  <Radio className="h-3.5 w-3.5" />
                   <span>Berlangsung</span>
                 </span>
               ) : timeStatus === "UPCOMING" ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-slate-300 border border-edge text-xs font-semibold">
-                  <Clock className="h-3.5 w-3.5 text-slate-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-ink-secondary border border-edge text-xs font-semibold">
+                  <Clock className="h-3.5 w-3.5" />
                   <span>Mendatang</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 text-xs font-semibold">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-semibold">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
                   <span>Selesai</span>
                 </span>
               )}
@@ -192,12 +176,12 @@ export function EventDetailCard({
           </h1>
 
           <div className="space-y-1 pt-0.5">
-            <p className="text-sm text-slate-300 flex items-center gap-2">
+            <p className="text-sm text-ink-secondary flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary shrink-0" />
               <span className="font-semibold">{dateRangeString}</span>
             </p>
             {event.description && (
-              <p className="text-base text-slate-300 leading-relaxed bg-surface-container-low/60 p-4 rounded-xl border border-edge/60 mt-2">
+              <p className="text-base text-ink-secondary leading-relaxed bg-surface-container-low/60 p-4 rounded-xl border border-edge/60 mt-2">
                 {event.description}
               </p>
             )}
@@ -210,7 +194,7 @@ export function EventDetailCard({
           <button
             type="button"
             onClick={handleShareWA}
-            className="w-full sm:flex-1 h-11 min-h-[44px] bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all shadow-sm cursor-pointer"
+            className="w-full sm:flex-1 h-11 min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all shadow-sm cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             <span>📱 Bagikan ke Grup WA</span>
@@ -222,7 +206,7 @@ export function EventDetailCard({
               href={event.driveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto h-11 min-h-[44px] px-4 bg-emerald-950/40 text-emerald-400 hover:bg-emerald-900/60 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-colors border border-emerald-500/30 shadow-sm"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-colors border border-emerald-200 dark:border-emerald-500/30 shadow-sm"
             >
               <Folder className="h-4 w-4 text-amber-400 fill-amber-400" />
               <span>Drive Acara</span>
@@ -232,7 +216,7 @@ export function EventDetailCard({
             <button
               type="button"
               onClick={onOpenDriveModal}
-              className="w-full sm:w-auto h-11 min-h-[44px] px-4 bg-surface-container-low hover:bg-surface-container text-slate-400 rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-colors border border-edge shadow-sm cursor-pointer"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink-muted rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-colors border border-edge shadow-sm cursor-pointer"
             >
               <Folder className="h-4 w-4 text-amber-500" />
               <span>Drive Belum Diatur</span>
