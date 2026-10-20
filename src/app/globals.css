@@ -15,14 +15,14 @@
   color-scheme: light;
 
   /* Neutral — Matte Pebble Finish (Anti-Silau #FFFFFF) */
-  --saba-surface: #E5E9F0;
-  --saba-card: #F1F4F8;
+  --saba-surface: #EDF0F5;
+  --saba-card: #F4F7FB;
   --saba-edge: #CBD5E1;
   --saba-surface-container-low: #E9EEF4;
   --saba-surface-container: #D9E1EB;
   --saba-surface-container-high: #CBD5E1;
   --saba-ink: #0F172A;
-  --saba-ink-secondary: #475569;
+  --saba-ink-secondary: #334155;
   --saba-ink-muted: #64748B;
 
   /* Brand Action — Rose Crimson (#E11D48) */

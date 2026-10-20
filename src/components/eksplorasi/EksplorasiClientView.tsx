@@ -97,7 +97,7 @@ export function EksplorasiClientView({
           <button
             type="button"
             onClick={() => setIsCreateProjectOpen(true)}
-            className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px] relative z-10"
+            className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
           >
             <Plus className="h-4 w-4" />
             <span>Submit Karya</span>
@@ -109,7 +109,7 @@ export function EksplorasiClientView({
               setEditingWikiArticle(null);
               setIsCreateWikiOpen(true);
             }}
-            className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px] relative z-10"
+            className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
           >
             <Plus className="h-4 w-4" />
             <span>Tulis Panduan</span>
@@ -131,28 +131,28 @@ export function EksplorasiClientView({
           }
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-11 min-h-[44px] pl-10 pr-3.5 bg-card border border-edge rounded-xl text-xs text-ink placeholder-ink-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-xs"
+          className="w-full h-11 min-h-11 pl-10 pr-3.5 bg-card border border-edge rounded-xl text-xs text-ink placeholder-ink-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-xs"
         />
       </div>
 
       {/* Segmented Control Pill Switcher */}
-      <div className="grid grid-cols-2 p-1 rounded-2xl bg-surface-container-low border border-edge shadow-xs relative z-10">
+      <div className="flex gap-2 p-1.5 rounded-2xl bg-surface-container border border-edge shadow-xs relative z-10">
         <button
           type="button"
           onClick={() => setActiveTab("SHOWCASE")}
-          className={`h-11 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "SHOWCASE"
-              ? "bg-primary text-white shadow-xs"
-              : "text-ink-muted hover:text-ink"
+              ? "bg-primary text-white shadow-sm"
+              : "text-ink-muted hover:text-ink hover:bg-surface-container-high"
           }`}
         >
-          <Sparkles className="h-4 w-4" />
+          <Sparkles className="h-3.5 w-3.5 shrink-0" />
           <span>Showcase Karya</span>
           <span
-            className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+            className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold tabular-nums ${
               activeTab === "SHOWCASE"
                 ? "bg-white/20 text-white"
-                : "bg-surface-container text-ink-secondary"
+                : "bg-surface-container-high text-ink-secondary"
             }`}
           >
             {projects.length}
@@ -162,19 +162,19 @@ export function EksplorasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("WIKI")}
-          className={`h-11 min-h-[44px] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "WIKI"
-              ? "bg-emerald-600 text-white shadow-xs"
-              : "text-ink-muted hover:text-ink"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : "text-ink-muted hover:text-ink hover:bg-surface-container-high"
           }`}
         >
-          <BookOpen className="h-4 w-4" />
+          <BookOpen className="h-3.5 w-3.5 shrink-0" />
           <span>Perpustakaan Digital</span>
           <span
-            className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+            className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold tabular-nums ${
               activeTab === "WIKI"
                 ? "bg-white/20 text-white"
-                : "bg-surface-container text-ink-secondary"
+                : "bg-surface-container-high text-ink-secondary"
             }`}
           >
             {articles.length}

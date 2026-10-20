@@ -1,19 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   X,
   Plus,
   Sparkles,
   Globe,
   Lock,
-  Bug,
-  Lightbulb,
-  ShieldCheck,
-  EyeOff,
   Loader2,
   AlertCircle,
-  HelpCircle,
 } from "lucide-react";
 import { FeedbackType } from "@prisma/client";
 import { submitFeedbackIssue } from "@/actions/aspirasi";
@@ -53,7 +48,6 @@ export function CreateFeedbackModal({
       : PRIVATE_CATEGORY_OPTIONS[0]
   );
   const [description, setDescription] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -90,13 +84,12 @@ export function CreateFeedbackModal({
         description: description.trim(),
         type,
         category,
-        isAnonymous,
+        isAnonymous: true,
       });
 
       if (res.success) {
         setTitle("");
         setDescription("");
-        setIsAnonymous(false);
         onSuccess?.();
         onClose();
       } else {
@@ -110,7 +103,7 @@ export function CreateFeedbackModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/40">
@@ -276,40 +269,20 @@ export function CreateFeedbackModal({
             />
           </div>
 
-          {/* Checkbox Pengirim Anonim */}
-          <label className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low border border-edge cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={isAnonymous}
-              onChange={(e) => setIsAnonymous(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary accent-primary"
-            />
-            <div className="text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-ink">
-                <EyeOff className="w-3.5 h-3.5 text-primary" />
-                <span>Kirim sebagai Anonim</span>
-              </div>
-              <p className="text-ink-muted text-[11px] mt-0.5 leading-relaxed">
-                Nama dan kelas Anda akan disamarkan menjadi &apos;Anggota Saba ExploIT&apos;
-                pada tampilan daftar laporan.
-              </p>
-            </div>
-          </label>
-
           {/* Action Buttons */}
           <div className="pt-3 border-t border-edge bg-card flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="h-11 min-h-11 px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="h-11 min-h-[44px] px-5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="h-11 min-h-11 px-5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isLoading ? (
                 <>

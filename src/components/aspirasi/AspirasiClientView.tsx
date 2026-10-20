@@ -1,17 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  Globe,
-  Lock,
-  Vote,
-  Plus,
-  Filter,
-  Inbox,
-  Sparkles,
-  ShieldCheck,
-  Search,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+"use client";
+
+import { Globe, Lock, Vote, Plus, ShieldCheck, Search } from "lucide-react";
 import { FeedbackType, IssueStatus, Role } from "@prisma/client";
 import { FeedbackIssueCard, FeedbackIssueData } from "./FeedbackIssueCard";
 import { CreateFeedbackModal } from "./CreateFeedbackModal";
@@ -64,19 +56,17 @@ export function AspirasiClientView({
     setIsCreateFeedbackOpen(true);
   };
 
-  // Filter Public Issues
+  // Filter Public Issues (seluruh isu publik ditampilkan tanpa filter status)
   const filteredPublicIssues = publicIssues.filter((issue) => {
-    const matchesStatus =
-      statusFilter === "ALL" ? true : issue.status === statusFilter;
-    const matchesSearch =
-      searchQuery.trim() === ""
-        ? true
-        : issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          issue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (issue.category &&
-            issue.category.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    return matchesStatus && matchesSearch;
+    if (searchQuery.trim() === "") return true;
+    return (
+      issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      Boolean(
+        issue.category &&
+          issue.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
   });
 
   // Filter Private Issues
@@ -127,7 +117,7 @@ export function AspirasiClientView({
               <button
                 type="button"
                 onClick={() => handleOpenCreateFeedback(FeedbackType.PUBLIC_ISSUE)}
-                className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
+                className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
               >
                 <Plus className="h-4 w-4" />
                 <span>Laporkan Isu</span>
@@ -138,7 +128,7 @@ export function AspirasiClientView({
               <button
                 type="button"
                 onClick={() => handleOpenCreateFeedback(FeedbackType.PRIVATE_ASPIRATION)}
-                className="h-11 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
+                className="h-11 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
               >
                 <Plus className="h-4 w-4" />
                 <span>Kirim Aspirasi</span>
@@ -149,7 +139,7 @@ export function AspirasiClientView({
               <button
                 type="button"
                 onClick={() => setIsCreatePollOpen(true)}
-                className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
+                className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
               >
                 <Plus className="h-4 w-4" />
                 <span>Buat Polling</span>
@@ -168,7 +158,7 @@ export function AspirasiClientView({
             setActiveTab("PUBLIC_ISSUES");
             setStatusFilter("ALL");
           }}
-          className={`h-12 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "PUBLIC_ISSUES"
               ? "bg-card text-ink shadow-xs border border-edge"
               : "text-ink-muted hover:text-ink"
@@ -188,7 +178,7 @@ export function AspirasiClientView({
             setActiveTab("PRIVATE_ASPIRATIONS");
             setStatusFilter("ALL");
           }}
-          className={`h-12 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "PRIVATE_ASPIRATIONS"
               ? "bg-card text-ink shadow-xs border border-edge"
               : "text-ink-muted hover:text-ink"
@@ -207,7 +197,7 @@ export function AspirasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("POLLS")}
-          className={`h-12 min-h-[48px] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "POLLS"
               ? "bg-card text-ink shadow-xs border border-edge"
               : "text-ink-muted hover:text-ink"
@@ -228,66 +218,16 @@ export function AspirasiClientView({
       {/* ========================================================= */}
       {activeTab === "PUBLIC_ISSUES" && (
         <section className="space-y-4 animate-in fade-in">
-          {/* Filter Status Buttons ("Semua", "Sedang Dikerjakan", "Selesai", "Ditinjau") */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container-low border border-edge overflow-x-auto no-scrollbar">
-              <button
-                type="button"
-                onClick={() => setStatusFilter("ALL")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
-                  statusFilter === "ALL"
-                    ? "bg-card text-ink shadow-xs border border-edge"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Semua ({publicIssues.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter(IssueStatus.IN_PROGRESS)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
-                  statusFilter === IssueStatus.IN_PROGRESS
-                    ? "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 shadow-xs border border-sky-300 dark:border-sky-500/30"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Sedang Ditangani
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter(IssueStatus.RESOLVED)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
-                  statusFilter === IssueStatus.RESOLVED
-                    ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-300 dark:border-emerald-500/30"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Selesai
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter(IssueStatus.PENDING)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
-                  statusFilter === IssueStatus.PENDING
-                    ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shadow-xs border border-amber-300 dark:border-amber-500/30"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Ditinjau
-              </button>
-            </div>
-
-            {/* Quick Search */}
-            <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari isu / ide fitur..."
-                className="w-full h-10 pl-9 pr-3 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              />
-            </div>
+          {/* Quick Search */}
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari isu / ide fitur..."
+              className="w-full h-10 pl-9 pr-3 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            />
           </div>
 
           {/* Daftar Kartu Isu Publik */}
@@ -306,7 +246,7 @@ export function AspirasiClientView({
                 <button
                   type="button"
                   onClick={() => handleOpenCreateFeedback(FeedbackType.PUBLIC_ISSUE)}
-                  className="h-11 px-5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-[44px]"
+                  className="h-11 px-5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Laporkan Isu Baru (+10 XP)</span>
@@ -353,7 +293,7 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter("ALL")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === "ALL"
                   ? "bg-card text-ink shadow-xs border border-edge"
                   : "text-ink-muted hover:text-ink"
@@ -364,7 +304,7 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.IN_PROGRESS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.IN_PROGRESS
                   ? "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 shadow-xs border border-sky-300 dark:border-sky-500/30"
                   : "text-ink-muted hover:text-ink"
@@ -375,7 +315,7 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.RESOLVED)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.RESOLVED
                   ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-300 dark:border-emerald-500/30"
                   : "text-ink-muted hover:text-ink"
@@ -386,7 +326,7 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.PENDING)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-[36px] ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.PENDING
                   ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shadow-xs border border-amber-300 dark:border-amber-500/30"
                   : "text-ink-muted hover:text-ink"
@@ -414,7 +354,7 @@ export function AspirasiClientView({
                 <button
                   type="button"
                   onClick={() => handleOpenCreateFeedback(FeedbackType.PRIVATE_ASPIRATION)}
-                  className="h-11 px-5 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-[44px]"
+                  className="h-11 px-5 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Tulis Aspirasi Privat (+10 XP)</span>
@@ -454,7 +394,7 @@ export function AspirasiClientView({
                 <button
                   type="button"
                   onClick={() => setIsCreatePollOpen(true)}
-                  className="h-11 px-5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-[44px]"
+                  className="h-11 px-5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Buat Polling Pertama</span>

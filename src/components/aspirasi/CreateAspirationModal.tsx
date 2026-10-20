@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   X,
   MessageSquarePlus,
   Sparkles,
-  EyeOff,
   Tag,
   AlertCircle,
   Globe,
@@ -42,7 +41,6 @@ export function CreateAspirationModal({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState<AspirationCategoryType>("IDE_KEGIATAN");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -70,13 +68,12 @@ export function CreateAspirationModal({
         content: content.trim(),
         category: targetScope === "PRIVATE_ADMIN" ? "BUG_SISTEM" : category,
         targetScope,
-        isAnonymous,
+        isAnonymous: true,
       });
 
       if (res.success) {
         setTitle("");
         setContent("");
-        setIsAnonymous(false);
         setTargetScope("PUBLIC");
         onSuccess?.();
         onClose();
@@ -91,7 +88,7 @@ export function CreateAspirationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/40">
@@ -233,30 +230,6 @@ export function CreateAspirationModal({
               className="w-full p-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none leading-relaxed"
             />
           </div>
-
-          {/* Toggle Kirim Sebagai Anonim */}
-          <label className="flex items-center justify-between p-3 rounded-xl bg-surface-container-low/60 border border-edge cursor-pointer select-none">
-            <div className="flex items-center gap-2.5 min-w-0 pr-2">
-              <div className="h-7 w-7 rounded-lg bg-surface border border-edge flex items-center justify-center shrink-0 text-ink-muted">
-                <EyeOff className="h-3.5 w-3.5" />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-ink block">
-                  Kirim Sebagai Anonim
-                </span>
-                <span className="text-[10px] text-ink-muted leading-tight block">
-                  Nama Anda akan disamarkan menjadi &quot;Anonim (Anggota Saba)&quot;.
-                </span>
-              </div>
-            </div>
-
-            <input
-              type="checkbox"
-              checked={isAnonymous}
-              onChange={(e) => setIsAnonymous(e.target.checked)}
-              className="h-4 w-4 rounded text-primary focus:ring-primary accent-primary shrink-0"
-            />
-          </label>
 
           {/* Action Buttons */}
           <div className="pt-2 flex items-center justify-end gap-2">
