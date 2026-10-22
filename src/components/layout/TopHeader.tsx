@@ -35,39 +35,48 @@ export function TopHeader({ user }: TopHeaderProps) {
     : "SE";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-edge bg-card pt-safe shadow-sm">
-      <div className="flex h-16 items-center justify-between px-4">
-        {/* Logo & Brand Identity */}
-        <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer group min-h-[44px]">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
-            {!logoError ? (
-              <Image
-                src="/logo.png"
-                alt="Saba ExploIT Logo"
-                width={32}
-                height={32}
-                priority
-                onError={() => setLogoError(true)}
-                className="object-contain h-7 w-7"
-              />
-            ) : (
-              <span className="font-bold text-xs text-primary">SE</span>
-            )}
+    <header className="sticky top-0 z-30 w-full border-b border-edge bg-card pt-safe shadow-sm">
+      <div className="flex h-16 items-center justify-between px-4 md:px-8 w-full max-w-7xl mx-auto">
+        {/* Logo & Brand Identity (Mobile) / Workspace Context (Desktop) */}
+        <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex md:hidden items-center gap-3 cursor-pointer group min-h-11">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
+              {!logoError ? (
+                <Image
+                  src="/logo.png"
+                  alt="Saba ExploIT Logo"
+                  width={32}
+                  height={32}
+                  priority
+                  onError={() => setLogoError(true)}
+                  className="object-contain h-7 w-7"
+                />
+              ) : (
+                <span className="font-bold text-xs text-primary">SE</span>
+              )}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-base font-semibold tracking-tight text-ink leading-tight">
+                Saba ExploIT
+              </span>
+              <span className="text-xs text-ink-muted tracking-normal leading-tight mt-0.5">
+                SMAN 1 Bantul
+              </span>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-ink-muted">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-ink">Saba ExploIT Portal Organisasi</span>
+            <span>&bull;</span>
+            <span className="text-ink-muted font-normal">Ekosistem Digital SMAN 1 Bantul</span>
           </div>
-          <div className="flex flex-col">
-            <span className="text-base font-semibold tracking-tight text-ink leading-tight">
-              Saba ExploIT
-            </span>
-            <span className="text-xs text-ink-muted tracking-normal leading-tight mt-0.5">
-              SMAN 1 Bantul
-            </span>
-          </div>
-        </Link>
+        </div>
 
         {/* Action Widgets & User Profile Avatar */}
         <div className="flex items-center gap-3">
           {/* XP Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-[36px]">
+          <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-9">
             <Zap className="h-4 w-4 fill-amber-500 text-amber-600 dark:fill-amber-400 dark:text-amber-500" />
             <span className="text-xs font-semibold text-ink tabular-nums">
               {points.toLocaleString("id-ID")}{" "}
@@ -78,7 +87,7 @@ export function TopHeader({ user }: TopHeaderProps) {
           {/* Avatar Profil dengan Role Ring (Pintu Navigasi Langsung ke /pengaturan) */}
           <Link
             href="/pengaturan"
-            className="relative flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center cursor-pointer active:scale-95 transition-transform"
             title="Akun & Pengaturan Profil"
           >
             {user?.image ? (

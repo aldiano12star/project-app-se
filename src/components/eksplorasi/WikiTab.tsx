@@ -60,8 +60,8 @@ export function WikiTab({
 
   return (
     <div className="space-y-4">
-      {/* 4 Kartu Kategori Utama (Grid 2x2 Responsif) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+      {/* 4 Kartu Kategori Utama (Grid Adaptif: 1 col mobile, 2 col tablet, 4 col desktop) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
         {/* Category 1: Format Surat & LPJ */}
         <button
           type="button"
@@ -211,7 +211,7 @@ export function WikiTab({
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredArticles.map((article) => (
             <WikiCard
               key={article.id}

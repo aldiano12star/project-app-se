@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Receipt,
   ArrowDownLeft,
   ArrowUpRight,
   ExternalLink,
-  Filter,
 } from "lucide-react";
 import {
   TransactionType,
@@ -84,7 +83,7 @@ export function PublicCashLedger({
       </div>
 
       {/* 3 Kotak Ringkasan Finansial */}
-      <div className="grid grid-cols-3 gap-2 text-center">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center">
         <div className="rounded-lg bg-surface-container-low border border-edge p-2.5 flex flex-col">
           <span className="text-[10px] font-medium text-ink-muted">
             Saldo Kas
@@ -116,7 +115,7 @@ export function PublicCashLedger({
         <button
           type="button"
           onClick={() => setFilterType("ALL")}
-          className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
             filterType === "ALL"
               ? "bg-ink text-surface"
               : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
@@ -127,7 +126,7 @@ export function PublicCashLedger({
         <button
           type="button"
           onClick={() => setFilterType("INCOME")}
-          className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
             filterType === "INCOME"
               ? "bg-emerald-600 text-white"
               : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
@@ -138,7 +137,7 @@ export function PublicCashLedger({
         <button
           type="button"
           onClick={() => setFilterType("EXPENSE")}
-          className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
             filterType === "EXPENSE"
               ? "bg-rose-600 text-white"
               : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
@@ -170,7 +169,7 @@ export function PublicCashLedger({
               >
                 <div className="flex items-start gap-2.5 min-w-0">
                   <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0 mt-0.5 ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg shrink-0 mt-0.5 ${
                       isIncome
                         ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600"
                         : "bg-rose-50 dark:bg-rose-950/50 text-rose-600"
@@ -212,7 +211,7 @@ export function PublicCashLedger({
                 </div>
 
                 <span
-                  className={`text-xs font-extrabold flex-shrink-0 tabular-nums ${
+                  className={`text-xs font-extrabold shrink-0 tabular-nums ${
                     isIncome
                       ? "text-emerald-600 dark:text-emerald-400"
                       : "text-rose-600 dark:text-rose-400"

@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
-import { Role, ClassGrade, TransactionType } from "@prisma/client";
+import { Role, TransactionType } from "@prisma/client";
 import { PersonalDuesCard } from "@/components/kas/PersonalDuesCard";
 import { CashComplianceCard } from "@/components/kas/CashComplianceCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
@@ -286,31 +286,34 @@ export default async function KasPage() {
           </div>
         </section>
 
-        {/* 1. Status Kas Personal Pengguna */}
-        <PersonalDuesCard
-          userName={dbUser.name}
-          periods={personalPeriods}
-        />
+        {/* Grid Adaptif Layar Lebar: Status Kas Personal & Kepatuhan Kas Angkatan */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          {/* 1. Status Kas Personal Pengguna */}
+          <PersonalDuesCard
+            userName={dbUser.name}
+            periods={personalPeriods}
+          />
 
-        {/* 2. Kepatuhan Kas Angkatan (Gen 20 & Gen 21) */}
-        <CashComplianceCard
-          gen20={{
-            name: "Gen 20 (Kelas 11)",
-            grade: "Kelas 11",
-            totalMembers: gen20Total,
-            paidMembers: gen20PaidCount,
-            collectedAmount: gen20Collected,
-            percentage: gen20Percentage,
-          }}
-          gen21={{
-            name: "Gen 21 (Kelas 10)",
-            grade: "Kelas 10",
-            totalMembers: gen21Total,
-            paidMembers: gen21PaidCount,
-            collectedAmount: gen21Collected,
-            percentage: gen21Percentage,
-          }}
-        />
+          {/* 2. Kepatuhan Kas Angkatan (Gen 20 & Gen 21) */}
+          <CashComplianceCard
+            gen20={{
+              name: "Gen 20 (Kelas 11)",
+              grade: "Kelas 11",
+              totalMembers: gen20Total,
+              paidMembers: gen20PaidCount,
+              collectedAmount: gen20Collected,
+              percentage: gen20Percentage,
+            }}
+            gen21={{
+              name: "Gen 21 (Kelas 10)",
+              grade: "Kelas 10",
+              totalMembers: gen21Total,
+              paidMembers: gen21PaidCount,
+              collectedAmount: gen21Collected,
+              percentage: gen21Percentage,
+            }}
+          />
+        </div>
 
         {/* 3. Panel Khusus Bendahara & Admin (Tampil Kondisional) */}
         {isTreasurer && (

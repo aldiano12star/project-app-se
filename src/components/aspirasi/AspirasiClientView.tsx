@@ -253,14 +253,16 @@ export function AspirasiClientView({
               )}
             </div>
           ) : (
-            filteredPublicIssues.map((issue) => (
-              <FeedbackIssueCard
-                key={issue.id}
-                issue={issue}
-                currentUserRole={currentUser.role}
-                currentUserId={currentUser.id}
-              />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPublicIssues.map((issue) => (
+                <FeedbackIssueCard
+                  key={issue.id}
+                  issue={issue}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
           )}
         </section>
       )}
@@ -361,14 +363,16 @@ export function AspirasiClientView({
               )}
             </div>
           ) : (
-            filteredPrivateIssues.map((issue) => (
-              <FeedbackIssueCard
-                key={issue.id}
-                issue={issue}
-                currentUserRole={currentUser.role}
-                currentUserId={currentUser.id}
-              />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPrivateIssues.map((issue) => (
+                <FeedbackIssueCard
+                  key={issue.id}
+                  issue={issue}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
           )}
         </section>
       )}
@@ -401,14 +405,16 @@ export function AspirasiClientView({
               )}
             </div>
           ) : (
-            polls.map((poll) => (
-              <PollCard
-                key={poll.id}
-                poll={poll}
-                currentUserRole={currentUser.role}
-                currentUserId={currentUser.id}
-              />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {polls.map((poll) => (
+                <PollCard
+                  key={poll.id}
+                  poll={poll}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
           )}
         </section>
       )}

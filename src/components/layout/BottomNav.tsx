@@ -34,7 +34,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: CalendarDays,
   },
   {
-    label: "Jelajah",
+    label: "Eksplorasi",
     href: "/eksplorasi",
     icon: Compass,
   },
@@ -77,7 +77,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-surface-container/90 backdrop-blur-xl border border-edge text-ink-secondary shadow-lg dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 transition-colors ${
+      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-surface-container/90 backdrop-blur-xl border border-edge text-ink-secondary shadow-lg dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 transition-colors md:hidden ${
         isModalActive ? "hidden" : ""
       }`}
     >

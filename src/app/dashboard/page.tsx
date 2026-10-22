@@ -345,7 +345,7 @@ export default async function DashboardPage() {
 
                     <Link
                       href={`/acara/${task.section.event.id}`}
-                      className="h-11 min-h-[44px] px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-colors shadow-sm self-end sm:self-auto cursor-pointer"
+                      className="h-11 min-h-11 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-colors shadow-sm self-end sm:self-auto cursor-pointer"
                     >
                       <span>Buka Tugas</span>
                       <ChevronRight className="h-4 w-4" />
@@ -358,140 +358,141 @@ export default async function DashboardPage() {
         </section>
 
         {/* ========================================================= */}
-        {/* MODUL 2: Podium Juara Top 3 (Panggung Apresiasi Komunitas) */}
+        {/* MODUL 2 & 3: Grid Adaptif Layar Lebar (Podium & Acara)    */}
         {/* ========================================================= */}
-        <PodiumTop3 contributors={topContributors} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* MODUL 2: Podium Juara Top 3 (Panggung Apresiasi Komunitas) */}
+          <PodiumTop3 contributors={topContributors} />
 
-        {/* ========================================================= */}
-        {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
-        {/* ========================================================= */}
-        <section className="card-solid p-6 shadow-sm flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
-                <CalendarDays className="h-5 w-5" />
+          {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
+          <section className="card-solid p-6 shadow-sm flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
+                  <CalendarDays className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                    Agenda Acara Terdekat
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Workspace &amp; kepanitiaan acara organisasi
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
-                  Agenda Acara Terdekat
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Workspace &amp; kepanitiaan acara organisasi
+              <Link
+                href="/acara"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-[44px] px-2"
+              >
+                <span>Semua Acara</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            {recentEvents.length === 0 ? (
+              <div className="p-6 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
+                <p className="text-sm font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
+                <p className="text-xs text-slate-400">
+                  Agenda kegiatan ekskul akan dijadwalkan oleh pengurus inti.
                 </p>
               </div>
-            </div>
-            <Link
-              href="/acara"
-              className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-[44px] px-2"
-            >
-              <span>Semua Acara</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {recentEvents.map((evt) => {
+                  const isSingleDay =
+                    getLocalDateString(evt.startDate) ===
+                    getLocalDateString(evt.endDate);
+                  const timeStatus = getEventTimeStatus(
+                    evt.startDate,
+                    evt.endDate
+                  );
+                  const formattedSchedule = formatEventSchedule(
+                    evt.startDate,
+                    evt.endDate,
+                    { shortMonth: true }
+                  );
 
-          {recentEvents.length === 0 ? (
-            <div className="p-6 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
-              <p className="text-sm font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
-              <p className="text-xs text-slate-400">
-                Agenda kegiatan ekskul akan dijadwalkan oleh pengurus inti.
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {recentEvents.map((evt) => {
-                const isSingleDay =
-                  getLocalDateString(evt.startDate) ===
-                  getLocalDateString(evt.endDate);
-                const timeStatus = getEventTimeStatus(
-                  evt.startDate,
-                  evt.endDate
-                );
-                const formattedSchedule = formatEventSchedule(
-                  evt.startDate,
-                  evt.endDate,
-                  { shortMonth: true }
-                );
+                  const totalTasks = evt.sections.reduce(
+                    (sum, s) => sum + s.tasks.length,
+                    0
+                  );
+                  const completedTasks = evt.sections.reduce(
+                    (sum, s) =>
+                      sum + s.tasks.filter((t) => t.status === "DONE").length,
+                    0
+                  );
 
-                const totalTasks = evt.sections.reduce(
-                  (sum, s) => sum + s.tasks.length,
-                  0
-                );
-                const completedTasks = evt.sections.reduce(
-                  (sum, s) =>
-                    sum + s.tasks.filter((t) => t.status === "DONE").length,
-                  0
-                );
-
-                return (
-                  <Link
-                    key={evt.id}
-                    href={`/acara/${evt.id}`}
-                    className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
-                  >
-                    <div className="min-w-0 flex-1 space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        {/* Status Badge */}
-                        {timeStatus === "ACTIVE" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 shadow-xs">
-                            <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
-                            <span>Sedang Berlangsung</span>
-                          </span>
-                        ) : timeStatus === "UPCOMING" ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                            <Clock className="h-3 w-3 text-slate-400" />
-                            <span>Mendatang</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
-                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                            <span>✓ Selesai</span>
-                          </span>
-                        )}
-
-                        {/* Tipe Acara */}
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                            isSingleDay
-                              ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
-                              : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
-                          }`}
-                        >
-                          {isSingleDay ? (
-                            <MessageSquare className="h-3 w-3" />
+                  return (
+                    <Link
+                      key={evt.id}
+                      href={`/acara/${evt.id}`}
+                      className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
+                    >
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          {/* Status Badge */}
+                          {timeStatus === "ACTIVE" ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 shadow-xs">
+                              <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
+                              <span>Sedang Berlangsung</span>
+                            </span>
+                          ) : timeStatus === "UPCOMING" ? (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                              <Clock className="h-3 w-3 text-slate-400" />
+                              <span>Mendatang</span>
+                            </span>
                           ) : (
-                            <Layers className="h-3 w-3" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                              <span>✓ Selesai</span>
+                            </span>
                           )}
-                          <span>
-                            {isSingleDay
-                              ? "Agenda Singkat"
-                              : "Proker / Multi-Hari"}
+
+                          {/* Tipe Acara */}
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                              isSingleDay
+                                ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
+                                : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
+                            }`}
+                          >
+                            {isSingleDay ? (
+                              <MessageSquare className="h-3 w-3" />
+                            ) : (
+                              <Layers className="h-3 w-3" />
+                            )}
+                            <span>
+                              {isSingleDay
+                                ? "Agenda Singkat"
+                                : "Proker / Multi-Hari"}
+                            </span>
                           </span>
-                        </span>
 
-                        <span className="text-xs font-mono text-slate-400">
-                          {formattedSchedule}
-                        </span>
+                          <span className="text-xs font-mono text-slate-400">
+                            {formattedSchedule}
+                          </span>
+                        </div>
+
+                        <h3 className="text-sm sm:text-base font-semibold text-ink truncate group-hover:text-primary transition-colors">
+                          {evt.title}
+                        </h3>
+
+                        {totalTasks > 0 && (
+                          <p className="text-xs text-slate-400">
+                            Progress: {completedTasks}/{totalTasks} Tugas Selesai ({evt.sections.length} Seksi)
+                          </p>
+                        )}
                       </div>
-
-                      <h3 className="text-sm sm:text-base font-semibold text-ink truncate group-hover:text-primary transition-colors">
-                        {evt.title}
-                      </h3>
-
-                      {totalTasks > 0 && (
-                        <p className="text-xs text-slate-400">
-                          Progress: {completedTasks}/{totalTasks} Tugas Selesai ({evt.sections.length} Seksi)
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge text-slate-400 group-hover:text-primary shrink-0">
-                      <ChevronRight className="h-5 w-5" />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge text-slate-400 group-hover:text-primary shrink-0">
+                        <ChevronRight className="h-5 w-5" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </AppShell>
   );

@@ -36,7 +36,7 @@ export function CashComplianceCard({
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Gen 20 (Kelas 11) */}
         <div className="bg-surface-container-low border border-edge rounded-lg p-3 flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
