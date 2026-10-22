@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition } from "react";
 import {
+  Wallet,
   ShieldAlert,
   PlusCircle,
   Receipt,
@@ -358,7 +359,7 @@ export function TreasurerPanel({
       <div className="flex items-center justify-between border-b border-edge pb-3">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50">
-            <ShieldAlert className="h-4 w-4" />
+            <Wallet className="h-4 w-4" />
           </div>
           <div>
             <h3 className="text-xs font-bold text-ink uppercase tracking-wider">

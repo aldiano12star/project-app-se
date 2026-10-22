@@ -103,8 +103,8 @@ export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
                 key={period.id}
                 className={`rounded-xl p-3 flex flex-col items-center justify-center text-center min-h-[64px] border transition-colors ${
                   period.isPaid
-                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30"
-                    : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/30"
+                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50"
+                    : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/50"
                 }`}
               >
                 <span className="text-xs font-bold leading-none font-mono">

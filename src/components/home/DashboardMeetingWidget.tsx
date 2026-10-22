@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { QrCode, Sparkles, Eye } from "lucide-react";
+import { QrCode, Sparkles, Eye, CalendarDays } from "lucide-react";
 import { Role } from "@prisma/client";
 
 const MeetingQrModal = dynamic(
@@ -34,14 +34,21 @@ export function DashboardMeetingWidget({
       <section className="card-solid bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-500/30 p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
         {/* Header Widget */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-            </span>
-            <h2 className="text-base font-semibold text-ink">
-              Presensi Sesi Rapat Aktif
-            </h2>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+                </span>
+                <h2 className="text-base font-semibold text-ink">
+                  Presensi Sesi Rapat Aktif
+                </h2>
+              </div>
+            </div>
           </div>
           <span className="inline-flex items-center gap-1.5 bg-primary-subtle text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
             <Sparkles className="h-3.5 w-3.5" />
