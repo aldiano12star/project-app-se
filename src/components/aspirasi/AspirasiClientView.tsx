@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-"use client";
 
 import { Globe, Lock, Vote, Plus, ShieldCheck, Search } from "lucide-react";
 import { FeedbackType, IssueStatus, Role } from "@prisma/client";
