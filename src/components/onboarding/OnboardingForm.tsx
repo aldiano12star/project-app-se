@@ -11,6 +11,10 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  Lock,
+  Eye,
+  EyeOff,
+  Check,
 } from "lucide-react";
 import { saveOnboardingData } from "@/actions/onboarding";
 
@@ -29,8 +33,21 @@ export function OnboardingForm({
   const [fullName, setFullName] = useState(initialName);
   const [kelas, setKelas] = useState<"X" | "XI" | "XII">("X");
   const [divisi, setDivisi] = useState("Programming");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Validasi frontend untuk tombol submit
+  const isPasswordLengthValid = password.length >= 8;
+  const isPasswordMatch = password === confirmPassword && confirmPassword.length > 0;
+  const canSubmit =
+    fullName.trim().length >= 3 &&
+    isPasswordLengthValid &&
+    isPasswordMatch &&
+    !isPending;
 
   // Hitung generasi otomatis berdasarkan kelas
   const getGen = (k: "X" | "XI" | "XII") => {
@@ -55,11 +72,23 @@ export function OnboardingForm({
       return;
     }
 
+    if (!isPasswordLengthValid) {
+      setErrorMessage("Kata sandi wajib diisi minimal 8 karakter.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Konfirmasi kata sandi tidak cocok dengan kata sandi.");
+      return;
+    }
+
     startTransition(async () => {
       const res = await saveOnboardingData({
         fullName: fullName.trim(),
         kelas,
         divisi,
+        password,
+        confirmPassword,
       });
 
       if (res.success) {
@@ -199,17 +228,120 @@ export function OnboardingForm({
           </select>
         </div>
 
+        {/* Input 4: Kata Sandi Baru */}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-ink flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Lock className="w-4 h-4 text-purple-500" />
+              <span>
+                Kata Sandi <span className="text-primary">*</span>
+              </span>
+            </span>
+            <span className="text-[11px] text-ink-muted">Minimal 8 karakter</span>
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              placeholder="Masukkan kata sandi baru Anda"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full h-12 pl-4 pr-11 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-medium"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-ink-muted hover:text-ink transition-colors cursor-pointer rounded-lg"
+              title={showPassword ? "Sembunyikan kata sandi" : "Lihat kata sandi"}
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          {password.length > 0 && (
+            <div className="flex items-center gap-1.5 text-[11px]">
+              {isPasswordLengthValid ? (
+                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Panjang kata sandi memenuhi syarat ({password.length} karakter)</span>
+                </span>
+              ) : (
+                <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>Kurang {8 - password.length} karakter lagi (minimal 8)</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Input 5: Konfirmasi Kata Sandi */}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
+            <Lock className="w-4 h-4 text-purple-500" />
+            <span>
+              Konfirmasi Kata Sandi <span className="text-primary">*</span>
+            </span>
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              required
+              minLength={8}
+              placeholder="Ulangi kata sandi baru Anda"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full h-12 pl-4 pr-11 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-medium"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-ink-muted hover:text-ink transition-colors cursor-pointer rounded-lg"
+              title={
+                showConfirmPassword
+                  ? "Sembunyikan kata sandi"
+                  : "Lihat kata sandi"
+              }
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          {confirmPassword.length > 0 && (
+            <div className="flex items-center gap-1.5 text-[11px]">
+              {isPasswordMatch ? (
+                <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Kata sandi cocok</span>
+                </span>
+              ) : (
+                <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>Konfirmasi kata sandi belum sama</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Submit Action */}
         <div className="pt-2">
           <button
             type="submit"
-            disabled={isPending}
-            className="w-full h-12 min-h-[48px] rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50"
+            disabled={!canSubmit}
+            className="w-full h-12 min-h-[48px] rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.99] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Menyimpan Data Profil...</span>
+                <span>Menyimpan Akun &amp; Kata Sandi...</span>
               </>
             ) : (
               <>

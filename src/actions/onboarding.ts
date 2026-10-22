@@ -4,11 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated } from "@/lib/rbac";
 import { Division } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 
 export interface OnboardingInput {
   fullName: string;
   kelas: "X" | "XI" | "XII";
   divisi: string;
+  password?: string;
+  confirmPassword?: string;
 }
 
 export interface OnboardingResponse {
@@ -43,6 +46,24 @@ export async function saveOnboardingData(
         message: "Pilihan divisi wajib dipilih.",
       };
     }
+
+    // Validasi Kata Sandi Baru
+    if (!input.password || input.password.length < 8) {
+      return {
+        success: false,
+        message: "Kata sandi wajib diisi minimal 8 karakter.",
+      };
+    }
+
+    if (input.password !== input.confirmPassword) {
+      return {
+        success: false,
+        message: "Konfirmasi kata sandi tidak cocok.",
+      };
+    }
+
+    // Enkripsi (hash) kata sandi dengan salt 10 rounds sebelum disimpan
+    const hashedPassword = await bcrypt.hash(input.password, 10);
 
     // Hitung Generasi dan ClassGrade otomatis
     let gen = 21;
@@ -100,6 +121,8 @@ export async function saveOnboardingData(
         divisi: normalizedDivisi,
         classGrade,
         mainDivision,
+        password: hashedPassword,
+        mustChangePassword: false,
         isProfileCompleted: true,
       },
     });
@@ -111,7 +134,7 @@ export async function saveOnboardingData(
 
     return {
       success: true,
-      message: "Data profil berhasil disimpan! Selamat datang di Saba ExploIT.",
+      message: "Data profil & kata sandi berhasil disimpan! Selamat datang di Saba ExploIT.",
     };
   } catch (error) {
     console.error("[Onboarding] saveOnboardingData error:", error);

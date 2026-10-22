@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { signIn } from "@/auth";
 import { AlertTriangle } from "lucide-react";
 
@@ -91,7 +92,17 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </form>
         </div>
 
-        <p className="mt-6 text-xs text-ink-muted">
+        <div className="mt-5 pt-4 border-t border-edge flex items-center justify-center gap-1.5 text-xs text-ink-muted">
+          <span>Belum memiliki akun?</span>
+          <Link
+            href="/register"
+            className="font-semibold text-primary hover:underline"
+          >
+            Daftar Akun Baru
+          </Link>
+        </div>
+
+        <p className="mt-4 text-xs text-ink-muted">
           Akses dibatasi khusus untuk anggota aktif dan pengurus resmi Saba ExploIT.
         </p>
       </div>
