@@ -166,7 +166,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
           {/* Juara 2 (Perak/Silver - Kiri) */}
           <div className="w-[30%] max-w-[110px] flex flex-col items-center">
             {renderAvatar(rank2, "ring-slate-400 ring-offset-2 ring-offset-card", "🥈")}
-            <span className="text-xs sm:text-sm font-semibold text-ink truncate text-center w-full block">
+            <span className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300 truncate text-center w-full block">
               {rank2 ? rank2.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
@@ -235,7 +235,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
               "ring-amber-700 ring-offset-2 ring-offset-card",
               "🥉"
             )}
-            <span className="text-xs sm:text-sm font-semibold text-ink truncate text-center w-full block">
+            <span className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300 truncate text-center w-full block">
               {rank3 ? rank3.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
