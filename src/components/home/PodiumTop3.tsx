@@ -152,7 +152,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
         <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-sm flex items-start gap-3 relative z-10">
           <Zap className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1 space-y-1">
-            <span className="font-bold block text-amber-950 dark:text-amber-200 text-sm">
+            <span className="font-bold block text-amber-800 dark:text-amber-400 text-sm">
               Kontribusi &amp; Keaktifan Komunitas
             </span>
             <p className="text-xs text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
@@ -179,14 +179,14 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
 
             {/* Pilar Perak Berjejang */}
             <div className="w-full h-32 sm:h-36 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
-              <span className="text-xl font-extrabold text-slate-800 dark:text-slate-200">2</span>
+              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">2</span>
               <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
                 <Zap className="h-3 w-3 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400" />
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
                   {rank2 ? rank2.totalPoints : 0}
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
+              <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
                 XP
               </span>
             </div>
@@ -200,7 +200,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
               "🥇",
               true
             )}
-            <span className="text-sm sm:text-base font-bold text-amber-900 dark:text-amber-200 truncate text-center w-full block">
+            <span className="text-sm sm:text-base font-extrabold text-amber-700 dark:text-amber-400 truncate text-center w-full block">
               {rank1 ? rank1.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
@@ -214,15 +214,15 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             {/* Pilar Emas Tertinggi */}
             <div className="w-full h-44 sm:h-48 bg-surface-container border-2 border-amber-500 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 inset-x-0 h-1 bg-amber-500 shadow-sm" />
-              <span className="text-3xl font-black text-amber-900 dark:text-amber-300">1</span>
+              <span className="text-3xl font-black text-amber-700 dark:text-amber-400">1</span>
               <div className="flex items-center gap-1.5 mt-1.5 bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/40">
                 <Zap className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 fill-amber-600 dark:fill-amber-400" />
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-200 tabular-nums">
+                <span className="text-xs font-extrabold text-amber-700 dark:text-amber-400 tabular-nums">
                   {rank1 ? rank1.totalPoints : 0}
                 </span>
-                <span className="text-[10px] font-bold text-amber-900 dark:text-amber-300">XP</span>
+                <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400">XP</span>
               </div>
-              <span className="text-[10px] font-bold text-amber-900 dark:text-amber-300 uppercase tracking-widest mt-1.5">
+              <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 uppercase tracking-widest mt-1.5">
                 JUARA 1
               </span>
             </div>
@@ -248,14 +248,14 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
 
             {/* Pilar Perunggu Berjejang */}
             <div className="w-full h-28 sm:h-32 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
-              <span className="text-xl font-extrabold text-slate-800 dark:text-slate-200">3</span>
+              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">3</span>
               <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
                 <Zap className="h-3 w-3 text-amber-700 dark:text-amber-500 fill-amber-700 dark:fill-amber-500" />
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
                   {rank3 ? rank3.totalPoints : 0}
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
+              <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
                 XP
               </span>
             </div>

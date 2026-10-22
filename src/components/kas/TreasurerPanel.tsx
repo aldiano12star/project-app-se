@@ -239,7 +239,7 @@ export function TreasurerPanel({
       {/* Header Panel Bendahara */}
       <div className="flex items-center justify-between border-b border-edge pb-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50">
             <ShieldAlert className="h-4 w-4" />
           </div>
           <div>
@@ -396,12 +396,12 @@ export function TreasurerPanel({
                   </div>
 
                   {isFullyPaid ? (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-subtle text-success text-[10px] font-bold shrink-0 border border-success/20">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 text-[10px] font-bold shrink-0">
                       <Check className="h-3 w-3" />
                       Lunas
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-danger-subtle text-danger text-[10px] font-bold shrink-0 border border-danger/20">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 text-[10px] font-bold shrink-0">
                       Nunggak Rp {arrearsAmount.toLocaleString("id-ID")}
                     </span>
                   )}

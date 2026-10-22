@@ -236,7 +236,7 @@ export default async function KasPage() {
               Transparansi pembukuan, iuran rutin, & kepatuhan anggota
             </p>
           </div>
-          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-xs p-2.5 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800 shrink-0">
+          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50 shadow-xs p-2.5 shrink-0">
             <Wallet className="h-5 w-5" />
           </div>
         </section>

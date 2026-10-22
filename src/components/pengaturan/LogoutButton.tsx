@@ -18,7 +18,7 @@ export function LogoutButton() {
         type="button"
         onClick={handleSignOut}
         disabled={isLoading}
-        className="w-full min-h-[44px] px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold shadow-xs transition-colors dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400 text-xs sm:text-sm flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+        className="w-full min-h-[44px] px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold dark:bg-rose-950/40 dark:hover:bg-rose-900/60 dark:text-rose-400 dark:border-rose-800/50 shadow-xs transition-colors text-xs sm:text-sm flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
       >
         {isLoading ? (
           <>

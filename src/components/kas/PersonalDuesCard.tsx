@@ -30,7 +30,7 @@ export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
       {/* Header Status Personal */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-xs p-2.5 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800 shrink-0">
+          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50 shadow-xs p-2.5 shrink-0">
             <Wallet className="h-5 w-5" />
           </div>
           <div>
@@ -44,12 +44,12 @@ export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
         </div>
 
         {isFullyPaid ? (
-          <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800/60">
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800/50">
             <CheckCircle2 className="h-4 w-4" />
             Lunas Terpenuhi
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-200 font-semibold px-2.5 py-1 rounded-full text-xs dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60">
+          <span className="inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-rose-200 dark:border-rose-800/50">
             <AlertCircle className="h-4 w-4" />
             Nunggak {unpaidPeriods.length} Periode
           </span>

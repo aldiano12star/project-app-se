@@ -55,12 +55,12 @@ export function PersonalSummarySection({
           <div className="flex flex-col items-start gap-2.5">
             {/* Baris Teratas: Badge Status */}
             {kasSummary.isPaid ? (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/30 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800/50 whitespace-nowrap shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Kas Lunas</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-300 dark:border-amber-500/30 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 px-3 py-1 rounded-full text-xs font-semibold border border-rose-200 dark:border-rose-800/50 whitespace-nowrap shrink-0">
                 <AlertCircle className="w-4 h-4" />
                 <span>Tunggakan Rp {kasSummary.totalArrears.toLocaleString("id-ID")}</span>
               </span>
