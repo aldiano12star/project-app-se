@@ -21,6 +21,11 @@ enum ClassGrade {
   KELAS_12
 }
 
+enum BillingType {
+  KAS_RUTIN
+  URUNAN
+}
+
 enum FeedbackType {
   PUBLIC_ISSUE
   PRIVATE_ASPIRATION
@@ -132,6 +137,11 @@ model User {
   feedbackIssues          FeedbackIssue[]     @relation("UserFeedbackIssues")
   upvotedIssues           FeedbackIssue[]     @relation("IssueUpvotes")
 
+  // Sistem Tagihan Fleksibel (Kas Rutin & Urunan Insidental)
+  createdBillings         BillingEvent[]      @relation("BillingCreator")
+  targetedBillings        BillingEvent[]      @relation("BillingTargets")
+  billingPayments         BillingPayment[]    @relation("UserBillingPayments")
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -147,12 +157,13 @@ model AcademicYear {
   endDate     DateTime
   createdAt   DateTime      @default(now())
 
-  kasPeriods   KasPeriod[]
-  transactions Transaction[]
-  events       Event[]
-  meetings     Meeting[]
-  showcases    Showcase[]
-  polls        Poll[]
+  kasPeriods    KasPeriod[]
+  transactions  Transaction[]
+  events        Event[]
+  meetings      Meeting[]
+  showcases     Showcase[]
+  polls         Poll[]
+  billingEvents BillingEvent[]
 
   @@index([isCurrent])
 }
@@ -573,4 +584,53 @@ model SeasonHallOfFame {
   totalCashFlow  Int      @default(0)
   archivedAt     DateTime @default(now())
 }
+
+// ==========================================
+// MODUL SISTEM TAGIHAN FLEKSIBEL (KAS & URUNAN)
+// ==========================================
+
+model BillingEvent {
+  id             String          @id @default(cuid())
+  title          String          // Contoh: "Kas Rutin September" atau "Urunan Hoodie Divisi"
+  description    String?         @db.Text
+  type           BillingType     @default(KAS_RUTIN)
+  amount         Int             // Nominal yang harus disetor per anggota (Rp)
+  dueDate        DateTime?
+  isActive       Boolean         @default(true)
+  createdById    String
+  createdBy      User            @relation("BillingCreator", fields: [createdById], references: [id])
+  academicYearId String?
+  academicYear   AcademicYear?   @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+
+  // Target penerima tagihan khusus jika URUNAN (array anggota terpilih)
+  // Untuk KAS_RUTIN: berlaku global ke seluruh anggota aktif
+  targetUsers    User[]          @relation("BillingTargets")
+  payments       BillingPayment[]
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+  @@index([academicYearId])
+}
+
+model BillingPayment {
+  id             String        @id @default(cuid())
+  billingEventId String
+  userId         String
+  amountPaid     Int
+  paidAt         DateTime      @default(now())
+  recordedBy     String        // Petugas bendahara / operator yang mencatat
+  proofUrl       String?       // URL bukti transfer / nota
+  notes          String?       @db.Text
+
+  billingEvent   BillingEvent  @relation(fields: [billingEventId], references: [id], onDelete: Cascade)
+  user           User          @relation("UserBillingPayments", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([billingEventId, userId])
+  @@index([billingEventId])
+  @@index([userId])
+}
+
 

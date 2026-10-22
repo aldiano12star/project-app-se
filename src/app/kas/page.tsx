@@ -98,6 +98,9 @@ export default async function KasPage() {
         image: true,
         role: true,
         classGrade: true,
+        generationNumber: true,
+        gen: true,
+        kelas: true,
         mainDivision: true,
         kasPayments: {
           select: {
@@ -171,13 +174,52 @@ export default async function KasPage() {
   // Periode aktif (periode dengan nomor urut tertinggi atau yang sedang berjalan)
   const activePeriod = kasPeriods[kasPeriods.length - 1] || null;
 
+  // Helper pencocokan generasi / kelas yang tahan banting (berbasis gen, generationNumber, maupun classGrade)
+  const isGen20Member = (m: {
+    classGrade?: string | null;
+    gen?: number | null;
+    generationNumber?: number | null;
+    kelas?: string | null;
+  }) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 20) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return (
+      cg === "KELAS_11" ||
+      cg === "XI" ||
+      cg === "11" ||
+      cg.includes("11") ||
+      k === "XI" ||
+      k === "11" ||
+      k.includes("11")
+    );
+  };
+
+  const isGen21Member = (m: {
+    classGrade?: string | null;
+    gen?: number | null;
+    generationNumber?: number | null;
+    kelas?: string | null;
+  }) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 21) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return (
+      cg === "KELAS_10" ||
+      cg === "X" ||
+      cg === "10" ||
+      cg.includes("10") ||
+      k === "X" ||
+      k === "10" ||
+      k.includes("10")
+    );
+  };
+
   // Hitung kepatuhan kas riil Gen 20 (Kelas 11) dan Gen 21 (Kelas 10)
-  const gen20Members = allMembers.filter(
-    (m) => m.classGrade === ClassGrade.KELAS_11
-  );
-  const gen21Members = allMembers.filter(
-    (m) => m.classGrade === ClassGrade.KELAS_10
-  );
+  const gen20Members = allMembers.filter(isGen20Member);
+  const gen21Members = allMembers.filter(isGen21Member);
 
   const gen20PaidCount = gen20Members.filter((m) =>
     activePeriod
@@ -219,6 +261,9 @@ export default async function KasPage() {
     image: m.image,
     role: m.role,
     classGrade: m.classGrade,
+    generationNumber: m.generationNumber ?? null,
+    gen: m.gen ?? null,
+    kelas: m.kelas ?? null,
     mainDivision: m.mainDivision,
     payments: m.kasPayments,
   }));

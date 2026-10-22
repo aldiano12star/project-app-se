@@ -335,3 +335,96 @@ export async function recordAdvancePayment(
     };
   }
 }
+
+export interface CreateBillingEventInput {
+  title: string;
+  description?: string;
+  type: "KAS_RUTIN" | "URUNAN";
+  amount: number;
+  dueDate?: string;
+  targetUserIds?: string[];
+}
+
+/**
+ * Membuat Tagihan Baru (Kas Rutin Global / Urunan Insidental Anggota Spesifik)
+ * Hanya dapat diakses oleh: BENDAHARA, ADMIN, OPERATOR
+ */
+export async function createBillingEvent(
+  input: CreateBillingEventInput
+): Promise<ActionResponse> {
+  try {
+    const user = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+
+    if (!input.title || input.title.trim() === "") {
+      return {
+        success: false,
+        message: "Judul tagihan wajib diisi.",
+      };
+    }
+
+    if (!input.amount || input.amount <= 0) {
+      return {
+        success: false,
+        message: "Nominal tagihan harus lebih dari Rp 0.",
+      };
+    }
+
+    if (input.type === "URUNAN" && (!input.targetUserIds || input.targetUserIds.length === 0)) {
+      return {
+        success: false,
+        message: "Pilih minimal 1 anggota untuk tagihan urunan insidental.",
+      };
+    }
+
+    // Ambil tahun ajaran aktif saat ini
+    let academicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+    });
+    if (!academicYear) {
+      academicYear = await prisma.academicYear.findFirst({
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    // Simpan BillingEvent ke database aktif
+    await prisma.billingEvent.create({
+      data: {
+        title: input.title.trim(),
+        description: input.description?.trim() || null,
+        type: input.type,
+        amount: Math.round(input.amount),
+        dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        createdById: user.id,
+        academicYearId: academicYear?.id || null,
+        ...(input.type === "URUNAN" && input.targetUserIds?.length
+          ? {
+              targetUsers: {
+                connect: input.targetUserIds.map((id) => ({ id })),
+              },
+            }
+          : {}),
+      },
+    });
+
+    revalidatePath("/kas");
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: `Tagihan ${
+        input.type === "KAS_RUTIN" ? "Kas Rutin" : "Urunan"
+      } "${input.title}" (${
+        input.type === "URUNAN"
+          ? `${input.targetUserIds?.length || 0} anggota terpilih`
+          : "seluruh anggota aktif"
+      }) berhasil dibuat.`,
+    };
+  } catch (error) {
+    console.error("[Kas Action] createBillingEvent error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal membuat tagihan baru.",
+    };
+  }
+}
