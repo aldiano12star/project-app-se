@@ -271,15 +271,15 @@ export function AspirasiClientView({
       {activeTab === "PRIVATE_ASPIRATIONS" && (
         <section className="space-y-4 animate-in fade-in">
           {/* Banner Informasi Saluran Privat */}
-          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900/50 flex items-start gap-3">
+          <div className="p-4 rounded-2xl bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
             <div className="text-xs space-y-1">
-              <span className="font-bold text-purple-800 dark:text-purple-300 block">
+              <span className="font-bold text-purple-950 dark:text-purple-200 block">
                 {isOperator
                   ? "Peti Saluran Rahasia Operator"
                   : "Saluran Aspirasi & Evaluasi Privat"}
               </span>
-              <p className="text-purple-700 dark:text-purple-300/80 leading-relaxed text-[11px]">
+              <p className="text-purple-800 dark:text-purple-200/90 font-medium leading-relaxed text-[11px]">
                 {isOperator
                   ? "Seluruh pesan di bawah ini bersifat rahasia dan hanya dapat diakses oleh akun dengan wewenang Operator Organisasi."
                   : "Pesan yang Anda kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}

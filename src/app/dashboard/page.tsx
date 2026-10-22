@@ -368,7 +368,7 @@ export default async function DashboardPage() {
         <section className="card-solid p-6 shadow-sm flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-950/50 text-sky-400 border border-sky-500/30">
+              <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 shadow-xs p-2.5 dark:bg-indigo-950/50 dark:text-indigo-400 dark:border-indigo-900/50 shrink-0">
                 <CalendarDays className="h-5 w-5" />
               </div>
               <div>

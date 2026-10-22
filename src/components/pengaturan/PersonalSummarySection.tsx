@@ -69,10 +69,10 @@ export function PersonalSummarySection({
             {/* Baris Bawah: Icon + Judul & Deskripsi Membentang Penuh */}
             <div className="flex items-center gap-3 w-full">
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+                className={`rounded-xl flex items-center justify-center shrink-0 border p-2.5 shadow-xs ${
                   kasSummary.isPaid
-                    ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
+                    ? "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-800"
+                    : "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800"
                 }`}
               >
                 <Wallet className="w-5 h-5" />
@@ -126,12 +126,12 @@ export function PersonalSummarySection({
           <div className="flex flex-col items-start gap-2.5">
             {/* Baris Teratas: Badge Status */}
             {attendanceSummary.isCompliant ? (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/30 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-500/30 whitespace-nowrap shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Aktif &amp; Memenuhi Syarat</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-xs font-semibold border border-amber-300 dark:border-amber-500/30 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-300 font-semibold px-2.5 py-1 rounded-full text-xs dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60 whitespace-nowrap shrink-0">
                 <AlertTriangle className="w-4 h-4" />
                 <span>Perlu Ditingkatkan</span>
               </span>
@@ -139,13 +139,7 @@ export function PersonalSummarySection({
 
             {/* Baris Bawah: Icon + Judul & Deskripsi Membentang Penuh */}
             <div className="flex items-center gap-3 w-full">
-              <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
-                  attendanceSummary.isCompliant
-                    ? "bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400"
-                }`}
-              >
+              <div className="rounded-xl flex items-center justify-center shrink-0 border border-amber-200 p-2.5 shadow-xs bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-800">
                 <CalendarCheck className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">

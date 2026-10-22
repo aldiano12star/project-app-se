@@ -69,11 +69,15 @@ export function BottomNav() {
     return () => observer.disconnect();
   }, []);
 
+  if (pathname.startsWith("/pengaturan")) {
+    return null;
+  }
+
   return (
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full border shadow-lg flex items-center justify-between bg-white/90 border-slate-200/80 text-slate-600 backdrop-blur-xl dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 transition-colors ${
+      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full border shadow-xl flex items-center justify-between bg-white/95 border-slate-200/90 text-slate-600 backdrop-blur-xl dark:bg-slate-900/95 dark:border-slate-800 dark:text-slate-400 transition-colors ${
         isModalActive ? "hidden" : ""
       }`}
     >
@@ -103,7 +107,7 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                className="bg-rose-50 text-rose-600 border border-rose-200/60 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/40 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
+                className="bg-rose-50 text-rose-600 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/40 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs font-semibold leading-none tracking-tight">

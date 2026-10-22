@@ -18,16 +18,16 @@ export function LogoutButton() {
         type="button"
         onClick={handleSignOut}
         disabled={isLoading}
-        className="w-full min-h-[44px] px-4 py-3 rounded-xl bg-red-950/40 hover:bg-red-900/50 active:scale-[0.98] text-red-400 border border-red-800/60 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+        className="w-full min-h-[44px] px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold shadow-xs transition-colors dark:bg-rose-950/30 dark:border-rose-900/50 dark:text-rose-400 text-xs sm:text-sm flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
       >
         {isLoading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin text-red-400" />
+            <Loader2 className="w-4 h-4 animate-spin text-rose-600 dark:text-rose-400" />
             <span>Memproses Keluar...</span>
           </>
         ) : (
           <>
-            <LogOut className="w-4 h-4 text-red-400" />
+            <LogOut className="w-4 h-4 text-rose-600 dark:text-rose-400" />
             <span>Keluar dari Akun</span>
           </>
         )}
