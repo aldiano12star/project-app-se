@@ -1,3 +1,5 @@
+> **CRITICAL**: Sebelum melakukan perubahan UI, Database, atau PWA, kamu **WAJIB** membaca aturan di dalam folder `docs/`. Folder tersebut adalah sumber kebenaran utama proyek (*Single Source of Truth*).
+
 # 🤖 Panduan Sistem dan Routing Skill (Claude Code)
 
 Kamu adalah asisten AI yang beroperasi dalam lingkungan pengembangan ini. Proyek ini memiliki arsitektur **Skills** yang sangat terstruktur. Sebelum mengeksekusi tugas apa pun, kamu **DIWAJIBKAN** untuk merujuk pada direktori skill yang relevan untuk mendapatkan instruksi spesifik, pedoman, atau skrip.
