@@ -37,12 +37,9 @@ export function DashboardMeetingWidget({
           <div className="flex items-center gap-3">
             <CalendarDays className="h-6 w-6 text-slate-700 dark:text-slate-300 shrink-0" />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                <h2 className="text-base font-semibold text-ink">
-                  Presensi Sesi Rapat Aktif
-                </h2>
-              </div>
+              <h2 className="text-base font-semibold text-ink">
+                Presensi Sesi Rapat Aktif
+              </h2>
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 bg-primary-subtle text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
@@ -67,7 +64,7 @@ export function DashboardMeetingWidget({
               <button
                 type="button"
                 onClick={() => setIsScannerOpen(true)}
-                className="w-full flex-1 h-12 min-h-[48px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                className="w-full flex-1 h-12 min-h-12 bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 <QrCode className="h-4 w-4" />
                 <span>Pindai QR Rapat (+10 XP)</span>
@@ -78,7 +75,7 @@ export function DashboardMeetingWidget({
                 <button
                   type="button"
                   onClick={() => setIsQrModalOpen(true)}
-                  className="w-full sm:w-auto h-12 min-h-[48px] px-5 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full sm:w-auto h-12 min-h-12 px-5 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   title="Tampilkan QR Code untuk dipindai anggota"
                 >
                   <Eye className="h-4 w-4 text-primary" />

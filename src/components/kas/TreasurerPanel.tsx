@@ -15,6 +15,8 @@ import {
   ExternalLink,
   Loader2,
   Share2,
+  Minus,
+  Plus,
 } from "lucide-react";
 import {
   generateWhatsAppLink,
@@ -32,6 +34,7 @@ import {
   toggleDuesPayment,
   recordAdvancePayment,
   createBillingEvent,
+  toggleUrunanPayment,
 } from "@/actions/kas";
 
 export interface MemberKasData {
@@ -99,16 +102,32 @@ export interface KasPeriodData {
   amount: number;
 }
 
+export interface ActiveUrunanEvent {
+  id: string;
+  title: string;
+  amount: number;
+  dueDate?: Date | string | null;
+  targetUsers: { id: string }[];
+  payments: {
+    id: string;
+    userId: string;
+    amountPaid: number;
+    paidAt: Date | string;
+  }[];
+}
+
 interface TreasurerPanelProps {
   currentUserRole: Role;
   allMembers: MemberKasData[];
   periods: KasPeriodData[];
+  activeUrunanEvents?: ActiveUrunanEvent[];
 }
 
 export function TreasurerPanel({
   currentUserRole,
   allMembers,
   periods,
+  activeUrunanEvents = [],
 }: TreasurerPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterClass, setFilterClass] = useState<
@@ -172,7 +191,15 @@ export function TreasurerPanel({
     if (!matchesSearch) return false;
 
     const paidPeriodIds = new Set(m.payments.map((p) => p.kasPeriodId));
-    const isNunggak = periods.some((p) => !paidPeriodIds.has(p.id));
+    const isKasNunggak = periods.some((p) => !paidPeriodIds.has(p.id));
+
+    const targetedUrunans = activeUrunanEvents.filter((event) =>
+      event.targetUsers.some((u) => u.id === m.id)
+    );
+    const isUrunanNunggak = targetedUrunans.some(
+      (event) => !event.payments.some((p) => p.userId === m.id)
+    );
+    const isNunggak = isKasNunggak || isUrunanNunggak;
 
     if (filterClass === "ALL") return true;
     if (filterClass === "KELAS_10") return isGen21(m);
@@ -245,6 +272,17 @@ export function TreasurerPanel({
   const handleTogglePayment = (userId: string, periodId: string) => {
     startTransition(async () => {
       const res = await toggleDuesPayment(userId, periodId);
+      if (res.success) {
+        showToast(res.message, "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    });
+  };
+
+  const handleToggleUrunan = (userId: string, eventId: string) => {
+    startTransition(async () => {
+      const res = await toggleUrunanPayment(userId, eventId);
       if (res.success) {
         showToast(res.message, "success");
       } else {
@@ -486,11 +524,26 @@ export function TreasurerPanel({
             const unpaidPeriods = periods.filter(
               (p) => !paidPeriodIds.has(p.id)
             );
-            const isFullyPaid = unpaidPeriods.length === 0;
-            const arrearsAmount = unpaidPeriods.reduce(
+            const unpaidKasArrears = unpaidPeriods.reduce(
               (sum, p) => sum + p.amount,
               0
             );
+
+            // Filter urunan aktif yang menargetkan anggota ini
+            const targetedUrunans = activeUrunanEvents.filter((event) =>
+              event.targetUsers.some((u) => u.id === member.id)
+            );
+            const unpaidUrunans = targetedUrunans.filter(
+              (event) => !event.payments.some((p) => p.userId === member.id)
+            );
+            const unpaidUrunanArrears = unpaidUrunans.reduce(
+              (sum, u) => sum + u.amount,
+              0
+            );
+
+            const totalArrears = unpaidKasArrears + unpaidUrunanArrears;
+            const isFullyPaid =
+              unpaidPeriods.length === 0 && unpaidUrunans.length === 0;
 
             return (
               <div
@@ -534,51 +587,108 @@ export function TreasurerPanel({
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 text-[10px] font-bold shrink-0">
-                      Nunggak Rp {arrearsAmount.toLocaleString("id-ID")}
+                      Nunggak Rp {totalArrears.toLocaleString("id-ID")}
                     </span>
                   )}
                 </div>
 
-                {/* Grid Periode Interaktif Toggle */}
-                {periods.length > 0 && (
-                  <div className="space-y-1 pt-1">
-                    <span className="text-[10px] font-semibold text-ink-muted block">
-                      Klik periode untuk verifikasi pembayaran:
-                    </span>
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {periods.map((period) => {
-                        const isPaid = paidPeriodIds.has(period.id);
-                        return (
-                          <button
-                            key={period.id}
-                            type="button"
-                            disabled={isPending}
-                            onClick={() =>
-                              handleTogglePayment(member.id, period.id)
-                            }
-                            className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
-                              isPaid
-                                ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
-                                : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
-                            }`}
-                            title={`Klik untuk ubah status P${period.periodNumber}`}
-                          >
-                            <span className="text-[10px] font-bold">
-                              P{String(period.periodNumber).padStart(2, "0")}
-                            </span>
-                            <span
-                              className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
-                                isPaid
-                                  ? "bg-success text-white"
-                                  : "bg-danger text-white"
-                              }`}
-                            >
-                              {isPaid ? "L" : "N"}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
+                {/* Grid Periode Interaktif Toggle (Kas Rutin & Urunan) */}
+                {(periods.length > 0 || targetedUrunans.length > 0) && (
+                  <div
+                    className={`space-y-2 pt-1 ${
+                      targetedUrunans.length > 0
+                        ? "sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0"
+                        : ""
+                    }`}
+                  >
+                    {/* Grid Periode Kas Rutin */}
+                    {periods.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-semibold text-ink-muted block">
+                          Iuran Kas Rutin:
+                        </span>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {periods.map((period) => {
+                            const isPaid = paidPeriodIds.has(period.id);
+                            return (
+                              <button
+                                key={period.id}
+                                type="button"
+                                disabled={isPending}
+                                onClick={() =>
+                                  handleTogglePayment(member.id, period.id)
+                                }
+                                className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
+                                  isPaid
+                                    ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
+                                    : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
+                                }`}
+                                title={`Klik untuk ubah status P${period.periodNumber}`}
+                              >
+                                <span className="text-[10px] font-bold">
+                                  P{String(period.periodNumber).padStart(2, "0")}
+                                </span>
+                                <span
+                                  className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
+                                    isPaid
+                                      ? "bg-success text-white"
+                                      : "bg-danger text-white"
+                                  }`}
+                                >
+                                  {isPaid ? "L" : "N"}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Grid Tagihan Urunan Insidental */}
+                    {targetedUrunans.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-semibold text-ink-muted block">
+                          Tagihan Urunan:
+                        </span>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {targetedUrunans.map((urunan, uIdx) => {
+                            const isPaid = urunan.payments.some(
+                              (p) => p.userId === member.id
+                            );
+                            const urunanCode = `U${String(uIdx + 1).padStart(2, "0")}`;
+                            return (
+                              <button
+                                key={urunan.id}
+                                type="button"
+                                disabled={isPending}
+                                onClick={() =>
+                                  handleToggleUrunan(member.id, urunan.id)
+                                }
+                                className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
+                                  isPaid
+                                    ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
+                                    : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
+                                }`}
+                                title={`${urunan.title} (Rp ${urunan.amount.toLocaleString("id-ID")}) - Klik untuk ubah status`}
+                              >
+                                <span className="text-[10px] font-bold">
+                                  {urunanCode}
+                                </span>
+                                <span
+                                  className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
+                                    isPaid
+                                      ? "bg-success text-white"
+                                      : "bg-danger text-white"
+                                  }`}
+                                >
+                                  {isPaid ? "L" : "N"}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -772,27 +882,43 @@ export function TreasurerPanel({
               </div>
 
               <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
                   Jumlah Periode Kas Di Muka
                 </label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {[1, 2, 4, 8].map((cnt) => (
-                    <button
-                      key={cnt}
-                      type="button"
-                      onClick={() => setAdvancePeriodsCount(cnt)}
-                      className={`min-h-[44px] rounded-lg font-bold border transition-colors ${
-                        advancePeriodsCount === cnt
-                          ? "bg-primary text-white border-primary"
-                          : "bg-surface text-ink border-edge"
-                      }`}
-                    >
-                      {cnt} Periode
-                      <span className="block text-[9px] font-normal">
-                        Rp {(cnt * 5000).toLocaleString("id-ID")}
-                      </span>
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-3 p-2 bg-surface-container-low rounded-xl border border-edge">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAdvancePeriodsCount((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={advancePeriodsCount <= 1}
+                    className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                    aria-label="Kurangi Periode"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+
+                  <div className="flex flex-col items-center">
+                    <span className="text-base font-bold text-ink leading-tight">
+                      {advancePeriodsCount} Periode
+                    </span>
+                    <span className="text-[10px] text-ink-muted">
+                      ({advancePeriodsCount} pekan)
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setAdvancePeriodsCount((prev) => prev + 1)}
+                    className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 transition-all cursor-pointer"
+                    aria-label="Tambah Periode"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <div className="mt-2 text-center text-xs font-semibold text-primary">
+                  Total: Rp {(advancePeriodsCount * 5000).toLocaleString("id-ID")}
                 </div>
               </div>
 
@@ -858,34 +984,28 @@ export function TreasurerPanel({
                   <button
                     type="button"
                     onClick={() => setBillingType("KAS_RUTIN")}
-                    className={`min-h-[44px] rounded-xl font-bold border transition-all text-left p-3 flex flex-col gap-0.5 cursor-pointer ${
+                    className={`min-h-[44px] rounded-xl font-bold border transition-all p-3 flex items-center justify-center gap-1.5 cursor-pointer ${
                       billingType === "KAS_RUTIN"
                         ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30"
                         : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
                     }`}
                   >
                     <span className="text-xs font-bold flex items-center gap-1.5">
-                      <span>💰 Kas Rutin</span>
-                    </span>
-                    <span className="text-[10px] font-normal leading-tight">
-                      Tagihan global untuk semua anggota
+                      💰 Kas Rutin
                     </span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setBillingType("URUNAN")}
-                    className={`min-h-[44px] rounded-xl font-bold border transition-all text-left p-3 flex flex-col gap-0.5 cursor-pointer ${
+                    className={`min-h-[44px] rounded-xl font-bold border transition-all p-3 flex items-center justify-center gap-1.5 cursor-pointer ${
                       billingType === "URUNAN"
                         ? "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-500 shadow-xs ring-1 ring-purple-500/30"
                         : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
                     }`}
                   >
                     <span className="text-xs font-bold flex items-center gap-1.5">
-                      <span>🎯 Urunan Insidental</span>
-                    </span>
-                    <span className="text-[10px] font-normal leading-tight">
-                      Hanya dibebankan pada anggota terpilih
+                      🎯 Urunan
                     </span>
                   </button>
                 </div>

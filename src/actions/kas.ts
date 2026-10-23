@@ -428,3 +428,99 @@ export async function createBillingEvent(
     };
   }
 }
+
+/**
+ * Menandai status lunas atau membatalkan pembayaran Urunan Insidental anggota.
+ * Menambah atau menghapus record di model BillingPayment.
+ */
+export async function toggleUrunanPayment(
+  userId: string,
+  eventId: string
+): Promise<ActionResponse<{ isPaid: boolean }>> {
+  try {
+    const currentUser = await assertRole([
+      Role.BENDAHARA,
+      Role.ADMIN,
+      Role.OPERATOR,
+    ]);
+
+    const [billingEvent, targetMember] = await Promise.all([
+      prisma.billingEvent.findUnique({
+        where: { id: eventId },
+        include: { targetUsers: { select: { id: true } } },
+      }),
+      prisma.user.findUnique({
+        where: { id: userId },
+      }),
+    ]);
+
+    if (!billingEvent) {
+      return {
+        success: false,
+        message: "Tagihan urunan tidak ditemukan.",
+      };
+    }
+
+    if (!targetMember) {
+      return {
+        success: false,
+        message: "Data anggota tidak ditemukan.",
+      };
+    }
+
+    // Periksa apakah pembayaran urunan sudah ada
+    const existingPayment = await prisma.billingPayment.findUnique({
+      where: {
+        billingEventId_userId: {
+          billingEventId: eventId,
+          userId,
+        },
+      },
+    });
+
+    if (existingPayment) {
+      // BATALKAN: Hapus BillingPayment
+      await prisma.billingPayment.delete({
+        where: { id: existingPayment.id },
+      });
+
+      revalidatePath("/kas");
+      revalidatePath("/dashboard");
+
+      return {
+        success: true,
+        message: `Status urunan "${billingEvent.title}" untuk ${targetMember.name} dibatalkan.`,
+        data: { isPaid: false },
+      };
+    } else {
+      // TANDAI LUNAS: Buat BillingPayment
+      await prisma.billingPayment.create({
+        data: {
+          billingEventId: eventId,
+          userId,
+          amountPaid: billingEvent.amount,
+          recordedBy: currentUser.name || currentUser.email || "Bendahara",
+          paidAt: new Date(),
+        },
+      });
+
+      revalidatePath("/kas");
+      revalidatePath("/dashboard");
+
+      return {
+        success: true,
+        message: `Pembayaran urunan "${billingEvent.title}" untuk ${targetMember.name} berhasil dicatat.`,
+        data: { isPaid: true },
+      };
+    }
+  } catch (error) {
+    console.error("[Kas Action] toggleUrunanPayment error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui status urunan.",
+    };
+  }
+}

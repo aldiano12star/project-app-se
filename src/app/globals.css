@@ -14,15 +14,15 @@
 :root {
   color-scheme: light;
 
-  /* Neutral — Matte Pebble Finish (Anti-Silau #FFFFFF) */
-  --saba-surface: #EDF0F5;
-  --saba-card: #F4F7FB;
-  --saba-edge: #CBD5E1;
-  --saba-surface-container-low: #E9EEF4;
-  --saba-surface-container: #D9E1EB;
-  --saba-surface-container-high: #CBD5E1;
+  /* Neutral — Soft Slate Clean Light Mode */
+  --saba-surface: #F8FAFC;
+  --saba-card: #FFFFFF;
+  --saba-edge: #E2E8F0;
+  --saba-surface-container-low: #F1F5F9;
+  --saba-surface-container: #FFFFFF;
+  --saba-surface-container-high: #E2E8F0;
   --saba-ink: #0F172A;
-  --saba-ink-secondary: #334155;
+  --saba-ink-secondary: #475569;
   --saba-ink-muted: #64748B;
 
   /* Brand Action — Rose Crimson (#E11D48) */
@@ -46,29 +46,29 @@
 .dark {
   color-scheme: dark;
 
-  /* Neutral — Deep Navy & Steel Slate (Kontras Tinggi) */
-  --saba-surface: #0B0F17;
+  /* Neutral — Deep Navy & Steel Slate */
+  --saba-surface: #0B0F19;
   --saba-card: #151D2A;
   --saba-edge: #27344A;
   --saba-surface-container-low: #101622;
   --saba-surface-container: #1D2738;
   --saba-surface-container-high: #2E3D56;
-  --saba-ink: #E2E8F0;
+  --saba-ink: #F1F5F9;
   --saba-ink-secondary: #94A3B8;
   --saba-ink-muted: #64748B;
 
-  /* Brand Action — Coral Rose (#F43F5E) */
-  --saba-primary: #F43F5E;
-  --saba-primary-hover: #E11D48;
+  /* Brand Action — Rose Pastel (#FB7185) */
+  --saba-primary: #FB7185;
+  --saba-primary-hover: #F43F5E;
   --saba-primary-subtle: #881337;
-  --saba-on-primary: #FFFFFF;
+  --saba-on-primary: #0F172A;
 
-  /* Semantic Refresh (Dark Mode High-Contrast) */
-  --saba-success: #10B981;
+  /* Semantic Refresh (Dark Mode Pastel) */
+  --saba-success: #34D399;
   --saba-success-subtle: #064E3B;
-  --saba-danger: #EF4444;
+  --saba-danger: #F87171;
   --saba-danger-subtle: #450A0A;
-  --saba-warning: #F59E0B;
+  --saba-warning: #FBBF24;
   --saba-warning-subtle: #451A03;
   --saba-info: #38BDF8;
   --saba-info-subtle: #0C4A6E;

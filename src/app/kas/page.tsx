@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
-import { Role, TransactionType } from "@prisma/client";
+import { Role, TransactionType, BillingType } from "@prisma/client";
 import { PersonalDuesCard } from "@/components/kas/PersonalDuesCard";
 import { CashComplianceCard } from "@/components/kas/CashComplianceCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
@@ -25,6 +25,7 @@ export default async function KasPage() {
     incomeAggregate,
     expenseAggregate,
     allMembers,
+    activeUrunanEvents,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
@@ -105,6 +106,30 @@ export default async function KasPage() {
         kasPayments: {
           select: {
             kasPeriodId: true,
+            amountPaid: true,
+            paidAt: true,
+          },
+        },
+      },
+    }),
+    prisma.billingEvent.findMany({
+      where: {
+        type: BillingType.URUNAN,
+        isActive: true,
+      },
+      orderBy: { createdAt: "asc" },
+      select: {
+        id: true,
+        title: true,
+        amount: true,
+        dueDate: true,
+        targetUsers: {
+          select: { id: true },
+        },
+        payments: {
+          select: {
+            id: true,
+            userId: true,
             amountPaid: true,
             paidAt: true,
           },
@@ -315,6 +340,7 @@ export default async function KasPage() {
             currentUserRole={dbUser.role}
             allMembers={mappedTreasurerMembers}
             periods={kasPeriods}
+            activeUrunanEvents={activeUrunanEvents}
           />
         )}
 

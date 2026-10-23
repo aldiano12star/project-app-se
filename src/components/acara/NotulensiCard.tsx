@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { FileText, CheckCircle2, Sparkles, Clock, Edit3 } from "lucide-react";
+import { FileText, CheckCircle2, Clock, Edit3 } from "lucide-react";
 import { markNotulensiRead } from "@/actions/acara";
 import { Role } from "@prisma/client";
 
@@ -78,10 +78,8 @@ export function NotulensiCard({
       <section className="card-solid bg-card p-4 sm:p-5 shadow-sm space-y-3">
         {/* Header Notulensi */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <FileText className="h-4 w-4" />
-            </div>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <FileText className="h-5 w-5 text-slate-500 shrink-0" />
             <div className="min-w-0">
               <h3 className="text-sm font-bold text-ink truncate">{title}</h3>
               <p className="text-[11px] text-ink-muted">
@@ -131,12 +129,7 @@ export function NotulensiCard({
         </div>
 
         {/* Action Mark as Read */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center gap-1.5 text-xs text-ink-muted">
-            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-            <span>Wajib dibaca oleh panitia dan peserta terkait</span>
-          </div>
-
+        <div className="flex items-center justify-end pt-1">
           {!hasRead ? (
             <button
               type="button"
