@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { X, CheckCircle2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { UserProfileData } from "./ProfileHeroCard";
@@ -146,9 +147,11 @@ export function KTADigitalModal({
                 <div className="w-16 h-16 rounded-xl p-[2px] bg-gradient-to-tr from-primary to-amber-400 shadow-md">
                   <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-900 flex items-center justify-center">
                     {user.image ? (
-                      <img
+                      <Image
                         src={user.image}
-                        alt={user.name}
+                        alt={user.name || "Foto anggota"}
+                        width={64}
+                        height={64}
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />

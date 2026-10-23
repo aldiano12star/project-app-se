@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Sparkles,
@@ -127,9 +128,11 @@ export function OnboardingForm({
       <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-card border border-edge">
         <div className="w-11 h-11 rounded-full bg-surface-container-low border border-edge overflow-hidden shrink-0 flex items-center justify-center">
           {userImage ? (
-            <img
+            <Image
               src={userImage}
-              alt={fullName}
+              alt={fullName || "Foto profil pengguna"}
+              width={44}
+              height={44}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />

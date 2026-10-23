@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Zap, CheckCircle2, IdCard } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 
@@ -185,9 +186,11 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           <div className="w-20 h-20 rounded-full p-[2.5px] bg-linear-to-tr from-primary via-rose-500 to-amber-500 shadow-md">
             <div className="w-full h-full rounded-full overflow-hidden bg-surface flex items-center justify-center">
               {user.image ? (
-                <img
+                <Image
                   src={user.image}
-                  alt={user.name}
+                  alt={user.name || "Foto profil pengguna"}
+                  width={80}
+                  height={80}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />

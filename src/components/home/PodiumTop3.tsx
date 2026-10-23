@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Sparkles, Trophy, Zap } from "lucide-react";
 import { Division, Role } from "@prisma/client";
 
@@ -104,9 +105,11 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
           <span className="text-2xl -mb-1 animate-bounce duration-1000">👑</span>
         )}
         {user.image ? (
-          <img
+          <Image
             src={user.image}
-            alt={user.name}
+            alt={user.name || "Foto profil kontributor"}
+            width={isFirst ? 64 : 48}
+            height={isFirst ? 64 : 48}
             referrerPolicy="no-referrer"
             className={`${sizeClasses} rounded-full object-cover ring-2 ${ringColor} shadow-lg`}
           />

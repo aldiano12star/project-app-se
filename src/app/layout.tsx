@@ -73,7 +73,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-surface text-ink flex flex-col antialiased">
+      <body className={`${inter.className} min-h-screen bg-surface text-ink flex flex-col antialiased`}>
         <ThemeProvider>
           <ServiceWorkerRegister />
           {children}

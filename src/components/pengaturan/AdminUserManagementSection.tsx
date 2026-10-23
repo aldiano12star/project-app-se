@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import Image from "next/image";
 import {
   UserCheck,
   Shield,
@@ -252,9 +253,11 @@ export function AdminUserManagementSection({
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-11 h-11 rounded-full bg-slate-900 border border-edge overflow-hidden shrink-0 flex items-center justify-center">
                       {u.image ? (
-                        <img
+                        <Image
                           src={u.image}
-                          alt={u.name}
+                          alt={u.name || "Foto pengguna"}
+                          width={44}
+                          height={44}
                           className="w-full h-full object-cover"
                           referrerPolicy="no-referrer"
                         />

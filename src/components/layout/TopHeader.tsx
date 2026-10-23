@@ -91,9 +91,11 @@ export function TopHeader({ user }: TopHeaderProps) {
             title="Akun & Pengaturan Profil"
           >
             {user?.image ? (
-              <img
+              <Image
                 src={user.image}
-                alt={user.name || "User Avatar"}
+                alt={user.name || "Foto profil pengguna"}
+                width={36}
+                height={36}
                 referrerPolicy="no-referrer"
                 className="h-9 w-9 rounded-full border border-edge object-cover ring-2 ring-primary/20"
               />

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Wallet,
@@ -171,8 +169,8 @@ export function PersonalSummarySection({
               <div
                 className={`h-full rounded-full transition-all duration-500 ${
                   attendanceSummary.isCompliant
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-400"
-                    : "bg-gradient-to-r from-amber-500 to-rose-500"
+                    ? "bg-linear-to-r from-emerald-500 to-teal-400"
+                    : "bg-linear-to-r from-amber-500 to-rose-500"
                 }`}
                 style={{ width: `${Math.min(attendanceSummary.attendanceRate, 100)}%` }}
               />

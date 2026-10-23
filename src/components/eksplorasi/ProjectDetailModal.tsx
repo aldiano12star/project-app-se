@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import Image from "next/image";
 import {
   X,
   ExternalLink,
@@ -251,10 +252,12 @@ export function ProjectDetailModal({
           {/* Pratinjau Gambar / Banner Besar */}
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-edge bg-surface shadow-md">
             {project.imageUrl ? (
-              <img
+              <Image
                 src={project.imageUrl}
                 alt={project.title}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 672px"
+                className="object-cover"
               />
             ) : (
               <div className="absolute inset-0 bg-surface-container p-4 flex flex-col justify-between">
@@ -337,9 +340,11 @@ export function ProjectDetailModal({
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-full ring-2 ring-primary/40 overflow-hidden bg-surface-container flex items-center justify-center shrink-0">
                   {project.author.image ? (
-                    <img
+                    <Image
                       src={project.author.image}
                       alt={project.author.name}
+                      width={40}
+                      height={40}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                     />
@@ -387,11 +392,13 @@ export function ProjectDetailModal({
                       key={c.id}
                       className="flex items-center gap-2 p-2 rounded-xl bg-surface border border-edge"
                     >
-                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono">
+                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono overflow-hidden">
                         {c.image ? (
-                          <img
+                          <Image
                             src={c.image}
                             alt={c.name}
+                            width={28}
+                            height={28}
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover rounded-full"
                           />

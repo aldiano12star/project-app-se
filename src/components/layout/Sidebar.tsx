@@ -163,9 +163,11 @@ export function Sidebar({ user }: SidebarProps) {
           title="Pengaturan Akun & Profil"
         >
           {user?.image ? (
-            <img
+            <Image
               src={user.image}
-              alt={user.name || "User Avatar"}
+              alt={user.name || "Foto profil pengguna"}
+              width={32}
+              height={32}
               referrerPolicy="no-referrer"
               className="h-8 w-8 rounded-full border border-edge object-cover ring-2 ring-primary/20 shrink-0"
             />

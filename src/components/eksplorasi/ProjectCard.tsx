@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import Image from "next/image";
 import {
   ExternalLink,
   Code2,
@@ -221,10 +222,12 @@ export function ProjectCard({
       {/* 16:9 Thumbnail Header */}
       <div className="relative w-full aspect-video bg-surface-container-low overflow-hidden border-b border-edge flex items-center justify-center">
         {project.imageUrl ? (
-          <img
+          <Image
             src={project.imageUrl}
             alt={project.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-[#0c1322] p-3.5 flex flex-col justify-between">
