@@ -77,9 +77,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
 
       <div className="bg-card border border-edge rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-500 flex items-center justify-center shrink-0">
-            <FileSpreadsheet className="w-5 h-5" />
-          </div>
+          <FileSpreadsheet className="w-6 h-6 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-ink leading-tight">
               Pencadangan Data Organisasi (.CSV)
@@ -118,9 +116,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                <Users className="w-4 h-4" />
-              </div>
+              <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   1. Unduh Rekap Data Anggota (.CSV)
@@ -148,9 +144,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                <CalendarCheck className="w-4 h-4" />
-              </div>
+              <CalendarCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   2. Unduh Arsip Kehadiran Rapat (.CSV)
@@ -178,9 +172,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
-                <Wallet className="w-4 h-4" />
-              </div>
+              <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   3. Unduh Buku Besar Kas (.CSV)

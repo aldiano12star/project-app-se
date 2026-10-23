@@ -23,9 +23,7 @@ export function CashComplianceCard({
     <div className="card-solid p-4 sm:p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center justify-between border-b border-edge pb-2">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 border border-blue-200 dark:border-blue-900">
-            <Users2 className="h-4 w-4" />
-          </div>
+          <Users2 className="h-5 w-5 text-slate-700 dark:text-slate-300 shrink-0" />
           <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
             Kepatuhan Kas Angkatan
           </h3>

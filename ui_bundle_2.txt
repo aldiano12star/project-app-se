@@ -1,0 +1,944 @@
+==================== FILE: src/app/kas/page.tsx ====================
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { AppShell } from "@/components/layout/AppShell";
+import { Role, TransactionType } from "@prisma/client";
+import { PersonalDuesCard } from "@/components/kas/PersonalDuesCard";
+import { CashComplianceCard } from "@/components/kas/CashComplianceCard";
+import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
+import { TreasurerPanel } from "@/components/kas/TreasurerPanel";
+import { Wallet, Lock } from "lucide-react";
+
+export default async function KasPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  // Ambil seluruh data esensial untuk halaman Kas secara paralel
+  const [
+    dbUser,
+    kasPeriods,
+    userPayments,
+    transactions,
+    incomeAggregate,
+    expenseAggregate,
+    allMembers,
+  ] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        classGrade: true,
+        mainDivision: true,
+        status: true,
+        monthlyPoints: true,
+        totalPoints: true,
+        isProfileCompleted: true,
+      },
+    }),
+    prisma.kasPeriod.findMany({
+      orderBy: { periodNumber: "asc" },
+      select: {
+        id: true,
+        periodNumber: true,
+        name: true,
+        startDate: true,
+        endDate: true,
+        amount: true,
+      },
+    }),
+    prisma.kasPayment.findMany({
+      where: { userId: session.user.id },
+      select: {
+        kasPeriodId: true,
+        amountPaid: true,
+        paidAt: true,
+      },
+    }),
+    prisma.transaction.findMany({
+      orderBy: { date: "desc" },
+      take: 40,
+      select: {
+        id: true,
+        type: true,
+        incomeCategory: true,
+        expenseCategory: true,
+        amount: true,
+        description: true,
+        proofUrl: true,
+        date: true,
+        createdBy: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    }),
+    prisma.transaction.aggregate({
+      where: { type: TransactionType.INCOME },
+      _sum: { amount: true },
+    }),
+    prisma.transaction.aggregate({
+      where: { type: TransactionType.EXPENSE },
+      _sum: { amount: true },
+    }),
+    prisma.user.findMany({
+      where: { status: "ACTIVE" },
+      orderBy: [{ classGrade: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        classGrade: true,
+        generationNumber: true,
+        gen: true,
+        kelas: true,
+        mainDivision: true,
+        kasPayments: {
+          select: {
+            kasPeriodId: true,
+            amountPaid: true,
+            paidAt: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  if (!dbUser) {
+    redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
+  }
+
+  // Gatekeeper: Akun GUEST tidak dapat melihat data sensitif keuangan
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-4">
+          <section className="flex items-center justify-between pt-1">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-ink">
+                Kas Organisasi
+              </h1>
+              <p className="text-xs text-ink-muted">
+                Transparansi pembukuan, iuran rutin, &amp; kepatuhan anggota
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low text-ink-muted border border-edge shadow-sm">
+              <Wallet className="h-5 w-5" />
+            </div>
+          </section>
+
+          <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
+            <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center">
+              <Lock className="h-6 w-6" />
+            </div>
+            <h3 className="text-sm font-bold text-ink">Akses Data Kas Terbatas</h3>
+            <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
+              Akun Anda saat ini berstatus <span className="font-semibold text-ink">Menunggu Verifikasi (GUEST)</span>. Informasi transparansi kas dan buku besar organisasi hanya dapat diakses oleh anggota resmi terverifikasi.
+            </p>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  const isTreasurer =
+    dbUser.role === Role.ADMIN ||
+    dbUser.role === Role.BENDAHARA ||
+    dbUser.role === Role.OPERATOR;
+
+  // Hitung total finansial riil dari database aggregation
+  const totalIncome = incomeAggregate._sum.amount || 0;
+  const totalExpense = expenseAggregate._sum.amount || 0;
+  const totalBalance = Math.max(0, totalIncome - totalExpense);
+
+  // Status periode untuk user aktif
+  const userPaidPeriodIds = new Set(userPayments.map((p) => p.kasPeriodId));
+  const personalPeriods = kasPeriods.map((p) => ({
+    ...p,
+    isPaid: userPaidPeriodIds.has(p.id),
+  }));
+
+  // Periode aktif (periode dengan nomor urut tertinggi atau yang sedang berjalan)
+  const activePeriod = kasPeriods[kasPeriods.length - 1] || null;
+
+  // Helper pencocokan generasi / kelas yang tahan banting (berbasis gen, generationNumber, maupun classGrade)
+  const isGen20Member = (m: {
+    classGrade?: string | null;
+    gen?: number | null;
+    generationNumber?: number | null;
+    kelas?: string | null;
+  }) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 20) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return (
+      cg === "KELAS_11" ||
+      cg === "XI" ||
+      cg === "11" ||
+      cg.includes("11") ||
+      k === "XI" ||
+      k === "11" ||
+      k.includes("11")
+    );
+  };
+
+  const isGen21Member = (m: {
+    classGrade?: string | null;
+    gen?: number | null;
+    generationNumber?: number | null;
+    kelas?: string | null;
+  }) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 21) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return (
+      cg === "KELAS_10" ||
+      cg === "X" ||
+      cg === "10" ||
+      cg.includes("10") ||
+      k === "X" ||
+      k === "10" ||
+      k.includes("10")
+    );
+  };
+
+  // Hitung kepatuhan kas riil Gen 20 (Kelas 11) dan Gen 21 (Kelas 10)
+  const gen20Members = allMembers.filter(isGen20Member);
+  const gen21Members = allMembers.filter(isGen21Member);
+
+  const gen20PaidCount = gen20Members.filter((m) =>
+    activePeriod
+      ? m.kasPayments.some((p) => p.kasPeriodId === activePeriod.id)
+      : m.kasPayments.length > 0
+  ).length;
+
+  const gen21PaidCount = gen21Members.filter((m) =>
+    activePeriod
+      ? m.kasPayments.some((p) => p.kasPeriodId === activePeriod.id)
+      : m.kasPayments.length > 0
+  ).length;
+
+  const gen20Total = gen20Members.length;
+  const gen21Total = gen21Members.length;
+
+  const gen20Percentage =
+    gen20Total > 0 ? Math.round((gen20PaidCount / gen20Total) * 100) : 0;
+  const gen21Percentage =
+    gen21Total > 0 ? Math.round((gen21PaidCount / gen21Total) * 100) : 0;
+
+  const gen20Collected = gen20Members.reduce(
+    (sum, m) =>
+      sum + m.kasPayments.reduce((pSum, p) => pSum + p.amountPaid, 0),
+    0
+  );
+
+  const gen21Collected = gen21Members.reduce(
+    (sum, m) =>
+      sum + m.kasPayments.reduce((pSum, p) => pSum + p.amountPaid, 0),
+    0
+  );
+
+  // Format anggota untuk TreasurerPanel
+  const mappedTreasurerMembers = allMembers.map((m) => ({
+    id: m.id,
+    name: m.name,
+    email: m.email,
+    image: m.image,
+    role: m.role,
+    classGrade: m.classGrade,
+    generationNumber: m.generationNumber ?? null,
+    gen: m.gen ?? null,
+    kelas: m.kelas ?? null,
+    mainDivision: m.mainDivision,
+    payments: m.kasPayments,
+  }));
+
+  return (
+    <AppShell user={dbUser}>
+      <div className="flex flex-col gap-4">
+        {/* Header Seksi Kas */}
+        <section className="flex items-center justify-between pt-1">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-ink">
+              Kas Organisasi
+            </h1>
+            <p className="text-xs text-ink-muted">
+              Transparansi pembukuan, iuran rutin, & kepatuhan anggota
+            </p>
+          </div>
+          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50 shadow-xs p-2.5 shrink-0">
+            <Wallet className="h-5 w-5" />
+          </div>
+        </section>
+
+        {/* Grid Adaptif Layar Lebar: Status Kas Personal & Kepatuhan Kas Angkatan */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+          {/* 1. Status Kas Personal Pengguna */}
+          <PersonalDuesCard
+            userName={dbUser.name}
+            periods={personalPeriods}
+          />
+
+          {/* 2. Kepatuhan Kas Angkatan (Gen 20 & Gen 21) */}
+          <CashComplianceCard
+            gen20={{
+              name: "Gen 20 (Kelas 11)",
+              grade: "Kelas 11",
+              totalMembers: gen20Total,
+              paidMembers: gen20PaidCount,
+              collectedAmount: gen20Collected,
+              percentage: gen20Percentage,
+            }}
+            gen21={{
+              name: "Gen 21 (Kelas 10)",
+              grade: "Kelas 10",
+              totalMembers: gen21Total,
+              paidMembers: gen21PaidCount,
+              collectedAmount: gen21Collected,
+              percentage: gen21Percentage,
+            }}
+          />
+        </div>
+
+        {/* 3. Panel Khusus Bendahara & Admin (Tampil Kondisional) */}
+        {isTreasurer && (
+          <TreasurerPanel
+            currentUserRole={dbUser.role}
+            allMembers={mappedTreasurerMembers}
+            periods={kasPeriods}
+          />
+        )}
+
+        {/* 4. Buku Kas Publik Transparan */}
+        <PublicCashLedger
+          transactions={transactions}
+          totalBalance={totalBalance}
+          totalIncome={totalIncome}
+          totalExpense={totalExpense}
+        />
+      </div>
+    </AppShell>
+  );
+}
+
+
+
+==================== FILE: src/components/kas/CashComplianceCard.tsx ====================
+import React from "react";
+import { Users2, TrendingUp } from "lucide-react";
+
+export interface GenerationCompliance {
+  name: string;
+  grade: string;
+  totalMembers: number;
+  paidMembers: number;
+  collectedAmount: number;
+  percentage: number;
+}
+
+interface CashComplianceCardProps {
+  gen20: GenerationCompliance;
+  gen21: GenerationCompliance;
+}
+
+export function CashComplianceCard({
+  gen20,
+  gen21,
+}: CashComplianceCardProps) {
+  return (
+    <div className="card-solid p-4 sm:p-5 shadow-sm flex flex-col gap-3">
+      <div className="flex items-center justify-between border-b border-edge pb-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 border border-blue-200 dark:border-blue-900">
+            <Users2 className="h-4 w-4" />
+          </div>
+          <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
+            Kepatuhan Kas Angkatan
+          </h3>
+        </div>
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+          <TrendingUp className="h-3 w-3" />
+          Aktif
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Gen 20 (Kelas 11) */}
+        <div className="bg-surface-container-low border border-edge rounded-lg p-3 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-ink truncate">
+              {gen20.name}
+            </span>
+            <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+              {gen20.percentage}%
+            </span>
+          </div>
+          <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-emerald-600 h-full rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(gen20.percentage, 100)}%` }}
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] text-ink-muted pt-0.5">
+            <span>
+              {gen20.paidMembers}/{gen20.totalMembers} Lunas
+            </span>
+            <span className="font-semibold text-ink-secondary">
+              Rp {gen20.collectedAmount.toLocaleString("id-ID")}
+            </span>
+          </div>
+        </div>
+
+        {/* Gen 21 (Kelas 10) */}
+        <div className="bg-surface-container-low border border-edge rounded-lg p-3 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-ink truncate">
+              ★ {gen21.name}
+            </span>
+            <span className="text-xs font-black text-brand-primary">
+              {gen21.percentage}%
+            </span>
+          </div>
+          <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-brand-primary h-full rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(gen21.percentage, 100)}%` }}
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] text-ink-muted pt-0.5">
+            <span>
+              {gen21.paidMembers}/{gen21.totalMembers} Lunas
+            </span>
+            <span className="font-semibold text-ink-secondary">
+              Rp {gen21.collectedAmount.toLocaleString("id-ID")}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/acara/EventDetailClientView.tsx ====================
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Role } from "@prisma/client";
+import {
+  ArrowLeft,
+  Folder,
+  Plus,
+  MessageSquare,
+  Layers,
+  Trash2,
+  AlertTriangle,
+  X,
+} from "lucide-react";
+import { EventDetailCard, EventDetailData } from "./EventDetailCard";
+import { CommitteeSection } from "./CommitteeSection";
+import { NotulensiCard } from "./NotulensiCard";
+import { AddTaskModal } from "./AddTaskModal";
+import { AddSectionModal } from "./AddSectionModal";
+import { EventRABSection } from "./EventRABSection";
+import { BudgetItemData } from "./PrintRABModal";
+import { deleteEvent } from "@/actions/acara";
+
+interface EventDetailClientViewProps {
+  currentUser: {
+    id: string;
+    name: string;
+    role: Role;
+  };
+  event: EventDetailData;
+  budgetItems?: BudgetItemData[];
+  allMembers?: { id: string; name: string; classGrade?: string | null }[];
+  latestMeeting?: {
+    id: string;
+    title: string;
+    notes?: string | null;
+    date: Date | string;
+    isRead?: boolean;
+  } | null;
+}
+
+export function EventDetailClientView({
+  currentUser,
+  event,
+  budgetItems = [],
+  allMembers = [],
+  latestMeeting,
+}: EventDetailClientViewProps) {
+  const router = useRouter();
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isAddSectionModalOpen, setIsAddSectionModalOpen] = useState(false);
+  const [targetSectionId, setTargetSectionId] = useState<string | undefined>();
+  const [isDriveAlertOpen, setIsDriveAlertOpen] = useState(false);
+
+  // State untuk Modal Hapus Acara di Bagian Paling Bawah Halaman Detail
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null);
+
+  const isOfficer =
+    currentUser.role === Role.ADMIN ||
+    currentUser.role === Role.OPERATOR;
+
+  const startDate = new Date(event.startDate);
+  const endDate = new Date(event.endDate);
+  const isSingleDay = startDate.toDateString() === endDate.toDateString();
+  const hasSections = event.sections.length > 0;
+  const isRapat = !hasSections || isSingleDay;
+
+  const handleOpenAddTask = (sectionId?: string) => {
+    setTargetSectionId(sectionId || event.sections[0]?.id);
+    setIsAddTaskModalOpen(true);
+  };
+
+  const handleDeleteEvent = async () => {
+    setIsDeleting(true);
+    setDeleteErrorMessage(null);
+
+    try {
+      const res = await deleteEvent(event.id);
+      if (res.success) {
+        setIsDeleteModalOpen(false);
+        router.push("/acara");
+      } else {
+        setDeleteErrorMessage(res.message);
+      }
+    } catch {
+      setDeleteErrorMessage("Gagal menghapus kegiatan. Terjadi kesalahan internal server.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Top Header Navigasi Kembali */}
+      <div className="flex items-center justify-between pt-1">
+        <Link
+          href="/acara"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors min-h-[44px]"
+        >
+          <ArrowLeft className="h-4 w-4 text-primary" />
+          <span>Kembali ke Kalender</span>
+        </Link>
+
+        {isOfficer && !isRapat && (
+          <button
+            type="button"
+            onClick={() => setIsAddSectionModalOpen(true)}
+            className="h-11 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
+          >
+            <Plus className="h-4 w-4" />
+            <span>+ Seksi Baru</span>
+          </button>
+        )}
+      </div>
+
+      {/* SECTION 1: Event Detail Hero, WhatsApp Share & Drive Link */}
+      <EventDetailCard
+        event={event}
+        onOpenDriveModal={() => setIsDriveAlertOpen(true)}
+      />
+
+      {/* SECTION 2: Notulensi Acara & Rapat */}
+      <NotulensiCard
+        eventId={event.id}
+        meetingId={latestMeeting?.id}
+        title={`Notulensi: ${event.title}`}
+        notes={event.notulensiText || latestMeeting?.notes}
+        date={event.startDate}
+        isRead={latestMeeting?.isRead}
+        currentUserRole={currentUser.role}
+      />
+
+      {/* SECTION 4: Modul Rancangan Anggaran Biaya (RAB Acara Siap Cetak Proposal) */}
+      <EventRABSection
+        eventId={event.id}
+        event={event}
+        budgetItems={budgetItems}
+        currentUserRole={currentUser.role}
+      />
+
+      {/* SECTION 5: Seksi Kepanitiaan & Task Board (Khusus untuk Acara Besar / Proker) */}
+      {!isRapat && (hasSections || isOfficer) && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-1.5">
+              <Layers className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-bold text-ink">
+                Seksi Kepanitiaan &amp; SOP
+              </h3>
+            </div>
+            <span className="text-[11px] font-semibold text-ink-muted">
+              {event.sections.length} Seksi Terdaftar
+            </span>
+          </div>
+
+          <CommitteeSection
+            sections={event.sections}
+            currentUserId={currentUser.id}
+            currentUserRole={currentUser.role}
+            allMembers={allMembers}
+            onOpenAddSectionModal={() => setIsAddSectionModalOpen(true)}
+            onOpenAddTaskModal={handleOpenAddTask}
+          />
+        </div>
+      )}
+
+      {/* SECTION 6 (Paling Bawah): Zona Bahaya / Hapus Acara Khusus Pengurus */}
+      {isOfficer && (
+        <div className="pt-4 border-t border-edge">
+          <div className="p-4 rounded-2xl bg-red-50/20 dark:bg-red-950/15 border border-red-200/60 dark:border-red-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <h4 className="text-xs font-bold text-ink flex items-center gap-1.5">
+                <Trash2 className="h-4 w-4 text-red-500" />
+                <span>Pengaturan Kegiatan &amp; Zona Bahaya</span>
+              </h4>
+              <p className="text-[11px] text-ink-muted leading-relaxed">
+                Hapus seluruh kepanitiaan, data rincian anggaran, notulensi, dan tugas acara ini secara permanen.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="h-10 min-h-[40px] px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Hapus Acara Ini</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dialog Tambah Tugas Ad-Hoc */}
+      <AddTaskModal
+        isOpen={isAddTaskModalOpen}
+        onClose={() => setIsAddTaskModalOpen(false)}
+        sections={event.sections}
+        defaultSectionId={targetSectionId}
+      />
+
+      {/* Modal Dialog Tambah Seksi Baru */}
+      <AddSectionModal
+        isOpen={isAddSectionModalOpen}
+        onClose={() => setIsAddSectionModalOpen(false)}
+        eventId={event.id}
+      />
+
+      {/* Alert Modal Tautan Google Drive Belum Diatur */}
+      {isDriveAlertOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-card rounded-2xl p-5 max-w-sm w-full border border-edge shadow-xl space-y-3 text-center">
+            <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-600 mx-auto flex items-center justify-center">
+              <Folder className="h-5 w-5" />
+            </div>
+            <h3 className="text-sm font-bold text-ink">Folder Drive Belum Diatur</h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Pengurus belum menautkan tautan Google Drive untuk kegiatan ini. Silakan hubungi Sekretaris atau Koordinator Acara.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsDriveAlertOpen(false)}
+              className="w-full h-11 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl border border-edge transition-colors min-h-[44px] cursor-pointer"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus Acara */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-sm font-bold text-ink">
+                Hapus Acara Ini?
+              </h3>
+              <p className="text-xs text-ink-secondary leading-relaxed">
+                Apakah Anda yakin ingin menghapus acara ini? Data presensi dan agenda terkait akan ikut terhapus.
+              </p>
+            </div>
+
+            {deleteErrorMessage && (
+              <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-xs text-primary font-medium">
+                {deleteErrorMessage}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-edge">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="h-9 px-3.5 rounded-lg border border-edge text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteEvent}
+                disabled={isDeleting}
+                className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{isDeleting ? "Menghapus..." : "Hapus Acara"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/pengaturan/AdminBackupSection.tsx ====================
+"use client";
+
+import React, { useState, useTransition } from "react";
+import {
+  Download,
+  FileSpreadsheet,
+  Users,
+  CalendarCheck,
+  Wallet,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import {
+  exportMembersCSV,
+  exportAttendanceCSV,
+  exportKasCSV,
+  BackupResponse,
+} from "@/actions/backup";
+
+interface AdminBackupSectionProps {
+  currentUserRole?: string;
+}
+
+export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps) {
+  const [downloadingType, setDownloadingType] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const isAdmin = currentUserRole === "ADMIN" || currentUserRole === "OPERATOR";
+
+  if (!isAdmin) return null;
+
+  const triggerDownload = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownload = (
+    type: "members" | "attendance" | "kas",
+    exportFn: () => Promise<BackupResponse>
+  ) => {
+    setDownloadingType(type);
+    setFeedback(null);
+
+    startTransition(async () => {
+      const res = await exportFn();
+      if (res.success && res.csvContent && res.filename) {
+        triggerDownload(res.csvContent, res.filename);
+        setFeedback({ text: res.message, type: "success" });
+      } else {
+        setFeedback({
+          text: res.message || "Gagal mengunduh cadangan data.",
+          type: "error",
+        });
+      }
+      setDownloadingType(null);
+    });
+  };
+
+  return (
+    <section className="space-y-1.5">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500 px-1 font-mono">
+        🛡️ Panel Darurat &amp; Cadangan Data Admin
+      </h3>
+
+      <div className="bg-card border border-edge rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-500 flex items-center justify-center shrink-0">
+            <FileSpreadsheet className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-ink leading-tight">
+              Pencadangan Data Organisasi (.CSV)
+            </h4>
+            <p className="text-[11px] text-ink-muted mt-1 leading-relaxed">
+              Unduh salinan data fisik berkala untuk arsip LPJ kesiswaan atau antisipasi pemulihan sistem. Format CSV menggunakan UTF-8 BOM agar rapi di Microsoft Excel.
+            </p>
+          </div>
+        </div>
+
+        {/* Feedback Message */}
+        {feedback && (
+          <div
+            className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-in fade-in ${
+              feedback.type === "success"
+                ? "bg-success-subtle border-success/30 text-success"
+                : "bg-danger-subtle border-danger/30 text-danger"
+            }`}
+          >
+            {feedback.type === "success" ? (
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-success" />
+            ) : (
+              <AlertCircle className="w-4 h-4 shrink-0 text-danger" />
+            )}
+            <span>{feedback.text}</span>
+          </div>
+        )}
+
+        {/* 3 Download Action Buttons */}
+        <div className="grid grid-cols-1 gap-2.5 pt-1">
+          {/* Button 1: Rekap Anggota */}
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => handleDownload("members", exportMembersCSV)}
+            className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
+          >
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <Users className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
+                  1. Unduh Rekap Data Anggota (.CSV)
+                </span>
+                <span className="text-[10px] text-ink-muted">
+                  NISN, Nama, Divisi, Angkatan, Role, No WA, Total XP
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
+              {downloadingType === "members" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-primary" />
+              )}
+              <span className="hidden sm:inline">Export</span>
+            </div>
+          </button>
+
+          {/* Button 2: Rekap Kehadiran Rapat */}
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => handleDownload("attendance", exportAttendanceCSV)}
+            className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
+          >
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <CalendarCheck className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
+                  2. Unduh Arsip Kehadiran Rapat (.CSV)
+                </span>
+                <span className="text-[10px] text-ink-muted">
+                  Judul Rapat, Tanggal, Anggota, NISN, Status Presensi
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
+              {downloadingType === "attendance" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-primary" />
+              )}
+              <span className="hidden sm:inline">Export</span>
+            </div>
+          </button>
+
+          {/* Button 3: Buku Besar Kas */}
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={() => handleDownload("kas", exportKasCSV)}
+            className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
+          >
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                <Wallet className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
+                  3. Unduh Buku Besar Kas (.CSV)
+                </span>
+                <span className="text-[10px] text-ink-muted">
+                  Tanggal, Jenis Mutasi, Kategori, Nominal, Uraian
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
+              {downloadingType === "kas" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+              ) : (
+                <Download className="w-3.5 h-3.5 text-primary" />
+              )}
+              <span className="hidden sm:inline">Export</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+

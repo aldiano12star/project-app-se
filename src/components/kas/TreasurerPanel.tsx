@@ -357,10 +357,8 @@ export function TreasurerPanel({
 
       {/* Header Panel Bendahara */}
       <div className="flex items-center justify-between border-b border-edge pb-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50">
-            <Wallet className="h-4 w-4" />
-          </div>
+        <div className="flex items-center gap-2.5">
+          <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <div>
             <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
               Panel Pembukuan Bendahara
@@ -380,7 +378,7 @@ export function TreasurerPanel({
           className="w-full min-h-[44px] bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
         >
           <PlusCircle className="h-4 w-4" />
-          <span>+ Buat Tagihan Baru (Kas Rutin / Urunan Insidental)</span>
+          <span>Buat Tagihan</span>
         </button>
 
         <button
@@ -389,7 +387,7 @@ export function TreasurerPanel({
           className="w-full min-h-[44px] bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
         >
           <Share2 className="h-4 w-4" />
-          <span>📢 Broadcast Tagihan Kas Pekanan ke WA</span>
+          <span>Broadcast Tagihan via WA</span>
         </button>
 
         <button
@@ -398,7 +396,7 @@ export function TreasurerPanel({
           className="w-full min-h-[44px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
         >
           <CreditCard className="h-4 w-4" />
-          <span>+ Catat Pembayaran Kas (Advance Payment)</span>
+          <span>Catat Setoran Kas &amp; Urunan</span>
         </button>
 
         <button
@@ -407,7 +405,7 @@ export function TreasurerPanel({
           className="w-full min-h-[44px] bg-surface-container-low hover:bg-surface-container border border-edge text-ink rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
         >
           <Receipt className="h-4 w-4 text-primary" />
-          <span>+ Catat Mutasi Kas (Pemasukan / Pengeluaran)</span>
+          <span>Catat Mutasi Kas</span>
         </button>
       </div>
 
@@ -513,7 +511,7 @@ export function TreasurerPanel({
                       <h4 className="text-xs font-bold text-ink truncate leading-tight">
                         {member.name}
                       </h4>
-                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-ink-muted">
+                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 truncate w-full flex-row whitespace-nowrap">
                         <span>
                           {isGen21(member)
                             ? "Gen 21 (Kelas 10)"

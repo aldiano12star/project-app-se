@@ -152,13 +152,13 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
 
         {/* Banner Motivasi Kontribusi Komunitas */}
-        <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-sm flex items-start gap-3 relative z-10">
-          <Zap className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="mb-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-sm flex items-start gap-3 relative z-10">
+          <Zap className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <div className="min-w-0 flex-1 space-y-1">
-            <span className="font-bold block text-amber-800 dark:text-amber-400 text-sm">
+            <span className="font-bold block text-slate-900 dark:text-white text-sm">
               Kontribusi &amp; Keaktifan Komunitas
             </span>
-            <p className="text-xs text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
               Tingkatkan XP kontribusi melalui presensi rapat, kepanitiaan kegiatan, dan submit karya inovasi.
             </p>
           </div>
@@ -181,11 +181,11 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             </span>
 
             {/* Pilar Perak Berjejang */}
-            <div className="w-full h-32 sm:h-36 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
-              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">2</span>
-              <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
-                <Zap className="h-3 w-3 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400" />
-                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
+            <div className="w-full h-32 sm:h-36 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-sm">
+              <span className="text-xl font-extrabold text-slate-900 dark:text-white">2</span>
+              <div className="flex items-center gap-1 mt-1 bg-slate-50 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                <Zap className="h-3 w-3 text-slate-700 dark:text-slate-300 fill-slate-700 dark:fill-slate-300" />
+                <span className="text-xs font-extrabold text-slate-900 dark:text-white tabular-nums">
                   {rank2 ? rank2.totalPoints : 0}
                 </span>
               </div>
@@ -250,11 +250,11 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             </span>
 
             {/* Pilar Perunggu Berjejang */}
-            <div className="w-full h-28 sm:h-32 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
-              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">3</span>
-              <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
+            <div className="w-full h-28 sm:h-32 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-sm">
+              <span className="text-xl font-extrabold text-slate-900 dark:text-white">3</span>
+              <div className="flex items-center gap-1 mt-1 bg-slate-50 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
                 <Zap className="h-3 w-3 text-amber-700 dark:text-amber-500 fill-amber-700 dark:fill-amber-500" />
-                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
+                <span className="text-xs font-extrabold text-slate-900 dark:text-white tabular-nums">
                   {rank3 ? rank3.totalPoints : 0}
                 </span>
               </div>

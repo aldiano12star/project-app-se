@@ -171,7 +171,7 @@ export function EventDetailClientView({
       {/* SECTION 6 (Paling Bawah): Zona Bahaya / Hapus Acara Khusus Pengurus */}
       {isOfficer && (
         <div className="pt-4 border-t border-edge">
-          <div className="p-4 rounded-2xl bg-red-50/20 dark:bg-red-950/15 border border-red-200/60 dark:border-red-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
               <h4 className="text-xs font-bold text-ink flex items-center gap-1.5">
                 <Trash2 className="h-4 w-4 text-red-500" />
@@ -236,9 +236,7 @@ export function EventDetailClientView({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
+              <AlertTriangle className="h-6 w-6 text-red-500 shrink-0" />
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}

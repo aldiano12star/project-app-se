@@ -1,0 +1,2500 @@
+==================== FILE: src/app/globals.css ====================
+@import "tailwindcss";
+
+/*
+ * Saba ExploIT UI Engine v2.3.0 (Matte Pebble Finish & Anti-Glare Calibration)
+ *
+ * Pedoman Visual: DESIGN.md & doc/stitch/beranda/DESIGN.md
+ * - Solid Surface Container Elevation (tanpa glassmorphism/blur berat)
+ * - Border tegas 1px (`border-edge` / `border-border-light`)
+ * - Area sentuh minimal 44px (`min-h-[44px]` / `h-11`)
+ * - Dual-Theme: Matte Pebble Light (#E5E9F0 / #F1F4F8) & Deep Navy Dark (#0B0F17 / #151D2A)
+ */
+
+/* ── Variabel runtime Mode Terang (Default :root) ─────────────────── */
+:root {
+  color-scheme: light;
+
+  /* Neutral — Matte Pebble Finish (Anti-Silau #FFFFFF) */
+  --saba-surface: #EDF0F5;
+  --saba-card: #F4F7FB;
+  --saba-edge: #CBD5E1;
+  --saba-surface-container-low: #E9EEF4;
+  --saba-surface-container: #D9E1EB;
+  --saba-surface-container-high: #CBD5E1;
+  --saba-ink: #0F172A;
+  --saba-ink-secondary: #334155;
+  --saba-ink-muted: #64748B;
+
+  /* Brand Action — Rose Crimson (#E11D48) */
+  --saba-primary: #E11D48;
+  --saba-primary-hover: #BE123C;
+  --saba-primary-subtle: #FFE4E6;
+  --saba-on-primary: #FFFFFF;
+
+  /* Semantic Refresh (Light Mode High-Contrast) */
+  --saba-success: #059669;
+  --saba-success-subtle: #D1FAE5;
+  --saba-danger: #DC2626;
+  --saba-danger-subtle: #FEE2E2;
+  --saba-warning: #D97706;
+  --saba-warning-subtle: #FEF3C7;
+  --saba-info: #0284C7;
+  --saba-info-subtle: #E0F2FE;
+}
+
+/* ── Variabel runtime Mode Gelap (.dark) ──────────────────────────── */
+.dark {
+  color-scheme: dark;
+
+  /* Neutral — Deep Navy & Steel Slate (Kontras Tinggi) */
+  --saba-surface: #0B0F17;
+  --saba-card: #151D2A;
+  --saba-edge: #27344A;
+  --saba-surface-container-low: #101622;
+  --saba-surface-container: #1D2738;
+  --saba-surface-container-high: #2E3D56;
+  --saba-ink: #E2E8F0;
+  --saba-ink-secondary: #94A3B8;
+  --saba-ink-muted: #64748B;
+
+  /* Brand Action — Coral Rose (#F43F5E) */
+  --saba-primary: #F43F5E;
+  --saba-primary-hover: #E11D48;
+  --saba-primary-subtle: #881337;
+  --saba-on-primary: #FFFFFF;
+
+  /* Semantic Refresh (Dark Mode High-Contrast) */
+  --saba-success: #10B981;
+  --saba-success-subtle: #064E3B;
+  --saba-danger: #EF4444;
+  --saba-danger-subtle: #450A0A;
+  --saba-warning: #F59E0B;
+  --saba-warning-subtle: #451A03;
+  --saba-info: #38BDF8;
+  --saba-info-subtle: #0C4A6E;
+}
+
+/* ── Saba ExploIT Design Tokens ───────────────────────────────────── */
+@theme {
+  /* Brand */
+  --color-brand-primary: var(--saba-primary);
+  --color-brand-hover: var(--saba-primary-hover);
+  --color-brand-subtle: var(--saba-primary-subtle);
+  --color-primary: var(--saba-primary);
+  --color-primary-hover: var(--saba-primary-hover);
+  --color-primary-subtle: var(--saba-primary-subtle);
+  --color-on-primary: var(--saba-on-primary);
+
+  /* Surfaces & Neutrals */
+  --color-surface: var(--saba-surface);
+  --color-surface-bg-light: #E5E9F0;
+  --color-surface-bg-dark: #0B0F17;
+  --color-card: var(--saba-card);
+  --color-card-bg-light: #F1F4F8;
+  --color-card-bg-dark: #151D2A;
+  --color-edge: var(--saba-edge);
+  --color-border-light: #CBD5E1;
+  --color-border-dark: #27344A;
+  --color-surface-container-low: var(--saba-surface-container-low);
+  --color-surface-container: var(--saba-surface-container);
+  --color-surface-container-high: var(--saba-surface-container-high);
+
+  /* Typography Colors */
+  --color-ink: var(--saba-ink);
+  --color-ink-secondary: var(--saba-ink-secondary);
+  --color-ink-muted: var(--saba-ink-muted);
+  --color-text-primary-light: #0F172A;
+  --color-text-secondary-light: #475569;
+  --color-text-muted-light: #64748B;
+  --color-text-primary-dark: #E2E8F0;
+  --color-text-secondary-dark: #94A3B8;
+  --color-text-muted-dark: #64748B;
+
+  /* Semantics */
+  --color-success: var(--saba-success);
+  --color-success-subtle: var(--saba-success-subtle);
+  --color-danger: var(--saba-danger);
+  --color-danger-subtle: var(--saba-danger-subtle);
+  --color-warning: var(--saba-warning);
+  --color-warning-subtle: var(--saba-warning-subtle);
+  --color-info: var(--saba-info);
+  --color-info-subtle: var(--saba-info-subtle);
+
+  /* Divisions */
+  --color-div-programming: #0284C7;
+  --color-div-programming-bg-light: #0C4A6E;
+  --color-div-design: #C084FC;
+  --color-div-design-bg-light: #581C87;
+  --color-div-photography: #059669;
+  --color-div-photography-bg-light: #064E3B;
+  --color-div-cinematography: #E11D48;
+  --color-div-cinematography-bg-light: #881337;
+  --color-div-technopreneurship: #D97706;
+  --color-div-technopreneurship-bg-light: #451A03;
+
+  /* Spacing & Container */
+  --spacing-app-max: 430px;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────── */
+body {
+  background: var(--saba-surface);
+  color: var(--saba-ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────── */
+@utility app-shell {
+  width: 100%;
+  max-width: var(--spacing-app-max);
+  margin-inline: auto;
+  min-height: 100dvh;
+}
+
+@utility card-solid {
+  background-color: var(--saba-card);
+  border: 1px solid var(--saba-edge);
+  border-radius: 0.75rem;
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+
+
+==================== FILE: src/components/layout/BottomNav.tsx ====================
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  Wallet,
+  CalendarDays,
+  Compass,
+  MessageSquareText,
+} from "lucide-react";
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  {
+    label: "Beranda",
+    href: "/dashboard",
+    icon: Home,
+  },
+  {
+    label: "Kas",
+    href: "/kas",
+    icon: Wallet,
+  },
+  {
+    label: "Acara",
+    href: "/acara",
+    icon: CalendarDays,
+  },
+  {
+    label: "Eksplorasi",
+    href: "/eksplorasi",
+    icon: Compass,
+  },
+  {
+    label: "Aspirasi",
+    href: "/aspirasi",
+    icon: MessageSquareText,
+  },
+];
+
+export function BottomNav() {
+  const pathname = usePathname();
+  const [isModalActive, setIsModalActive] = useState(false);
+
+  useEffect(() => {
+    const checkModalInDOM = () => {
+      // Deteksi modal overlay yang aktif di DOM (fixed inset-0 di luar nav)
+      const activeModal = document.querySelector(
+        '[role="dialog"], .fixed.inset-0:not([data-nav="true"])'
+      );
+      setIsModalActive(!!activeModal);
+    };
+
+    checkModalInDOM();
+
+    const observer = new MutationObserver(checkModalInDOM);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  if (pathname.startsWith("/pengaturan")) {
+    return null;
+  }
+
+  return (
+    <nav
+      data-nav="true"
+      aria-label="Navigasi Utama Bawah"
+      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-surface-container/90 backdrop-blur-xl border border-edge text-ink-secondary shadow-lg dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 transition-colors md:hidden ${
+        isModalActive ? "hidden" : ""
+      }`}
+    >
+      <div className="flex items-center justify-between w-full">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const isActive =
+            pathname === item.href ||
+            (item.href === "/eksplorasi" &&
+              (pathname === "/eksplorasi" ||
+                pathname.startsWith("/eksplorasi") ||
+                pathname === "/showcase" ||
+                pathname === "/arsip")) ||
+            (item.href === "/aspirasi" &&
+              (pathname === "/aspirasi" ||
+                pathname.startsWith("/aspirasi") ||
+                pathname === "/suara" ||
+                pathname.startsWith("/suara"))) ||
+            (item.href !== "/dashboard" &&
+              item.href !== "/aspirasi" &&
+              item.href !== "/eksplorasi" &&
+              pathname.startsWith(item.href));
+
+          if (isActive) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                prefetch={true}
+                className="bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
+              >
+                <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
+                <span className="text-xs font-semibold leading-none tracking-tight">
+                  {item.label}
+                </span>
+              </Link>
+            );
+          }
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch={true}
+              title={item.label}
+              aria-label={item.label}
+              className="text-ink-muted hover:text-ink p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+            >
+              <Icon className="h-5 w-5 stroke-[1.8]" />
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+
+
+==================== FILE: src/components/layout/AppShell.tsx ====================
+import React from "react";
+import { TopHeader } from "./TopHeader";
+import { BottomNav } from "./BottomNav";
+import { Sidebar } from "./Sidebar";
+import { Role } from "@prisma/client";
+
+export interface AppShellUser {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: Role;
+  monthlyPoints?: number;
+  totalPoints?: number;
+}
+
+interface AppShellProps {
+  user?: AppShellUser | null;
+  children: React.ReactNode;
+  showHeader?: boolean;
+  showNav?: boolean;
+}
+
+export function AppShell({
+  user,
+  children,
+  showHeader = true,
+  showNav = true,
+}: AppShellProps) {
+  return (
+    <div className="min-h-screen w-full bg-surface text-ink flex justify-center md:justify-start">
+      {/* Sidebar Desktop (Hanya di Layar Lebar) */}
+      {showNav && <Sidebar user={user} />}
+
+      {/* Kontainer Konten Utama */}
+      <div
+        className={`relative flex min-h-screen w-full max-w-md md:max-w-none md:w-auto md:flex-1 min-w-0 flex-col bg-surface border-x md:border-x-0 border-edge/30 shadow-sm transition-all ${
+          showNav ? "md:ml-64" : "mx-auto"
+        }`}
+      >
+        {/* Header Lengkap dengan Brand & Identitas */}
+        {showHeader && <TopHeader user={user} />}
+
+        {/* Banner Proteksi Akun GUEST */}
+        {user?.role === Role.GUEST && (
+          <div className="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 shadow-sm animate-in fade-in">
+            <span className="text-xl shrink-0">⏳</span>
+            <div className="space-y-1 min-w-0 flex-1">
+              <span className="font-semibold block text-amber-200 text-sm">
+                Menunggu Verifikasi Pengurus
+              </span>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Akun Anda sedang menunggu verifikasi pengurus Saba ExploIT. Hubungi pengurus untuk aktivasi akun.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Slot Konten Utama */}
+        <main
+          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
+            showNav ? "pb-32 md:pb-12" : "pb-8"
+          }`}
+        >
+          {children}
+        </main>
+
+        {/* Navigasi Bawah (Hanya Mobile via md:hidden) */}
+        {showNav && <BottomNav />}
+      </div>
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/home/DashboardMeetingWidget.tsx ====================
+"use client";
+
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { QrCode, Sparkles, Eye, CalendarDays } from "lucide-react";
+import { Role } from "@prisma/client";
+
+const MeetingQrModal = dynamic(
+  () => import("./MeetingQrModal").then((mod) => mod.MeetingQrModal),
+  { ssr: false }
+);
+
+const AttendanceScannerModal = dynamic(
+  () => import("./AttendanceScannerModal").then((mod) => mod.AttendanceScannerModal),
+  { ssr: false }
+);
+
+interface DashboardMeetingWidgetProps {
+  userRole: Role;
+}
+
+export function DashboardMeetingWidget({
+  userRole,
+}: DashboardMeetingWidgetProps) {
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const canShowQr =
+    userRole === Role.ADMIN ||
+    userRole === Role.OPERATOR;
+
+  return (
+    <>
+      <section className="card-solid bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-500/30 p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+        {/* Header Widget */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
+              <CalendarDays className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+                </span>
+                <h2 className="text-base font-semibold text-ink">
+                  Presensi Sesi Rapat Aktif
+                </h2>
+              </div>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 bg-primary-subtle text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
+            <Sparkles className="h-3.5 w-3.5" />
+            Sesi Terbuka
+          </span>
+        </div>
+
+        <p className="text-sm text-ink-secondary leading-relaxed">
+          Pindai QR Code di layar proyektor ruang rapat untuk mencatat kehadiran otomatis dan mengklaim poin presensi.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full pt-1">
+          {userRole === Role.GUEST ? (
+            <div className="w-full p-4 rounded-xl bg-surface-container-low border border-edge text-center text-sm text-ink-muted">
+              🔒 <span className="font-semibold text-ink">Fitur Presensi Terkunci</span> — Menunggu aktivasi role akun oleh pengurus.
+            </div>
+          ) : (
+            <>
+              {/* Tombol Utama Scan QR Mandiri (Semua Anggota Terverifikasi) */}
+              <button
+                type="button"
+                onClick={() => setIsScannerOpen(true)}
+                className="w-full flex-1 h-12 min-h-[48px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+              >
+                <QrCode className="h-4 w-4" />
+                <span>Pindai QR Rapat (+10 XP)</span>
+              </button>
+
+              {/* Tombol Khusus Pengurus: Tampilkan QR Sesi */}
+              {canShowQr && (
+                <button
+                  type="button"
+                  onClick={() => setIsQrModalOpen(true)}
+                  className="w-full sm:w-auto h-12 min-h-[48px] px-5 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  title="Tampilkan QR Code untuk dipindai anggota"
+                >
+                  <Eye className="h-4 w-4 text-primary" />
+                  <span>Tampilkan QR Sesi</span>
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* Modal Dialog QR Code Pengurus */}
+      <MeetingQrModal
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+      />
+
+      {/* Modal Dialog Scanner Kamera Anggota */}
+      <AttendanceScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+      />
+    </>
+  );
+}
+
+
+
+==================== FILE: src/components/home/PodiumTop3.tsx ====================
+import React from "react";
+import Image from "next/image";
+import { Sparkles, Trophy, Zap } from "lucide-react";
+import { Division, Role } from "@prisma/client";
+
+export interface ContributorItem {
+  id: string;
+  name: string;
+  image?: string | null;
+  role?: Role;
+  classGrade?: string | null;
+  mainDivision?: Division;
+  totalPoints: number;
+  monthlyPoints?: number;
+}
+
+interface PodiumTop3Props {
+  contributors: ContributorItem[];
+}
+
+function formatGrade(grade?: string | null) {
+  if (!grade) return "";
+  if (grade === "KELAS_10") return "Gen 21";
+  if (grade === "KELAS_11") return "Gen 20";
+  if (grade === "KELAS_12") return "Gen 19";
+  return grade.replace("_", " ");
+}
+
+export function PodiumTop3({ contributors }: PodiumTop3Props) {
+  const rank1 = contributors[0] || null;
+  const rank2 = contributors[1] || null;
+  const rank3 = contributors[2] || null;
+
+  const getDivisionBadgeColor = (division?: Division) => {
+    switch (division) {
+      case Division.PROGRAMMING:
+        return "text-sky-600 dark:text-sky-400";
+      case Division.TECHNOPRENEURSHIP:
+        return "text-amber-600 dark:text-amber-400";
+      case Division.DESIGN:
+        return "text-purple-600 dark:text-purple-400";
+      case Division.PHOTOGRAPHY:
+        return "text-emerald-600 dark:text-emerald-400";
+      case Division.CINEMATOGRAPHY:
+        return "text-rose-600 dark:text-rose-400";
+      default:
+        return "text-ink-muted";
+    }
+  };
+
+  const getDivisionLabel = (division?: Division) => {
+    switch (division) {
+      case Division.PROGRAMMING:
+        return "Programming";
+      case Division.TECHNOPRENEURSHIP:
+        return "Technopreneurship";
+      case Division.DESIGN:
+        return "Desain";
+      case Division.PHOTOGRAPHY:
+        return "Fotografi";
+      case Division.CINEMATOGRAPHY:
+        return "Cinematografi";
+      default:
+        return division || "Anggota";
+    }
+  };
+
+  const renderAvatar = (
+    user: ContributorItem | null,
+    ringColor: string,
+    badgeText: string,
+    isFirst: boolean = false
+  ) => {
+    const sizeClasses = isFirst ? "h-16 w-16" : "h-12 w-12";
+
+    if (!user) {
+      return (
+        <div className="relative mb-3 flex flex-col items-center">
+          {isFirst && (
+            <span className="text-2xl -mb-1 animate-bounce duration-1000">👑</span>
+          )}
+          <div
+            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-surface text-xs font-semibold text-ink-muted shadow-md ring-2 ${ringColor}`}
+          >
+            -
+          </div>
+          <span className="absolute -bottom-1.5 -right-1 text-xs px-2 py-0.5 rounded-full bg-card border border-edge font-bold text-ink shadow-sm font-mono">
+            {badgeText}
+          </span>
+        </div>
+      );
+    }
+
+    const initials =
+      user.name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase() || "SE";
+
+    return (
+      <div className="relative mb-3 flex flex-col items-center">
+        {isFirst && (
+          <span className="text-2xl -mb-1 animate-bounce duration-1000">👑</span>
+        )}
+        {user.image ? (
+          <Image
+            src={user.image}
+            alt={user.name || "Foto profil kontributor"}
+            width={isFirst ? 64 : 48}
+            height={isFirst ? 64 : 48}
+            referrerPolicy="no-referrer"
+            className={`${sizeClasses} rounded-full object-cover ring-2 ${ringColor} shadow-lg`}
+          />
+        ) : (
+          <div
+            className={`flex ${sizeClasses} items-center justify-center rounded-full border border-edge bg-surface text-sm font-bold text-ink ring-2 ${ringColor} shadow-lg`}
+          >
+            {initials}
+          </div>
+        )}
+        <span className="absolute -bottom-1.5 -right-1 text-xs px-2 py-0.5 rounded-full bg-card border border-edge font-bold text-ink shadow-sm font-mono">
+          {badgeText}
+        </span>
+      </div>
+    );
+  };
+
+  return (
+    <section className="flex flex-col gap-3">
+      {/* Header Seksi */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
+            <span>Podium Apresiasi Kontributor</span>
+            <Sparkles className="h-4 w-4 text-amber-500 fill-amber-500" />
+          </h2>
+          <p className="text-xs text-ink-muted mt-0.5">
+            Panggung apresiasi kontribusi aktif, presensi &amp; karya teratas
+          </p>
+        </div>
+        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
+          <Trophy className="h-4 w-4" />
+          <span>Top 3</span>
+        </div>
+      </div>
+
+      {/* Kartu Utama Podium Panggung Turnamen */}
+      <div className="card-solid relative overflow-hidden p-6 shadow-md flex flex-col bg-card text-ink border-edge rounded-2xl">
+        {/* Ambient Glow Emas di belakang Juara 1 */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
+
+        {/* Banner Motivasi Kontribusi Komunitas */}
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-sm flex items-start gap-3 relative z-10">
+          <Zap className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1 space-y-1">
+            <span className="font-bold block text-amber-800 dark:text-amber-400 text-sm">
+              Kontribusi &amp; Keaktifan Komunitas
+            </span>
+            <p className="text-xs text-slate-700 dark:text-slate-300 font-normal leading-relaxed">
+              Tingkatkan XP kontribusi melalui presensi rapat, kepanitiaan kegiatan, dan submit karya inovasi.
+            </p>
+          </div>
+        </div>
+
+        {/* 3 Pilar Fisik Podium Berjejang (Juara 2 - Juara 1 - Juara 3) */}
+        <div className="flex items-end justify-center gap-3 sm:gap-4 pt-4 pb-2 relative z-10">
+          {/* Juara 2 (Perak/Silver - Kiri) */}
+          <div className="w-[30%] max-w-[110px] flex flex-col items-center">
+            {renderAvatar(rank2, "ring-slate-400 ring-offset-2 ring-offset-card", "🥈")}
+            <span className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300 truncate text-center w-full block">
+              {rank2 ? rank2.name.split(" ")[0] : "Belum Ada"}
+            </span>
+            <span
+              className={`text-xs font-medium truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
+                rank2?.mainDivision
+              )}`}
+            >
+              {rank2?.classGrade ? formatGrade(rank2.classGrade) : getDivisionLabel(rank2?.mainDivision)}
+            </span>
+
+            {/* Pilar Perak Berjejang */}
+            <div className="w-full h-32 sm:h-36 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
+              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">2</span>
+              <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
+                <Zap className="h-3 w-3 text-slate-600 dark:text-slate-400 fill-slate-600 dark:fill-slate-400" />
+                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
+                  {rank2 ? rank2.totalPoints : 0}
+                </span>
+              </div>
+              <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
+                XP
+              </span>
+            </div>
+          </div>
+
+          {/* Juara 1 (Emas/Gold - Tengah: Pilar Tertinggi & Paling Dominan) */}
+          <div className="w-[38%] max-w-[140px] flex flex-col items-center">
+            {renderAvatar(
+              rank1,
+              "ring-amber-500 ring-offset-2 ring-offset-card shadow-amber-500/30 shadow-lg",
+              "🥇",
+              true
+            )}
+            <span className="text-sm sm:text-base font-extrabold text-amber-700 dark:text-amber-400 truncate text-center w-full block">
+              {rank1 ? rank1.name.split(" ")[0] : "Belum Ada"}
+            </span>
+            <span
+              className={`text-xs font-semibold truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
+                rank1?.mainDivision
+              )}`}
+            >
+              {rank1?.classGrade ? formatGrade(rank1.classGrade) : getDivisionLabel(rank1?.mainDivision)}
+            </span>
+
+            {/* Pilar Emas Tertinggi */}
+            <div className="w-full h-44 sm:h-48 bg-surface-container border-2 border-amber-500 rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 inset-x-0 h-1 bg-amber-500 shadow-sm" />
+              <span className="text-3xl font-black text-amber-700 dark:text-amber-400">1</span>
+              <div className="flex items-center gap-1.5 mt-1.5 bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/40">
+                <Zap className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 fill-amber-600 dark:fill-amber-400" />
+                <span className="text-xs font-extrabold text-amber-700 dark:text-amber-400 tabular-nums">
+                  {rank1 ? rank1.totalPoints : 0}
+                </span>
+                <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400">XP</span>
+              </div>
+              <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 uppercase tracking-widest mt-1.5">
+                JUARA 1
+              </span>
+            </div>
+          </div>
+
+          {/* Juara 3 (Perunggu/Bronze - Kanan) */}
+          <div className="w-[30%] max-w-[110px] flex flex-col items-center">
+            {renderAvatar(
+              rank3,
+              "ring-amber-700 ring-offset-2 ring-offset-card",
+              "🥉"
+            )}
+            <span className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-300 truncate text-center w-full block">
+              {rank3 ? rank3.name.split(" ")[0] : "Belum Ada"}
+            </span>
+            <span
+              className={`text-xs font-medium truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
+                rank3?.mainDivision
+              )}`}
+            >
+              {rank3?.classGrade ? formatGrade(rank3.classGrade) : getDivisionLabel(rank3?.mainDivision)}
+            </span>
+
+            {/* Pilar Perunggu Berjejang */}
+            <div className="w-full h-28 sm:h-32 bg-surface-container border border-edge rounded-t-2xl mt-3 flex flex-col items-center justify-center p-3 shadow-lg">
+              <span className="text-xl font-extrabold text-slate-700 dark:text-slate-300">3</span>
+              <div className="flex items-center gap-1 mt-1 bg-surface px-2 py-0.5 rounded-full border border-edge">
+                <Zap className="h-3 w-3 text-amber-700 dark:text-amber-500 fill-amber-700 dark:fill-amber-500" />
+                <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
+                  {rank3 ? rank3.totalPoints : 0}
+                </span>
+              </div>
+              <span className="text-[10px] font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider mt-1">
+                XP
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Info Transparan */}
+        <div className="pt-4 border-t border-edge mt-4 flex items-center justify-between text-xs text-ink-muted relative z-10">
+          <span>Klasemen Peringkat Akumulasi XP</span>
+          <span className="text-amber-600 dark:text-amber-400 font-semibold">Kompetisi Terbuka &amp; Transparan</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+==================== FILE: src/components/kas/TreasurerPanel.tsx ====================
+"use client";
+
+import React, { useState, useTransition } from "react";
+import {
+  Wallet,
+  ShieldAlert,
+  PlusCircle,
+  Receipt,
+  Search,
+  Check,
+  X,
+  CreditCard,
+  UserCheck,
+  AlertCircle,
+  ExternalLink,
+  Loader2,
+  Share2,
+} from "lucide-react";
+import {
+  generateWhatsAppLink,
+  formatKasBroadcastMessage,
+} from "@/utils/whatsappShare";
+import {
+  Role,
+  Division,
+  TransactionType,
+  IncomeCategory,
+  ExpenseCategory,
+} from "@prisma/client";
+import {
+  createCashTransaction,
+  toggleDuesPayment,
+  recordAdvancePayment,
+  createBillingEvent,
+} from "@/actions/kas";
+
+export interface MemberKasData {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  role: Role;
+  classGrade: string | null;
+  generationNumber?: number | null;
+  gen?: number | null;
+  kelas?: string | null;
+  mainDivision: Division;
+  payments: {
+    kasPeriodId: string;
+    amountPaid: number;
+    paidAt: Date | string;
+  }[];
+}
+
+/**
+ * Helper pencocokan data angkatan Kelas 11 (Gen 20)
+ * Memeriksa properti gen, generationNumber, kelas, atau classGrade
+ */
+export function isGen20(m: MemberKasData): boolean {
+  const g = m.gen ?? m.generationNumber;
+  if (g === 20) return true;
+  const cg = (m.classGrade || "").toUpperCase().trim();
+  const k = (m.kelas || "").toUpperCase().trim();
+  return (
+    cg === "KELAS_11" ||
+    cg === "XI" ||
+    cg === "11" ||
+    cg.includes("11") ||
+    k === "XI" ||
+    k === "11" ||
+    k.includes("11")
+  );
+}
+
+/**
+ * Helper pencocokan data angkatan Kelas 10 (Gen 21)
+ * Memeriksa properti gen, generationNumber, kelas, atau classGrade
+ */
+export function isGen21(m: MemberKasData): boolean {
+  const g = m.gen ?? m.generationNumber;
+  if (g === 21) return true;
+  const cg = (m.classGrade || "").toUpperCase().trim();
+  const k = (m.kelas || "").toUpperCase().trim();
+  return (
+    cg === "KELAS_10" ||
+    cg === "X" ||
+    cg === "10" ||
+    cg.includes("10") ||
+    k === "X" ||
+    k === "10" ||
+    k.includes("10")
+  );
+}
+
+export interface KasPeriodData {
+  id: string;
+  periodNumber: number;
+  name: string;
+  amount: number;
+}
+
+interface TreasurerPanelProps {
+  currentUserRole: Role;
+  allMembers: MemberKasData[];
+  periods: KasPeriodData[];
+}
+
+export function TreasurerPanel({
+  currentUserRole,
+  allMembers,
+  periods,
+}: TreasurerPanelProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterClass, setFilterClass] = useState<
+    "ALL" | "KELAS_10" | "KELAS_11" | "NUNGGAK"
+  >("ALL");
+
+  // Modal states
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [isAdvanceModalOpen, setIsAdvanceModalOpen] = useState(false);
+  const [isBillingModalOpen, setIsBillingModalOpen] = useState(false);
+  const [feedbackMsg, setFeedbackMsg] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const [isPending, startTransition] = useTransition();
+
+  // Form states for new billing (Kas Rutin / Urunan Insidental)
+  const [billingType, setBillingType] = useState<"KAS_RUTIN" | "URUNAN">(
+    "KAS_RUTIN"
+  );
+  const [billingTitle, setBillingTitle] = useState("");
+  const [billingAmount, setBillingAmount] = useState("");
+  const [billingDescription, setBillingDescription] = useState("");
+  const [billingDueDate, setBillingDueDate] = useState("");
+  const [selectedBillingMemberIds, setSelectedBillingMemberIds] = useState<
+    string[]
+  >([]);
+  const [billingMemberSearch, setBillingMemberSearch] = useState("");
+
+  // Form states for new transaction
+  const [txType, setTxType] = useState<TransactionType>(TransactionType.INCOME);
+  const [txAmount, setTxAmount] = useState<string>("");
+  const [txDescription, setTxDescription] = useState<string>("");
+  const [txIncomeCategory, setTxIncomeCategory] = useState<IncomeCategory>(
+    IncomeCategory.KAS_RUTIN
+  );
+  const [txExpenseCategory, setTxExpenseCategory] = useState<ExpenseCategory>(
+    ExpenseCategory.ACARA
+  );
+  const [txProofUrl, setTxProofUrl] = useState<string>("");
+
+  // Form states for advance payment
+  const [advanceUserId, setAdvanceUserId] = useState<string>(
+    allMembers[0]?.id || ""
+  );
+  const [advancePeriodsCount, setAdvancePeriodsCount] = useState<number>(1);
+
+  const showToast = (text: string, type: "success" | "error" = "success") => {
+    setFeedbackMsg({ text, type });
+    setTimeout(() => setFeedbackMsg(null), 3500);
+  };
+
+  // Filter members dengan logika angkatan / kelas yang tahan banting
+  const filteredMembers = allMembers.filter((m) => {
+    const matchesSearch =
+      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.mainDivision.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    const paidPeriodIds = new Set(m.payments.map((p) => p.kasPeriodId));
+    const isNunggak = periods.some((p) => !paidPeriodIds.has(p.id));
+
+    if (filterClass === "ALL") return true;
+    if (filterClass === "KELAS_10") return isGen21(m);
+    if (filterClass === "KELAS_11") return isGen20(m);
+    if (filterClass === "NUNGGAK") return isNunggak;
+
+    return true;
+  });
+
+  const handleToggleSelectMember = (id: string) => {
+    setSelectedBillingMemberIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllMembers = () => {
+    setSelectedBillingMemberIds(allMembers.map((m) => m.id));
+  };
+
+  const handleDeselectAllMembers = () => {
+    setSelectedBillingMemberIds([]);
+  };
+
+  const handleCreateBilling = (e: React.FormEvent) => {
+    e.preventDefault();
+    const amountNum = parseFloat(billingAmount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      showToast("Nominal tagihan harus lebih dari Rp 0.", "error");
+      return;
+    }
+
+    if (!billingTitle.trim()) {
+      showToast("Judul tagihan wajib diisi.", "error");
+      return;
+    }
+
+    if (billingType === "URUNAN" && selectedBillingMemberIds.length === 0) {
+      showToast(
+        "Pilih minimal 1 anggota untuk tagihan urunan insidental.",
+        "error"
+      );
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await createBillingEvent({
+        title: billingTitle.trim(),
+        description: billingDescription.trim() || undefined,
+        type: billingType,
+        amount: amountNum,
+        dueDate: billingDueDate || undefined,
+        targetUserIds:
+          billingType === "URUNAN" ? selectedBillingMemberIds : undefined,
+      });
+
+      if (res.success) {
+        showToast(res.message, "success");
+        setIsBillingModalOpen(false);
+        setBillingTitle("");
+        setBillingAmount("");
+        setBillingDescription("");
+        setBillingDueDate("");
+        setSelectedBillingMemberIds([]);
+      } else {
+        showToast(res.message, "error");
+      }
+    });
+  };
+
+  const handleTogglePayment = (userId: string, periodId: string) => {
+    startTransition(async () => {
+      const res = await toggleDuesPayment(userId, periodId);
+      if (res.success) {
+        showToast(res.message, "success");
+      } else {
+        showToast(res.message, "error");
+      }
+    });
+  };
+
+  const handleCreateTransaction = (e: React.FormEvent) => {
+    e.preventDefault();
+    const amountNum = parseFloat(txAmount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      showToast("Nominal transaksi tidak valid.", "error");
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await createCashTransaction({
+        type: txType,
+        amount: amountNum,
+        description: txDescription,
+        incomeCategory:
+          txType === TransactionType.INCOME ? txIncomeCategory : undefined,
+        expenseCategory:
+          txType === TransactionType.EXPENSE ? txExpenseCategory : undefined,
+        proofUrl: txProofUrl || undefined,
+      });
+
+      if (res.success) {
+        showToast(res.message, "success");
+        setIsTxModalOpen(false);
+        setTxAmount("");
+        setTxDescription("");
+        setTxProofUrl("");
+      } else {
+        showToast(res.message, "error");
+      }
+    });
+  };
+
+  const handleRecordAdvance = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!advanceUserId) {
+      showToast("Pilih anggota terlebih dahulu.", "error");
+      return;
+    }
+
+    const selectedMember = allMembers.find((m) => m.id === advanceUserId);
+    if (!selectedMember) return;
+
+    const paidPeriodIds = new Set(
+      selectedMember.payments.map((p) => p.kasPeriodId)
+    );
+    // Cari periode yang belum lunas sebanyak advancePeriodsCount
+    const unpaidPeriods = periods.filter((p) => !paidPeriodIds.has(p.id));
+    const targetPeriodIds = unpaidPeriods
+      .slice(0, advancePeriodsCount)
+      .map((p) => p.id);
+
+    if (targetPeriodIds.length === 0) {
+      showToast("Semua periode kas untuk anggota ini sudah lunas!", "error");
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await recordAdvancePayment(advanceUserId, targetPeriodIds);
+      if (res.success) {
+        showToast(res.message, "success");
+        setIsAdvanceModalOpen(false);
+      } else {
+        showToast(res.message, "error");
+      }
+    });
+  };
+
+  const handleBroadcastKasWA = () => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const activePeriod = periods[periods.length - 1];
+    const message = formatKasBroadcastMessage(
+      {
+        amountPerPeriod: activePeriod?.amount || 5000,
+        periodName: activePeriod?.name || "Pekan Ini",
+      },
+      origin
+    );
+
+    const waLink = generateWhatsAppLink("", message);
+    window.open(waLink, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="card-solid border-purple-300 dark:border-purple-900 bg-purple-50/10 dark:bg-purple-950/10 p-4 sm:p-5 shadow-sm flex flex-col gap-4">
+      {/* Toast Feedback */}
+      {feedbackMsg && (
+        <div
+          className={`fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2 ${
+            feedbackMsg.type === "success"
+              ? "bg-ink text-surface"
+              : "bg-danger text-white"
+          }`}
+        >
+          {feedbackMsg.type === "success" ? (
+            <Check className="h-4 w-4 text-emerald-400" />
+          ) : (
+            <AlertCircle className="h-4 w-4 text-white" />
+          )}
+          <span>{feedbackMsg.text}</span>
+        </div>
+      )}
+
+      {/* Header Panel Bendahara */}
+      <div className="flex items-center justify-between border-b border-edge pb-3">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50">
+            <Wallet className="h-4 w-4" />
+          </div>
+          <div>
+            <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
+              Panel Pembukuan Bendahara
+            </h3>
+            <span className="text-[10px] text-ink-muted">
+              Akses Pengurus: {currentUserRole}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tombol Aksi Cepat Bendahara */}
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => setIsBillingModalOpen(true)}
+          className="w-full min-h-[44px] bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+        >
+          <PlusCircle className="h-4 w-4" />
+          <span>+ Buat Tagihan Baru (Kas Rutin / Urunan Insidental)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleBroadcastKasWA}
+          className="w-full min-h-[44px] bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+        >
+          <Share2 className="h-4 w-4" />
+          <span>📢 Broadcast Tagihan Kas Pekanan ke WA</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsAdvanceModalOpen(true)}
+          className="w-full min-h-[44px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+        >
+          <CreditCard className="h-4 w-4" />
+          <span>+ Catat Pembayaran Kas (Advance Payment)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsTxModalOpen(true)}
+          className="w-full min-h-[44px] bg-surface-container-low hover:bg-surface-container border border-edge text-ink rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+        >
+          <Receipt className="h-4 w-4 text-primary" />
+          <span>+ Catat Mutasi Kas (Pemasukan / Pengeluaran)</span>
+        </button>
+      </div>
+
+      {/* Pencarian Anggota & Filter Tabs */}
+      <div className="space-y-2 pt-1">
+        <div className="relative w-full">
+          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ink-muted">
+            <Search className="h-4 w-4" />
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari nama anggota atau divisi..."
+            className="w-full min-h-[44px] pl-9 pr-4 bg-card text-ink placeholder-ink-muted rounded-lg text-xs border border-edge outline-none focus:border-primary transition-colors"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setFilterClass("ALL")}
+            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+              filterClass === "ALL"
+                ? "bg-ink text-surface"
+                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
+            }`}
+          >
+            Semua ({allMembers.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterClass("KELAS_10")}
+            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+              filterClass === "KELAS_10"
+                ? "bg-primary text-white"
+                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
+            }`}
+          >
+            ★ Kelas 10 (Gen 21) ({allMembers.filter(isGen21).length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterClass("KELAS_11")}
+            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+              filterClass === "KELAS_11"
+                ? "bg-primary text-white"
+                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
+            }`}
+          >
+            Kelas 11 (Gen 20) ({allMembers.filter(isGen20).length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterClass("NUNGGAK")}
+            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+              filterClass === "NUNGGAK"
+                ? "bg-danger text-white"
+                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
+            }`}
+          >
+            Tunggakan Saja
+          </button>
+        </div>
+      </div>
+
+      {/* Daftar Kartu Kas Anggota (Interactive Checklist Matrix) */}
+      <div className="space-y-3 pt-1">
+        {filteredMembers.length === 0 ? (
+          <div className="text-center py-6 text-xs text-ink-muted border border-dashed border-edge rounded-lg">
+            Tidak ada anggota yang cocok dengan filter pencarian.
+          </div>
+        ) : (
+          filteredMembers.map((member) => {
+            const paidPeriodIds = new Set(
+              member.payments.map((p) => p.kasPeriodId)
+            );
+            const unpaidPeriods = periods.filter(
+              (p) => !paidPeriodIds.has(p.id)
+            );
+            const isFullyPaid = unpaidPeriods.length === 0;
+            const arrearsAmount = unpaidPeriods.reduce(
+              (sum, p) => sum + p.amount,
+              0
+            );
+
+            return (
+              <div
+                key={member.id}
+                className="rounded-xl border border-edge bg-card p-3.5 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-low text-xs font-bold text-ink border border-edge shrink-0">
+                      {member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-ink truncate leading-tight">
+                        {member.name}
+                      </h4>
+                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-ink-muted">
+                        <span>
+                          {isGen21(member)
+                            ? "Gen 21 (Kelas 10)"
+                            : isGen20(member)
+                            ? "Gen 20 (Kelas 11)"
+                            : (member.classGrade || "").replace("_", " ")}
+                        </span>
+                        <span>•</span>
+                        <span className="text-primary font-medium">
+                          {member.mainDivision}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {isFullyPaid ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 text-[10px] font-bold shrink-0">
+                      <Check className="h-3 w-3" />
+                      Lunas
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 text-[10px] font-bold shrink-0">
+                      Nunggak Rp {arrearsAmount.toLocaleString("id-ID")}
+                    </span>
+                  )}
+                </div>
+
+                {/* Grid Periode Interaktif Toggle */}
+                {periods.length > 0 && (
+                  <div className="space-y-1 pt-1">
+                    <span className="text-[10px] font-semibold text-ink-muted block">
+                      Klik periode untuk verifikasi pembayaran:
+                    </span>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {periods.map((period) => {
+                        const isPaid = paidPeriodIds.has(period.id);
+                        return (
+                          <button
+                            key={period.id}
+                            type="button"
+                            disabled={isPending}
+                            onClick={() =>
+                              handleTogglePayment(member.id, period.id)
+                            }
+                            className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
+                              isPaid
+                                ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
+                                : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
+                            }`}
+                            title={`Klik untuk ubah status P${period.periodNumber}`}
+                          >
+                            <span className="text-[10px] font-bold">
+                              P{String(period.periodNumber).padStart(2, "0")}
+                            </span>
+                            <span
+                              className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
+                                isPaid
+                                  ? "bg-success text-white"
+                                  : "bg-danger text-white"
+                              }`}
+                            >
+                              {isPaid ? "L" : "N"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Modal 1: Catat Mutasi Kas Baru */}
+      {isTxModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-sm rounded-xl p-4 shadow-xl border border-edge space-y-3">
+            <div className="flex items-center justify-between border-b border-edge pb-2">
+              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
+                Catat Transaksi Kas
+              </h4>
+              <button
+                type="button"
+                onClick={() => setIsTxModalOpen(false)}
+                className="text-ink-muted hover:text-ink"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTransaction} className="space-y-3 text-xs">
+              {/* Jenis Transaksi */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setTxType(TransactionType.INCOME)}
+                  className={`min-h-[40px] rounded-lg font-bold border transition-colors ${
+                    txType === TransactionType.INCOME
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-surface text-ink-secondary border-edge"
+                  }`}
+                >
+                  Pemasukan (+)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTxType(TransactionType.EXPENSE)}
+                  className={`min-h-[40px] rounded-lg font-bold border transition-colors ${
+                    txType === TransactionType.EXPENSE
+                      ? "bg-rose-600 text-white border-rose-600"
+                      : "bg-surface text-ink-secondary border-edge"
+                  }`}
+                >
+                  Pengeluaran (-)
+                </button>
+              </div>
+
+              {/* Kategori */}
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Kategori
+                </label>
+                {txType === TransactionType.INCOME ? (
+                  <select
+                    value={txIncomeCategory}
+                    onChange={(e) =>
+                      setTxIncomeCategory(e.target.value as IncomeCategory)
+                    }
+                    className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
+                  >
+                    <option value={IncomeCategory.KAS_RUTIN}>Kas Rutin</option>
+                    <option value={IncomeCategory.DANA_USAHA}>Dana Usaha</option>
+                    <option value={IncomeCategory.DONASI}>Donasi</option>
+                    <option value={IncomeCategory.SPONSOR}>Sponsor</option>
+                    <option value={IncomeCategory.SALDO_AWAL}>Saldo Awal</option>
+                  </select>
+                ) : (
+                  <select
+                    value={txExpenseCategory}
+                    onChange={(e) =>
+                      setTxExpenseCategory(e.target.value as ExpenseCategory)
+                    }
+                    className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
+                  >
+                    <option value={ExpenseCategory.ACARA}>Acara / Kegiatan</option>
+                    <option value={ExpenseCategory.KONSUMSI}>Konsumsi</option>
+                    <option value={ExpenseCategory.LOGISTIK}>Logistik & Alat</option>
+                    <option value={ExpenseCategory.KESEKRETARIATAN}>
+                      Kesekretariatan
+                    </option>
+                    <option value={ExpenseCategory.LAINNYA}>Lainnya</option>
+                  </select>
+                )}
+              </div>
+
+              {/* Nominal */}
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Nominal (Rp)
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={txAmount}
+                  onChange={(e) => setTxAmount(e.target.value)}
+                  placeholder="Contoh: 50000"
+                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Deskripsi */}
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Deskripsi / Keterangan
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={txDescription}
+                  onChange={(e) => setTxDescription(e.target.value)}
+                  placeholder="Contoh: Pembelian snack rapat pleno"
+                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Proof URL */}
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Link Google Drive Nota (Opsional)
+                </label>
+                <input
+                  type="url"
+                  value={txProofUrl}
+                  onChange={(e) => setTxProofUrl(e.target.value)}
+                  placeholder="https://drive.google.com/..."
+                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-edge">
+                <button
+                  type="button"
+                  onClick={() => setIsTxModalOpen(false)}
+                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover text-white font-bold flex items-center justify-center gap-1"
+                >
+                  {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  <span>Simpan</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 2: Catat Advance Payment */}
+      {isAdvanceModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-sm rounded-xl p-4 shadow-xl border border-edge space-y-3">
+            <div className="flex items-center justify-between border-b border-edge pb-2">
+              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
+                Advance Payment Kas
+              </h4>
+              <button
+                type="button"
+                onClick={() => setIsAdvanceModalOpen(false)}
+                className="text-ink-muted hover:text-ink"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRecordAdvance} className="space-y-3 text-xs">
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Pilih Anggota
+                </label>
+                <select
+                  value={advanceUserId}
+                  onChange={(e) => setAdvanceUserId(e.target.value)}
+                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
+                >
+                  {allMembers.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({(m.classGrade || "").replace("_", " ")} - {m.mainDivision})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                  Jumlah Periode Kas Di Muka
+                </label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[1, 2, 4, 8].map((cnt) => (
+                    <button
+                      key={cnt}
+                      type="button"
+                      onClick={() => setAdvancePeriodsCount(cnt)}
+                      className={`min-h-[44px] rounded-lg font-bold border transition-colors ${
+                        advancePeriodsCount === cnt
+                          ? "bg-primary text-white border-primary"
+                          : "bg-surface text-ink border-edge"
+                      }`}
+                    >
+                      {cnt} Periode
+                      <span className="block text-[9px] font-normal">
+                        Rp {(cnt * 5000).toLocaleString("id-ID")}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2 border-t border-edge">
+                <button
+                  type="button"
+                  onClick={() => setIsAdvanceModalOpen(false)}
+                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover text-white font-bold flex items-center justify-center gap-1"
+                >
+                  {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  <span>Setor Kas</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 3: Buat Tagihan Baru (Kas Rutin & Urunan Insidental) */}
+      {isBillingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-lg rounded-2xl p-5 shadow-2xl border border-edge space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-edge pb-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50">
+                  <PlusCircle className="h-4 w-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-ink uppercase tracking-wider">
+                    Buat Tagihan Baru
+                  </h4>
+                  <p className="text-[11px] text-ink-muted">
+                    Sistem tagihan kas rutin global atau urunan insidental
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBillingModalOpen(false)}
+                className="text-ink-muted hover:text-ink cursor-pointer p-1 rounded-lg hover:bg-surface-container"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleCreateBilling}
+              className="space-y-3.5 text-xs overflow-y-auto flex-1 pr-1"
+            >
+              {/* Pilihan Tipe Tagihan: KAS_RUTIN vs URUNAN */}
+              <div>
+                <label className="text-[11px] font-bold text-ink block mb-1.5">
+                  Tipe Tagihan <span className="text-primary">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setBillingType("KAS_RUTIN")}
+                    className={`min-h-[44px] rounded-xl font-bold border transition-all text-left p-3 flex flex-col gap-0.5 cursor-pointer ${
+                      billingType === "KAS_RUTIN"
+                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30"
+                        : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
+                    }`}
+                  >
+                    <span className="text-xs font-bold flex items-center gap-1.5">
+                      <span>💰 Kas Rutin</span>
+                    </span>
+                    <span className="text-[10px] font-normal leading-tight">
+                      Tagihan global untuk semua anggota
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setBillingType("URUNAN")}
+                    className={`min-h-[44px] rounded-xl font-bold border transition-all text-left p-3 flex flex-col gap-0.5 cursor-pointer ${
+                      billingType === "URUNAN"
+                        ? "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-500 shadow-xs ring-1 ring-purple-500/30"
+                        : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
+                    }`}
+                  >
+                    <span className="text-xs font-bold flex items-center gap-1.5">
+                      <span>🎯 Urunan Insidental</span>
+                    </span>
+                    <span className="text-[10px] font-normal leading-tight">
+                      Hanya dibebankan pada anggota terpilih
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Judul Tagihan */}
+              <div>
+                <label className="text-[11px] font-bold text-ink block mb-1">
+                  Nama Tagihan / Event <span className="text-primary">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={billingTitle}
+                  onChange={(e) => setBillingTitle(e.target.value)}
+                  placeholder={
+                    billingType === "KAS_RUTIN"
+                      ? "Contoh: Kas Rutin Pekan Ke-4 September"
+                      : "Contoh: Urunan Sewa Bus Kunjungan Industri"
+                  }
+                  className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
+                />
+              </div>
+
+              {/* Nominal & Tenggat Waktu */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="text-[11px] font-bold text-ink block mb-1">
+                    Nominal per Anggota (Rp) <span className="text-primary">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={billingAmount}
+                    onChange={(e) => setBillingAmount(e.target.value)}
+                    placeholder="Contoh: 10000"
+                    className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-ink block mb-1">
+                    Tenggat Waktu (Opsional)
+                  </label>
+                  <input
+                    type="date"
+                    value={billingDueDate}
+                    onChange={(e) => setBillingDueDate(e.target.value)}
+                    className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Keterangan */}
+              <div>
+                <label className="text-[11px] font-bold text-ink block mb-1">
+                  Keterangan / Rincian Tagihan
+                </label>
+                <textarea
+                  rows={2}
+                  value={billingDescription}
+                  onChange={(e) => setBillingDescription(e.target.value)}
+                  placeholder="Deskripsi singkat tujuan penarikan dana atau rincian biaya..."
+                  className="w-full p-2.5 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs resize-none"
+                />
+              </div>
+
+              {/* ========================================================= */}
+              {/* FITUR MULTI-SELECT ANGGOTA (HANYA MUNCUL JIKA TIPE URUNAN) */}
+              {/* ========================================================= */}
+              {billingType === "URUNAN" && (
+                <div className="space-y-2 pt-1 border-t border-edge">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-bold text-ink block">
+                        Pilih Anggota Penanggung Urunan <span className="text-primary">*</span>
+                      </span>
+                      <span className="text-[10px] text-ink-muted">
+                        {selectedBillingMemberIds.length} dari {allMembers.length} anggota terpilih
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-[10px]">
+                      <button
+                        type="button"
+                        onClick={handleSelectAllMembers}
+                        className="px-2 py-1 rounded-md bg-surface-container text-ink hover:text-primary font-semibold transition-colors cursor-pointer"
+                      >
+                        Pilih Semua
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDeselectAllMembers}
+                        className="px-2 py-1 rounded-md bg-surface-container text-ink-muted hover:text-rose-600 font-semibold transition-colors cursor-pointer"
+                      >
+                        Kosongkan
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Filter Pencarian Cepat Anggota Urunan */}
+                  <input
+                    type="text"
+                    value={billingMemberSearch}
+                    onChange={(e) => setBillingMemberSearch(e.target.value)}
+                    placeholder="Saring nama atau divisi anggota..."
+                    className="w-full h-8 px-2.5 bg-surface text-ink border border-edge rounded-lg text-[11px] outline-none focus:border-primary"
+                  />
+
+                  {/* Daftar Checklist Anggota */}
+                  <div className="max-h-48 overflow-y-auto space-y-1.5 p-2 bg-surface-container-low rounded-xl border border-edge">
+                    {allMembers
+                      .filter(
+                        (m) =>
+                          m.name
+                            .toLowerCase()
+                            .includes(billingMemberSearch.toLowerCase()) ||
+                          m.mainDivision
+                            .toLowerCase()
+                            .includes(billingMemberSearch.toLowerCase())
+                      )
+                      .map((member) => {
+                        const isSelected = selectedBillingMemberIds.includes(
+                          member.id
+                        );
+                        return (
+                          <label
+                            key={member.id}
+                            className={`flex items-center justify-between p-2 rounded-lg border transition-all cursor-pointer ${
+                              isSelected
+                                ? "bg-card border-purple-500/50 shadow-xs"
+                                : "bg-surface border-edge/60 hover:bg-card"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() =>
+                                  handleToggleSelectMember(member.id)
+                                }
+                                className="h-4 w-4 rounded text-purple-600 accent-purple-600 cursor-pointer"
+                              />
+                              <div className="min-w-0">
+                                <span className="text-xs font-semibold text-ink block truncate leading-tight">
+                                  {member.name}
+                                </span>
+                                <span className="text-[10px] text-ink-muted block truncate">
+                                  {isGen21(member)
+                                    ? "Gen 21 (Kelas 10)"
+                                    : isGen20(member)
+                                    ? "Gen 20 (Kelas 11)"
+                                    : (member.classGrade || "").replace("_", " ")}{" "}
+                                  • {member.mainDivision}
+                                </span>
+                              </div>
+                            </div>
+                            {isSelected && (
+                              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 shrink-0">
+                                Ditagih
+                              </span>
+                            )}
+                          </label>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons Submit & Batal */}
+              <div className="flex gap-2 pt-3 border-t border-edge shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsBillingModalOpen(false)}
+                  className="flex-1 min-h-[44px] rounded-xl bg-surface-container-low text-ink font-semibold hover:bg-surface-container transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="flex-1 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Menerbitkan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <PlusCircle className="h-4 w-4" />
+                      <span>Terbitkan Tagihan</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/kas/PersonalDuesCard.tsx ====================
+import React from "react";
+import { CheckCircle2, AlertCircle, Calendar, Wallet } from "lucide-react";
+
+export interface PeriodStatusItem {
+  id: string;
+  periodNumber: number;
+  name: string;
+  startDate: Date | string;
+  endDate: Date | string;
+  amount: number;
+  isPaid: boolean;
+}
+
+interface PersonalDuesCardProps {
+  userName: string;
+  periods: PeriodStatusItem[];
+}
+
+export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
+  const totalPaid = periods
+    .filter((p) => p.isPaid)
+    .reduce((sum, p) => sum + p.amount, 0);
+
+  const unpaidPeriods = periods.filter((p) => !p.isPaid);
+  const totalArrears = unpaidPeriods.reduce((sum, p) => sum + p.amount, 0);
+  const isFullyPaid = unpaidPeriods.length === 0 && periods.length > 0;
+
+  return (
+    <div className="card-solid p-6 shadow-sm flex flex-col gap-4">
+      {/* Header Status Personal */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/50 shadow-xs p-2.5 shrink-0">
+            <Wallet className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
+              Status Iuran Kas Personal
+            </h3>
+            <span className="text-xs text-ink-muted mt-0.5 block">
+              {userName.split(" ")[0]}
+            </span>
+          </div>
+        </div>
+
+        {isFullyPaid ? (
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800/50">
+            <CheckCircle2 className="h-4 w-4" />
+            Lunas Terpenuhi
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 px-2.5 py-1 rounded-full text-xs font-semibold border border-rose-200 dark:border-rose-800/50">
+            <AlertCircle className="h-4 w-4" />
+            Nunggak {unpaidPeriods.length} Periode
+          </span>
+        )}
+      </div>
+
+      {/* Rincian Ringkasan */}
+      <div className="grid grid-cols-2 gap-4 bg-surface-container-low rounded-xl p-4 border border-edge/60">
+        <div className="flex flex-col">
+          <span className="text-xs font-medium text-ink-muted">
+            Total Terbayar
+          </span>
+          <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">
+            Rp {totalPaid.toLocaleString("id-ID")}
+          </span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-xs font-medium text-ink-muted">
+            Tunggakan Kas
+          </span>
+          <span
+            className={`text-base font-bold mt-1 tabular-nums ${
+              totalArrears > 0
+                ? "text-rose-600 dark:text-rose-400"
+                : "text-emerald-600 dark:text-emerald-400"
+            }`}
+          >
+            {totalArrears > 0
+              ? `Rp ${totalArrears.toLocaleString("id-ID")}`
+              : "Rp 0 (Bebas)"}
+          </span>
+        </div>
+      </div>
+
+      {/* Grid Matriks Periode */}
+      {periods.length > 0 && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center justify-between text-xs text-slate-400">
+            <span className="font-semibold flex items-center gap-1.5 text-ink-secondary">
+              <Calendar className="h-4 w-4 text-emerald-400" />
+              Siklus Kas 2026/2027
+            </span>
+            <span className="text-xs text-ink-muted">
+              Rp 5.000 / Periode
+            </span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {periods.map((period) => (
+              <div
+                key={period.id}
+                className={`rounded-xl p-3 flex flex-col items-center justify-center text-center min-h-[64px] border transition-colors ${
+                  period.isPaid
+                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50"
+                    : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/50"
+                }`}
+              >
+                <span className="text-xs font-bold leading-none font-mono">
+                  P{String(period.periodNumber).padStart(2, "0")}
+                </span>
+                <span
+                  className={`w-5 h-5 mt-1.5 rounded-full text-[10px] flex items-center justify-center font-bold ${
+                    period.isPaid
+                      ? "bg-emerald-500 text-white"
+                      : "bg-rose-500 text-white"
+                  }`}
+                >
+                  {period.isPaid ? "L" : "N"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/aspirasi/AspirasiClientView.tsx ====================
+"use client";
+
+import { useState, useEffect } from "react";
+
+import { Globe, Lock, Vote, Plus, ShieldCheck, Search } from "lucide-react";
+import { FeedbackType, IssueStatus, Role } from "@prisma/client";
+import { FeedbackIssueCard, FeedbackIssueData } from "./FeedbackIssueCard";
+import { CreateFeedbackModal } from "./CreateFeedbackModal";
+import { PollCard, PollCardData } from "./PollCard";
+import { CreatePollModal } from "./CreatePollModal";
+
+interface AspirasiClientViewProps {
+  currentUser: {
+    id: string;
+    name: string;
+    role: Role;
+  };
+  publicIssues: FeedbackIssueData[];
+  privateIssues: FeedbackIssueData[];
+  polls: PollCardData[];
+}
+
+export function AspirasiClientView({
+  currentUser,
+  publicIssues,
+  privateIssues,
+  polls,
+}: AspirasiClientViewProps) {
+  const [isMounted, setIsMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"PUBLIC_ISSUES" | "PRIVATE_ASPIRATIONS" | "POLLS">(
+    "PUBLIC_ISSUES"
+  );
+
+  // Status Filter for Issues: ALL, IN_PROGRESS, RESOLVED, PENDING
+  const [statusFilter, setStatusFilter] = useState<"ALL" | IssueStatus>("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Modals
+  const [isCreateFeedbackOpen, setIsCreateFeedbackOpen] = useState(false);
+  const [feedbackDefaultType, setFeedbackDefaultType] = useState<FeedbackType>(
+    FeedbackType.PUBLIC_ISSUE
+  );
+  const [isCreatePollOpen, setIsCreatePollOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const isOperator =
+    currentUser.role === Role.OPERATOR || currentUser.role === Role.ADMIN;
+  const canCreate = currentUser.role !== Role.GUEST;
+
+  const handleOpenCreateFeedback = (defaultType: FeedbackType) => {
+    setFeedbackDefaultType(defaultType);
+    setIsCreateFeedbackOpen(true);
+  };
+
+  // Filter Public Issues (seluruh isu publik ditampilkan tanpa filter status)
+  const filteredPublicIssues = publicIssues.filter((issue) => {
+    if (searchQuery.trim() === "") return true;
+    return (
+      issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      issue.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      Boolean(
+        issue.category &&
+          issue.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  });
+
+  // Filter Private Issues
+  const filteredPrivateIssues = privateIssues.filter((issue) => {
+    const matchesStatus =
+      statusFilter === "ALL" ? true : issue.status === statusFilter;
+    const matchesSearch =
+      searchQuery.trim() === ""
+        ? true
+        : issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          issue.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesStatus && matchesSearch;
+  });
+
+  const now = new Date();
+  const activePollsCount = polls.filter((p) => {
+    const isExpired = p.closesAt ? now > new Date(p.closesAt) : false;
+    return p.isActive && !isExpired;
+  }).length;
+
+  if (!isMounted) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-10 bg-surface-container-low rounded-xl w-1/2" />
+        <div className="h-14 bg-surface-container-low rounded-2xl w-full" />
+        <div className="h-48 bg-surface-container-low rounded-2xl w-full" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Top Bar Header & Action Buttons */}
+      <div className="flex items-center justify-between pt-1 relative z-10">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold text-ink">
+            Kotak Suara Hibrida
+          </h1>
+          <p className="text-xs sm:text-sm text-ink-muted mt-0.5">
+            Papan isu sistem &amp; saluran aspirasi rahasia
+          </p>
+        </div>
+
+        {canCreate && (
+          <div>
+            {activeTab === "PUBLIC_ISSUES" && (
+              <button
+                type="button"
+                onClick={() => handleOpenCreateFeedback(FeedbackType.PUBLIC_ISSUE)}
+                className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Laporkan Isu</span>
+              </button>
+            )}
+
+            {activeTab === "PRIVATE_ASPIRATIONS" && (
+              <button
+                type="button"
+                onClick={() => handleOpenCreateFeedback(FeedbackType.PRIVATE_ASPIRATION)}
+                className="h-11 px-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Kirim Aspirasi</span>
+              </button>
+            )}
+
+            {activeTab === "POLLS" && (
+              <button
+                type="button"
+                onClick={() => setIsCreatePollOpen(true)}
+                className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Buat Polling</span>
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Main Tab Navigation (Tab 1: Papan Isu, Tab 2: Aspirasi Privat, Tab 3: Polling) */}
+      <div className="grid grid-cols-3 p-1.5 rounded-2xl bg-surface-container-low border border-edge shadow-xs relative z-10">
+        {/* Tab 1: Papan Isu Sistem */}
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("PUBLIC_ISSUES");
+            setStatusFilter("ALL");
+          }}
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+            activeTab === "PUBLIC_ISSUES"
+              ? "bg-card text-ink shadow-xs border border-edge"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <Globe className="h-4 w-4 text-sky-500 shrink-0" />
+          <span className="truncate">Papan Isu</span>
+          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-surface-container text-[11px] text-ink-secondary border border-edge font-mono">
+            {publicIssues.length}
+          </span>
+        </button>
+
+        {/* Tab 2: Aspirasi Privat */}
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab("PRIVATE_ASPIRATIONS");
+            setStatusFilter("ALL");
+          }}
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+            activeTab === "PRIVATE_ASPIRATIONS"
+              ? "bg-card text-ink shadow-xs border border-edge"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <Lock className="h-4 w-4 text-purple-500 shrink-0" />
+          <span className="truncate">
+            {isOperator ? "Aspirasi Operator" : "Aspirasi Privat"}
+          </span>
+          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-bold border border-purple-300 dark:border-purple-500/30 font-mono">
+            {privateIssues.length}
+          </span>
+        </button>
+
+        {/* Tab 3: Polling Organisasi */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("POLLS")}
+          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+            activeTab === "POLLS"
+              ? "bg-card text-ink shadow-xs border border-edge"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <Vote className="h-4 w-4 text-emerald-500 shrink-0" />
+          <span className="truncate">Polling</span>
+          {activePollsCount > 0 && (
+            <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-300 dark:border-emerald-500/30 font-mono">
+              {activePollsCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* ========================================================= */}
+      {/* TAB 1: PAPAN ISU SISTEM (PUBLIC ISSUE TRACKER)            */}
+      {/* ========================================================= */}
+      {activeTab === "PUBLIC_ISSUES" && (
+        <section className="space-y-4 animate-in fade-in">
+          {/* Quick Search */}
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari isu / ide fitur..."
+              className="w-full h-10 pl-9 pr-3 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            />
+          </div>
+
+          {/* Daftar Kartu Isu Publik */}
+          {filteredPublicIssues.length === 0 ? (
+            <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
+              <div className="h-12 w-12 rounded-full bg-sky-100 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 mx-auto flex items-center justify-center border border-sky-300 dark:border-sky-500/30">
+                <Globe className="h-6 w-6" />
+              </div>
+              <h3 className="text-base font-semibold text-ink">
+                Papan Isu Bersih
+              </h3>
+              <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
+                Tidak ada laporan isu sistem atau usulan fitur pada filter ini. Laporkan kendala teknis atau ide inovasi aplikasi untuk meningkatkan kualitas sistem.
+              </p>
+              {canCreate && (
+                <button
+                  type="button"
+                  onClick={() => handleOpenCreateFeedback(FeedbackType.PUBLIC_ISSUE)}
+                  className="h-11 px-5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Laporkan Isu Baru (+10 XP)</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPublicIssues.map((issue) => (
+                <FeedbackIssueCard
+                  key={issue.id}
+                  issue={issue}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ========================================================= */}
+      {/* TAB 2: ASPIRASI PRIVAT (PRIVATE OPERATOR CHANNEL)         */}
+      {/* ========================================================= */}
+      {activeTab === "PRIVATE_ASPIRATIONS" && (
+        <section className="space-y-4 animate-in fade-in">
+          {/* Banner Informasi Saluran Privat */}
+          <div className="p-4 rounded-2xl bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
+            <div className="text-xs space-y-1">
+              <span className="font-bold text-purple-900 dark:text-purple-300 block">
+                {isOperator
+                  ? "Peti Saluran Rahasia Operator"
+                  : "Saluran Aspirasi & Evaluasi Privat"}
+              </span>
+              <p className="text-purple-800 dark:text-purple-200/80 font-medium leading-relaxed text-[11px]">
+                {isOperator
+                  ? "Seluruh pesan di bawah ini bersifat rahasia dan hanya dapat diakses oleh akun dengan wewenang Operator Organisasi."
+                  : "Pesan yang Anda kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}
+              </p>
+            </div>
+          </div>
+
+          {/* Filter Status */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container-low border border-edge overflow-x-auto no-scrollbar">
+            <button
+              type="button"
+              onClick={() => setStatusFilter("ALL")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+                statusFilter === "ALL"
+                  ? "bg-card text-ink shadow-xs border border-edge"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Semua ({privateIssues.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter(IssueStatus.IN_PROGRESS)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+                statusFilter === IssueStatus.IN_PROGRESS
+                  ? "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 shadow-xs border border-sky-300 dark:border-sky-500/30"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Sedang Ditangani
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter(IssueStatus.RESOLVED)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+                statusFilter === IssueStatus.RESOLVED
+                  ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-300 dark:border-emerald-500/30"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Selesai
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter(IssueStatus.PENDING)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+                statusFilter === IssueStatus.PENDING
+                  ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shadow-xs border border-amber-300 dark:border-amber-500/30"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Ditinjau
+            </button>
+          </div>
+
+          {/* Daftar Kartu Aspirasi Privat */}
+          {filteredPrivateIssues.length === 0 ? (
+            <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
+              <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 mx-auto flex items-center justify-center border border-purple-300 dark:border-purple-500/30">
+                <Lock className="h-6 w-6" />
+              </div>
+              <h3 className="text-base font-semibold text-ink">
+                Kotak Aspirasi Masih Bersih
+              </h3>
+              <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
+                {isOperator
+                  ? "Belum ada aspirasi privat atau laporan evaluasi rahasia yang masuk dari anggota."
+                  : "Anda belum mengirimkan pesan atau kritik evaluasi internal ke Operator."}
+              </p>
+              {canCreate && (
+                <button
+                  type="button"
+                  onClick={() => handleOpenCreateFeedback(FeedbackType.PRIVATE_ASPIRATION)}
+                  className="h-11 px-5 bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Tulis Aspirasi Privat (+10 XP)</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPrivateIssues.map((issue) => (
+                <FeedbackIssueCard
+                  key={issue.id}
+                  issue={issue}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ========================================================= */}
+      {/* TAB 3: POLLING ORGANISASI (COMMUNITY POLLS)                */}
+      {/* ========================================================= */}
+      {activeTab === "POLLS" && (
+        <section className="space-y-4 animate-in fade-in">
+          {polls.length === 0 ? (
+            <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
+              <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-300 dark:border-emerald-500/30">
+                <Vote className="h-6 w-6" />
+              </div>
+              <h3 className="text-base font-semibold text-ink">
+                Belum Ada Polling Aktif
+              </h3>
+              <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
+                Saat ini belum ada pemungutan suara atau jajak pendapat kebijakan yang sedang dibuka.
+              </p>
+              {canCreate && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreatePollOpen(true)}
+                  className="h-11 px-5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-11"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Buat Polling Pertama</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {polls.map((poll) => (
+                <PollCard
+                  key={poll.id}
+                  poll={poll}
+                  currentUserRole={currentUser.role}
+                  currentUserId={currentUser.id}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Modal Dialog Form Buat Laporan / Aspirasi */}
+      <CreateFeedbackModal
+        isOpen={isCreateFeedbackOpen}
+        onClose={() => setIsCreateFeedbackOpen(false)}
+        defaultType={feedbackDefaultType}
+      />
+
+      {/* Modal Dialog Form Buat Polling */}
+      <CreatePollModal
+        isOpen={isCreatePollOpen}
+        onClose={() => setIsCreatePollOpen(false)}
+      />
+    </div>
+  );
+}
+
+
+
+==================== FILE: src/components/pengaturan/LogoutButton.tsx ====================
+"use client";
+
+import React, { useState } from "react";
+import { LogOut, Loader2 } from "lucide-react";
+import { signOut } from "next-auth/react";
+
+export function LogoutButton() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    await signOut({ callbackUrl: "/login" });
+  };
+
+  return (
+    <section className="pt-2">
+      <button
+        type="button"
+        onClick={handleSignOut}
+        disabled={isLoading}
+        className="w-full min-h-[44px] px-4 py-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-semibold dark:bg-rose-950/40 dark:hover:bg-rose-900/60 dark:text-rose-400 dark:border-rose-800/50 shadow-xs transition-colors text-xs sm:text-sm flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 active:scale-[0.98]"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin text-rose-600 dark:text-rose-400" />
+            <span>Memproses Keluar...</span>
+          </>
+        ) : (
+          <>
+            <LogOut className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+            <span>Keluar dari Akun</span>
+          </>
+        )}
+      </button>
+
+      <p className="text-center text-[10px] text-ink-muted mt-3 font-mono">
+        Saba ExploIT App v1.0.0-beta • Build 2026
+      </p>
+    </section>
+  );
+}
+
+
+

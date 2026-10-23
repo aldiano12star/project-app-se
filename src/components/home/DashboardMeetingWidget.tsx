@@ -35,15 +35,10 @@ export function DashboardMeetingWidget({
         {/* Header Widget */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
-              <CalendarDays className="h-5 w-5" />
-            </div>
+            <CalendarDays className="h-6 w-6 text-slate-700 dark:text-slate-300 shrink-0" />
             <div>
               <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
-                </span>
+                <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
                 <h2 className="text-base font-semibold text-ink">
                   Presensi Sesi Rapat Aktif
                 </h2>

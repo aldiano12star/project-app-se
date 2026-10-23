@@ -232,9 +232,7 @@ export function AspirasiClientView({
           {/* Daftar Kartu Isu Publik */}
           {filteredPublicIssues.length === 0 ? (
             <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-              <div className="h-12 w-12 rounded-full bg-sky-100 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 mx-auto flex items-center justify-center border border-sky-300 dark:border-sky-500/30">
-                <Globe className="h-6 w-6" />
-              </div>
+              <Globe className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
               <h3 className="text-base font-semibold text-ink">
                 Papan Isu Bersih
               </h3>
@@ -273,15 +271,15 @@ export function AspirasiClientView({
       {activeTab === "PRIVATE_ASPIRATIONS" && (
         <section className="space-y-4 animate-in fade-in">
           {/* Banner Informasi Saluran Privat */}
-          <div className="p-4 rounded-2xl bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 flex items-start gap-3">
+          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-900/20 border border-purple-200 text-purple-900 dark:text-purple-100 flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
             <div className="text-xs space-y-1">
-              <span className="font-bold text-purple-900 dark:text-purple-300 block">
+              <span className="font-bold text-purple-900 dark:text-purple-100 block">
                 {isOperator
                   ? "Peti Saluran Rahasia Operator"
                   : "Saluran Aspirasi & Evaluasi Privat"}
               </span>
-              <p className="text-purple-800 dark:text-purple-200/80 font-medium leading-relaxed text-[11px]">
+              <p className="text-purple-800 dark:text-purple-200 font-medium leading-relaxed text-[11px]">
                 {isOperator
                   ? "Seluruh pesan di bawah ini bersifat rahasia dan hanya dapat diakses oleh akun dengan wewenang Operator Organisasi."
                   : "Pesan yang Anda kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}
@@ -340,9 +338,7 @@ export function AspirasiClientView({
           {/* Daftar Kartu Aspirasi Privat */}
           {filteredPrivateIssues.length === 0 ? (
             <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-              <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 mx-auto flex items-center justify-center border border-purple-300 dark:border-purple-500/30">
-                <Lock className="h-6 w-6" />
-              </div>
+              <Lock className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
               <h3 className="text-base font-semibold text-ink">
                 Kotak Aspirasi Masih Bersih
               </h3>
@@ -384,9 +380,7 @@ export function AspirasiClientView({
         <section className="space-y-4 animate-in fade-in">
           {polls.length === 0 ? (
             <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-              <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center border border-emerald-300 dark:border-emerald-500/30">
-                <Vote className="h-6 w-6" />
-              </div>
+              <Vote className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
               <h3 className="text-base font-semibold text-ink">
                 Belum Ada Polling Aktif
               </h3>
