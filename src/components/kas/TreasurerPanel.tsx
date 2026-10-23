@@ -171,10 +171,32 @@ export function TreasurerPanel({
   const [txProofUrl, setTxProofUrl] = useState<string>("");
 
   // Form states for advance payment
+  const [advanceDepositType, setAdvanceDepositType] = useState<
+    "KAS_RUTIN" | "URUNAN"
+  >("KAS_RUTIN");
   const [advanceUserId, setAdvanceUserId] = useState<string>(
     allMembers[0]?.id || ""
   );
   const [advancePeriodsCount, setAdvancePeriodsCount] = useState<number>(1);
+  const [selectedAdvanceUrunanId, setSelectedAdvanceUrunanId] =
+    useState<string>("");
+
+  // Filter urunan aktif yang menargetkan anggota terpilih dan belum dibayar
+  const unpaidUrunansForSelectedMember = activeUrunanEvents.filter(
+    (event) =>
+      event.targetUsers.some((u) => u.id === advanceUserId) &&
+      !event.payments.some((p) => p.userId === advanceUserId)
+  );
+
+  const currentSelectedUrunanId = unpaidUrunansForSelectedMember.some(
+    (u) => u.id === selectedAdvanceUrunanId
+  )
+    ? selectedAdvanceUrunanId
+    : unpaidUrunansForSelectedMember[0]?.id || "";
+
+  const selectedUrunan = unpaidUrunansForSelectedMember.find(
+    (u) => u.id === currentSelectedUrunanId
+  );
 
   const showToast = (text: string, type: "success" | "error" = "success") => {
     setFeedbackMsg({ text, type });
@@ -333,29 +355,51 @@ export function TreasurerPanel({
     const selectedMember = allMembers.find((m) => m.id === advanceUserId);
     if (!selectedMember) return;
 
-    const paidPeriodIds = new Set(
-      selectedMember.payments.map((p) => p.kasPeriodId)
-    );
-    // Cari periode yang belum lunas sebanyak advancePeriodsCount
-    const unpaidPeriods = periods.filter((p) => !paidPeriodIds.has(p.id));
-    const targetPeriodIds = unpaidPeriods
-      .slice(0, advancePeriodsCount)
-      .map((p) => p.id);
+    if (advanceDepositType === "KAS_RUTIN") {
+      const paidPeriodIds = new Set(
+        selectedMember.payments.map((p) => p.kasPeriodId)
+      );
+      // Cari periode yang belum lunas sebanyak advancePeriodsCount
+      const unpaidPeriods = periods.filter((p) => !paidPeriodIds.has(p.id));
+      const targetPeriodIds = unpaidPeriods
+        .slice(0, advancePeriodsCount)
+        .map((p) => p.id);
 
-    if (targetPeriodIds.length === 0) {
-      showToast("Semua periode kas untuk anggota ini sudah lunas!", "error");
-      return;
-    }
-
-    startTransition(async () => {
-      const res = await recordAdvancePayment(advanceUserId, targetPeriodIds);
-      if (res.success) {
-        showToast(res.message, "success");
-        setIsAdvanceModalOpen(false);
-      } else {
-        showToast(res.message, "error");
+      if (targetPeriodIds.length === 0) {
+        showToast("Semua periode kas untuk anggota ini sudah lunas!", "error");
+        return;
       }
-    });
+
+      startTransition(async () => {
+        const res = await recordAdvancePayment(advanceUserId, targetPeriodIds);
+        if (res.success) {
+          showToast(res.message, "success");
+          setIsAdvanceModalOpen(false);
+        } else {
+          showToast(res.message, "error");
+        }
+      });
+    } else {
+      // Setoran Urunan Insidental
+      if (!currentSelectedUrunanId) {
+        showToast("Pilih tagihan urunan yang ingin disetor.", "error");
+        return;
+      }
+
+      startTransition(async () => {
+        const res = await toggleUrunanPayment(
+          advanceUserId,
+          currentSelectedUrunanId
+        );
+        if (res.success) {
+          showToast(res.message, "success");
+          setIsAdvanceModalOpen(false);
+          setSelectedAdvanceUrunanId("");
+        } else {
+          showToast(res.message, "error");
+        }
+      });
+    }
   };
 
   const handleBroadcastKasWA = () => {
@@ -846,32 +890,67 @@ export function TreasurerPanel({
         </div>
       )}
 
-      {/* Modal 2: Catat Advance Payment */}
+      {/* Modal 2: Catat Advance Payment Kas & Urunan */}
       {isAdvanceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-card w-full max-w-sm rounded-xl p-4 shadow-xl border border-edge space-y-3">
             <div className="flex items-center justify-between border-b border-edge pb-2">
               <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
-                Advance Payment Kas
+                Catat Setoran Kas &amp; Urunan
               </h4>
               <button
                 type="button"
                 onClick={() => setIsAdvanceModalOpen(false)}
-                className="text-ink-muted hover:text-ink"
+                className="text-ink-muted hover:text-ink cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             <form onSubmit={handleRecordAdvance} className="space-y-3 text-xs">
+              {/* Pilihan Jenis Setoran: Kas Rutin vs Urunan Insidental */}
+              <div>
+                <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
+                  Jenis Setoran
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAdvanceDepositType("KAS_RUTIN")}
+                    className={`min-h-[40px] rounded-lg font-bold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                      advanceDepositType === "KAS_RUTIN"
+                        ? "bg-primary text-white border-primary shadow-xs"
+                        : "bg-surface-container-low text-ink-secondary hover:text-ink border-edge"
+                    }`}
+                  >
+                    <span>💰 Kas Rutin</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdvanceDepositType("URUNAN")}
+                    className={`min-h-[40px] rounded-lg font-bold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                      advanceDepositType === "URUNAN"
+                        ? "bg-purple-600 text-white border-purple-600 shadow-xs"
+                        : "bg-surface-container-low text-ink-secondary hover:text-ink border-edge"
+                    }`}
+                  >
+                    <span>🎯 Urunan Insidental</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Pemilihan Anggota */}
               <div>
                 <label className="text-[11px] font-semibold text-ink-muted block mb-1">
                   Pilih Anggota
                 </label>
                 <select
                   value={advanceUserId}
-                  onChange={(e) => setAdvanceUserId(e.target.value)}
-                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
+                  onChange={(e) => {
+                    setAdvanceUserId(e.target.value);
+                    setSelectedAdvanceUrunanId("");
+                  }}
+                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
                 >
                   {allMembers.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -881,62 +960,109 @@ export function TreasurerPanel({
                 </select>
               </div>
 
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
-                  Jumlah Periode Kas Di Muka
-                </label>
-                <div className="flex items-center justify-between gap-3 p-2 bg-surface-container-low rounded-xl border border-edge">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setAdvancePeriodsCount((prev) => Math.max(1, prev - 1))
-                    }
-                    disabled={advancePeriodsCount <= 1}
-                    className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                    aria-label="Kurangi Periode"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
+              {/* JIKA Kas Rutin: UI Counter (+ / -) yang sudah ada sebelumnya */}
+              {advanceDepositType === "KAS_RUTIN" ? (
+                <div>
+                  <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
+                    Jumlah Periode Kas Di Muka
+                  </label>
+                  <div className="flex items-center justify-between gap-3 p-2 bg-surface-container-low rounded-xl border border-edge">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setAdvancePeriodsCount((prev) => Math.max(1, prev - 1))
+                      }
+                      disabled={advancePeriodsCount <= 1}
+                      className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                      aria-label="Kurangi Periode"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
 
-                  <div className="flex flex-col items-center">
-                    <span className="text-base font-bold text-ink leading-tight">
-                      {advancePeriodsCount} Periode
-                    </span>
-                    <span className="text-[10px] text-ink-muted">
-                      ({advancePeriodsCount} pekan)
-                    </span>
+                    <div className="flex flex-col items-center">
+                      <span className="text-base font-bold text-ink leading-tight">
+                        {advancePeriodsCount} Periode
+                      </span>
+                      <span className="text-[10px] text-ink-muted">
+                        ({advancePeriodsCount} pekan)
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setAdvancePeriodsCount((prev) => prev + 1)}
+                      className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 transition-all cursor-pointer"
+                      aria-label="Tambah Periode"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setAdvancePeriodsCount((prev) => prev + 1)}
-                    className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 transition-all cursor-pointer"
-                    aria-label="Tambah Periode"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
+                  <div className="mt-2 text-center text-xs font-semibold text-primary">
+                    Total: Rp {(advancePeriodsCount * 5000).toLocaleString("id-ID")}
+                  </div>
                 </div>
+              ) : (
+                /* JIKA Urunan Insidental: Dropdown Urunan Aktif yang belum lunas atau pesan nihil */
+                <div>
+                  <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                    Pilih Tagihan Urunan
+                  </label>
+                  {unpaidUrunansForSelectedMember.length === 0 ? (
+                    <div className="p-3 rounded-lg bg-surface-container-low border border-dashed border-edge text-center text-ink-muted text-xs">
+                      Anggota ini tidak memiliki tunggakan urunan.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <select
+                        value={currentSelectedUrunanId}
+                        onChange={(e) =>
+                          setSelectedAdvanceUrunanId(e.target.value)
+                        }
+                        className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary text-xs"
+                      >
+                        {unpaidUrunansForSelectedMember.map((urunan) => (
+                          <option key={urunan.id} value={urunan.id}>
+                            {urunan.title} — Rp{" "}
+                            {urunan.amount.toLocaleString("id-ID")}
+                          </option>
+                        ))}
+                      </select>
 
-                <div className="mt-2 text-center text-xs font-semibold text-primary">
-                  Total: Rp {(advancePeriodsCount * 5000).toLocaleString("id-ID")}
+                      {selectedUrunan && (
+                        <div className="mt-2 text-center text-xs font-semibold text-purple-600 dark:text-purple-400">
+                          Nominal Setoran: Rp{" "}
+                          {selectedUrunan.amount.toLocaleString("id-ID")}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
 
               <div className="flex gap-2 pt-2 border-t border-edge">
                 <button
                   type="button"
                   onClick={() => setIsAdvanceModalOpen(false)}
-                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold"
+                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold hover:bg-surface-container transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  disabled={isPending}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover text-white font-bold flex items-center justify-center gap-1"
+                  disabled={
+                    isPending ||
+                    (advanceDepositType === "URUNAN" &&
+                      unpaidUrunansForSelectedMember.length === 0)
+                  }
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
                 >
                   {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                  <span>Setor Kas</span>
+                  <span>
+                    {advanceDepositType === "KAS_RUTIN"
+                      ? "Setor Kas"
+                      : "Setor Urunan"}
+                  </span>
                 </button>
               </div>
             </form>

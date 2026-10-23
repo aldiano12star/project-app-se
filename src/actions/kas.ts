@@ -431,7 +431,8 @@ export async function createBillingEvent(
 
 /**
  * Menandai status lunas atau membatalkan pembayaran Urunan Insidental anggota.
- * Menambah atau menghapus record di model BillingPayment.
+ * Menambah atau menghapus record di model BillingPayment serta menyinkronkan
+ * mutasi kas publik (Transaction) secara atomik menggunakan Prisma Transaction.
  */
 export async function toggleUrunanPayment(
   userId: string,
@@ -468,6 +469,8 @@ export async function toggleUrunanPayment(
       };
     }
 
+    const txDescription = `Urunan: ${billingEvent.title} - ${targetMember.name}`;
+
     // Periksa apakah pembayaran urunan sudah ada
     const existingPayment = await prisma.billingPayment.findUnique({
       where: {
@@ -479,9 +482,25 @@ export async function toggleUrunanPayment(
     });
 
     if (existingPayment) {
-      // BATALKAN: Hapus BillingPayment
-      await prisma.billingPayment.delete({
-        where: { id: existingPayment.id },
+      // BATALKAN: Hapus BillingPayment dan Hapus Transaction pemasukan terkait secara atomik
+      await prisma.$transaction(async (tx) => {
+        await tx.billingPayment.delete({
+          where: { id: existingPayment.id },
+        });
+
+        const matchingTx = await tx.transaction.findFirst({
+          where: {
+            type: TransactionType.INCOME,
+            description: txDescription,
+          },
+          orderBy: { createdAt: "desc" },
+        });
+
+        if (matchingTx) {
+          await tx.transaction.delete({
+            where: { id: matchingTx.id },
+          });
+        }
       });
 
       revalidatePath("/kas");
@@ -493,15 +512,47 @@ export async function toggleUrunanPayment(
         data: { isPaid: false },
       };
     } else {
-      // TANDAI LUNAS: Buat BillingPayment
-      await prisma.billingPayment.create({
-        data: {
-          billingEventId: eventId,
-          userId,
-          amountPaid: billingEvent.amount,
-          recordedBy: currentUser.name || currentUser.email || "Bendahara",
-          paidAt: new Date(),
-        },
+      // TANDAI LUNAS: Buat BillingPayment dan Buat Transaction pemasukan secara atomik
+      let academicYearId = billingEvent.academicYearId;
+      if (!academicYearId) {
+        const activeYear =
+          (await prisma.academicYear.findFirst({
+            where: { isCurrent: true },
+          })) ||
+          (await prisma.academicYear.findFirst({
+            orderBy: { createdAt: "desc" },
+          }));
+        academicYearId = activeYear?.id || null;
+      }
+
+      if (!academicYearId) {
+        return {
+          success: false,
+          message: "Tahun ajaran aktif belum dikonfigurasi dalam sistem.",
+        };
+      }
+
+      await prisma.$transaction(async (tx) => {
+        await tx.billingPayment.create({
+          data: {
+            billingEventId: eventId,
+            userId,
+            amountPaid: billingEvent.amount,
+            recordedBy: currentUser.name || currentUser.email || "Bendahara",
+            paidAt: new Date(),
+          },
+        });
+
+        await tx.transaction.create({
+          data: {
+            academicYearId,
+            type: TransactionType.INCOME,
+            amount: billingEvent.amount,
+            description: txDescription,
+            createdById: currentUser.id,
+            date: new Date(),
+          },
+        });
       });
 
       revalidatePath("/kas");
@@ -523,4 +574,31 @@ export async function toggleUrunanPayment(
           : "Gagal memperbarui status urunan.",
     };
   }
+}
+
+/**
+ * Mencatat pelunasan Urunan secara langsung (jika belum lunas).
+ */
+export async function recordUrunanPayment(
+  userId: string,
+  eventId: string
+): Promise<ActionResponse<{ isPaid: boolean }>> {
+  const existingPayment = await prisma.billingPayment.findUnique({
+    where: {
+      billingEventId_userId: {
+        billingEventId: eventId,
+        userId,
+      },
+    },
+  });
+
+  if (existingPayment) {
+    return {
+      success: true,
+      message: "Urunan untuk anggota ini sudah lunas.",
+      data: { isPaid: true },
+    };
+  }
+
+  return toggleUrunanPayment(userId, eventId);
 }
