@@ -159,9 +159,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4" />
-                </div>
+                <User className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     Data Kontak &amp; Tautan Portofolio
@@ -275,9 +273,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
-                  <Key className="w-4 h-4" />
-                </div>
+                <Key className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     Ganti Kata Sandi &amp; Keamanan Akun
@@ -392,9 +388,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-500 flex items-center justify-center shrink-0">
-                <IdCard className="w-4 h-4" />
-              </div>
+              <IdCard className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                   Kartu Tanda Anggota (KTA) Digital
@@ -424,9 +418,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
           {/* Row 1: Notifikasi Rapat & Acara */}
           <div className="min-h-[48px] px-4 py-3.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-primary flex items-center justify-center shrink-0">
-                <Bell className="w-4 h-4" />
-              </div>
+              <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink">
                 Notifikasi Rapat &amp; Acara
               </span>
@@ -446,9 +438,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
           {/* Row 2: Pengingat Iuran Kas Mingguan */}
           <div className="min-h-[48px] px-4 py-3.5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
-                <Wallet className="w-4 h-4" />
-              </div>
+              <Wallet className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink">
                 Pengingat Iuran Kas Mingguan
               </span>
@@ -468,13 +458,11 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
           {/* Row 3: Mode Tampilan / Tema Antarmuka */}
           <div className="min-h-[52px] px-4 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center shrink-0">
-                {resolvedTheme === "dark" ? (
-                  <Moon className="w-4 h-4" />
-                ) : (
-                  <Sun className="w-4 h-4 text-amber-500" />
-                )}
-              </div>
+              {resolvedTheme === "dark" ? (
+                <Moon className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
+              ) : (
+                <Sun className="w-5 h-5 text-amber-500 shrink-0" />
+              )}
               <div>
                 <span className="text-xs sm:text-sm font-semibold text-ink">
                   Tema Antarmuka
@@ -536,9 +524,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between text-left hover:bg-danger-subtle active:bg-danger-subtle/60 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
-                  <RefreshCcw className="w-4 h-4" />
-                </div>
+                <RefreshCcw className="w-5 h-5 text-rose-500 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
                     Ganti Periode Kepengurusan
@@ -574,9 +560,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors group cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-500 flex items-center justify-center shrink-0">
-                <BookOpen className="w-4 h-4" />
-              </div>
+              <BookOpen className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                 Perpustakaan &amp; Panduan Organisasi
               </span>
@@ -590,9 +574,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors group cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-4 h-4" />
-              </div>
+              <AlertTriangle className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                 Laporkan Kendala / Bug Sistem
               </span>
@@ -603,9 +585,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
           {/* Row 3: Versi Sistem */}
           <div className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-500 flex items-center justify-center shrink-0">
-                <Code2 className="w-4 h-4" />
-              </div>
+              <Code2 className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <div>
                 <span className="text-xs sm:text-sm font-semibold text-ink">
                   Saba ExploIT App

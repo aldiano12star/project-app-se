@@ -155,9 +155,7 @@ export function ShowcaseTab({
       {/* Projects Grid / List */}
       {filteredProjects.length === 0 ? (
         <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-          <div className="h-12 w-12 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
-            <FolderKanban className="h-6 w-6" />
-          </div>
+          <FolderKanban className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
           <h3 className="text-sm font-bold text-ink">Belum Ada Karya di Kategori Ini</h3>
           <p className="text-xs text-ink-muted max-w-xs mx-auto">
             Jadilah yang pertama memamerkan karya proyek dari divisimu dan raih apresiasi XP tim!

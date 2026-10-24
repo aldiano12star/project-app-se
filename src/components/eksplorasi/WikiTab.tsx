@@ -70,17 +70,15 @@ export function WikiTab({
           }
           className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "SURAT_LPJ"
-              ? "bg-rose-950/40 border-rose-500 shadow-sm"
+              ? "bg-rose-50 dark:bg-rose-950/40 border-rose-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-500 flex items-center justify-center shrink-0">
-            <FileText className="h-5 w-5" />
-          </div>
+          <FileText className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-ink truncate">1. Format Surat &amp; LPJ</h4>
-              <span className="text-[10px] font-mono text-rose-400 font-bold">
+              <span className="text-[10px] font-mono text-rose-500 dark:text-rose-400 font-bold">
                 {categoryCounts.SURAT_LPJ}
               </span>
             </div>
@@ -98,17 +96,15 @@ export function WikiTab({
           }
           className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "INFO_LOMBA"
-              ? "bg-amber-950/40 border-amber-500 shadow-sm"
+              ? "bg-amber-50 dark:bg-amber-950/40 border-amber-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex items-center justify-center shrink-0">
-            <Trophy className="h-5 w-5" />
-          </div>
+          <Trophy className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-ink truncate">2. Tips &amp; Info Lomba</h4>
-              <span className="text-[10px] font-mono text-amber-400 font-bold">
+              <span className="text-[10px] font-mono text-amber-500 dark:text-amber-400 font-bold">
                 {categoryCounts.INFO_LOMBA}
               </span>
             </div>
@@ -126,17 +122,15 @@ export function WikiTab({
           }
           className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "MODUL_PELATIHAN"
-              ? "bg-indigo-950/40 border-indigo-500 shadow-sm"
+              ? "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
-            <GraduationCap className="h-5 w-5" />
-          </div>
+          <GraduationCap className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-ink truncate">3. Modul Pelatihan</h4>
-              <span className="text-[10px] font-mono text-indigo-400 font-bold">
+              <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 font-bold">
                 {categoryCounts.MODUL_PELATIHAN}
               </span>
             </div>
@@ -154,17 +148,15 @@ export function WikiTab({
           }
           className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "PANDUAN_TEKNIS"
-              ? "bg-emerald-950/40 border-emerald-500 shadow-sm"
+              ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
-            <Wrench className="h-5 w-5" />
-          </div>
+          <Wrench className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-ink truncate">4. Panduan Teknis &amp; Alat</h4>
-              <span className="text-[10px] font-mono text-emerald-400 font-bold">
+              <span className="text-[10px] font-mono text-emerald-500 dark:text-emerald-400 font-bold">
                 {categoryCounts.PANDUAN_TEKNIS}
               </span>
             </div>
@@ -194,9 +186,7 @@ export function WikiTab({
       {/* Articles List */}
       {filteredArticles.length === 0 ? (
         <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-          <div className="h-12 w-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 mx-auto flex items-center justify-center">
-            <BookOpen className="h-6 w-6" />
-          </div>
+          <BookOpen className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
           <h3 className="text-sm font-bold text-ink">Belum Ada Koleksi di Kategori Ini</h3>
           <p className="text-xs text-ink-muted max-w-xs mx-auto">
             Tulis modul pelatihan, format surat, atau panduan teknis baru untuk berbagi ilmu dan dapatkan +15 XP!

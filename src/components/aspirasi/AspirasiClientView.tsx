@@ -271,10 +271,10 @@ export function AspirasiClientView({
       {activeTab === "PRIVATE_ASPIRATIONS" && (
         <section className="space-y-4 animate-in fade-in">
           {/* Banner Informasi Saluran Privat */}
-          <div className="p-4 rounded-2xl bg-white dark:bg-[#151D2A] border border-slate-200 dark:border-slate-800 shadow-xs flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-slate-600 dark:text-slate-400 shrink-0 mt-0.5" />
+          <div className="p-4 rounded-2xl bg-surface-container-low dark:bg-[#101622] border border-[#E2E8F0] dark:border-[#27344A] shadow-xs flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
             <div className="text-xs space-y-1">
-              <span className="font-bold text-slate-900 dark:text-slate-100 block">
+              <span className="font-bold text-slate-900 dark:text-[#E2E8F0] block">
                 {isOperator
                   ? "Peti Saluran Rahasia Operator"
                   : "Saluran Aspirasi & Evaluasi Privat"}

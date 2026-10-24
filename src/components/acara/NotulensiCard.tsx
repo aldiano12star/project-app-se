@@ -79,7 +79,7 @@ export function NotulensiCard({
         {/* Header Notulensi */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <FileText className="h-5 w-5 text-slate-500 shrink-0" />
+            <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
             <div className="min-w-0">
               <h3 className="text-sm font-bold text-ink truncate">{title}</h3>
               <p className="text-[11px] text-ink-muted">
@@ -93,10 +93,10 @@ export function NotulensiCard({
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(true)}
-                className="h-8 px-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="h-8 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Tulis / Edit Notulensi"
               >
-                <Edit3 className="h-3.5 w-3.5" />
+                <Edit3 className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                 <span className="hidden sm:inline">Edit Notulensi</span>
               </button>
             )}

@@ -213,9 +213,7 @@ export function EventDetailClientView({
       {isDriveAlertOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-card rounded-2xl p-5 max-w-sm w-full border border-edge shadow-xl space-y-3 text-center">
-            <div className="h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-600 mx-auto flex items-center justify-center">
-              <Folder className="h-5 w-5" />
-            </div>
+            <Folder className="h-8 w-8 text-amber-500 mx-auto" />
             <h3 className="text-sm font-bold text-ink">Folder Drive Belum Diatur</h3>
             <p className="text-xs text-ink-muted leading-relaxed">
               Pengurus belum menautkan tautan Google Drive untuk kegiatan ini. Silakan hubungi Sekretaris atau Koordinator Acara.

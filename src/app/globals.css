@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
- * Saba ExploIT UI Engine v2.3.0 (Matte Pebble Finish & Anti-Glare Calibration)
+ * Saba ExploIT UI Engine v2.4.0 (Clean Minimalist & Anti-Glare Calibration)
  *
- * Pedoman Visual: DESIGN.md & doc/stitch/beranda/DESIGN.md
- * - Solid Surface Container Elevation (tanpa glassmorphism/blur berat)
- * - Border tegas 1px (`border-edge` / `border-border-light`)
- * - Area sentuh minimal 44px (`min-h-[44px]` / `h-11`)
- * - Dual-Theme: Matte Pebble Light (#E5E9F0 / #F1F4F8) & Deep Navy Dark (#0B0F17 / #151D2A)
+ * Pedoman Visual: DESIGN SYSTEM LAWS
+ * - Light Mode: Soft Slate #F8FAFC, Card Pure White #FFFFFF, Border #E2E8F0, Ink #0F172A
+ * - Dark Mode: Deep Navy #0B0F19, Card #151D2A, Border #27344A, Ink #E2E8F0 (Off-white, Never #FFFFFF)
+ * - Semantic Colors: Pastel in Dark Mode (Rose #FB7185, Emerald #34D399, Amber #FBBF24, Danger #F87171)
+ * - Naked Icons: Zero decorative wrappers
  */
 
 /* ── Variabel runtime Mode Terang (Default :root) ─────────────────── */
@@ -53,7 +55,7 @@
   --saba-surface-container-low: #101622;
   --saba-surface-container: #1D2738;
   --saba-surface-container-high: #2E3D56;
-  --saba-ink: #F1F5F9;
+  --saba-ink: #E2E8F0;
   --saba-ink-secondary: #94A3B8;
   --saba-ink-muted: #64748B;
 
@@ -87,13 +89,13 @@
 
   /* Surfaces & Neutrals */
   --color-surface: var(--saba-surface);
-  --color-surface-bg-light: #E5E9F0;
-  --color-surface-bg-dark: #0B0F17;
+  --color-surface-bg-light: #F8FAFC;
+  --color-surface-bg-dark: #0B0F19;
   --color-card: var(--saba-card);
-  --color-card-bg-light: #F1F4F8;
+  --color-card-bg-light: #FFFFFF;
   --color-card-bg-dark: #151D2A;
   --color-edge: var(--saba-edge);
-  --color-border-light: #CBD5E1;
+  --color-border-light: #E2E8F0;
   --color-border-dark: #27344A;
   --color-surface-container-low: var(--saba-surface-container-low);
   --color-surface-container: var(--saba-surface-container);

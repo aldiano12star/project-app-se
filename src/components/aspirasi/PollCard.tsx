@@ -402,9 +402,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
+              <AlertTriangle className="h-6 w-6 text-red-500 shrink-0" />
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}

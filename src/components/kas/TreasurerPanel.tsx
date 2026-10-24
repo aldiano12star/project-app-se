@@ -418,7 +418,7 @@ export function TreasurerPanel({
   };
 
   return (
-    <div className="card-solid border-purple-300 dark:border-purple-900 bg-purple-50/10 dark:bg-purple-950/10 p-4 sm:p-5 shadow-sm flex flex-col gap-4">
+    <div className="card-solid bg-card border-edge p-4 sm:p-5 shadow-sm flex flex-col gap-4">
       {/* Toast Feedback */}
       {feedbackMsg && (
         <div
@@ -440,7 +440,7 @@ export function TreasurerPanel({
       {/* Header Panel Bendahara */}
       <div className="flex items-center justify-between border-b border-edge pb-3">
         <div className="flex items-center gap-2.5">
-          <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <Wallet className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
           <div>
             <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
               Panel Pembukuan Bendahara
@@ -595,7 +595,7 @@ export function TreasurerPanel({
                 className="rounded-xl border border-edge bg-card p-3.5 shadow-sm space-y-3"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-low text-xs font-bold text-ink border border-edge shrink-0">
                       {member.name
                         .split(" ")
@@ -604,12 +604,12 @@ export function TreasurerPanel({
                         .join("")
                         .toUpperCase()}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <h4 className="text-xs font-bold text-ink truncate leading-tight">
                         {member.name}
                       </h4>
                       <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 truncate w-full flex-row whitespace-nowrap">
-                        <span>
+                        <span className="shrink-0">
                           {isGen21(member)
                             ? "Gen 21 (Kelas 10)"
                             : isGen20(member)
@@ -617,7 +617,7 @@ export function TreasurerPanel({
                             : (member.classGrade || "").replace("_", " ")}
                         </span>
                         <span>•</span>
-                        <span className="text-primary font-medium">
+                        <span className="text-primary font-medium truncate">
                           {member.mainDivision}
                         </span>
                       </div>
@@ -1075,10 +1075,8 @@ export function TreasurerPanel({
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-card w-full max-w-lg rounded-2xl p-5 shadow-2xl border border-edge space-y-4 max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-edge pb-3 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50">
-                  <PlusCircle className="h-4 w-4" />
-                </div>
+              <div className="flex items-center gap-2.5">
+                <PlusCircle className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div>
                   <h4 className="text-sm font-bold text-ink uppercase tracking-wider">
                     Buat Tagihan Baru

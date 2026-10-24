@@ -30,7 +30,7 @@ export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
       {/* Header Status Personal */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Wallet className="h-6 w-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <Wallet className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
           <div>
             <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
               Status Iuran Kas Personal
@@ -87,7 +87,7 @@ export function PersonalDuesCard({ userName, periods }: PersonalDuesCardProps) {
         <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-semibold flex items-center gap-1.5 text-ink-secondary">
-              <Calendar className="h-4 w-4 text-emerald-400" />
+              <Calendar className="h-4 w-4 text-slate-400 dark:text-slate-500" />
               Siklus Kas 2026/2027
             </span>
             <span className="text-xs text-ink-muted">

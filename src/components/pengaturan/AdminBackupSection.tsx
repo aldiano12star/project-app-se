@@ -71,13 +71,13 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
 
   return (
     <section className="space-y-1.5">
-      <h3 className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500 px-1 font-mono">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-1 font-mono">
         🛡️ Panel Darurat &amp; Cadangan Data Admin
       </h3>
 
       <div className="bg-card border border-edge rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
         <div className="flex items-start gap-3">
-          <FileSpreadsheet className="w-6 h-6 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
+          <FileSpreadsheet className="w-6 h-6 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-bold text-ink leading-tight">
               Pencadangan Data Organisasi (.CSV)
@@ -116,7 +116,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <Users className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 ml-1" />
+              <Users className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   1. Unduh Rekap Data Anggota (.CSV)
@@ -128,9 +128,9 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
               {downloadingType === "members" ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500 dark:text-slate-400" />
               ) : (
-                <Download className="w-3.5 h-3.5 text-primary" />
+                <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               )}
               <span className="hidden sm:inline">Export</span>
             </div>
@@ -144,7 +144,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <CalendarCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 ml-1" />
+              <CalendarCheck className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   2. Unduh Arsip Kehadiran Rapat (.CSV)
@@ -156,9 +156,9 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
               {downloadingType === "attendance" ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500 dark:text-slate-400" />
               ) : (
-                <Download className="w-3.5 h-3.5 text-primary" />
+                <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               )}
               <span className="hidden sm:inline">Export</span>
             </div>
@@ -172,7 +172,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             className="w-full min-h-[44px] p-3 rounded-xl bg-surface-container-low hover:bg-surface-container active:scale-[0.99] border border-edge flex items-center justify-between text-left transition-all cursor-pointer disabled:opacity-50 group"
           >
             <div className="flex items-center gap-3 min-w-0 pr-2">
-              <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0 ml-1" />
+              <Wallet className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 ml-1" />
               <div className="min-w-0">
                 <span className="text-xs font-bold text-ink group-hover:text-primary transition-colors block truncate">
                   3. Unduh Buku Besar Kas (.CSV)
@@ -184,9 +184,9 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-edge text-ink text-xs font-semibold shrink-0 group-hover:border-primary/50">
               {downloadingType === "kas" ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500 dark:text-slate-400" />
               ) : (
-                <Download className="w-3.5 h-3.5 text-primary" />
+                <Download className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               )}
               <span className="hidden sm:inline">Export</span>
             </div>

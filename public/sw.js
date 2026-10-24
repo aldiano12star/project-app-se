@@ -1,5 +1,5 @@
 // Saba ExploIT - Vanilla Service Worker (PWA Caching & Push Notifications)
-const CACHE_NAME = 'saba-exploit-v2';
+const CACHE_NAME = 'saba-exploit-v3';
 const PRECACHE_URLS = ['/', '/offline.html'];
 
 // 1. Event Install: Precache halaman utama & fallback offline

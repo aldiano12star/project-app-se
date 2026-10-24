@@ -77,7 +77,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-white/95 backdrop-blur-md border border-slate-200 shadow-md text-slate-500 dark:bg-[#151D2A]/95 dark:border-[#27344A] dark:text-slate-400 transition-colors md:hidden ${
+      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-white/80 backdrop-blur-lg border border-slate-200/80 shadow-lg text-slate-500 dark:bg-[#151D2A]/80 dark:border-[#27344A] dark:text-slate-400 transition-colors md:hidden ${
         isModalActive ? "hidden" : ""
       }`}
     >
@@ -124,7 +124,7 @@ export function BottomNav() {
               prefetch={true}
               title={item.label}
               aria-label={item.label}
-              className="text-ink-muted hover:text-ink p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-[#E2E8F0] p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

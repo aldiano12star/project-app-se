@@ -4,25 +4,22 @@ Dokumen ini merupakan panduan tegas dan sumber kebenaran utama (*Single Source o
 
 ---
 
-## 1. Aturan Pewarnaan Tema Terang (Light Mode)
+## 1. Aturan Pewarnaan Tema (Light & Dark Mode)
 
-- **Wajib Gunakan Surface Container / Pastel Cerah**:
-  - Latar belakang elemen card/panel pada mode terang **wajib** menggunakan token `bg-surface-container`, `bg-card`, atau warna pastel cerah bergaris tepi tegas, contoh:
-    - `bg-rose-50 border border-rose-200/80` (aksen brand/penting)
-    - `bg-surface-container border border-edge` (kontainer umum)
-    - `bg-emerald-50 border border-emerald-200/80` (status sukses)
-- **DILARANG Menggunakan Warna Gelap Kusam Tanpa Prefix**:
-  - Dilarang keras menuliskan warna abu-abu gelap/hitam kusam seperti `bg-slate-800`, `bg-slate-900`, `bg-gray-800` langsung pada mode terang!
-  - Setiap warna gelap **wajib berawalan prefix `dark:`**, contoh:
-    ```tsx
-    // ❌ SALAH (membuat tampilan light mode terlihat kotor/kontras rusak)
-    className="bg-slate-800 text-white"
-
-    // ✅ BENAR
-    className="bg-surface-container dark:bg-slate-800 text-ink dark:text-slate-100 border border-edge"
-    ```
-- **Matte Pebble Finish & Anti-Glare**:
-  - Latar belakang utama aplikasi dikalibrasi ke warna Matte Pebble `#EDF0F5` (variabel `--saba-surface`) untuk mencegah efek silau layar putih murni.
+- **Light Mode Standards**:
+  - Main Background: `#F8FAFC` (Soft Slate bersih, bukan abu-abu semen kusam).
+  - Card Background: `#FFFFFF` (Pure White) untuk elevasi bersih tanpa shadow pekat.
+  - Border: `#E2E8F0`.
+  - Main Text: `#0F172A` (Deep Charcoal, bukan hitam pekat `#000000`). Secondary Text: `#64748B`.
+- **Dark Mode Standards**:
+  - Main Background: `#0B0F19` (Deep Navy / Midnight, dilarang keras `#000000` atau `#0F172A`).
+  - Card Background: `#151D2A`.
+  - Border: `#27344A`.
+  - Main Text: `#E2E8F0` (Off-white, dilarang keras `#FFFFFF` untuk mencegah OLED halation dan silau mata).
+  - Semantic Colors (Wajib Pastel di Dark Mode): Rose (`#FB7185`), Emerald (`#34D399`), Amber (`#FBBF24`), Danger (`#F87171`).
+- **Naked Icons (Zero Decorative Wrappers)**:
+  - Dilarang membungkus setiap ikon dalam kotak hiasan berwarna (`bg-blue-50 text-blue-600 rounded-xl p-2`).
+  - Ikon harus bernapas alami (`naked icon`) menggunakan warna netral (`text-slate-500 dark:text-slate-400`).
 
 ---
 

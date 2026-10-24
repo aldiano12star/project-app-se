@@ -172,19 +172,15 @@ export function AspirationCard({
 
   return (
     <div
-      className={`card-solid bg-card p-6 rounded-2xl border shadow-sm space-y-4 transition-all ${
-        isPrivate
-          ? "border-purple-500/30 bg-purple-950/10"
-          : "border-edge"
-      }`}
+      className="card-solid bg-card p-6 rounded-2xl border border-edge shadow-sm space-y-4 transition-all"
     >
       {/* Header Kartu: Kategori & Tanggal */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {/* Badge Scope Privat jika ada */}
           {isPrivate && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-950/60 text-purple-300 border border-purple-500/40">
-              <Lock className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-ink-secondary border border-edge">
+              <Lock className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
               <span>Privat Operator/Dev</span>
             </span>
           )}
@@ -344,9 +340,7 @@ export function AspirationCard({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-sm rounded-2xl bg-card border border-edge shadow-2xl p-5 space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-950/60 text-primary flex items-center justify-center shrink-0">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
+              <AlertTriangle className="h-6 w-6 text-red-500 shrink-0" />
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}

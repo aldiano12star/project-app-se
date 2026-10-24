@@ -31,18 +31,18 @@ export function DashboardMeetingWidget({
 
   return (
     <>
-      <section className="card-solid bg-sky-50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-500/30 p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+      <section className="card-solid bg-card border-edge p-6 shadow-sm flex flex-col gap-4 relative overflow-hidden">
         {/* Header Widget */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <CalendarDays className="h-6 w-6 text-slate-700 dark:text-slate-300 shrink-0" />
+            <CalendarDays className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
             <div>
               <h2 className="text-base font-semibold text-ink">
                 Presensi Sesi Rapat Aktif
               </h2>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 bg-primary-subtle text-primary px-3 py-1 rounded-full text-xs font-semibold border border-primary/20">
+          <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20">
             <Sparkles className="h-3.5 w-3.5" />
             Sesi Terbuka
           </span>
@@ -78,7 +78,7 @@ export function DashboardMeetingWidget({
                   className="w-full sm:w-auto h-12 min-h-12 px-5 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   title="Tampilkan QR Code untuk dipindai anggota"
                 >
-                  <Eye className="h-4 w-4 text-primary" />
+                  <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   <span>Tampilkan QR Sesi</span>
                 </button>
               )}
