@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
 import { AcaraClientView } from "@/components/acara/AcaraClientView";
-import { EventDetailData } from "@/components/acara/EventDetailCard";
+import { EventDetailData, NestedMeetingData } from "@/components/acara/EventDetailCard";
+import { getAllowedTargetAudiences } from "@/utils/audience";
 
 export const dynamic = "force-dynamic";
 
@@ -68,13 +69,34 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
 
   const academicYearId = activeAcademicYear?.id;
 
-  // Query events & meeting dengan kueri yang aman
-  const [dbEvents, latestMeeting] = 
+  // Filter Target Audience berdasarkan Role & ClassGrade (Targeted Fetching)
+  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
+  const audienceFilter = allowedAudiences !== null
+    ? { targetAudience: { in: allowedAudiences } }
+    : {};
+
+  // Query events (dengan child meetings) & independent meetings
+  const [dbEvents, dbIndependentMeetings, latestMeeting] =
   await Promise.all([
     prisma.event.findMany({
-      where: academicYearId ? { academicYearId } : undefined,
+      where: {
+        ...(academicYearId ? { academicYearId } : {}),
+        ...audienceFilter,
+      },
       orderBy: { startDate: "asc" },
       include: {
+        meetings: {
+          where: audienceFilter,
+          orderBy: { date: "asc" },
+          include: {
+            readLogs: {
+              where: { userId: dbUser.id },
+            },
+            attendances: {
+              where: { userId: dbUser.id },
+            },
+          },
+        },
         sections: {
           include: {
             pj: {
@@ -99,8 +121,27 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
         },
       },
     }),
+    prisma.meeting.findMany({
+      where: {
+        ...(academicYearId ? { academicYearId } : {}),
+        eventId: null,
+        ...audienceFilter,
+      },
+      orderBy: { date: "desc" },
+      include: {
+        readLogs: {
+          where: { userId: dbUser.id },
+        },
+        attendances: {
+          where: { userId: dbUser.id },
+        },
+      },
+    }),
     prisma.meeting.findFirst({
-      where: academicYearId ? { academicYearId } : undefined,
+      where: {
+        ...(academicYearId ? { academicYearId } : {}),
+        ...audienceFilter,
+      },
       orderBy: { date: "desc" },
       include: {
         readLogs: {
@@ -110,15 +151,26 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     }),
   ]);
 
-  // Format data events agar cocok dengan interface EventDetailData
+  // Format data events (Mega-Cards) dengan nested children meetings
   const events: EventDetailData[] = dbEvents.map((ev) => ({
     id: ev.id,
     title: ev.title,
     description: ev.description,
     startDate: ev.startDate,
     endDate: ev.endDate,
+    targetAudience: ev.targetAudience,
     driveUrl: ev.driveUrl,
     notulensiText: ev.notulensiText,
+    meetings: ev.meetings.map((m) => ({
+      id: m.id,
+      title: m.title,
+      date: m.date,
+      targetAudience: m.targetAudience,
+      notes: m.notes,
+      eventId: m.eventId,
+      isRead: m.readLogs.length > 0,
+      isAttended: m.attendances.length > 0,
+    })),
     sections: ev.sections.map((sec) => ({
       id: sec.id,
       name: sec.name,
@@ -141,6 +193,18 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     })),
   }));
 
+  // Format rapat mandiri (Independent Meetings)
+  const independentMeetings: NestedMeetingData[] = dbIndependentMeetings.map((m) => ({
+    id: m.id,
+    title: m.title,
+    date: m.date,
+    targetAudience: m.targetAudience,
+    notes: m.notes,
+    eventId: null,
+    isRead: m.readLogs.length > 0,
+    isAttended: m.attendances.length > 0,
+  }));
+
   const formattedMeeting = latestMeeting
     ? {
         id: latestMeeting.id,
@@ -160,6 +224,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
           role: dbUser.role,
         }}
         events={events}
+        independentMeetings={independentMeetings}
         latestMeeting={formattedMeeting}
         initialMonth={initialMonth}
         initialYear={initialYear}

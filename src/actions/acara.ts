@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole, assertActiveMember } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
-import { Role, TaskStatus } from "@prisma/client";
+import { Role, TaskStatus, TargetAudience } from "@prisma/client";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -16,6 +16,7 @@ export interface CreateEventInput {
   description?: string;
   startDate: string; // ISO date or string
   endDate: string;
+  targetAudience?: TargetAudience;
   driveUrl?: string;
   notulensiText?: string;
   autoGenerateSOP?: boolean;
@@ -26,8 +27,17 @@ export interface UpdateEventInput {
   description?: string;
   startDate?: string;
   endDate?: string;
+  targetAudience?: TargetAudience;
   driveUrl?: string;
   notulensiText?: string;
+}
+
+export interface CreateMeetingInput {
+  title: string;
+  date: string; // ISO date or string
+  targetAudience?: TargetAudience;
+  eventId?: string | null;
+  notes?: string;
 }
 
 export interface CreateTaskInput {
@@ -106,6 +116,7 @@ export async function createEvent(
         description: input.description?.trim() || null,
         startDate,
         endDate,
+        targetAudience: input.targetAudience || TargetAudience.ALL,
         driveUrl: input.driveUrl?.trim() || null,
         notulensiText: input.notulensiText?.trim() || null,
         createdById: user.id,
@@ -248,6 +259,7 @@ export async function updateEvent(
       description?: string | null;
       startDate?: Date;
       endDate?: Date;
+      targetAudience?: TargetAudience;
       driveUrl?: string | null;
       notulensiText?: string | null;
     } = {};
@@ -257,6 +269,8 @@ export async function updateEvent(
       updateData.description = input.description.trim() || null;
     if (input.startDate) updateData.startDate = new Date(input.startDate);
     if (input.endDate) updateData.endDate = new Date(input.endDate);
+    if (input.targetAudience !== undefined)
+      updateData.targetAudience = input.targetAudience;
     if (input.driveUrl !== undefined)
       updateData.driveUrl = input.driveUrl.trim() || null;
     if (input.notulensiText !== undefined)
@@ -1167,7 +1181,12 @@ export async function deleteEvent(eventId: string): Promise<ActionResponse> {
         });
       }
 
-      // 3. Hapus event utama
+      // 3. Hapus semua sesi rapat terkait (Nested Meetings) secara eksplisit
+      await tx.meeting.deleteMany({
+        where: { eventId },
+      });
+
+      // 4. Hapus event utama
       await tx.event.delete({
         where: { id: eventId },
       });
@@ -1191,5 +1210,143 @@ export async function deleteEvent(eventId: string): Promise<ActionResponse> {
     };
   }
 }
+
+/**
+ * Membuat Sesi Rapat Baru (Bisa berdiri sendiri / Independent Meeting, atau bagian dari Proker / Event).
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function createMeeting(
+  input: CreateMeetingInput
+): Promise<ActionResponse<{ id: string }>> {
+  try {
+    const user = await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    if (!input.title || input.title.trim() === "") {
+      return {
+        success: false,
+        message: "Nama rapat/agenda wajib diisi.",
+      };
+    }
+
+    if (!input.date) {
+      return {
+        success: false,
+        message: "Tanggal rapat wajib ditentukan.",
+      };
+    }
+
+    const meetingDate = new Date(input.date);
+    if (isNaN(meetingDate.getTime())) {
+      return {
+        success: false,
+        message: "Format tanggal tidak valid.",
+      };
+    }
+
+    // Ambil tahun ajaran aktif
+    let academicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+    });
+
+    if (!academicYear) {
+      academicYear = await prisma.academicYear.findFirst({
+        orderBy: { createdAt: "desc" },
+      });
+    }
+
+    if (!academicYear) {
+      return {
+        success: false,
+        message: "Tahun ajaran aktif belum dikonfigurasi dalam sistem.",
+      };
+    }
+
+    // Generate token QR sesi rapat
+    const generatedToken = `SE-MEET-${Date.now().toString(36).toUpperCase()}-${Math.random()
+      .toString(36)
+      .substring(2, 7)
+      .toUpperCase()}`;
+
+    // Berlaku 24 jam dari waktu rapat
+    const expiresAt = new Date(meetingDate.getTime() + 24 * 60 * 60 * 1000);
+
+    const newMeeting = await prisma.meeting.create({
+      data: {
+        academicYearId: academicYear.id,
+        title: input.title.trim(),
+        date: meetingDate,
+        targetAudience: input.targetAudience || TargetAudience.ALL,
+        eventId: input.eventId || null,
+        notes: input.notes?.trim() || null,
+        qrToken: generatedToken,
+        qrExpiresAt: expiresAt,
+        createdById: user.id,
+      },
+    });
+
+    revalidatePath("/acara");
+    if (input.eventId) {
+      revalidatePath(`/acara/${input.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Sesi rapat berhasil dibuat.",
+      data: { id: newMeeting.id },
+    };
+  } catch (error) {
+    console.error("Gagal membuat sesi rapat:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Menghapus Sesi Rapat
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function deleteMeeting(meetingId: string): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    const meeting = await prisma.meeting.findUnique({
+      where: { id: meetingId },
+    });
+
+    if (!meeting) {
+      return {
+        success: false,
+        message: "Sesi rapat tidak ditemukan.",
+      };
+    }
+
+    await prisma.meeting.delete({
+      where: { id: meetingId },
+    });
+
+    revalidatePath("/acara");
+    if (meeting.eventId) {
+      revalidatePath(`/acara/${meeting.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: `Sesi rapat "${meeting.title}" berhasil dihapus.`,
+    };
+  } catch (error) {
+    console.error("Gagal menghapus sesi rapat:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
 
 

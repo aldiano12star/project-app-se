@@ -9,6 +9,7 @@ import {
   AttendanceSummaryData,
 } from "@/components/pengaturan/PersonalSummarySection";
 import { Role } from "@prisma/client";
+import { getAllowedTargetAudiences } from "@/utils/audience";
 
 export const dynamic = "force-dynamic";
 
@@ -19,34 +20,49 @@ export default async function PengaturanPage() {
     redirect("/login");
   }
 
-  // Ambil data profil lengkap, riwayat kas mandiri, dan riwayat presensi mandiri
+  // 1. Ambil data profil lengkap pengguna terlebih dahulu untuk evaluasi batasan privasi angkatan
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      classGrade: true,
+      mainDivision: true,
+      status: true,
+      monthlyPoints: true,
+      totalPoints: true,
+      noWhatsapp: true,
+      portfolioUrl: true,
+      nisn: true,
+      isProfileCompleted: true,
+      createdAt: true,
+    },
+  });
+
+  if (!dbUser) {
+    redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
+  }
+
+  // Tentukan batasan target audience yang berhak diikuti oleh user ini
+  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
+  const eligibleMeetingFilter = allowedAudiences !== null
+    ? { targetAudience: { in: allowedAudiences } }
+    : {};
+
+  // 2. Ambil riwayat kas mandiri dan rekap presensi (hanya rapat yang berhak diikuti user)
   const [
-    dbUser,
     kasPeriods,
     userKasPayments,
     attendedCount,
     totalMeetings,
   ] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        role: true,
-        classGrade: true,
-        mainDivision: true,
-        status: true,
-        monthlyPoints: true,
-        totalPoints: true,
-        noWhatsapp: true,
-        portfolioUrl: true,
-        nisn: true,
-        isProfileCompleted: true,
-        createdAt: true,
-      },
-    }),
     prisma.kasPeriod.findMany({
       orderBy: { periodNumber: "asc" },
       select: {
@@ -67,18 +83,13 @@ export default async function PengaturanPage() {
       where: {
         userId: session.user.id,
         status: "HADIR",
+        meeting: eligibleMeetingFilter,
       },
     }),
-    prisma.meeting.count(),
+    prisma.meeting.count({
+      where: eligibleMeetingFilter,
+    }),
   ]);
-
-  if (!dbUser) {
-    redirect("/login");
-  }
-
-  if (!dbUser.isProfileCompleted) {
-    redirect("/onboarding");
-  }
 
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 

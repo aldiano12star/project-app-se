@@ -6,6 +6,7 @@ import { PodiumTop3 } from "@/components/home/PodiumTop3";
 import { DashboardMeetingWidget } from "@/components/home/DashboardMeetingWidget";
 import Link from "next/link";
 import { Role, Division } from "@prisma/client";
+import { getAllowedTargetAudiences } from "@/utils/audience";
 import {
   CheckCircle2,
   CalendarDays,
@@ -40,25 +41,41 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Ambil profil user, Top 3 Leaderboard, acara terdekat (belum selesai), presensi hari ini, dan tugas panitia
-  const [dbUser, topContributors, recentEvents, todayAttendance, myAssignedTasks] =
+  // Ambil profil user terlebih dahulu untuk evaluasi izin privasi angkatan
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      classGrade: true,
+      mainDivision: true,
+      status: true,
+      monthlyPoints: true,
+      totalPoints: true,
+      isProfileCompleted: true,
+    },
+  });
+
+  if (!dbUser) {
+    redirect("/login");
+  }
+
+  if (!dbUser.isProfileCompleted) {
+    redirect("/onboarding");
+  }
+
+  // Tentukan batasan visibilitas target audience berdasarkan kelas/role pengguna
+  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
+  const audienceFilter = allowedAudiences !== null
+    ? { targetAudience: { in: allowedAudiences } }
+    : {};
+
+  // Ambil Top 3 Leaderboard, acara terdekat (belum selesai & sesuai angkatan), presensi hari ini, dan tugas panitia
+  const [topContributors, recentEvents, todayAttendance, myAssignedTasks] =
     await Promise.all([
-      prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          role: true,
-          classGrade: true,
-          mainDivision: true,
-          status: true,
-          monthlyPoints: true,
-          totalPoints: true,
-          isProfileCompleted: true,
-        },
-      }),
       prisma.user.findMany({
         where: { status: "ACTIVE" },
         orderBy: { totalPoints: "desc" },
@@ -79,6 +96,7 @@ export default async function DashboardPage() {
           endDate: {
             gte: new Date(),
           },
+          ...audienceFilter,
         },
         orderBy: { startDate: "asc" },
         take: 3,
@@ -127,14 +145,6 @@ export default async function DashboardPage() {
         orderBy: { dueDate: "asc" },
       }),
     ]);
-
-  if (!dbUser) {
-    redirect("/login");
-  }
-
-  if (!dbUser.isProfileCompleted) {
-    redirect("/onboarding");
-  }
 
   const nowParts = getJakartaDateParts(new Date());
   const nowDayStart = new Date(

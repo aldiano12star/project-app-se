@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Role } from "@prisma/client";
-import { Plus } from "lucide-react";
+import { Plus, LayoutGrid, Calendar } from "lucide-react";
 import {
   SnakingPathCalendar,
   CalendarEventItem,
 } from "./SnakingPathCalendar";
-import { EventDetailData } from "./EventDetailCard";
+import { EventDetailData, NestedMeetingData } from "./EventDetailCard";
+import { EventGroupingView } from "./EventGroupingView";
 import { AdminEventModal } from "./AdminEventModal";
 import { MultiEventSelectorModal } from "./MultiEventSelectorModal";
 import {
@@ -23,6 +24,7 @@ export interface AcaraClientViewProps {
     role: Role;
   };
   events: EventDetailData[];
+  independentMeetings?: NestedMeetingData[];
   latestMeeting?: {
     id: string;
     title: string;
@@ -37,6 +39,7 @@ export interface AcaraClientViewProps {
 export function AcaraClientView({
   currentUser,
   events,
+  independentMeetings = [],
   initialMonth,
   initialYear,
 }: AcaraClientViewProps) {
@@ -44,6 +47,9 @@ export function AcaraClientView({
   const searchParams = useSearchParams();
 
   const nowParts = getJakartaDateParts(new Date());
+
+  // Tab view: "grouping" (Contextual Grouping Mega-Cards) vs "calendar" (Snaking Timeline)
+  const [activeTab, setActiveTab] = useState<"grouping" | "calendar">("grouping");
 
   // Baca query params atau gunakan initial/default saat ini
   const queryMonth = searchParams.get("month");
@@ -129,47 +135,94 @@ export function AcaraClientView({
     setIsMultiEventModalOpen(true);
   };
 
+  const parentEventsList = events.map((e) => ({
+    id: e.id,
+    title: e.title,
+  }));
+
   return (
     <div className="space-y-4">
       {/* Top Bar Header & Action */}
-      <div className="flex items-center justify-between pt-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-ink tracking-tight">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-[#E2E8F0] tracking-tight">
             Modul Acara &amp; Kepanitiaan
           </h2>
-          <p className="text-xs text-ink-muted mt-0.5">
-            Pusat kalender agenda, timeline sirkuit, dan koordinasi kepanitiaan organisasi.
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Pusat kalender agenda, mega-cards terpadu, dan koordinasi kepanitiaan organisasi.
           </p>
         </div>
 
-        {isOfficer && (
-          <button
-            type="button"
-            onClick={() => setIsAdminModalOpen(true)}
-            className="h-9 px-3 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-9"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Buat Kegiatan</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {/* Tab Selector: Grouping vs Timeline */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-[#151D2A] border border-slate-200 dark:border-[#27344A]">
+            <button
+              type="button"
+              onClick={() => setActiveTab("grouping")}
+              className={`h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "grouping"
+                  ? "bg-white dark:bg-[#101622] text-slate-900 dark:text-[#E2E8F0] shadow-xs font-bold"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-[#E2E8F0]"
+              }`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>Daftar Agenda</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("calendar")}
+              className={`h-8 px-3 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "calendar"
+                  ? "bg-white dark:bg-[#101622] text-slate-900 dark:text-[#E2E8F0] shadow-xs font-bold"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-[#E2E8F0]"
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Timeline Sirkuit</span>
+            </button>
+          </div>
+
+          {isOfficer && (
+            <button
+              type="button"
+              onClick={() => setIsAdminModalOpen(true)}
+              className="h-10 min-h-10 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Buat Agenda</span>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Timeline Sirkuit Vertikal Tunggal Terpadu */}
-      <SnakingPathCalendar
-        currentYear={currentYear}
-        currentMonthIndex={currentMonthIndex}
-        onMonthChange={handleMonthChange}
-        events={calendarItems}
-        selectedDate={selectedDate}
-        onSelectDate={handleSelectDate}
-        onSelectEvent={handleSelectEvent}
-        onSelectMultipleEvents={handleSelectMultipleEvents}
-      />
+      {/* VIEW 1: Contextual Grouping Mega-Cards */}
+      {activeTab === "grouping" && (
+        <EventGroupingView
+          events={events}
+          independentMeetings={independentMeetings}
+          currentUser={currentUser}
+        />
+      )}
+
+      {/* VIEW 2: Timeline Sirkuit Vertikal Tunggal Terpadu */}
+      {activeTab === "calendar" && (
+        <SnakingPathCalendar
+          currentYear={currentYear}
+          currentMonthIndex={currentMonthIndex}
+          onMonthChange={handleMonthChange}
+          events={calendarItems}
+          selectedDate={selectedDate}
+          onSelectDate={handleSelectDate}
+          onSelectEvent={handleSelectEvent}
+          onSelectMultipleEvents={handleSelectMultipleEvents}
+        />
+      )}
 
       {/* Modal Dialog Buat Agenda Baru (Admin/Operator) */}
       <AdminEventModal
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
+        parentEvents={parentEventsList}
       />
 
       {/* Modal Dialog Pemilih Multi-Agenda pada Tanggal yang Sama */}

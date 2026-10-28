@@ -2,12 +2,17 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { FileText, CheckCircle2, Clock, Edit3 } from "lucide-react";
+import { FileText, CheckCircle2, Clock, Edit3, QrCode } from "lucide-react";
 import { markNotulensiRead } from "@/actions/acara";
 import { Role } from "@prisma/client";
 
 const EditNotulensiModal = dynamic(
   () => import("./EditNotulensiModal").then((mod) => mod.EditNotulensiModal),
+  { ssr: false }
+);
+
+const MeetingQrModal = dynamic(
+  () => import("@/components/home/MeetingQrModal").then((mod) => mod.MeetingQrModal),
   { ssr: false }
 );
 
@@ -35,6 +40,7 @@ export function NotulensiCard({
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const canEdit =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
@@ -89,6 +95,18 @@ export function NotulensiCard({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {canEdit && meetingId && (
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                className="h-8 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Tampilkan QR Presensi Sesi Rapat Ini"
+              >
+                <QrCode className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                <span className="hidden sm:inline">QR Presensi</span>
+              </button>
+            )}
+
             {canEdit && eventId && (
               <button
                 type="button"
@@ -158,6 +176,15 @@ export function NotulensiCard({
           eventTitle={title}
           initialNotes={notes}
           onSuccess={(newNotes) => setNotes(newNotes)}
+        />
+      )}
+
+      {/* Modal QR Code Sesi Presensi Rapat (Pengurus) */}
+      {meetingId && (
+        <MeetingQrModal
+          isOpen={isQrModalOpen}
+          onClose={() => setIsQrModalOpen(false)}
+          meetingId={meetingId}
         />
       )}
     </>

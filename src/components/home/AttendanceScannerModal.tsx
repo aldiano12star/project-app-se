@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useTransition } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { QrCode, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { claimAttendance } from "@/actions/presensi";
+import { recordAttendance } from "@/actions/presensi";
 
 interface AttendanceScannerModalProps {
   isOpen: boolean;
@@ -14,27 +14,45 @@ export function AttendanceScannerModal({
   isOpen,
   onClose,
 }: AttendanceScannerModalProps) {
-  const [scanResult, setScanResult] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
     text: string;
+    meetingTitle?: string;
     type: "success" | "error";
   } | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleClaim = (token: string) => {
+  const handleClaim = (scannedText: string) => {
     startTransition(async () => {
-      const res = await claimAttendance(token);
+      let meetingId = scannedText.trim();
+
+      // Ekstraksi Smart QR Attendance Payload
+      try {
+        const parsed = JSON.parse(scannedText);
+        if (parsed && typeof parsed === "object" && parsed.meetingId) {
+          meetingId = parsed.meetingId;
+        }
+      } catch {
+        // Raw token / ID fallback
+      }
+
+      const res = await recordAttendance(meetingId);
       if (res.success) {
-        setFeedback({ text: res.message, type: "success" });
+        setFeedback({
+          text: `Berhasil mencatat kehadiran untuk rapat ${res.data?.meetingTitle || ""}`,
+          meetingTitle: res.data?.meetingTitle,
+          type: "success",
+        });
       } else {
-        setFeedback({ text: res.message, type: "error" });
+        setFeedback({
+          text: res.message || "Gagal mencatat kehadiran rapat.",
+          type: "error",
+        });
       }
     });
   };
 
   useEffect(() => {
     if (!isOpen) {
-      setScanResult(null);
       setFeedback(null);
       return;
     }
@@ -55,7 +73,6 @@ export function AttendanceScannerModal({
 
         scanner.render(
           (decodedText) => {
-            setScanResult(decodedText);
             if (scanner) {
               scanner.clear().catch(() => {});
             }
@@ -91,9 +108,8 @@ export function AttendanceScannerModal({
         </button>
 
         <div className="flex flex-col items-center text-center gap-1.5 pr-6 pl-6 pt-1">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-subtle text-primary border border-primary/20">
-            <QrCode className="h-5 w-5" />
-          </div>
+          {/* Naked Icon: Zero decorative box wrappers */}
+          <QrCode className="h-8 w-8 text-primary" />
           <h3 className="text-lg font-semibold text-ink mt-1">
             Pindai QR Presensi Rapat
           </h3>
@@ -108,14 +124,14 @@ export function AttendanceScannerModal({
             <div
               className={`flex flex-col items-center justify-center rounded-2xl p-6 text-center w-full border ${
                 feedback.type === "success"
-                  ? "bg-success-subtle border-success/30 text-success"
-                  : "bg-danger-subtle border-danger/30 text-danger"
+                  ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900 text-emerald-700 dark:text-emerald-300"
+                  : "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900 text-red-700 dark:text-red-300"
               }`}
             >
               {feedback.type === "success" ? (
-                <CheckCircle2 className="h-10 w-10 mb-2 text-success" />
+                <CheckCircle2 className="h-10 w-10 mb-2 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <AlertCircle className="h-10 w-10 mb-2 text-danger" />
+                <AlertCircle className="h-10 w-10 mb-2 text-red-600 dark:text-red-400" />
               )}
               <span className="text-sm font-semibold">{feedback.text}</span>
             </div>

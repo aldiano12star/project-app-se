@@ -21,6 +21,18 @@ import {
   getJakartaDateParts,
   formatEventSchedule,
 } from "@/utils/eventStatus";
+import { TargetAudience } from "@prisma/client";
+
+export interface NestedMeetingData {
+  id: string;
+  title: string;
+  date: Date | string;
+  targetAudience: TargetAudience;
+  notes?: string | null;
+  eventId?: string | null;
+  isRead?: boolean;
+  isAttended?: boolean;
+}
 
 export interface SectionMember {
   id: string;
@@ -42,8 +54,10 @@ export interface EventDetailData {
   description?: string | null;
   startDate: Date | string;
   endDate: Date | string;
+  targetAudience?: TargetAudience;
   driveUrl?: string | null;
   notulensiText?: string | null;
+  meetings?: NestedMeetingData[];
   sections: {
     id: string;
     name: string;

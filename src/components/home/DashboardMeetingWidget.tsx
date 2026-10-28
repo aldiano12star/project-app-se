@@ -2,13 +2,8 @@
 
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { QrCode, Sparkles, Eye, CalendarDays } from "lucide-react";
+import { QrCode, Sparkles, CalendarDays } from "lucide-react";
 import { Role } from "@prisma/client";
-
-const MeetingQrModal = dynamic(
-  () => import("./MeetingQrModal").then((mod) => mod.MeetingQrModal),
-  { ssr: false }
-);
 
 const AttendanceScannerModal = dynamic(
   () => import("./AttendanceScannerModal").then((mod) => mod.AttendanceScannerModal),
@@ -22,12 +17,7 @@ interface DashboardMeetingWidgetProps {
 export function DashboardMeetingWidget({
   userRole,
 }: DashboardMeetingWidgetProps) {
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-
-  const canShowQr =
-    userRole === Role.ADMIN ||
-    userRole === Role.OPERATOR;
 
   return (
     <>
@@ -43,7 +33,7 @@ export function DashboardMeetingWidget({
             </div>
           </div>
           <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20">
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
             Sesi Terbuka
           </span>
         </div>
@@ -59,39 +49,18 @@ export function DashboardMeetingWidget({
               🔒 <span className="font-semibold text-ink">Fitur Presensi Terkunci</span> — Menunggu aktivasi role akun oleh pengurus.
             </div>
           ) : (
-            <>
-              {/* Tombol Utama Scan QR Mandiri (Semua Anggota Terverifikasi) */}
-              <button
-                type="button"
-                onClick={() => setIsScannerOpen(true)}
-                className="w-full flex-1 h-12 min-h-12 bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-              >
-                <QrCode className="h-4 w-4" />
-                <span>Pindai QR Rapat (+10 XP)</span>
-              </button>
-
-              {/* Tombol Khusus Pengurus: Tampilkan QR Sesi */}
-              {canShowQr && (
-                <button
-                  type="button"
-                  onClick={() => setIsQrModalOpen(true)}
-                  className="w-full sm:w-auto h-12 min-h-12 px-5 bg-surface-container-low hover:bg-surface-container border border-edge text-ink text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                  title="Tampilkan QR Code untuk dipindai anggota"
-                >
-                  <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                  <span>Tampilkan QR Sesi</span>
-                </button>
-              )}
-            </>
+            /* Tombol Utama Scan QR Mandiri (Semua Anggota Terverifikasi) */
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="w-full flex-1 h-12 min-h-12 bg-primary hover:bg-primary-hover active:scale-[0.99] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+            >
+              <QrCode className="h-4 w-4" />
+              <span>Pindai QR Rapat (+10 XP)</span>
+            </button>
           )}
         </div>
       </section>
-
-      {/* Modal Dialog QR Code Pengurus */}
-      <MeetingQrModal
-        isOpen={isQrModalOpen}
-        onClose={() => setIsQrModalOpen(false)}
-      />
 
       {/* Modal Dialog Scanner Kamera Anggota */}
       <AttendanceScannerModal

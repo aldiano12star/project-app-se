@@ -21,6 +21,12 @@ enum ClassGrade {
   KELAS_12
 }
 
+enum TargetAudience {
+  ALL
+  GEN_20
+  GEN_21
+}
+
 enum BillingType {
   KAS_RUTIN
   URUNAN
@@ -86,17 +92,17 @@ enum AttendanceStatus {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String
-  email         String       @unique
-  image         String?
-  role          Role         @default(GUEST)
-  classGrade    String?      // "X", "XI", "XII", "ALUMNI"
-  generationNumber Int?      // Misal: 20, 21, 22
-  mainDivision  Division
-  status        MemberStatus @default(ACTIVE)
-  monthlyPoints Int          @default(0) // Direset tiap awal bulan untuk Podium
-  totalPoints   Int          @default(0) // Akumulasi poin tahunan di profil
+  id                 String       @id @default(cuid())
+  name               String
+  email              String       @unique
+  image              String?
+  role               Role         @default(GUEST)
+  classGrade         String? // "X", "XI", "XII", "ALUMNI"
+  generationNumber   Int? // Misal: 20, 21, 22
+  mainDivision       Division
+  status             MemberStatus @default(ACTIVE)
+  monthlyPoints      Int          @default(0) // Direset tiap awal bulan untuk Podium
+  totalPoints        Int          @default(0) // Akumulasi poin tahunan di profil
   noWhatsapp         String?
   portfolioUrl       String?
   password           String?
@@ -127,20 +133,20 @@ model User {
   memberSections        EventSection[]        @relation("EventSectionMembers")
 
   // Hub Eksplorasi (Showcase & Wiki)
-  createdShowcaseProjects ShowcaseProject[]   @relation("CreatedShowcases")
-  contributedProjects     ShowcaseProject[]   @relation("ProjectContributors")
+  createdShowcaseProjects ShowcaseProject[] @relation("CreatedShowcases")
+  contributedProjects     ShowcaseProject[] @relation("ProjectContributors")
   projectLikes            ProjectLike[]
-  createdWikis            WikiArticle[]       @relation("CreatedWikis")
-  updatedWikis            WikiArticle[]       @relation("UpdatedWikis")
+  createdWikis            WikiArticle[]     @relation("CreatedWikis")
+  updatedWikis            WikiArticle[]     @relation("UpdatedWikis")
 
   // Kotak Suara Hibrida (Feedback & Issue Tracker)
-  feedbackIssues          FeedbackIssue[]     @relation("UserFeedbackIssues")
-  upvotedIssues           FeedbackIssue[]     @relation("IssueUpvotes")
+  feedbackIssues FeedbackIssue[] @relation("UserFeedbackIssues")
+  upvotedIssues  FeedbackIssue[] @relation("IssueUpvotes")
 
   // Sistem Tagihan Fleksibel (Kas Rutin & Urunan Insidental)
-  createdBillings         BillingEvent[]      @relation("BillingCreator")
-  targetedBillings        BillingEvent[]      @relation("BillingTargets")
-  billingPayments         BillingPayment[]    @relation("UserBillingPayments")
+  createdBillings  BillingEvent[]   @relation("BillingCreator")
+  targetedBillings BillingEvent[]   @relation("BillingTargets")
+  billingPayments  BillingPayment[] @relation("UserBillingPayments")
 
   @@index([email])
   @@index([role])
@@ -150,12 +156,12 @@ model User {
 }
 
 model AcademicYear {
-  id          String        @id @default(cuid())
-  name        String        @unique // Contoh: "2026/2027"
-  isCurrent   Boolean       @default(false)
-  startDate   DateTime
-  endDate     DateTime
-  createdAt   DateTime      @default(now())
+  id        String   @id @default(cuid())
+  name      String   @unique // Contoh: "2026/2027"
+  isCurrent Boolean  @default(false)
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
 
   kasPeriods    KasPeriod[]
   transactions  Transaction[]
@@ -169,32 +175,32 @@ model AcademicYear {
 }
 
 model KasPeriod {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   academicYearId String
   periodNumber   Int
-  name           String       // Contoh: "Kas Periode 1 - Agustus"
+  name           String // Contoh: "Kas Periode 1 - Agustus"
   startDate      DateTime
   endDate        DateTime
-  amount         Int          @default(5000)
-  createdAt      DateTime     @default(now())
+  amount         Int      @default(5000)
+  createdAt      DateTime @default(now())
 
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  payments       KasPayment[]
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  payments     KasPayment[]
 
   @@unique([academicYearId, periodNumber])
   @@index([academicYearId])
 }
 
 model KasPayment {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   kasPeriodId String
   userId      String
-  amountPaid  Int       @default(5000)
-  paidAt      DateTime  @default(now())
+  amountPaid  Int      @default(5000)
+  paidAt      DateTime @default(now())
   recordedBy  String
 
-  kasPeriod   KasPeriod @relation(fields: [kasPeriodId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kasPeriod KasPeriod @relation(fields: [kasPeriodId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([kasPeriodId, userId])
   @@index([userId])
@@ -208,13 +214,13 @@ model Transaction {
   expenseCategory ExpenseCategory?
   amount          Int
   description     String
-  proofUrl        String?          // URL Google Drive Nota/Kuitansi
+  proofUrl        String? // URL Google Drive Nota/Kuitansi
   date            DateTime         @default(now())
   createdById     String
   createdAt       DateTime         @default(now())
 
-  academicYear    AcademicYear     @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy       User             @relation("TransactionCreator", fields: [createdById], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy    User         @relation("TransactionCreator", fields: [createdById], references: [id])
 
   @@index([academicYearId])
   @@index([type])
@@ -227,26 +233,29 @@ model Event {
   description    String?
   startDate      DateTime
   endDate        DateTime
-  driveUrl       String?        // Tautan Root Folder Google Drive Acara
-  notulensiText  String?        // Notulensi terintegrasi khusus acara ini
+  targetAudience TargetAudience @default(ALL)
+  driveUrl       String? // Tautan Root Folder Google Drive Acara
+  notulensiText  String? // Notulensi terintegrasi khusus acara ini
   createdById    String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  academicYear   AcademicYear   @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy      User           @relation("EventCreator", fields: [createdById], references: [id])
-  sections       EventSection[]
-  budgetItems    EventBudgetItem[]
+  academicYear AcademicYear      @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy    User              @relation("EventCreator", fields: [createdById], references: [id])
+  sections     EventSection[]
+  budgetItems  EventBudgetItem[]
+  meetings     Meeting[]
 
   @@index([academicYearId])
   @@index([startDate])
+  @@index([targetAudience])
 }
 
 model EventBudgetItem {
   id             String   @id @default(cuid())
   eventId        String
   event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  name           String   // Nama barang/kebutuhan (contoh: "Konsumsi Pemateri", "Cetak Sertifikat")
+  name           String // Nama barang/kebutuhan (contoh: "Konsumsi Pemateri", "Cetak Sertifikat")
   quantity       Int      @default(1)
   unit           String   @default("pcs") // pcs, paket, box, orang
   estimatedPrice Int      @default(0) // Harga satuan (Rp)
@@ -257,37 +266,37 @@ model EventBudgetItem {
 }
 
 model EventSection {
-  id        String      @id @default(cuid())
+  id        String   @id @default(cuid())
   eventId   String
-  name      String      // Seksi Acara, Korlap, Humas, Kesekretariatan
-  pjId      String?     // Penanggung Jawab Seksi
-  createdAt DateTime    @default(now())
+  name      String // Seksi Acara, Korlap, Humas, Kesekretariatan
+  pjId      String? // Penanggung Jawab Seksi
+  createdAt DateTime @default(now())
 
-  event     Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  pj        User?       @relation("EventSectionPJ", fields: [pjId], references: [id], onDelete: SetNull)
-  members   User[]      @relation("EventSectionMembers")
-  tasks     EventTask[]
+  event   Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  pj      User?       @relation("EventSectionPJ", fields: [pjId], references: [id], onDelete: SetNull)
+  members User[]      @relation("EventSectionMembers")
+  tasks   EventTask[]
 
   @@index([eventId])
   @@index([pjId])
 }
 
 model EventTask {
-  id             String       @id @default(cuid())
-  sectionId      String
-  title          String
-  description    String?
-  status         TaskStatus   @default(TODO)
-  dueDate        DateTime?
-  assigneeId     String?
-  isSOP          Boolean      @default(false)
-  verifiedById   String?
-  pointsAwarded  Boolean      @default(false)
-  createdAt      DateTime     @default(now())
+  id            String     @id @default(cuid())
+  sectionId     String
+  title         String
+  description   String?
+  status        TaskStatus @default(TODO)
+  dueDate       DateTime?
+  assigneeId    String?
+  isSOP         Boolean    @default(false)
+  verifiedById  String?
+  pointsAwarded Boolean    @default(false)
+  createdAt     DateTime   @default(now())
 
-  section        EventSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
-  verifiedBy     User?        @relation("TaskVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  section    EventSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  assignee   User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  verifiedBy User?        @relation("TaskVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
 
   @@index([sectionId])
   @@index([assigneeId])
@@ -302,34 +311,39 @@ model SOPTemplate {
 }
 
 model Meeting {
-  id             String             @id @default(cuid())
+  id             String         @id @default(cuid())
   academicYearId String
-  title          String             // Rapat Pleno Umum
-  date           DateTime           @default(now())
-  qrToken        String?            // Token unik sesi QR dinamis
-  qrExpiresAt    DateTime?          // Batas kedaluwarsa QR
-  notes          String?            // Notulensi Rapat Pleno
+  title          String // Rapat Pleno Umum
+  date           DateTime       @default(now())
+  targetAudience TargetAudience @default(ALL)
+  eventId        String? // Foreign key opsional mengaitkan Rapat ke Acara Proker Induk
+  event          Event?         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  qrToken        String? // Token unik sesi QR dinamis
+  qrExpiresAt    DateTime? // Batas kedaluwarsa QR
+  notes          String? // Notulensi Rapat Pleno
   createdById    String
-  createdAt      DateTime           @default(now())
+  createdAt      DateTime       @default(now())
 
-  academicYear   AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy      User               @relation("MeetingCreator", fields: [createdById], references: [id])
-  attendances    Attendance[]
-  readLogs       NotulensiReadLog[]
+  academicYear AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy    User               @relation("MeetingCreator", fields: [createdById], references: [id])
+  attendances  Attendance[]
+  readLogs     NotulensiReadLog[]
 
   @@index([academicYearId])
+  @@index([eventId])
+  @@index([targetAudience])
 }
 
 model Attendance {
-  id          String           @id @default(cuid())
-  meetingId   String
-  userId      String
-  status      AttendanceStatus @default(HADIR)
-  checkedAt   DateTime         @default(now())
-  isManual    Boolean          @default(false)
+  id        String           @id @default(cuid())
+  meetingId String
+  userId    String
+  status    AttendanceStatus @default(HADIR)
+  checkedAt DateTime         @default(now())
+  isManual  Boolean          @default(false)
 
-  meeting     Meeting          @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([meetingId, userId])
   @@index([meetingId])
@@ -341,56 +355,56 @@ model NotulensiReadLog {
   userId    String
   readAt    DateTime @default(now())
 
-  meeting   Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([meetingId, userId])
 }
 
 model Showcase {
-  id              String                @id @default(cuid())
+  id              String   @id @default(cuid())
   academicYearId  String
   title           String
   description     String
   primaryDivision Division
   externalUrl     String
   thumbnailUrl    String
-  isPinned        Boolean               @default(false)
+  isPinned        Boolean  @default(false)
   createdById     String
-  createdAt       DateTime              @default(now())
+  createdAt       DateTime @default(now())
 
-  academicYear    AcademicYear          @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy       User                  @relation("ShowcaseCreator", fields: [createdById], references: [id])
-  contributors    ShowcaseContributor[]
+  academicYear AcademicYear          @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy    User                  @relation("ShowcaseCreator", fields: [createdById], references: [id])
+  contributors ShowcaseContributor[]
 
   @@index([academicYearId])
   @@index([primaryDivision])
 }
 
 model ShowcaseContributor {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   showcaseId String
   userId     String
 
-  showcase   Showcase @relation(fields: [showcaseId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  showcase Showcase @relation(fields: [showcaseId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([showcaseId, userId])
 }
 
 model Aspiration {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   content     String
-  category    String    @default("DISKUSI_UMUM") // "IDE_KEGIATAN" | "SARAN_PENGURUS" | "DISKUSI_UMUM" | "BUG_SISTEM"
-  targetScope String    @default("PUBLIC") // "PUBLIC" | "PRIVATE_ADMIN"
-  isAnonymous Boolean   @default(false)
-  status      String    @default("OPEN")   // "OPEN" | "RESPONDED" | "RESOLVED"
+  category    String   @default("DISKUSI_UMUM") // "IDE_KEGIATAN" | "SARAN_PENGURUS" | "DISKUSI_UMUM" | "BUG_SISTEM"
+  targetScope String   @default("PUBLIC") // "PUBLIC" | "PRIVATE_ADMIN"
+  isAnonymous Boolean  @default(false)
+  status      String   @default("OPEN") // "OPEN" | "RESPONDED" | "RESOLVED"
   adminReply  String?
   senderId    String?
-  sender      User?     @relation("SentAspirations", fields: [senderId], references: [id], onDelete: SetNull)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  sender      User?    @relation("SentAspirations", fields: [senderId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([category])
   @@index([status])
@@ -398,50 +412,50 @@ model Aspiration {
 }
 
 model Poll {
-  id                 String        @id @default(cuid())
+  id                 String    @id @default(cuid())
   academicYearId     String?
   question           String
   description        String?
-  isActive           Boolean       @default(true)
+  isActive           Boolean   @default(true)
   closesAt           DateTime?
   expiresAt          DateTime?
-  isAnonymous        Boolean       @default(false)
-  allowMultipleVotes Boolean       @default(false)
+  isAnonymous        Boolean   @default(false)
+  allowMultipleVotes Boolean   @default(false)
   createdById        String?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  academicYear       AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
-  creator            User?         @relation("PollCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  options            PollOption[]
-  votes              PollVote[]
+  academicYear AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  creator      User?         @relation("PollCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  options      PollOption[]
+  votes        PollVote[]
 
   @@index([isActive])
   @@index([academicYearId])
 }
 
 model PollOption {
-  id         String     @id @default(cuid())
+  id         String   @id @default(cuid())
   pollId     String
-  optionText String     // Label opsi
-  createdAt  DateTime   @default(now())
+  optionText String // Label opsi
+  createdAt  DateTime @default(now())
 
-  poll       Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  votes      PollVote[]
+  poll  Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes PollVote[]
 
   @@index([pollId])
 }
 
 model PollVote {
-  id        String     @id @default(cuid())
-  pollId    String
-  optionId  String
-  userId    String
-  votedAt   DateTime   @default(now())
+  id       String   @id @default(cuid())
+  pollId   String
+  optionId String
+  userId   String
+  votedAt  DateTime @default(now())
 
-  poll      Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([optionId, userId])
   @@index([pollId])
@@ -451,7 +465,7 @@ model PollVote {
 model ArchiveResource {
   id          String   @id @default(cuid())
   title       String
-  category    String   // "Modul Belajar", "Template Dokumen", "Aset Brand"
+  category    String // "Modul Belajar", "Template Dokumen", "Aset Brand"
   driveUrl    String
   description String?
   createdAt   DateTime @default(now())
@@ -498,18 +512,18 @@ model ProjectLike {
 }
 
 model WikiArticle {
-  id              String            @id @default(cuid())
+  id              String   @id @default(cuid())
   title           String
-  slug            String            @unique
-  content         String            // Konten teks Markdown
-  category        String            @default("PANDUAN_TEKNIS") // "SURAT_LPJ", "INFO_LOMBA", "MODUL_PELATIHAN", "PANDUAN_TEKNIS"
+  slug            String   @unique
+  content         String // Konten teks Markdown
+  category        String   @default("PANDUAN_TEKNIS") // "SURAT_LPJ", "INFO_LOMBA", "MODUL_PELATIHAN", "PANDUAN_TEKNIS"
   authorId        String
-  author          User              @relation("CreatedWikis", fields: [authorId], references: [id], onDelete: Cascade)
+  author          User     @relation("CreatedWikis", fields: [authorId], references: [id], onDelete: Cascade)
   lastUpdatedById String?
-  lastUpdatedBy   User?             @relation("UpdatedWikis", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
-  viewCount       Int               @default(0)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  lastUpdatedBy   User?    @relation("UpdatedWikis", fields: [lastUpdatedById], references: [id], onDelete: SetNull)
+  viewCount       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([category])
   @@index([slug])
@@ -521,25 +535,25 @@ model WikiArticle {
 // ==========================================
 
 model FeedbackIssue {
-  id            String        @id @default(cuid())
-  title         String
-  description   String        @db.Text
-  type          FeedbackType  @default(PUBLIC_ISSUE)
-  status        IssueStatus   @default(PENDING)
-  isAnonymous   Boolean       @default(false)
-  category      String?       // Misal: "Bug Aplikasi", "Usulan Fitur", "Kritik Acara"
+  id          String       @id @default(cuid())
+  title       String
+  description String       @db.Text
+  type        FeedbackType @default(PUBLIC_ISSUE)
+  status      IssueStatus  @default(PENDING)
+  isAnonymous Boolean      @default(false)
+  category    String? // Misal: "Bug Aplikasi", "Usulan Fitur", "Kritik Acara"
 
-  userId        String
-  user          User          @relation("UserFeedbackIssues", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("UserFeedbackIssues", fields: [userId], references: [id], onDelete: Cascade)
 
   // Upvote relasi banyak-ke-banyak
-  upvoters      User[]        @relation("IssueUpvotes")
+  upvoters User[] @relation("IssueUpvotes")
 
   // Kolom respon catatan resmi dari Operator
-  operatorNotes String?       @db.Text
+  operatorNotes String? @db.Text
 
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([type])
   @@index([status])
@@ -547,23 +561,23 @@ model FeedbackIssue {
 }
 
 model OrganizationalPeriod {
-  id                   String              @id @default(cuid())
-  name                 String              // Contoh: "Periode 2025/2026 (Gen 20)"
-  generationYear       Int                 // 20
-  isActive             Boolean             @default(true)
-  startDate            DateTime            @default(now())
-  endDate              DateTime?
-  closingCashBalance   Int                 @default(0)
-  startingCashBalance  Int                 @default(0)
-  notes                String?             @db.Text
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  id                  String    @id @default(cuid())
+  name                String // Contoh: "Periode 2025/2026 (Gen 20)"
+  generationYear      Int // 20
+  isActive            Boolean   @default(true)
+  startDate           DateTime  @default(now())
+  endDate             DateTime?
+  closingCashBalance  Int       @default(0)
+  startingCashBalance Int       @default(0)
+  notes               String?   @db.Text
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 model SeasonHallOfFame {
-  id             String   @id @default(cuid())
-  periodName     String   // "Gen 20 (2025/2026)"
-  generationYear Int      // 20
+  id             String  @id @default(cuid())
+  periodName     String // "Gen 20 (2025/2026)"
+  generationYear Int // 20
   // Snapshot Juara 1
   rank1Name      String
   rank1Division  String?
@@ -580,9 +594,9 @@ model SeasonHallOfFame {
   rank3Points    Int
   rank3Avatar    String?
 
-  totalMeetings  Int      @default(0)
-  totalCashFlow  Int      @default(0)
-  archivedAt     DateTime @default(now())
+  totalMeetings Int      @default(0)
+  totalCashFlow Int      @default(0)
+  archivedAt    DateTime @default(now())
 }
 
 // ==========================================
@@ -590,25 +604,25 @@ model SeasonHallOfFame {
 // ==========================================
 
 model BillingEvent {
-  id             String          @id @default(cuid())
-  title          String          // Contoh: "Kas Rutin September" atau "Urunan Hoodie Divisi"
-  description    String?         @db.Text
-  type           BillingType     @default(KAS_RUTIN)
-  amount         Int             // Nominal yang harus disetor per anggota (Rp)
+  id             String        @id @default(cuid())
+  title          String // Contoh: "Kas Rutin September" atau "Urunan Hoodie Divisi"
+  description    String?       @db.Text
+  type           BillingType   @default(KAS_RUTIN)
+  amount         Int // Nominal yang harus disetor per anggota (Rp)
   dueDate        DateTime?
-  isActive       Boolean         @default(true)
+  isActive       Boolean       @default(true)
   createdById    String
-  createdBy      User            @relation("BillingCreator", fields: [createdById], references: [id])
+  createdBy      User          @relation("BillingCreator", fields: [createdById], references: [id])
   academicYearId String?
-  academicYear   AcademicYear?   @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  academicYear   AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
 
   // Target penerima tagihan khusus jika URUNAN (array anggota terpilih)
   // Untuk KAS_RUTIN: berlaku global ke seluruh anggota aktif
-  targetUsers    User[]          @relation("BillingTargets")
-  payments       BillingPayment[]
+  targetUsers User[]           @relation("BillingTargets")
+  payments    BillingPayment[]
 
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([type])
   @@index([isActive])
@@ -616,21 +630,19 @@ model BillingEvent {
 }
 
 model BillingPayment {
-  id             String        @id @default(cuid())
+  id             String   @id @default(cuid())
   billingEventId String
   userId         String
   amountPaid     Int
-  paidAt         DateTime      @default(now())
-  recordedBy     String        // Petugas bendahara / operator yang mencatat
-  proofUrl       String?       // URL bukti transfer / nota
-  notes          String?       @db.Text
+  paidAt         DateTime @default(now())
+  recordedBy     String // Petugas bendahara / operator yang mencatat
+  proofUrl       String? // URL bukti transfer / nota
+  notes          String?  @db.Text
 
-  billingEvent   BillingEvent  @relation(fields: [billingEventId], references: [id], onDelete: Cascade)
-  user           User          @relation("UserBillingPayments", fields: [userId], references: [id], onDelete: Cascade)
+  billingEvent BillingEvent @relation(fields: [billingEventId], references: [id], onDelete: Cascade)
+  user         User         @relation("UserBillingPayments", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([billingEventId, userId])
   @@index([billingEventId])
   @@index([userId])
 }
-
-

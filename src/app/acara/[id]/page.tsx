@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { EventDetailClientView } from "@/components/acara/EventDetailClientView";
 import { EventDetailData } from "@/components/acara/EventDetailCard";
 import { BudgetItemData } from "@/components/acara/PrintRABModal";
+import { isUserEligibleForAudience } from "@/utils/audience";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,17 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
     prisma.event.findUnique({
       where: { id },
       include: {
+        meetings: {
+          orderBy: { date: "asc" },
+          include: {
+            readLogs: {
+              where: { userId: session.user.id },
+            },
+            attendances: {
+              where: { userId: session.user.id },
+            },
+          },
+        },
         budgetItems: {
           orderBy: { createdAt: "asc" },
         },
@@ -92,8 +104,20 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
     notFound();
   }
 
-  // Ambil meeting notulensi terbaru yang terkait dengan academicYear atau event
-  const latestMeeting = await prisma.meeting.findFirst({
+  // Validasi Hak Akses Privasi Angkatan (TargetAudience)
+  const isEligible = isUserEligibleForAudience(
+    dbEvent.targetAudience,
+    dbUser.role,
+    dbUser.classGrade
+  );
+
+  if (!isEligible) {
+    redirect("/acara");
+  }
+
+  // Ambil meeting notulensi terbaru yang terkait dengan event atau academicYear
+  const eventMeeting = dbEvent.meetings[dbEvent.meetings.length - 1];
+  const latestMeeting = eventMeeting || (await prisma.meeting.findFirst({
     where: { academicYearId: dbEvent.academicYearId },
     orderBy: { createdAt: "desc" },
     include: {
@@ -101,7 +125,7 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
         where: { userId: dbUser.id },
       },
     },
-  });
+  }));
 
   const formattedEvent: EventDetailData = {
     id: dbEvent.id,
@@ -109,8 +133,19 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
     description: dbEvent.description,
     startDate: dbEvent.startDate,
     endDate: dbEvent.endDate,
+    targetAudience: dbEvent.targetAudience,
     driveUrl: dbEvent.driveUrl,
     notulensiText: dbEvent.notulensiText,
+    meetings: dbEvent.meetings.map((m) => ({
+      id: m.id,
+      title: m.title,
+      date: m.date,
+      targetAudience: m.targetAudience,
+      notes: m.notes,
+      eventId: m.eventId,
+      isRead: m.readLogs.length > 0,
+      isAttended: m.attendances.length > 0,
+    })),
     sections: dbEvent.sections.map((sec) => ({
       id: sec.id,
       name: sec.name,
@@ -148,7 +183,7 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
         title: latestMeeting.title,
         notes: latestMeeting.notes,
         date: latestMeeting.date,
-        isRead: latestMeeting.readLogs.length > 0,
+        isRead: "readLogs" in latestMeeting ? latestMeeting.readLogs.length > 0 : false,
       }
     : null;
 
