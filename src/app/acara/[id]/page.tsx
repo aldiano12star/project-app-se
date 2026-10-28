@@ -47,6 +47,9 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
     prisma.event.findUnique({
       where: { id },
       include: {
+        targetUsers: {
+          select: { id: true },
+        },
         meetings: {
           orderBy: { date: "asc" },
           include: {
@@ -104,11 +107,13 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
     notFound();
   }
 
-  // Validasi Hak Akses Privasi Angkatan (TargetAudience)
+  // Validasi Hak Akses Privasi Angkatan / Peserta Khusus (TargetAudience)
   const isEligible = isUserEligibleForAudience(
     dbEvent.targetAudience,
     dbUser.role,
-    dbUser.classGrade
+    dbUser.classGrade,
+    dbUser.id,
+    dbEvent.targetUsers
   );
 
   if (!isEligible) {

@@ -17,6 +17,7 @@ export interface CreateEventInput {
   startDate: string; // ISO date or string
   endDate: string;
   targetAudience?: TargetAudience;
+  targetUserIds?: string[];
   driveUrl?: string;
   notulensiText?: string;
   autoGenerateSOP?: boolean;
@@ -28,6 +29,7 @@ export interface UpdateEventInput {
   startDate?: string;
   endDate?: string;
   targetAudience?: TargetAudience;
+  targetUserIds?: string[];
   driveUrl?: string;
   notulensiText?: string;
 }
@@ -36,6 +38,7 @@ export interface CreateMeetingInput {
   title: string;
   date: string; // ISO date or string
   targetAudience?: TargetAudience;
+  targetUserIds?: string[];
   eventId?: string | null;
   notes?: string;
 }
@@ -120,6 +123,12 @@ export async function createEvent(
         driveUrl: input.driveUrl?.trim() || null,
         notulensiText: input.notulensiText?.trim() || null,
         createdById: user.id,
+        targetUsers:
+          input.targetAudience === TargetAudience.CUSTOM &&
+          input.targetUserIds &&
+          input.targetUserIds.length > 0
+            ? { connect: input.targetUserIds.map((id) => ({ id })) }
+            : undefined,
       },
     });
 
@@ -260,6 +269,7 @@ export async function updateEvent(
       startDate?: Date;
       endDate?: Date;
       targetAudience?: TargetAudience;
+      targetUsers?: { set: { id: string }[] };
       driveUrl?: string | null;
       notulensiText?: string | null;
     } = {};
@@ -269,8 +279,16 @@ export async function updateEvent(
       updateData.description = input.description.trim() || null;
     if (input.startDate) updateData.startDate = new Date(input.startDate);
     if (input.endDate) updateData.endDate = new Date(input.endDate);
-    if (input.targetAudience !== undefined)
+    if (input.targetAudience !== undefined) {
       updateData.targetAudience = input.targetAudience;
+      if (input.targetAudience === TargetAudience.CUSTOM && input.targetUserIds) {
+        updateData.targetUsers = {
+          set: input.targetUserIds.map((id) => ({ id })),
+        };
+      } else if (input.targetAudience !== TargetAudience.CUSTOM) {
+        updateData.targetUsers = { set: [] };
+      }
+    }
     if (input.driveUrl !== undefined)
       updateData.driveUrl = input.driveUrl.trim() || null;
     if (input.notulensiText !== undefined)
@@ -1281,6 +1299,12 @@ export async function createMeeting(
         qrToken: generatedToken,
         qrExpiresAt: expiresAt,
         createdById: user.id,
+        targetUsers:
+          input.targetAudience === TargetAudience.CUSTOM &&
+          input.targetUserIds &&
+          input.targetUserIds.length > 0
+            ? { connect: input.targetUserIds.map((id) => ({ id })) }
+            : undefined,
       },
     });
 

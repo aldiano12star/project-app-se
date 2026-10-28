@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
 import { AcaraClientView } from "@/components/acara/AcaraClientView";
 import { EventDetailData, NestedMeetingData } from "@/components/acara/EventDetailCard";
-import { getAllowedTargetAudiences } from "@/utils/audience";
+import { buildAudienceFilter } from "@/utils/audience";
+import { Role } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -69,14 +70,12 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
 
   const academicYearId = activeAcademicYear?.id;
 
-  // Filter Target Audience berdasarkan Role & ClassGrade (Targeted Fetching)
-  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
-  const audienceFilter = allowedAudiences !== null
-    ? { targetAudience: { in: allowedAudiences } }
-    : {};
+  // Filter Target Audience berdasarkan Role, ClassGrade, dan Custom Many-to-Many Users
+  const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
+  const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  // Query events (dengan child meetings) & independent meetings
-  const [dbEvents, dbIndependentMeetings, latestMeeting] =
+  // Query events (dengan child meetings), independent meetings, dan seluruh anggota aktif
+  const [dbEvents, dbIndependentMeetings, latestMeeting, allMembers] =
   await Promise.all([
     prisma.event.findMany({
       where: {
@@ -149,6 +148,18 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
         },
       },
     }),
+    isOfficer
+      ? prisma.user.findMany({
+          where: { status: "ACTIVE" },
+          select: {
+            id: true,
+            name: true,
+            classGrade: true,
+            mainDivision: true,
+          },
+          orderBy: { name: "asc" },
+        })
+      : Promise.resolve([]),
   ]);
 
   // Format data events (Mega-Cards) dengan nested children meetings
@@ -225,6 +236,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
         }}
         events={events}
         independentMeetings={independentMeetings}
+        allMembers={allMembers}
         latestMeeting={formattedMeeting}
         initialMonth={initialMonth}
         initialYear={initialYear}

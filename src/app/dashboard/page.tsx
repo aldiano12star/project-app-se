@@ -6,7 +6,7 @@ import { PodiumTop3 } from "@/components/home/PodiumTop3";
 import { DashboardMeetingWidget } from "@/components/home/DashboardMeetingWidget";
 import Link from "next/link";
 import { Role, Division } from "@prisma/client";
-import { getAllowedTargetAudiences } from "@/utils/audience";
+import { buildAudienceFilter } from "@/utils/audience";
 import {
   CheckCircle2,
   CalendarDays,
@@ -67,11 +67,8 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Tentukan batasan visibilitas target audience berdasarkan kelas/role pengguna
-  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
-  const audienceFilter = allowedAudiences !== null
-    ? { targetAudience: { in: allowedAudiences } }
-    : {};
+  // Tentukan batasan visibilitas target audience berdasarkan kelas/role dan custom target pengguna
+  const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
 
   // Ambil Top 3 Leaderboard, acara terdekat (belum selesai & sesuai angkatan), presensi hari ini, dan tugas panitia
   const [topContributors, recentEvents, todayAttendance, myAssignedTasks] =

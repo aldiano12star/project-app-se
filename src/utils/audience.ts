@@ -30,15 +30,52 @@ export function getAllowedTargetAudiences(
 }
 
 /**
+ * Membangun klausa filter where Prisma untuk Event atau Meeting
+ * yang mendukung ALL, GEN_20, GEN_21, dan CUSTOM (Many-to-Many targetUsers).
+ */
+export function buildAudienceFilter(
+  role?: Role | null,
+  classGrade?: string | null,
+  userId?: string | null
+): Record<string, unknown> {
+  if (role === Role.ADMIN || role === Role.OPERATOR) {
+    return {}; // Tanpa batasan kueri untuk pengurus
+  }
+
+  const allowed = getAllowedTargetAudiences(role, classGrade);
+  const conditions: Record<string, unknown>[] = [];
+
+  if (allowed && allowed.length > 0) {
+    conditions.push({ targetAudience: { in: allowed } });
+  }
+
+  if (userId) {
+    conditions.push({
+      targetAudience: TargetAudience.CUSTOM,
+      targetUsers: { some: { id: userId } },
+    });
+  }
+
+  return conditions.length > 0 ? { OR: conditions } : {};
+}
+
+/**
  * Memeriksa apakah user berhak mengakses rapat/acara dengan target audience tertentu.
  */
 export function isUserEligibleForAudience(
   targetAudience: TargetAudience,
   role?: Role | null,
-  classGrade?: string | null
+  classGrade?: string | null,
+  userId?: string | null,
+  targetUsers?: { id: string }[] | null
 ): boolean {
   if (role === Role.ADMIN || role === Role.OPERATOR) {
     return true;
+  }
+
+  if (targetAudience === TargetAudience.CUSTOM) {
+    if (!userId || !targetUsers) return false;
+    return targetUsers.some((u) => u.id === userId);
   }
 
   const allowed = getAllowedTargetAudiences(role, classGrade);
@@ -53,6 +90,12 @@ export function getTargetAudienceBadge(targetAudience: TargetAudience): {
   badgeClass: string;
 } {
   switch (targetAudience) {
+    case TargetAudience.CUSTOM:
+      return {
+        label: "Peserta Khusus",
+        badgeClass:
+          "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900",
+      };
     case TargetAudience.GEN_20:
       return {
         label: "Khusus Kelas 11 (Gen 20)",

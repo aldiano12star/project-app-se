@@ -9,7 +9,7 @@ import {
   AttendanceSummaryData,
 } from "@/components/pengaturan/PersonalSummarySection";
 import { Role } from "@prisma/client";
-import { getAllowedTargetAudiences } from "@/utils/audience";
+import { buildAudienceFilter } from "@/utils/audience";
 
 export const dynamic = "force-dynamic";
 
@@ -50,11 +50,8 @@ export default async function PengaturanPage() {
     redirect("/onboarding");
   }
 
-  // Tentukan batasan target audience yang berhak diikuti oleh user ini
-  const allowedAudiences = getAllowedTargetAudiences(dbUser.role, dbUser.classGrade);
-  const eligibleMeetingFilter = allowedAudiences !== null
-    ? { targetAudience: { in: allowedAudiences } }
-    : {};
+  // Tentukan batasan target audience yang berhak diikuti oleh user ini (termasuk CUSTOM)
+  const eligibleMeetingFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
 
   // 2. Ambil riwayat kas mandiri dan rekap presensi (hanya rapat yang berhak diikuti user)
   const [

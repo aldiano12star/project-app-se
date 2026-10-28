@@ -4,7 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { Role, AttendanceStatus, TargetAudience } from "@prisma/client";
-import { getAllowedTargetAudiences, isUserEligibleForAudience } from "@/utils/audience";
+import {
+  getAllowedTargetAudiences,
+  isUserEligibleForAudience,
+  buildAudienceFilter,
+} from "@/utils/audience";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -109,52 +113,10 @@ export async function getActiveOrCreateMeetingSession(): Promise<
     });
 
     if (!activeMeeting || !activeMeeting.qrToken) {
-      // Ambil tahun ajaran aktif
-      let academicYear = await prisma.academicYear.findFirst({
-        where: { isCurrent: true },
-      });
-
-      if (!academicYear) {
-        academicYear = await prisma.academicYear.findFirst({
-          orderBy: { createdAt: "desc" },
-        });
-      }
-
-      if (!academicYear) {
-        return {
-          success: false,
-          message: "Tahun ajaran aktif belum dikonfigurasi dalam sistem.",
-        };
-      }
-
-      const generatedToken = `SE-MEET-${Date.now().toString(36).toUpperCase()}-${Math.random()
-        .toString(36)
-        .substring(2, 7)
-        .toUpperCase()}`;
-
-      const expiresAt = new Date(Date.now() + 6 * 60 * 60 * 1000); // 6 jam
-
-      const newMeeting = await prisma.meeting.create({
-        data: {
-          academicYearId: academicYear.id,
-          title: "Rapat Pleno & Presensi Organisasi",
-          targetAudience: TargetAudience.ALL,
-          qrToken: generatedToken,
-          qrExpiresAt: expiresAt,
-          date: new Date(),
-          createdById: user.id,
-        },
-        select: {
-          id: true,
-          title: true,
-          targetAudience: true,
-          qrToken: true,
-          qrExpiresAt: true,
-          createdAt: true,
-        },
-      });
-
-      activeMeeting = newMeeting;
+      return {
+        success: false,
+        message: "Tidak ada sesi rapat aktif yang ditemukan. Buat jadwal rapat terlebih dahulu.",
+      };
     }
 
     revalidatePath("/dashboard");
@@ -222,6 +184,9 @@ export async function recordAttendance(
       where: { id: cleanMeetingId },
       include: {
         academicYear: true,
+        targetUsers: {
+          select: { id: true },
+        },
       },
     });
 
@@ -231,6 +196,9 @@ export async function recordAttendance(
         where: { qrToken: cleanMeetingId },
         include: {
           academicYear: true,
+          targetUsers: {
+            select: { id: true },
+          },
         },
       });
     }
@@ -250,16 +218,20 @@ export async function recordAttendance(
       };
     }
 
-    // Validasi Hak Akses Privasi Angkatan (TargetAudience)
+    // Validasi Hak Akses Privasi Angkatan / Peserta Khusus (TargetAudience)
     const isEligible = isUserEligibleForAudience(
       meeting.targetAudience,
       user.role,
-      user.classGrade
+      user.classGrade,
+      user.id,
+      meeting.targetUsers
     );
 
     if (!isEligible) {
       const targetLabel =
-        meeting.targetAudience === TargetAudience.GEN_20
+        meeting.targetAudience === TargetAudience.CUSTOM
+          ? "peserta khusus terpilih"
+          : meeting.targetAudience === TargetAudience.GEN_20
           ? "Kelas 11 (Gen 20)"
           : meeting.targetAudience === TargetAudience.GEN_21
           ? "Kelas 10 (Gen 21)"
@@ -267,7 +239,7 @@ export async function recordAttendance(
 
       return {
         success: false,
-        message: `Rapat ini khusus untuk ${targetLabel}. Akun Anda tidak termasuk dalam sasaran rapat ini.`,
+        message: `Rapat ini dibatasi untuk ${targetLabel}. Akun Anda tidak termasuk dalam sasaran rapat ini.`,
       };
     }
 
@@ -309,11 +281,8 @@ export async function recordAttendance(
       });
     });
 
-    // Hitung persentase kehadiran user yang akurat berdasarkan rapat yang berhak mereka ikuti
-    const allowedAudiences = getAllowedTargetAudiences(user.role, user.classGrade);
-    const audienceFilter = allowedAudiences !== null
-      ? { targetAudience: { in: allowedAudiences } }
-      : {};
+    // Hitung persentase kehadiran user yang akurat berdasarkan rapat yang berhak mereka ikuti (termasuk CUSTOM)
+    const audienceFilter = buildAudienceFilter(user.role, user.classGrade, user.id);
 
     const [totalEligibleMeetings, userAttendedCount] = await Promise.all([
       prisma.meeting.count({

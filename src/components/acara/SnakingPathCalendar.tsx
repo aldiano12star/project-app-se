@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Flag,
   X,
+  QrCode,
 } from "lucide-react";
 import {
   getLocalDateString,
@@ -27,6 +28,9 @@ import {
   FULL_MONTHS,
   INDONESIAN_DAYS,
 } from "@/utils/eventStatus";
+import { Role, TargetAudience } from "@prisma/client";
+import { NestedMeetingData } from "./EventDetailCard";
+import { getTargetAudienceBadge } from "@/utils/audience";
 
 export interface CalendarEventItem {
   id: string;
@@ -34,11 +38,14 @@ export interface CalendarEventItem {
   description?: string | null;
   startDate: Date | string;
   endDate: Date | string;
+  targetAudience?: TargetAudience;
+  isIndependentMeeting?: boolean;
   driveUrl?: string | null;
   status?: "COMPLETED" | "ACTIVE" | "UPCOMING";
   sectionsCount?: number;
   completedTasksCount?: number;
   totalTasksCount?: number;
+  meetings?: NestedMeetingData[];
 }
 
 interface SnakingPathCalendarProps {
@@ -46,6 +53,8 @@ interface SnakingPathCalendarProps {
   currentMonthIndex: number; // 0 = Jan, 11 = Des
   onMonthChange: (newMonthIndex: number, newYear: number) => void;
   events: CalendarEventItem[];
+  currentUserRole?: Role;
+  onOpenQr?: (meetingId: string) => void;
   selectedDate?: Date | null;
   onSelectDate?: (date: Date, dayEvents: CalendarEventItem[]) => void;
   onSelectEvent?: (event: CalendarEventItem) => void;
@@ -73,7 +82,12 @@ export function SnakingPathCalendar({
   currentMonthIndex,
   onMonthChange,
   events,
+  currentUserRole,
+  onOpenQr,
 }: SnakingPathCalendarProps) {
+  const isOfficer =
+    currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
+
   // State untuk Month-Year Picker Modal
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [pickerYear, setPickerYear] = useState<number>(currentYear);
@@ -369,12 +383,21 @@ export function SnakingPathCalendar({
                 ? Math.round((completedTasks / totalTasks) * 100)
                 : 0;
 
+            const isIndependent = Boolean(ev.isIndependentMeeting);
+            const childMeetings = ev.meetings || [];
+            const isParentMegaCard = !isIndependent && (isMultiDay || childMeetings.length > 0);
+            const audienceBadge = ev.targetAudience
+              ? getTargetAudienceBadge(ev.targetAudience)
+              : null;
+
             // Diferensiasi Border & Background Kartu Kegiatan
             const cardStyleClass = isFinished
               ? "border border-emerald-500/25 bg-card"
+              : isParentMegaCard
+              ? "border-2 border-slate-300 dark:border-[#27344A] bg-card shadow-sm"
               : isMultiDay
               ? "border border-indigo-500/40 bg-card shadow-sm"
-              : "border border-cyan-500/40 bg-card shadow-sm";
+              : "border border-edge bg-card shadow-xs";
 
             const todayAccentClass = isTodayEvent ? "ring-2 ring-primary/30" : "";
 
@@ -387,8 +410,8 @@ export function SnakingPathCalendar({
                     <div className="h-5.5 w-5.5 rounded-full bg-emerald-500 text-slate-950 border border-emerald-400 flex items-center justify-center shadow-xs">
                       <Check className="h-3 w-3 stroke-3" />
                     </div>
-                  ) : isMultiDay ? (
-                    /* 2. Proker Multi-Hari: Lingkaran Ungu Indigo dengan Ikon Flag */
+                  ) : isParentMegaCard || isMultiDay ? (
+                    /* 2. Proker Multi-Hari / Mega-Card: Lingkaran Ungu Indigo dengan Ikon Flag */
                     <div
                       className={`relative h-5.5 w-5.5 rounded-full bg-indigo-600 text-white border-2 border-indigo-400 flex items-center justify-center shadow-md ${
                         isOngoing || isTodayEvent
@@ -399,7 +422,7 @@ export function SnakingPathCalendar({
                       <Flag className="h-2.5 w-2.5 fill-white" />
                     </div>
                   ) : (
-                    /* 3. Agenda Singkat: Lingkaran Biru/Cyan dengan Ikon Kilat Zap */
+                    /* 3. Agenda Singkat / Rapat Mandiri: Lingkaran Biru/Cyan dengan Ikon Kilat Zap */
                     <div
                       className={`relative h-5.5 w-5.5 rounded-full bg-cyan-500 text-slate-950 border-2 border-cyan-300 flex items-center justify-center shadow-md ${
                         isOngoing || isTodayEvent
@@ -414,11 +437,11 @@ export function SnakingPathCalendar({
 
                 {/* KONTEN KARTU KEGIATAN */}
                 <div
-                  className={`p-4 rounded-2xl transition-all space-y-3 ${cardStyleClass} ${todayAccentClass}`}
+                  className={`p-5 rounded-2xl transition-all space-y-3.5 ${cardStyleClass} ${todayAccentClass}`}
                 >
                   {/* Header Tag & Tanggal */}
                   <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
+                    <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1.5 text-xs">
                         {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
                         {isFinished ? (
@@ -438,25 +461,42 @@ export function SnakingPathCalendar({
                           </span>
                         )}
 
-                        {/* Tipe Acara: Indigo untuk Proker Multi-Hari, Amber untuk Agenda Singkat */}
+                        {/* Tipe Acara */}
                         <span
                           className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            isMultiDay
+                            isIndependent
+                              ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                              : isParentMegaCard || isMultiDay
                               ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                              : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                              : "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
                           }`}
                         >
-                          {isMultiDay ? (
+                          {isIndependent ? (
+                            <MessageSquare className="h-3 w-3" />
+                          ) : isParentMegaCard || isMultiDay ? (
                             <Layers className="h-3 w-3" />
                           ) : (
-                            <MessageSquare className="h-3 w-3" />
+                            <Zap className="h-3 w-3" />
                           )}
                           <span>
-                            {isMultiDay
+                            {isIndependent
+                              ? "Rapat Mandiri"
+                              : isParentMegaCard
+                              ? "Program Kerja Utama"
+                              : isMultiDay
                               ? "Proker / Multi-Hari"
                               : "Agenda Singkat"}
                           </span>
                         </span>
+
+                        {/* Privacy Target Audience Badge */}
+                        {audienceBadge && ev.targetAudience !== TargetAudience.ALL && (
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${audienceBadge.badgeClass}`}
+                          >
+                            {audienceBadge.label}
+                          </span>
+                        )}
 
                         {/* Penanda Insentif Poin Khusus Acara Hari Ini */}
                         {isTodayEvent && !isFinished && (
@@ -475,12 +515,18 @@ export function SnakingPathCalendar({
                         </span>
                       </div>
 
-                      <Link
-                        href={`/acara/${ev.id}`}
-                        className="text-sm font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
-                      >
-                        {ev.title}
-                      </Link>
+                      {isIndependent ? (
+                        <h3 className="text-base font-bold text-ink leading-snug">
+                          {ev.title}
+                        </h3>
+                      ) : (
+                        <Link
+                          href={`/acara/${ev.id}`}
+                          className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
+                        >
+                          {ev.title}
+                        </Link>
+                      )}
                     </div>
 
                     {ev.driveUrl && (
@@ -488,10 +534,10 @@ export function SnakingPathCalendar({
                         href={ev.driveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink-secondary border border-edge transition-colors shrink-0"
+                        className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary border border-edge transition-colors shrink-0"
                         title="Buka Google Drive"
                       >
-                        <Folder className="h-3.5 w-3.5" />
+                        <Folder className="h-4 w-4" />
                       </a>
                     )}
                   </div>
@@ -503,7 +549,7 @@ export function SnakingPathCalendar({
                     </p>
                   )}
 
-                  {/* Progress Bar Seksi / Tugas */}
+                  {/* Progress Bar Seksi / Tugas (Khusus Proker Induk) */}
                   {hasSections && totalTasks > 0 && (
                     <div className="space-y-1.5 pt-1">
                       <div className="flex items-center justify-between text-[11px] text-ink-muted">
@@ -524,14 +570,116 @@ export function SnakingPathCalendar({
                     </div>
                   )}
 
-                  {/* Tombol Aksi Buka Detail & Kepanitiaan */}
-                  <Link
-                    href={`/acara/${ev.id}`}
-                    className="w-full h-10 min-h-10 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-edge"
-                  >
-                    <span>Buka Detail &amp; Kepanitiaan</span>
-                    <ArrowRight className="h-3.5 w-3.5 text-ink-muted" />
-                  </Link>
+                  {/* ======================================================== */}
+                  {/* THE NESTED CHILDREN: Meetings inside Parent Mega-Card   */}
+                  {/* ======================================================== */}
+                  {childMeetings.length > 0 && (
+                    <div className="pt-2 space-y-2.5">
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-xs font-bold text-ink flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                          <span>Sesi Rapat Koordinasi ({childMeetings.length})</span>
+                        </span>
+                        <span className="text-[10px] text-ink-muted">
+                          Terkait Program Kerja Ini
+                        </span>
+                      </div>
+
+                      <div className="space-y-2">
+                        {childMeetings.map((meeting) => {
+                          const mDateStr = new Date(meeting.date).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }) + " WIB";
+                          const mBadge = meeting.targetAudience
+                            ? getTargetAudienceBadge(meeting.targetAudience)
+                            : null;
+
+                          return (
+                            <div
+                              key={meeting.id}
+                              className="bg-surface-container-low border border-edge/70 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                            >
+                              <div className="space-y-1 min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="text-xs font-bold text-ink truncate">
+                                    {meeting.title}
+                                  </span>
+                                  {mBadge && meeting.targetAudience !== TargetAudience.ALL && (
+                                    <span
+                                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${mBadge.badgeClass}`}
+                                    >
+                                      {mBadge.label}
+                                    </span>
+                                  )}
+                                  {meeting.isAttended ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                      <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                                      <span>Hadir</span>
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-muted border border-edge">
+                                      Belum Presensi
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[11px] text-ink-muted flex items-center gap-1.5">
+                                  <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
+                                  <span>{mDateStr}</span>
+                                </p>
+                                {meeting.notes && (
+                                  <p className="text-[11px] text-ink-secondary line-clamp-1 italic">
+                                    "{meeting.notes}"
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* TOMBOL QR RELOKASI: Akses Cepat Langsung di Timeline Utama */}
+                              {isOfficer && onOpenQr && (
+                                <button
+                                  type="button"
+                                  onClick={() => onOpenQr(meeting.id)}
+                                  className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                                  title="Tampilkan QR Presensi Sesi Rapat Ini"
+                                >
+                                  <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                                  <span>Tampilkan QR</span>
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tombol Aksi di Bawah Kartu */}
+                  {isIndependent ? (
+                    isOfficer && onOpenQr && (
+                      <div className="pt-1 flex items-center justify-end">
+                        <button
+                          type="button"
+                          onClick={() => onOpenQr(ev.id)}
+                          className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink text-xs font-bold inline-flex items-center justify-center gap-1.5 border border-edge transition-colors cursor-pointer"
+                        >
+                          <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                          <span>Tampilkan QR Presensi Rapat</span>
+                        </button>
+                      </div>
+                    )
+                  ) : (
+                    <div className="pt-1">
+                      <Link
+                        href={`/acara/${ev.id}`}
+                        className="w-full h-11 min-h-11 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-edge"
+                      >
+                        <span>Buka Workspace &amp; Kepanitiaan</span>
+                        <ArrowRight className="h-3.5 w-3.5 text-ink-muted" />
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             );

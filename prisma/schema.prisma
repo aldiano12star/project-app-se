@@ -25,6 +25,7 @@ enum TargetAudience {
   ALL
   GEN_20
   GEN_21
+  CUSTOM
 }
 
 enum BillingType {
@@ -148,6 +149,10 @@ model User {
   targetedBillings BillingEvent[]   @relation("BillingTargets")
   billingPayments  BillingPayment[] @relation("UserBillingPayments")
 
+  // Sasaran Target Audience Khusus (Event & Meeting)
+  targetedEvents   Event[]   @relation("EventTargetUsers")
+  targetedMeetings Meeting[] @relation("MeetingTargetUsers")
+
   @@index([email])
   @@index([role])
   @@index([status])
@@ -245,6 +250,7 @@ model Event {
   sections     EventSection[]
   budgetItems  EventBudgetItem[]
   meetings     Meeting[]
+  targetUsers  User[]            @relation("EventTargetUsers")
 
   @@index([academicYearId])
   @@index([startDate])
@@ -328,6 +334,7 @@ model Meeting {
   createdBy    User               @relation("MeetingCreator", fields: [createdById], references: [id])
   attendances  Attendance[]
   readLogs     NotulensiReadLog[]
+  targetUsers  User[]             @relation("MeetingTargetUsers")
 
   @@index([academicYearId])
   @@index([eventId])
