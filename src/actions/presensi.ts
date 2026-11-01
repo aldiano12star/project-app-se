@@ -269,7 +269,9 @@ export async function recordAttendance(
       };
     }
 
-    // Catat kehadiran dan tambahkan +10 XP ke poin bulanan dan total poin
+    // Catat kehadiran dan tambahkan +10 XP ke poin bulanan dan total poin (Kecuali KOLABORATOR)
+    const shouldAwardPoints = user.role !== Role.KOLABORATOR;
+
     await prisma.$transaction(async (tx) => {
       await tx.attendance.create({
         data: {
@@ -281,13 +283,15 @@ export async function recordAttendance(
         },
       });
 
-      await tx.user.update({
-        where: { id: user.id },
-        data: {
-          monthlyPoints: { increment: 10 },
-          totalPoints: { increment: 10 },
-        },
-      });
+      if (shouldAwardPoints) {
+        await tx.user.update({
+          where: { id: user.id },
+          data: {
+            monthlyPoints: { increment: 10 },
+            totalPoints: { increment: 10 },
+          },
+        });
+      }
     });
 
     // Hitung persentase kehadiran user yang akurat berdasarkan rapat yang berhak mereka ikuti (termasuk CUSTOM)

@@ -185,6 +185,13 @@ export function TreasurerPanel({
     if (billTargetScope === "GEN_20") targetUsers = allMembers.filter(isGen20);
     if (billTargetScope === "GEN_21") targetUsers = allMembers.filter(isGen21);
 
+    // Proteksi Finansial: KOLABORATOR hanya membayar tagihan insidental, kecualikan dari tagihan rutin
+    if (billCategory === "TAGIHAN_RUTIN") {
+      targetUsers = targetUsers.filter(
+        (u) => u.role !== Role.KOLABORATOR && (u.role as string) !== "KOLABORATOR"
+      );
+    }
+
     const userIds = targetUsers.map((u) => u.id);
 
     startTransition(async () => {

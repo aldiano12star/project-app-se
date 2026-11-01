@@ -6,6 +6,7 @@ import { Role, TargetAudience } from "@prisma/client";
  *
  * Aturan Otorisasi Privasi:
  * - Role ADMIN & OPERATOR: Akses penuh (return null = tanpa filter).
+ * - Role KOLABORATOR: Dilarang melihat agenda umum internal (return [] = hanya CUSTOM via invite).
  * - KELAS_10 (Gen 21): Berhak melihat ALL dan GEN_21.
  * - KELAS_11 (Gen 20): Berhak melihat ALL dan GEN_20.
  * - Sisanya (KELAS_12 / Tamu): Hanya berhak melihat ALL.
@@ -16,6 +17,11 @@ export function getAllowedTargetAudiences(
 ): TargetAudience[] | null {
   if (role === Role.ADMIN || role === Role.OPERATOR) {
     return null; // Tanpa pembatasan (akses tak terbatas)
+  }
+
+  // Kolaborator eksternal tidak memiliki hak akses ke acara umum internal organisasi
+  if (role === Role.KOLABORATOR) {
+    return [];
   }
 
   if (classGrade === "KELAS_10") {
@@ -40,6 +46,17 @@ export function buildAudienceFilter(
 ): Record<string, unknown> {
   if (role === Role.ADMIN || role === Role.OPERATOR) {
     return {}; // Tanpa batasan kueri untuk pengurus
+  }
+
+  // Khusus Kolaborator: HANYA agenda bertarget CUSTOM yang secara eksplisit mengundang user ini
+  if (role === Role.KOLABORATOR) {
+    if (!userId) {
+      return { id: "UNAUTHORIZED_NO_ACCESS" };
+    }
+    return {
+      targetAudience: TargetAudience.CUSTOM,
+      targetUsers: { some: { id: userId } },
+    };
   }
 
   const allowed = getAllowedTargetAudiences(role, classGrade);
@@ -71,6 +88,14 @@ export function isUserEligibleForAudience(
 ): boolean {
   if (role === Role.ADMIN || role === Role.OPERATOR) {
     return true;
+  }
+
+  // Khusus Kolaborator: Hanya sah jika targetAudience adalah CUSTOM dan userId terdaftar di targetUsers
+  if (role === Role.KOLABORATOR) {
+    if (targetAudience !== TargetAudience.CUSTOM || !userId || !targetUsers) {
+      return false;
+    }
+    return targetUsers.some((u) => u.id === userId);
   }
 
   if (targetAudience === TargetAudience.CUSTOM) {

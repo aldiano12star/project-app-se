@@ -43,6 +43,8 @@ function getRoleBadgeStyle(role: Role) {
       return "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/50";
     case Role.MEMBER:
       return "bg-sky-100 dark:bg-blue-950/60 text-sky-700 dark:text-blue-400 border-sky-300 dark:border-blue-500/50";
+    case Role.KOLABORATOR:
+      return "bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-500/50";
     case Role.GUEST:
       return "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700";
     default:
@@ -60,6 +62,8 @@ function getRoleLabel(role: Role) {
       return "Bendahara";
     case Role.MEMBER:
       return "Member";
+    case Role.KOLABORATOR:
+      return "Kolaborator";
     case Role.GUEST:
       return "Menunggu Verifikasi";
     default:
@@ -332,6 +336,7 @@ export function AdminUserManagementSection({
                         className="h-11 min-h-[44px] px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
                       >
                         <option value={Role.MEMBER}>Set: Member</option>
+                        <option value={Role.KOLABORATOR}>Set: Kolaborator</option>
                         <option value={Role.BENDAHARA}>Set: Bendahara</option>
                         <option value={Role.ADMIN}>Set: Admin</option>
                         {currentUserRole === Role.OPERATOR && (

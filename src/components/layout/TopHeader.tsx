@@ -75,14 +75,16 @@ export function TopHeader({ user }: TopHeaderProps) {
 
         {/* Action Widgets & User Profile Avatar */}
         <div className="flex items-center gap-3">
-          {/* XP Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-9">
-            <Zap className="h-4 w-4 fill-amber-500 text-amber-600 dark:fill-amber-400 dark:text-amber-500" />
-            <span className="text-xs font-semibold text-ink tabular-nums">
-              {points.toLocaleString("id-ID")}{" "}
-              <span className="text-[11px] font-normal text-ink-muted">XP</span>
-            </span>
-          </div>
+          {/* XP Pill: Khusus anggota reguler/pengurus, disembunyikan untuk KOLABORATOR */}
+          {role !== "KOLABORATOR" && (
+            <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-9">
+              <Zap className="h-4 w-4 fill-amber-500 text-amber-600 dark:fill-amber-400 dark:text-amber-500" />
+              <span className="text-xs font-semibold text-ink tabular-nums">
+                {points.toLocaleString("id-ID")}{" "}
+                <span className="text-[11px] font-normal text-ink-muted">XP</span>
+              </span>
+            </div>
+          )}
 
           {/* Avatar Profil dengan Role Ring (Pintu Navigasi Langsung ke /pengaturan) */}
           <Link
@@ -114,6 +116,8 @@ export function TopHeader({ user }: TopHeaderProps) {
                   ? "bg-emerald-500"
                   : role === "MEMBER"
                   ? "bg-sky-500"
+                  : role === "KOLABORATOR"
+                  ? "bg-teal-500"
                   : "bg-slate-500"
               }`}
               title={`Role: ${role}`}

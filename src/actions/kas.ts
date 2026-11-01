@@ -196,6 +196,26 @@ export async function createBulkBills(
         ? TransactionCategory.TAGIHAN_INSIDENTAL
         : TransactionCategory.TAGIHAN_RUTIN;
 
+    // Filter Proteksi: KOLABORATOR tidak boleh dikenakan TAGIHAN_RUTIN kas mingguan/bulanan
+    let targetUserIds = userIds;
+    if (targetCategory === TransactionCategory.TAGIHAN_RUTIN) {
+      const regularMembers = await prisma.user.findMany({
+        where: {
+          id: { in: userIds },
+          role: { not: Role.KOLABORATOR },
+        },
+        select: { id: true },
+      });
+      targetUserIds = regularMembers.map((u) => u.id);
+    }
+
+    if (targetUserIds.length === 0) {
+      return {
+        success: false,
+        message: "Tidak ada anggota reguler yang memenuhi syarat untuk tagihan rutin ini.",
+      };
+    }
+
     // Ambil tahun ajaran aktif jika ada
     const currentAcademicYear = await prisma.academicYear.findFirst({
       where: { isCurrent: true },
@@ -208,7 +228,7 @@ export async function createBulkBills(
     const affectedCount = await prisma.$transaction(async (tx) => {
       // 1. Buat LedgerTransaction untuk setiap user
       await tx.ledgerTransaction.createMany({
-        data: userIds.map((uid) => ({
+        data: targetUserIds.map((uid) => ({
           academicYearId: currentAcademicYear?.id || null,
           type: TransactionType.BILL_DEDUCTION,
           category: targetCategory,
@@ -222,13 +242,13 @@ export async function createBulkBills(
 
       // 2. Potong saldo kasBalance masing-masing user
       await tx.user.updateMany({
-        where: { id: { in: userIds } },
+        where: { id: { in: targetUserIds } },
         data: {
           kasBalance: { decrement: cleanAmount },
         },
       });
 
-      return userIds.length;
+      return targetUserIds.length;
     });
 
     revalidatePath("/kas");

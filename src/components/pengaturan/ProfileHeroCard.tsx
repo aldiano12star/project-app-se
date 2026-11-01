@@ -135,6 +135,8 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
         return "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/40";
       case Role.MEMBER:
         return "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 border-sky-300 dark:border-sky-500/40";
+      case Role.KOLABORATOR:
+        return "bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-500/40";
       case Role.GUEST:
         return "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700";
       default:
@@ -152,6 +154,8 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
         return "Bendahara";
       case Role.MEMBER:
         return "Member";
+      case Role.KOLABORATOR:
+        return "Kolaborator";
       case Role.GUEST:
         return "Menunggu Verifikasi";
       default:
@@ -212,6 +216,8 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
                 ? "bg-emerald-500"
                 : user.role === Role.MEMBER
                 ? "bg-sky-500"
+                : user.role === Role.KOLABORATOR
+                ? "bg-teal-500"
                 : "bg-slate-500"
             }`}
             title={`Status Role: ${user.role}`}

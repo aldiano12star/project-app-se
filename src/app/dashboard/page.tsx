@@ -219,6 +219,11 @@ export default async function DashboardPage() {
           label: "Member",
           style: "bg-blue-950/60 text-blue-400 border-blue-500/50",
         };
+      case Role.KOLABORATOR:
+        return {
+          label: "Kolaborator",
+          style: "bg-teal-950/60 text-teal-400 border-teal-500/50",
+        };
       case Role.GUEST:
         return {
           label: "Menunggu Verifikasi",

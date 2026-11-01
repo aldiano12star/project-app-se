@@ -71,7 +71,9 @@ export function DigitalWalletCard({
                 }`}
               />
               <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-                Dompet Kas Personal
+                {userRole === "KOLABORATOR"
+                  ? "Dompet Urunan Kolaborator"
+                  : "Dompet Kas Personal"}
               </span>
             </div>
 
@@ -85,12 +87,20 @@ export function DigitalWalletCard({
               {isDeficit ? (
                 <>
                   <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                  <span>Tunggakan Kas</span>
+                  <span>
+                    {userRole === "KOLABORATOR"
+                      ? "Tunggakan Urunan"
+                      : "Tunggakan Kas"}
+                  </span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-                  <span>Saldo Kas Aman</span>
+                  <span>
+                    {userRole === "KOLABORATOR"
+                      ? "Urunan Beres"
+                      : "Saldo Kas Aman"}
+                  </span>
                 </>
               )}
             </span>
