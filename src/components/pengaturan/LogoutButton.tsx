@@ -34,7 +34,7 @@ export function LogoutButton() {
       </button>
 
       <p className="text-center text-[10px] text-ink-muted mt-3 font-mono">
-        Saba ExploIT App v1.0.0-beta • Build 2026
+        &copy; 2026 Saba ExploIT • Powered by SE-Core v1.0.0
       </p>
     </section>
   );

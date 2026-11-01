@@ -20,7 +20,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low border border-edge ring-4 ring-primary/10 shadow-xs p-2.5">
           <Image
             src="/logo.png"
-            alt="Saba ExploIT Logo"
+            alt="SE-Core Logo"
             width={64}
             height={64}
             priority
@@ -29,7 +29,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <h1 className="text-2xl font-extrabold tracking-tight text-ink">
-          Saba ExploIT
+          SE-Core
         </h1>
 
         {/* Pill Badge */}
@@ -104,6 +104,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <p className="mt-4 text-xs text-ink-muted">
           Akses dibatasi khusus untuk anggota aktif dan pengurus resmi Saba ExploIT.
+        </p>
+
+        <p className="mt-3 pt-3 border-t border-edge/60 text-[11px] text-ink-muted/80 font-mono">
+          &copy; 2026 Saba ExploIT. Powered by SE-Core.
         </p>
       </div>
     </main>

@@ -65,6 +65,11 @@ export function AppShell({
           {children}
         </main>
 
+        {/* Footer Hak Cipta & Powered by */}
+        <footer className="py-4 px-4 text-center text-xs text-ink-muted/70 select-none">
+          <p>&copy; 2026 Saba ExploIT. Powered by SE-Core.</p>
+        </footer>
+
         {/* Navigasi Bawah (Hanya Mobile via md:hidden) */}
         {showNav && <BottomNav />}
       </div>

@@ -26,17 +26,27 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Saba ExploIT - Super App Organisasi",
-  description: "Portal Ekosistem & Komunitas IT SMAN 1 Bantul",
+  title: "SE-Core",
+  description: "Internal Organizational Core Utility & Portal",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "SabaExploIT",
+    title: "SE-Core",
   },
   icons: {
     icon: "/logo.png",
     apple: "/icons/apple-touch-icon.png",
+  },
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
   },
 };
 

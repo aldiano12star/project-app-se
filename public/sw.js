@@ -1,5 +1,5 @@
-// Saba ExploIT - Vanilla Service Worker (PWA Caching & Push Notifications)
-const CACHE_NAME = 'saba-exploit-v3';
+// SE-Core - Vanilla Service Worker (PWA Caching & Push Notifications)
+const CACHE_NAME = 'se-core-v1';
 const PRECACHE_URLS = ['/', '/offline.html'];
 
 // 1. Event Install: Precache halaman utama & fallback offline
@@ -93,7 +93,7 @@ self.addEventListener('push', (event) => {
   }
 
   const options = {
-    body: data.body || 'Ada pembaruan penting di Saba ExploIT',
+    body: data.body || 'Ada pembaruan penting di SE-Core',
     icon: '/icons/icon-192.png',
     badge: '/icons/icon-192.png',
     vibrate: [100, 50, 100],
@@ -103,7 +103,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Saba ExploIT', options)
+    self.registration.showNotification(data.title || 'SE-Core', options)
   );
 });
 

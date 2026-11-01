@@ -71,7 +71,7 @@ export function Sidebar({ user }: SidebarProps) {
             {!logoError ? (
               <Image
                 src="/logo.png"
-                alt="Saba ExploIT Logo"
+                alt="SE-Core Logo"
                 width={32}
                 height={32}
                 priority
@@ -84,7 +84,7 @@ export function Sidebar({ user }: SidebarProps) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-bold tracking-tight text-ink leading-tight truncate">
-              Saba ExploIT
+              SE-Core
             </span>
             <span className="text-[11px] text-ink-muted leading-tight mt-0.5 truncate">
               SMAN 1 Bantul

@@ -64,7 +64,7 @@ export function InstallPWAPrompt() {
     const handleAppInstalled = () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
-      console.log("[PWA] Aplikasi Saba ExploIT berhasil dipasang di perangkat.");
+      console.log("[PWA] Aplikasi SE-Core berhasil dipasang di perangkat.");
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -112,7 +112,7 @@ export function InstallPWAPrompt() {
     <>
       {/* Floating Installation Banner Card */}
       <aside
-        aria-label="Prompt Pasang Aplikasi Saba ExploIT"
+        aria-label="Prompt Pasang Aplikasi SE-Core"
         className="fixed bottom-20 inset-x-3 sm:inset-x-auto sm:right-6 sm:bottom-24 z-50 max-w-md mx-auto sm:mx-0 animate-in fade-in slide-in-from-bottom-4 duration-300"
       >
         <div className="relative rounded-2xl bg-[#090D16]/95 border border-[#23304B] p-4 text-slate-100 shadow-2xl backdrop-blur-xl ring-1 ring-white/10">
@@ -128,8 +128,8 @@ export function InstallPWAPrompt() {
 
           <div className="flex items-start gap-3.5 pr-6">
             {/* App Icon Badge */}
-            <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#E11D2A] to-[#991B1B] text-white font-black text-sm shadow-md ring-2 ring-[#E11D2A]/40">
-              SE
+            <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#E11D2A] to-[#991B1B] text-white font-black text-xs shadow-md ring-2 ring-[#E11D2A]/40">
+              SEC
               <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white">
                 <Sparkles className="w-2.5 h-2.5" />
               </span>
@@ -142,11 +142,11 @@ export function InstallPWAPrompt() {
                   Mobile App
                 </span>
                 <span className="text-[11px] text-slate-400 font-medium">
-                  Saba ExploIT
+                  SE-Core
                 </span>
               </div>
               <p className="text-xs font-semibold text-slate-100 leading-snug">
-                Pasang Aplikasi Saba ExploIT di HP untuk presensi QR instan &amp; layar penuh!
+                Pasang Aplikasi SE-Core di HP untuk akses portal Saba ExploIT!
               </p>
             </div>
           </div>

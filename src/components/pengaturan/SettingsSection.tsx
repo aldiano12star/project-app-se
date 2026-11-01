@@ -588,7 +588,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               <Code2 className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <div>
                 <span className="text-xs sm:text-sm font-semibold text-ink">
-                  Saba ExploIT App
+                  SE-Core App
                 </span>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                   v1.3.0 • Build 2026

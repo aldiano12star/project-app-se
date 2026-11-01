@@ -44,7 +44,7 @@ export function TopHeader({ user }: TopHeaderProps) {
               {!logoError ? (
                 <Image
                   src="/logo.png"
-                  alt="Saba ExploIT Logo"
+                  alt="SE-Core Logo"
                   width={32}
                   height={32}
                   priority
@@ -57,7 +57,7 @@ export function TopHeader({ user }: TopHeaderProps) {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-semibold tracking-tight text-ink leading-tight">
-                Saba ExploIT
+                SE-Core
               </span>
               <span className="text-xs text-ink-muted tracking-normal leading-tight mt-0.5">
                 SMAN 1 Bantul
@@ -69,7 +69,7 @@ export function TopHeader({ user }: TopHeaderProps) {
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-ink">Saba ExploIT Portal Organisasi</span>
             <span>&bull;</span>
-            <span className="text-ink-muted font-normal">Ekosistem Digital SMAN 1 Bantul</span>
+            <span className="text-ink-muted font-normal">Powered by SE-Core</span>
           </div>
         </div>
 

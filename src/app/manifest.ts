@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Saba ExploIT",
-    short_name: "SabaExploIT",
-    description: "Portal Ekosistem & Komunitas IT SMAN 1 Bantul",
+    name: "SE-Core",
+    short_name: "SE-Core",
+    description: "Internal Organizational Core Utility & Portal",
     start_url: "/",
     id: "/?source=pwa",
     display: "standalone",
@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     lang: "id",
     dir: "ltr",
-    categories: ["education", "productivity", "utilities"],
+    categories: ["productivity", "utilities"],
     icons: [
       {
         src: "/icons/icon-192.png",
@@ -47,7 +47,7 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "1080x1920",
         type: "image/png",
         form_factor: "narrow",
-        label: "Beranda Saba ExploIT Mobile",
+        label: "Beranda SE-Core Mobile",
       },
     ],
   };
