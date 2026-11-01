@@ -205,7 +205,7 @@ export function AcaraClientView({
           <button
             type="button"
             onClick={() => setIsAdminModalOpen(true)}
-            className="w-auto inline-flex items-center gap-1.5 h-11 min-h-11 px-4 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+            className="self-start sm:self-auto inline-flex w-auto items-center justify-center gap-1.5 h-11 min-h-11 px-5 py-2.5 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
           >
             <Plus className="h-4 w-4" />
             <span>Buat Agenda</span>

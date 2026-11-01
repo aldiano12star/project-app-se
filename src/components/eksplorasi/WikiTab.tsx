@@ -68,23 +68,23 @@ export function WikiTab({
           onClick={() =>
             setSelectedCategory(selectedCategory === "SURAT_LPJ" ? "ALL" : "SURAT_LPJ")
           }
-          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
+          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "SURAT_LPJ"
               ? "bg-rose-50 dark:bg-rose-950/40 border-rose-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <FileText className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <FileText className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
+            <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-ink truncate">1. Format Surat &amp; LPJ</h4>
-              <span className="text-[10px] font-mono text-rose-500 dark:text-rose-400 font-bold">
-                {categoryCounts.SURAT_LPJ}
-              </span>
+              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+                Template proposal, surat &amp; laporan
+              </p>
             </div>
-            <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
-              Template proposal, surat &amp; laporan
-            </p>
+          </div>
+          <div className="flex items-center justify-center min-w-[32px] h-8 px-2.5 rounded-full bg-surface-container-high border border-edge text-sm font-semibold text-slate-400 dark:text-slate-300 shrink-0">
+            {categoryCounts.SURAT_LPJ}
           </div>
         </button>
 
@@ -94,23 +94,23 @@ export function WikiTab({
           onClick={() =>
             setSelectedCategory(selectedCategory === "INFO_LOMBA" ? "ALL" : "INFO_LOMBA")
           }
-          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
+          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "INFO_LOMBA"
               ? "bg-amber-50 dark:bg-amber-950/40 border-amber-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <Trophy className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Trophy className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
+            <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-ink truncate">2. Tips &amp; Info Lomba</h4>
-              <span className="text-[10px] font-mono text-amber-500 dark:text-amber-400 font-bold">
-                {categoryCounts.INFO_LOMBA}
-              </span>
+              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+                Arsip kompetisi, silabus &amp; panduan juara
+              </p>
             </div>
-            <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
-              Arsip kompetisi, silabus &amp; panduan juara
-            </p>
+          </div>
+          <div className="flex items-center justify-center min-w-[32px] h-8 px-2.5 rounded-full bg-surface-container-high border border-edge text-sm font-semibold text-slate-400 dark:text-slate-300 shrink-0">
+            {categoryCounts.INFO_LOMBA}
           </div>
         </button>
 
@@ -120,23 +120,23 @@ export function WikiTab({
           onClick={() =>
             setSelectedCategory(selectedCategory === "MODUL_PELATIHAN" ? "ALL" : "MODUL_PELATIHAN")
           }
-          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
+          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "MODUL_PELATIHAN"
               ? "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <GraduationCap className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <GraduationCap className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
+            <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-ink truncate">3. Modul Pelatihan</h4>
-              <span className="text-[10px] font-mono text-indigo-500 dark:text-indigo-400 font-bold">
-                {categoryCounts.MODUL_PELATIHAN}
-              </span>
+              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+                Materi belajar internal 5 divisi
+              </p>
             </div>
-            <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
-              Materi belajar internal 5 divisi
-            </p>
+          </div>
+          <div className="flex items-center justify-center min-w-[32px] h-8 px-2.5 rounded-full bg-surface-container-high border border-edge text-sm font-semibold text-slate-400 dark:text-slate-300 shrink-0">
+            {categoryCounts.MODUL_PELATIHAN}
           </div>
         </button>
 
@@ -146,23 +146,23 @@ export function WikiTab({
           onClick={() =>
             setSelectedCategory(selectedCategory === "PANDUAN_TEKNIS" ? "ALL" : "PANDUAN_TEKNIS")
           }
-          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
+          className={`min-h-[72px] rounded-2xl p-3.5 flex items-center justify-between gap-3 transition-all cursor-pointer text-left active:scale-[0.98] border ${
             selectedCategory === "PANDUAN_TEKNIS"
               ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 shadow-sm"
               : "bg-card hover:bg-surface-container-low border-edge"
           }`}
         >
-          <Wrench className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Wrench className="h-6 w-6 text-slate-500 dark:text-slate-400 shrink-0" />
+            <div className="min-w-0 flex-1">
               <h4 className="text-xs font-bold text-ink truncate">4. Panduan Teknis &amp; Alat</h4>
-              <span className="text-[10px] font-mono text-emerald-500 dark:text-emerald-400 font-bold">
-                {categoryCounts.PANDUAN_TEKNIS}
-              </span>
+              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+                Petunjuk lab, proyektor &amp; alat kerja
+              </p>
             </div>
-            <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
-              Petunjuk lab, proyektor &amp; alat kerja
-            </p>
+          </div>
+          <div className="flex items-center justify-center min-w-[32px] h-8 px-2.5 rounded-full bg-surface-container-high border border-edge text-sm font-semibold text-slate-400 dark:text-slate-300 shrink-0">
+            {categoryCounts.PANDUAN_TEKNIS}
           </div>
         </button>
       </div>

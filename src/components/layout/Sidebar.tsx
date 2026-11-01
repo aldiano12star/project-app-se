@@ -124,7 +124,7 @@ export function Sidebar({ user }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50 font-semibold shadow-xs transition-all min-h-11"
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold shadow-xs transition-all min-h-11"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs leading-none tracking-tight">

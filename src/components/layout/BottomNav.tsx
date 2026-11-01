@@ -107,7 +107,7 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                className="bg-rose-500 text-white font-semibold dark:bg-rose-400/20 dark:text-rose-400 rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
+                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs font-semibold leading-none tracking-tight">
