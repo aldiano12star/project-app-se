@@ -5,7 +5,9 @@ import { AppShell } from "@/components/layout/AppShell";
 import { EksplorasiClientView } from "@/components/eksplorasi/EksplorasiClientView";
 import { ProjectCardData } from "@/components/eksplorasi/ProjectCard";
 import { WikiArticleData } from "@/components/eksplorasi/WikiCard";
+import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { MemberOption } from "@/actions/eksplorasi";
+import { Role } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +41,29 @@ export default async function EksplorasiPage() {
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");
+  }
+
+  // Gatekeeper: Akun GUEST (Menunggu Verifikasi) tidak dapat melihat karya atau perpustakaan digital
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-4 pt-1">
+          <section>
+            <h1 className="text-xl font-bold tracking-tight text-ink">
+              Hub Eksplorasi &amp; Karya
+            </h1>
+            <p className="text-xs text-ink-muted mt-0.5">
+              Etalase pameran portofolio dan repositori perpustakaan digital organisasi.
+            </p>
+          </section>
+
+          <GuestLockedView
+            title="Akses Eksplorasi Terbatas"
+            description="Koleksi proyek karya divisi dan arsip perpustakaan digital organisasi hanya dapat diakses oleh anggota resmi terverifikasi."
+          />
+        </div>
+      </AppShell>
+    );
   }
 
   let formattedProjects: ProjectCardData[] = [];

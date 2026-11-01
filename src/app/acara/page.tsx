@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
 import { AcaraClientView } from "@/components/acara/AcaraClientView";
 import { EventDetailData, NestedMeetingData } from "@/components/acara/EventDetailCard";
+import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { buildAudienceFilter } from "@/utils/audience";
 import { Role } from "@prisma/client";
 
@@ -59,6 +60,29 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");
+  }
+
+  // Gatekeeper: Akun GUEST (Menunggu Verifikasi) tidak dapat melihat kalender kegiatan
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-4 pt-1">
+          <section>
+            <h1 className="text-xl font-bold tracking-tight text-ink">
+              Modul Acara &amp; Kepanitiaan
+            </h1>
+            <p className="text-xs text-ink-muted mt-0.5">
+              Pusat kalender agenda, timeline sirkuit terpadu, dan koordinasi kepanitiaan organisasi.
+            </p>
+          </section>
+
+          <GuestLockedView
+            title="Akses Kalender Acara Terbatas"
+            description="Informasi kalender agenda, sesi rapat pleno, timeline sirkuit kegiatan, dan kepanitiaan hanya dapat diakses oleh anggota resmi terverifikasi."
+          />
+        </div>
+      </AppShell>
+    );
   }
 
   // Fallback jika belum ada tahun ajaran dengan isCurrent = true

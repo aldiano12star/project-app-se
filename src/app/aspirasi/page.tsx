@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AspirasiClientView } from "@/components/aspirasi/AspirasiClientView";
 import { FeedbackIssueData } from "@/components/aspirasi/FeedbackIssueCard";
 import { PollCardData } from "@/components/aspirasi/PollCard";
+import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { Role, FeedbackType } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,29 @@ export default async function AspirasiPage() {
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");
+  }
+
+  // Gatekeeper: Akun GUEST (Menunggu Verifikasi) tidak dapat melihat atau membuat aspirasi/polling
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-4 pt-1">
+          <section>
+            <h1 className="text-xl font-bold tracking-tight text-ink">
+              Kotak Suara &amp; Aspirasi
+            </h1>
+            <p className="text-xs text-ink-muted mt-0.5">
+              Ruang penyampaian aspirasi, polling keputusan, dan issue tracking organisasi.
+            </p>
+          </section>
+
+          <GuestLockedView
+            title="Akses Aspirasi Terbatas"
+            description="Kotak suara aspirasi, polling keputusan organisasi, dan issue tracker internal hanya dapat diakses oleh anggota resmi terverifikasi."
+          />
+        </div>
+      </AppShell>
+    );
   }
 
   const isOperator =

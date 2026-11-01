@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/layout/AppShell";
 import { PodiumTop3 } from "@/components/home/PodiumTop3";
 import { DashboardMeetingWidget } from "@/components/home/DashboardMeetingWidget";
+import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import Link from "next/link";
 import { Role, Division } from "@prisma/client";
 import { buildAudienceFilter } from "@/utils/audience";
@@ -65,6 +66,29 @@ export default async function DashboardPage() {
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");
+  }
+
+  // Gatekeeper: Akun GUEST (Menunggu Verifikasi) tidak dapat melihat konten internal
+  if (dbUser.role === Role.GUEST) {
+    return (
+      <AppShell user={dbUser}>
+        <div className="flex flex-col gap-6 pt-1">
+          <section className="space-y-1">
+            <h1 className="text-xl font-bold tracking-tight text-ink">
+              Halo, {dbUser.name} 👋
+            </h1>
+            <p className="text-xs text-ink-muted">
+              Selamat datang di portal organisasi Saba ExploIT (SE-Core).
+            </p>
+          </section>
+
+          <GuestLockedView
+            title="Akses Dashboard Terbatas"
+            description="Informasi aktivitas kegiatan, leaderboard podium, sesi presensi rapat, dan tugas kepanitiaan hanya dapat diakses oleh anggota resmi terverifikasi."
+          />
+        </div>
+      </AppShell>
+    );
   }
 
   // Tentukan batasan visibilitas target audience berdasarkan kelas/role dan custom target pengguna

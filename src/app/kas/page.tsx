@@ -6,8 +6,9 @@ import { Role, TransactionType, TransactionCategory } from "@prisma/client";
 import { DigitalWalletCard } from "@/components/kas/DigitalWalletCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
 import { TreasurerPanel } from "@/components/kas/TreasurerPanel";
+import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { calculateRealMoney } from "@/actions/kas";
-import { Wallet, Lock, Users } from "lucide-react";
+import { Wallet, Users } from "lucide-react";
 
 export default async function KasPage() {
   const session = await auth();
@@ -60,17 +61,10 @@ export default async function KasPage() {
             <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
           </section>
 
-          <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-            <Lock className="h-8 w-8 text-amber-500 mx-auto" />
-            <h3 className="text-sm font-bold text-ink">Akses Data Kas Terbatas</h3>
-            <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
-              Akun Anda saat ini berstatus{" "}
-              <span className="font-semibold text-ink">
-                Menunggu Verifikasi (GUEST)
-              </span>
-              . Informasi dompet kas dan buku besar organisasi hanya dapat diakses oleh anggota resmi terverifikasi.
-            </p>
-          </div>
+          <GuestLockedView
+            title="Akses Data Kas Terbatas"
+            description="Informasi dompet kas, riwayat pembayaran iuran, dan buku besar organisasi hanya dapat diakses oleh anggota resmi terverifikasi."
+          />
         </div>
       </AppShell>
     );

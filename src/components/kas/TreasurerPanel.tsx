@@ -111,6 +111,25 @@ export function TreasurerPanel({
     return cg.includes("10") || k.includes("10") || cg === "X" || k === "X";
   };
 
+  // Helper pemformatan identitas Kelas & Generasi yang komprehensif
+  const formatGradeGen = (m: TreasurerMemberData) => {
+    const genVal = m.gen ?? m.generationNumber;
+    const genStr = genVal ? `Gen ${genVal}` : null;
+    const classStr =
+      m.kelas
+        ? `Kelas ${m.kelas}`
+        : m.classGrade === "KELAS_10"
+        ? "Kelas 10"
+        : m.classGrade === "KELAS_11"
+        ? "Kelas 11"
+        : m.classGrade === "KELAS_12"
+        ? "Kelas 12"
+        : m.classGrade;
+
+    if (classStr && genStr) return `${classStr} (${genStr})`;
+    return classStr || genStr || "-";
+  };
+
   // Kalkulasi Statistik Finansial
   const totalArrears = allMembers
     .filter((m) => m.kasBalance < 0)
@@ -477,7 +496,7 @@ export function TreasurerPanel({
                         {m.name}
                       </td>
                       <td className="px-4 py-3 text-ink-secondary">
-                        {m.classGrade || "-"}
+                        {formatGradeGen(m)}
                       </td>
                       <td className="px-4 py-3 text-ink-secondary">
                         {m.mainDivision}
@@ -557,7 +576,7 @@ export function TreasurerPanel({
                 >
                   {allMembers.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.name} ({m.classGrade || "-"}) - Saldo:{" "}
+                      {m.name} ({formatGradeGen(m)}) - Saldo:{" "}
                       {m.kasBalance < 0 ? "-" : "+"}Rp{" "}
                       {Math.abs(m.kasBalance).toLocaleString("id-ID")}
                     </option>
