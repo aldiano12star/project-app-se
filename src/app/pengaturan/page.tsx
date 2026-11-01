@@ -37,6 +37,7 @@ export default async function PengaturanPage() {
       noWhatsapp: true,
       portfolioUrl: true,
       nisn: true,
+      kasBalance: true,
       isProfileCompleted: true,
       createdAt: true,
     },
@@ -53,29 +54,8 @@ export default async function PengaturanPage() {
   // Tentukan batasan target audience yang berhak diikuti oleh user ini (termasuk CUSTOM)
   const eligibleMeetingFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
 
-  // 2. Ambil riwayat kas mandiri dan rekap presensi (hanya rapat yang berhak diikuti user)
-  const [
-    kasPeriods,
-    userKasPayments,
-    attendedCount,
-    totalMeetings,
-  ] = await Promise.all([
-    prisma.kasPeriod.findMany({
-      orderBy: { periodNumber: "asc" },
-      select: {
-        id: true,
-        name: true,
-        amount: true,
-        periodNumber: true,
-      },
-    }),
-    prisma.kasPayment.findMany({
-      where: { userId: session.user.id },
-      select: {
-        kasPeriodId: true,
-        amountPaid: true,
-      },
-    }),
+  // 2. Ambil rekap presensi mandiri (hanya rapat yang berhak diikuti user)
+  const [attendedCount, totalMeetings] = await Promise.all([
     prisma.attendance.count({
       where: {
         userId: session.user.id,
@@ -111,18 +91,16 @@ export default async function PengaturanPage() {
     createdAt: u.createdAt.toISOString(),
   }));
 
-  // Hitung Status Tunggakan Kas Mandiri
-  const paidPeriodIds = new Set(userKasPayments.map((p) => p.kasPeriodId));
-  const unpaidPeriods = kasPeriods.filter((p) => !paidPeriodIds.has(p.id));
-  const totalArrears = unpaidPeriods.reduce((sum, p) => sum + p.amount, 0);
-  const isKasPaid = unpaidPeriods.length === 0;
+  // Hitung Status Tunggakan Kas Mandiri berdasarkan Saldo Dompet Kas (Fintech-grade)
+  const isKasPaid = dbUser.kasBalance >= 0;
+  const totalArrears = isKasPaid ? 0 : Math.abs(dbUser.kasBalance);
 
   const kasSummary: KasSummaryData = {
     isPaid: isKasPaid,
     totalArrears,
-    unpaidPeriodNames: unpaidPeriods.map((p) => p.name),
-    paidPeriodCount: userKasPayments.length,
-    totalPeriodCount: kasPeriods.length,
+    unpaidPeriodNames: isKasPaid ? [] : ["Tagihan Iuran Kas"],
+    paidPeriodCount: isKasPaid ? 1 : 0,
+    totalPeriodCount: 1,
   };
 
   // Hitung Rekapitulasi Presensi Mandiri

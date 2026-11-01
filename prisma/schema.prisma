@@ -28,11 +28,6 @@ enum TargetAudience {
   CUSTOM
 }
 
-enum BillingType {
-  KAS_RUTIN
-  URUNAN
-}
-
 enum FeedbackType {
   PUBLIC_ISSUE
   PRIVATE_ASPIRATION
@@ -61,22 +56,15 @@ enum Division {
 enum TransactionType {
   INCOME
   EXPENSE
+  BILL_DEDUCTION
 }
 
-enum IncomeCategory {
-  KAS_RUTIN
-  DANA_USAHA
-  DONASI
-  SPONSOR
-  SALDO_AWAL
-}
-
-enum ExpenseCategory {
-  ACARA
-  KONSUMSI
-  LOGISTIK
-  KESEKRETARIATAN
-  LAINNYA
+enum TransactionCategory {
+  SETORAN_MEMBER
+  TAGIHAN_RUTIN
+  TAGIHAN_INSIDENTAL
+  DANUS_SUKARELA
+  OPERASIONAL_ACARA
 }
 
 enum TaskStatus {
@@ -114,11 +102,11 @@ model User {
   gen                Int?
   divisi             String?
   isProfileCompleted Boolean      @default(false)
+  kasBalance         Int          @default(0) // Saldo Kas Dompet Digital Organisasi (Bisa Negatif jika Nunggak)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
-  kasPayments           KasPayment[]
-  createdTransactions   Transaction[]         @relation("TransactionCreator")
+  ledgerTransactions    LedgerTransaction[]   @relation("UserLedgerTransactions")
   assignedTasks         EventTask[]           @relation("TaskAssignee")
   verifiedTasks         EventTask[]           @relation("TaskVerifier")
   createdEvents         Event[]               @relation("EventCreator")
@@ -144,11 +132,6 @@ model User {
   feedbackIssues FeedbackIssue[] @relation("UserFeedbackIssues")
   upvotedIssues  FeedbackIssue[] @relation("IssueUpvotes")
 
-  // Sistem Tagihan Fleksibel (Kas Rutin & Urunan Insidental)
-  createdBillings  BillingEvent[]   @relation("BillingCreator")
-  targetedBillings BillingEvent[]   @relation("BillingTargets")
-  billingPayments  BillingPayment[] @relation("UserBillingPayments")
-
   // Sasaran Target Audience Khusus (Event & Meeting)
   targetedEvents   Event[]   @relation("EventTargetUsers")
   targetedMeetings Meeting[] @relation("MeetingTargetUsers")
@@ -168,67 +151,13 @@ model AcademicYear {
   endDate   DateTime
   createdAt DateTime @default(now())
 
-  kasPeriods    KasPeriod[]
-  transactions  Transaction[]
-  events        Event[]
-  meetings      Meeting[]
-  showcases     Showcase[]
-  polls         Poll[]
-  billingEvents BillingEvent[]
+  ledgerTransactions LedgerTransaction[]
+  events             Event[]
+  meetings           Meeting[]
+  showcases          Showcase[]
+  polls              Poll[]
 
   @@index([isCurrent])
-}
-
-model KasPeriod {
-  id             String   @id @default(cuid())
-  academicYearId String
-  periodNumber   Int
-  name           String // Contoh: "Kas Periode 1 - Agustus"
-  startDate      DateTime
-  endDate        DateTime
-  amount         Int      @default(5000)
-  createdAt      DateTime @default(now())
-
-  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  payments     KasPayment[]
-
-  @@unique([academicYearId, periodNumber])
-  @@index([academicYearId])
-}
-
-model KasPayment {
-  id          String   @id @default(cuid())
-  kasPeriodId String
-  userId      String
-  amountPaid  Int      @default(5000)
-  paidAt      DateTime @default(now())
-  recordedBy  String
-
-  kasPeriod KasPeriod @relation(fields: [kasPeriodId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([kasPeriodId, userId])
-  @@index([userId])
-}
-
-model Transaction {
-  id              String           @id @default(cuid())
-  academicYearId  String
-  type            TransactionType
-  incomeCategory  IncomeCategory?
-  expenseCategory ExpenseCategory?
-  amount          Int
-  description     String
-  proofUrl        String? // URL Google Drive Nota/Kuitansi
-  date            DateTime         @default(now())
-  createdById     String
-  createdAt       DateTime         @default(now())
-
-  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy    User         @relation("TransactionCreator", fields: [createdById], references: [id])
-
-  @@index([academicYearId])
-  @@index([type])
 }
 
 model Event {
@@ -607,49 +536,28 @@ model SeasonHallOfFame {
 }
 
 // ==========================================
-// MODUL SISTEM TAGIHAN FLEKSIBEL (KAS & URUNAN)
+// MODUL SISTEM KAS MODERN (WALLET & LEDGER)
 // ==========================================
 
-model BillingEvent {
-  id             String        @id @default(cuid())
-  title          String // Contoh: "Kas Rutin September" atau "Urunan Hoodie Divisi"
-  description    String?       @db.Text
-  type           BillingType   @default(KAS_RUTIN)
-  amount         Int // Nominal yang harus disetor per anggota (Rp)
-  dueDate        DateTime?
-  isActive       Boolean       @default(true)
-  createdById    String
-  createdBy      User          @relation("BillingCreator", fields: [createdById], references: [id])
+model LedgerTransaction {
+  id             String              @id @default(cuid())
   academicYearId String?
-  academicYear   AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
+  type           TransactionType // INCOME (Uang riil masuk), EXPENSE (Uang riil keluar), BILL_DEDUCTION (Pemotongan saldo, bukan uang riil)
+  category       TransactionCategory // SETORAN_MEMBER, TAGIHAN_RUTIN, TAGIHAN_INSIDENTAL, DANUS_SUKARELA, OPERASIONAL_ACARA
+  amount         Int // Nominal selalu positif (integer absolut)
+  description    String
+  date           DateTime            @default(now())
+  userId         String? // Ditautkan ke User untuk Setoran/Tagihan. Null untuk global Danus/Expense.
+  createdById    String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
 
-  // Target penerima tagihan khusus jika URUNAN (array anggota terpilih)
-  // Untuk KAS_RUTIN: berlaku global ke seluruh anggota aktif
-  targetUsers User[]           @relation("BillingTargets")
-  payments    BillingPayment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user         User?         @relation("UserLedgerTransactions", fields: [userId], references: [id], onDelete: SetNull)
+  academicYear AcademicYear? @relation(fields: [academicYearId], references: [id], onDelete: SetNull)
 
   @@index([type])
-  @@index([isActive])
-  @@index([academicYearId])
-}
-
-model BillingPayment {
-  id             String   @id @default(cuid())
-  billingEventId String
-  userId         String
-  amountPaid     Int
-  paidAt         DateTime @default(now())
-  recordedBy     String // Petugas bendahara / operator yang mencatat
-  proofUrl       String? // URL bukti transfer / nota
-  notes          String?  @db.Text
-
-  billingEvent BillingEvent @relation(fields: [billingEventId], references: [id], onDelete: Cascade)
-  user         User         @relation("UserBillingPayments", fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([billingEventId, userId])
-  @@index([billingEventId])
+  @@index([category])
   @@index([userId])
+  @@index([date])
+  @@index([academicYearId])
 }

@@ -5,30 +5,27 @@ import {
   Receipt,
   ArrowDownLeft,
   ArrowUpRight,
-  ExternalLink,
+  Filter,
+  Layers,
 } from "lucide-react";
-import {
-  TransactionType,
-  IncomeCategory,
-  ExpenseCategory,
-} from "@prisma/client";
+import { TransactionType, TransactionCategory } from "@prisma/client";
 
-export interface TransactionItem {
+export interface PublicLedgerItem {
   id: string;
   type: TransactionType;
-  incomeCategory: IncomeCategory | null;
-  expenseCategory: ExpenseCategory | null;
+  category: TransactionCategory;
   amount: number;
   description: string;
-  proofUrl: string | null;
   date: Date | string;
-  createdBy: {
+  user?: {
+    id: string;
     name: string;
-  };
+    classGrade?: string | null;
+  } | null;
 }
 
 interface PublicCashLedgerProps {
-  transactions: TransactionItem[];
+  transactions: PublicLedgerItem[];
   totalBalance: number;
   totalIncome: number;
   totalExpense: number;
@@ -44,119 +41,114 @@ export function PublicCashLedger({
     "ALL"
   );
 
-  const filteredTransactions = transactions.filter((t) => {
+  // Filter hanya transaksi uang riil (INCOME & EXPENSE) untuk buku kas publik
+  const realTransactions = transactions.filter(
+    (t) =>
+      t.type === TransactionType.INCOME || t.type === TransactionType.EXPENSE
+  );
+
+  const filteredTransactions = realTransactions.filter((t) => {
     if (filterType === "ALL") return true;
     return t.type === filterType;
   });
 
-  const formatCategory = (
-    type: TransactionType,
-    incomeCat: IncomeCategory | null,
-    expenseCat: ExpenseCategory | null
-  ) => {
-    if (type === TransactionType.INCOME && incomeCat) {
-      return incomeCat.replace("_", " ");
-    }
-    if (type === TransactionType.EXPENSE && expenseCat) {
-      return expenseCat.replace("_", " ");
-    }
-    return type === TransactionType.INCOME ? "Pemasukan" : "Pengeluaran";
-  };
-
   return (
-    <div className="card-solid p-4 sm:p-5 shadow-sm flex flex-col gap-3">
-      {/* Header & Total Saldo */}
-      <div className="flex items-center justify-between border-b border-edge pb-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 dark:bg-red-950/50 text-brand-primary border border-red-200 dark:border-red-900">
-            <Receipt className="h-4 w-4" />
-          </div>
+    <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
+      {/* Header & Filter Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-edge/60 pb-4">
+        <div className="flex items-center gap-2.5">
+          <Receipt className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
           <div>
-            <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
-              Buku Kas Publik Transparan
+            <h3 className="text-sm font-bold text-ink">
+              Buku Kas Publik Terpadu
             </h3>
-            <span className="text-[10px] text-ink-muted">
-              Laporan keluar masuk dana organisasi
-            </span>
+            <p className="text-[11px] text-ink-muted">
+              Transparansi aliran dana kas riil organisasi Saba ExploIT
+            </p>
           </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 bg-surface-container-low p-1 rounded-xl border border-edge/70 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setFilterType("ALL")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              filterType === "ALL"
+                ? "bg-card text-ink shadow-xs border border-edge"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            Semua ({realTransactions.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType("INCOME")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              filterType === "INCOME"
+                ? "bg-card text-emerald-600 dark:text-emerald-400 shadow-xs border border-edge"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            Pemasukan
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterType("EXPENSE")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+              filterType === "EXPENSE"
+                ? "bg-card text-rose-600 dark:text-rose-400 shadow-xs border border-edge"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            Pengeluaran
+          </button>
         </div>
       </div>
 
-      {/* 3 Kotak Ringkasan Finansial */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center">
-        <div className="rounded-lg bg-surface-container-low border border-edge p-2.5 flex flex-col">
-          <span className="text-[10px] font-medium text-ink-muted">
-            Saldo Kas
+      {/* Ringkasan Finansial Singkat */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+          <span className="text-[11px] text-ink-muted block font-medium">
+            Saldo Kas Riil Tersedia
           </span>
-          <span className="text-xs font-black text-ink mt-0.5 tabular-nums truncate">
+          <span className="text-base sm:text-lg font-extrabold text-ink">
             Rp {totalBalance.toLocaleString("id-ID")}
           </span>
         </div>
-        <div className="rounded-lg bg-surface-container-low border border-edge p-2.5 flex flex-col">
-          <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-            Pemasukan
+
+        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
+            Total Dana Masuk
           </span>
-          <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 mt-0.5 tabular-nums truncate">
-            +Rp {totalIncome.toLocaleString("id-ID")}
+          <span className="text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
+            + Rp {totalIncome.toLocaleString("id-ID")}
           </span>
         </div>
-        <div className="rounded-lg bg-surface-container-low border border-edge p-2.5 flex flex-col">
-          <span className="text-[10px] font-medium text-rose-600 dark:text-rose-400">
-            Pengeluaran
+
+        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+          <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
+            Total Pengeluaran
           </span>
-          <span className="text-xs font-black text-rose-600 dark:text-rose-400 mt-0.5 tabular-nums truncate">
-            -Rp {totalExpense.toLocaleString("id-ID")}
+          <span className="text-base sm:text-lg font-extrabold text-rose-600 dark:text-rose-400">
+            - Rp {totalExpense.toLocaleString("id-ID")}
           </span>
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-1.5 pt-1">
-        <button
-          type="button"
-          onClick={() => setFilterType("ALL")}
-          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-            filterType === "ALL"
-              ? "bg-ink text-surface"
-              : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-          }`}
-        >
-          Semua ({transactions.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilterType("INCOME")}
-          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-            filterType === "INCOME"
-              ? "bg-emerald-600 text-white"
-              : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-          }`}
-        >
-          Pemasukan
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilterType("EXPENSE")}
-          className={`min-h-9 px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-            filterType === "EXPENSE"
-              ? "bg-rose-600 text-white"
-              : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-          }`}
-        >
-          Pengeluaran
-        </button>
-      </div>
-
-      {/* Daftar Riwayat Transaksi */}
-      <div className="space-y-2 pt-1">
-        {filteredTransactions.length === 0 ? (
-          <div className="text-center py-6 text-xs text-ink-muted border border-dashed border-edge rounded-lg">
-            Belum ada catatan transaksi pada filter ini.
-          </div>
-        ) : (
-          filteredTransactions.map((tx) => {
-            const isIncome = tx.type === TransactionType.INCOME;
-            const dateStr = new Date(tx.date).toLocaleDateString("id-ID", {
+      {/* Daftar Transaksi */}
+      {filteredTransactions.length === 0 ? (
+        <div className="py-10 text-center space-y-2 bg-surface-container-low rounded-xl border border-edge/60">
+          <Layers className="h-6 w-6 text-slate-400 mx-auto" />
+          <p className="text-xs text-ink-muted">
+            Tidak ada transaksi kas pada filter ini.
+          </p>
+        </div>
+      ) : (
+        <div className="divide-y divide-edge/70">
+          {filteredTransactions.map((t) => {
+            const isIncome = t.type === TransactionType.INCOME;
+            const dateStr = new Date(t.date).toLocaleDateString("id-ID", {
               day: "numeric",
               month: "short",
               year: "numeric",
@@ -164,15 +156,15 @@ export function PublicCashLedger({
 
             return (
               <div
-                key={tx.id}
-                className="rounded-lg border border-edge bg-surface p-3 flex items-start justify-between gap-2"
+                key={t.id}
+                className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 first:pt-0 last:pb-0"
               >
-                <div className="flex items-start gap-2.5 min-w-0">
+                <div className="flex items-start gap-3 min-w-0">
                   <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg shrink-0 mt-0.5 ${
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border mt-0.5 sm:mt-0 ${
                       isIncome
-                        ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600"
-                        : "bg-rose-50 dark:bg-rose-950/50 text-rose-600"
+                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
+                        : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800"
                     }`}
                   >
                     {isIncome ? (
@@ -181,50 +173,48 @@ export function PublicCashLedger({
                       <ArrowUpRight className="h-4 w-4" />
                     )}
                   </div>
+
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-ink truncate leading-tight">
-                      {tx.description}
+                    <p className="text-xs font-semibold text-ink line-clamp-1">
+                      {t.description}
                     </p>
-                    <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[10px] text-ink-muted">
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted mt-0.5">
                       <span>{dateStr}</span>
                       <span>•</span>
-                      <span className="inline-block rounded bg-surface-container-high px-1.5 py-0.2 text-[9px] font-semibold text-ink-secondary">
-                        {formatCategory(
-                          tx.type,
-                          tx.incomeCategory,
-                          tx.expenseCategory
-                        )}
+                      <span className="px-1.5 py-0.2 rounded bg-surface-container text-ink-secondary font-medium">
+                        {t.category.replace(/_/g, " ")}
                       </span>
-                      {tx.proofUrl && (
-                        <a
-                          href={tx.proofUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-0.5 text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          <span>Nota</span>
-                          <ExternalLink className="h-2.5 w-2.5" />
-                        </a>
+                      {t.user && (
+                        <>
+                          <span>•</span>
+                          <span className="text-ink">
+                            Anggota: {t.user.name}
+                          </span>
+                        </>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <span
-                  className={`text-xs font-extrabold shrink-0 tabular-nums ${
-                    isIncome
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-rose-600 dark:text-rose-400"
-                  }`}
-                >
-                  {isIncome ? "+" : "-"}Rp{" "}
-                  {tx.amount.toLocaleString("id-ID")}
-                </span>
+                <div className="text-left sm:text-right shrink-0 pl-12 sm:pl-0">
+                  <span
+                    className={`text-xs font-bold ${
+                      isIncome
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {isIncome ? "+" : "-"} Rp {t.amount.toLocaleString("id-ID")}
+                  </span>
+                  <span className="block text-[10px] text-ink-muted mt-0.5">
+                    {isIncome ? "Kas Masuk" : "Kas Keluar"}
+                  </span>
+                </div>
               </div>
             );
-          })
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }

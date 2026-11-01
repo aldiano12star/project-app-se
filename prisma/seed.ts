@@ -10,7 +10,7 @@
  */
 
 import "dotenv/config";
-import { PrismaClient, Role, ClassGrade, Division, MemberStatus, TransactionType, IncomeCategory, ExpenseCategory } from "@prisma/client";
+import { PrismaClient, Role, ClassGrade, Division, MemberStatus, TransactionType, TransactionCategory } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import ws from "ws";
 import { neonConfig } from "@neondatabase/serverless";
@@ -242,45 +242,23 @@ async function main() {
   console.log(`✅ Verified/Created Academic Year: ${academicYear.name}`);
 
   // ============================================
-  // 5. Periode Kas Organisasi
+  // 5. Inisialisasi Transaksi Awal Buku Kas
   // ============================================
-  const period1 = await prisma.kasPeriod.upsert({
-    where: {
-      academicYearId_periodNumber: {
+  await prisma.ledgerTransaction.createMany({
+    data: [
+      {
         academicYearId: academicYear.id,
-        periodNumber: 1,
+        type: TransactionType.INCOME,
+        category: TransactionCategory.DANUS_SUKARELA,
+        amount: 250000,
+        description: "Saldo awal kas dan dana usaha organisasi",
+        date: new Date("2026-07-01"),
       },
-    },
-    update: {},
-    create: {
-      academicYearId: academicYear.id,
-      periodNumber: 1,
-      name: "Kas Periode 1 - Juli 2026",
-      startDate: new Date("2026-07-01"),
-      endDate: new Date("2026-07-31"),
-      amount: 5000,
-    },
+    ],
+    skipDuplicates: true,
   });
 
-  const period2 = await prisma.kasPeriod.upsert({
-    where: {
-      academicYearId_periodNumber: {
-        academicYearId: academicYear.id,
-        periodNumber: 2,
-      },
-    },
-    update: {},
-    create: {
-      academicYearId: academicYear.id,
-      periodNumber: 2,
-      name: "Kas Periode 2 - Agustus 2026",
-      startDate: new Date("2026-08-01"),
-      endDate: new Date("2026-08-31"),
-      amount: 5000,
-    },
-  });
-
-  console.log("✅ Verified/Created Kas Periods (Juli & Agustus 2026)");
+  console.log("✅ Initialized Ledger Transactions");
 
   console.log("\n🎉 Seeding selesai dengan sukses!");
   console.log("📋 Catatan Akun Login Default:");

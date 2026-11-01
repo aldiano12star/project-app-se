@@ -3,7 +3,8 @@
 import React, { useState, useTransition } from "react";
 import {
   Wallet,
-  ShieldAlert,
+  ArrowDownLeft,
+  ArrowUpRight,
   PlusCircle,
   Receipt,
   Search,
@@ -12,32 +13,20 @@ import {
   CreditCard,
   UserCheck,
   AlertCircle,
-  ExternalLink,
   Loader2,
-  Share2,
-  Minus,
-  Plus,
+  Users,
+  Layers,
+  Banknote,
+  Send,
 } from "lucide-react";
+import { Role, Division, TransactionCategory } from "@prisma/client";
 import {
-  generateWhatsAppLink,
-  formatKasBroadcastMessage,
-} from "@/utils/whatsappShare";
-import {
-  Role,
-  Division,
-  TransactionType,
-  IncomeCategory,
-  ExpenseCategory,
-} from "@prisma/client";
-import {
-  createCashTransaction,
-  toggleDuesPayment,
-  recordAdvancePayment,
-  createBillingEvent,
-  toggleUrunanPayment,
+  recordDeposit,
+  createBulkBills,
+  recordGlobalFinance,
 } from "@/actions/kas";
 
-export interface MemberKasData {
+export interface TreasurerMemberData {
   id: string;
   name: string;
   email: string;
@@ -48,1021 +37,578 @@ export interface MemberKasData {
   gen?: number | null;
   kelas?: string | null;
   mainDivision: Division;
-  payments: {
-    kasPeriodId: string;
-    amountPaid: number;
-    paidAt: Date | string;
-  }[];
-}
-
-/**
- * Helper pencocokan data angkatan Kelas 11 (Gen 20)
- * Memeriksa properti gen, generationNumber, kelas, atau classGrade
- */
-export function isGen20(m: MemberKasData): boolean {
-  const g = m.gen ?? m.generationNumber;
-  if (g === 20) return true;
-  const cg = (m.classGrade || "").toUpperCase().trim();
-  const k = (m.kelas || "").toUpperCase().trim();
-  return (
-    cg === "KELAS_11" ||
-    cg === "XI" ||
-    cg === "11" ||
-    cg.includes("11") ||
-    k === "XI" ||
-    k === "11" ||
-    k.includes("11")
-  );
-}
-
-/**
- * Helper pencocokan data angkatan Kelas 10 (Gen 21)
- * Memeriksa properti gen, generationNumber, kelas, atau classGrade
- */
-export function isGen21(m: MemberKasData): boolean {
-  const g = m.gen ?? m.generationNumber;
-  if (g === 21) return true;
-  const cg = (m.classGrade || "").toUpperCase().trim();
-  const k = (m.kelas || "").toUpperCase().trim();
-  return (
-    cg === "KELAS_10" ||
-    cg === "X" ||
-    cg === "10" ||
-    cg.includes("10") ||
-    k === "X" ||
-    k === "10" ||
-    k.includes("10")
-  );
-}
-
-export interface KasPeriodData {
-  id: string;
-  periodNumber: number;
-  name: string;
-  amount: number;
-}
-
-export interface ActiveUrunanEvent {
-  id: string;
-  title: string;
-  amount: number;
-  dueDate?: Date | string | null;
-  targetUsers: { id: string }[];
-  payments: {
-    id: string;
-    userId: string;
-    amountPaid: number;
-    paidAt: Date | string;
-  }[];
+  kasBalance: number;
 }
 
 interface TreasurerPanelProps {
   currentUserRole: Role;
-  allMembers: MemberKasData[];
-  periods: KasPeriodData[];
-  activeUrunanEvents?: ActiveUrunanEvent[];
+  allMembers: TreasurerMemberData[];
+  realBalance: number;
+  totalIncome: number;
+  totalExpense: number;
 }
 
 export function TreasurerPanel({
   currentUserRole,
   allMembers,
-  periods,
-  activeUrunanEvents = [],
+  realBalance,
+  totalIncome,
+  totalExpense,
 }: TreasurerPanelProps) {
+  const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterClass, setFilterClass] = useState<
-    "ALL" | "KELAS_10" | "KELAS_11" | "NUNGGAK"
-  >("ALL");
+  const [gradeFilter, setGradeFilter] = useState<"ALL" | "GEN_20" | "GEN_21">("ALL");
 
-  // Modal states
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [isAdvanceModalOpen, setIsAdvanceModalOpen] = useState(false);
-  const [isBillingModalOpen, setIsBillingModalOpen] = useState(false);
-  const [feedbackMsg, setFeedbackMsg] = useState<{
-    text: string;
+  // State Modals
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isBulkBillModalOpen, setIsBulkBillModalOpen] = useState(false);
+  const [isGlobalFinanceModalOpen, setIsGlobalFinanceModalOpen] = useState(false);
+
+  // Form State: Setoran Anggota
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [depositAmount, setDepositAmount] = useState<string>("");
+  const [depositDesc, setDepositDesc] = useState<string>("");
+
+  // Form State: Tagihan Serentak
+  const [billTargetScope, setBillTargetScope] = useState<"ALL" | "GEN_20" | "GEN_21">("ALL");
+  const [billCategory, setBillCategory] = useState<"TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL">("TAGIHAN_RUTIN");
+  const [billAmount, setBillAmount] = useState<string>("5000");
+  const [billTitle, setBillTitle] = useState<string>("");
+
+  // Form State: Finansial Bebas
+  const [globalType, setGlobalType] = useState<"INCOME" | "EXPENSE">("INCOME");
+  const [globalCategory, setGlobalCategory] = useState<TransactionCategory>(
+    TransactionCategory.DANUS_SUKARELA
+  );
+  const [globalAmount, setGlobalAmount] = useState<string>("");
+  const [globalDesc, setGlobalDesc] = useState<string>("");
+
+  // Feedback Notification
+  const [notification, setNotification] = useState<{
     type: "success" | "error";
+    message: string;
   } | null>(null);
 
-  const [isPending, startTransition] = useTransition();
-
-  // Form states for new billing (Kas Rutin / Urunan Insidental)
-  const [billingType, setBillingType] = useState<"KAS_RUTIN" | "URUNAN">(
-    "KAS_RUTIN"
-  );
-  const [billingTitle, setBillingTitle] = useState("");
-  const [billingAmount, setBillingAmount] = useState("");
-  const [billingDescription, setBillingDescription] = useState("");
-  const [billingDueDate, setBillingDueDate] = useState("");
-  const [selectedBillingMemberIds, setSelectedBillingMemberIds] = useState<
-    string[]
-  >([]);
-  const [billingMemberSearch, setBillingMemberSearch] = useState("");
-
-  // Form states for new transaction
-  const [txType, setTxType] = useState<TransactionType>(TransactionType.INCOME);
-  const [txAmount, setTxAmount] = useState<string>("");
-  const [txDescription, setTxDescription] = useState<string>("");
-  const [txIncomeCategory, setTxIncomeCategory] = useState<IncomeCategory>(
-    IncomeCategory.KAS_RUTIN
-  );
-  const [txExpenseCategory, setTxExpenseCategory] = useState<ExpenseCategory>(
-    ExpenseCategory.ACARA
-  );
-  const [txProofUrl, setTxProofUrl] = useState<string>("");
-
-  // Form states for advance payment
-  const [advanceDepositType, setAdvanceDepositType] = useState<
-    "KAS_RUTIN" | "URUNAN"
-  >("KAS_RUTIN");
-  const [advanceUserId, setAdvanceUserId] = useState<string>(
-    allMembers[0]?.id || ""
-  );
-  const [advancePeriodsCount, setAdvancePeriodsCount] = useState<number>(1);
-  const [selectedAdvanceUrunanId, setSelectedAdvanceUrunanId] =
-    useState<string>("");
-
-  // Filter urunan aktif yang menargetkan anggota terpilih dan belum dibayar
-  const unpaidUrunansForSelectedMember = activeUrunanEvents.filter(
-    (event) =>
-      event.targetUsers.some((u) => u.id === advanceUserId) &&
-      !event.payments.some((p) => p.userId === advanceUserId)
-  );
-
-  const currentSelectedUrunanId = unpaidUrunansForSelectedMember.some(
-    (u) => u.id === selectedAdvanceUrunanId
-  )
-    ? selectedAdvanceUrunanId
-    : unpaidUrunansForSelectedMember[0]?.id || "";
-
-  const selectedUrunan = unpaidUrunansForSelectedMember.find(
-    (u) => u.id === currentSelectedUrunanId
-  );
-
-  const showToast = (text: string, type: "success" | "error" = "success") => {
-    setFeedbackMsg({ text, type });
-    setTimeout(() => setFeedbackMsg(null), 3500);
+  const showNotification = (type: "success" | "error", message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
   };
 
-  // Filter members dengan logika angkatan / kelas yang tahan banting
+  // Helper pencocokan generasi / angkatan
+  const isGen20 = (m: TreasurerMemberData) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 20) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return cg.includes("11") || k.includes("11") || cg === "XI" || k === "XI";
+  };
+
+  const isGen21 = (m: TreasurerMemberData) => {
+    const g = m.gen ?? m.generationNumber;
+    if (g === 21) return true;
+    const cg = (m.classGrade || "").toUpperCase().trim();
+    const k = (m.kelas || "").toUpperCase().trim();
+    return cg.includes("10") || k.includes("10") || cg === "X" || k === "X";
+  };
+
+  // Kalkulasi Statistik Finansial
+  const totalArrears = allMembers
+    .filter((m) => m.kasBalance < 0)
+    .reduce((sum, m) => sum + Math.abs(m.kasBalance), 0);
+
+  const totalPositiveBalance = allMembers
+    .filter((m) => m.kasBalance > 0)
+    .reduce((sum, m) => sum + m.kasBalance, 0);
+
+  const delinquentCount = allMembers.filter((m) => m.kasBalance < 0).length;
+
+  // Filter Anggota untuk Matriks
   const filteredMembers = allMembers.filter((m) => {
     const matchesSearch =
       m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.mainDivision.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.email.toLowerCase().includes(searchQuery.toLowerCase());
+      (m.classGrade || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.mainDivision.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (!matchesSearch) return false;
 
-    const paidPeriodIds = new Set(m.payments.map((p) => p.kasPeriodId));
-    const isKasNunggak = periods.some((p) => !paidPeriodIds.has(p.id));
-
-    const targetedUrunans = activeUrunanEvents.filter((event) =>
-      event.targetUsers.some((u) => u.id === m.id)
-    );
-    const isUrunanNunggak = targetedUrunans.some(
-      (event) => !event.payments.some((p) => p.userId === m.id)
-    );
-    const isNunggak = isKasNunggak || isUrunanNunggak;
-
-    if (filterClass === "ALL") return true;
-    if (filterClass === "KELAS_10") return isGen21(m);
-    if (filterClass === "KELAS_11") return isGen20(m);
-    if (filterClass === "NUNGGAK") return isNunggak;
-
+    if (gradeFilter === "GEN_20") return isGen20(m);
+    if (gradeFilter === "GEN_21") return isGen21(m);
     return true;
   });
 
-  const handleToggleSelectMember = (id: string) => {
-    setSelectedBillingMemberIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  // Aksi Cepat Setoran untuk User Tertentu
+  const handleQuickDeposit = (user: TreasurerMemberData) => {
+    setSelectedUserId(user.id);
+    setDepositAmount(user.kasBalance < 0 ? String(Math.abs(user.kasBalance)) : "5000");
+    setDepositDesc(`Setoran kas dari ${user.name}`);
+    setIsDepositModalOpen(true);
   };
 
-  const handleSelectAllMembers = () => {
-    setSelectedBillingMemberIds(allMembers.map((m) => m.id));
-  };
-
-  const handleDeselectAllMembers = () => {
-    setSelectedBillingMemberIds([]);
-  };
-
-  const handleCreateBilling = (e: React.FormEvent) => {
+  // Submit Handler: Setoran Kas
+  const handleSubmitDeposit = (e: React.FormEvent) => {
     e.preventDefault();
-    const amountNum = parseFloat(billingAmount);
+    const amountNum = parseInt(depositAmount, 10);
     if (isNaN(amountNum) || amountNum <= 0) {
-      showToast("Nominal tagihan harus lebih dari Rp 0.", "error");
-      return;
-    }
-
-    if (!billingTitle.trim()) {
-      showToast("Judul tagihan wajib diisi.", "error");
-      return;
-    }
-
-    if (billingType === "URUNAN" && selectedBillingMemberIds.length === 0) {
-      showToast(
-        "Pilih minimal 1 anggota untuk tagihan urunan insidental.",
-        "error"
-      );
+      showNotification("error", "Nominal setoran harus lebih dari Rp 0.");
       return;
     }
 
     startTransition(async () => {
-      const res = await createBillingEvent({
-        title: billingTitle.trim(),
-        description: billingDescription.trim() || undefined,
-        type: billingType,
-        amount: amountNum,
-        dueDate: billingDueDate || undefined,
-        targetUserIds:
-          billingType === "URUNAN" ? selectedBillingMemberIds : undefined,
-      });
-
+      const res = await recordDeposit(selectedUserId, amountNum, depositDesc);
       if (res.success) {
-        showToast(res.message, "success");
-        setIsBillingModalOpen(false);
-        setBillingTitle("");
-        setBillingAmount("");
-        setBillingDescription("");
-        setBillingDueDate("");
-        setSelectedBillingMemberIds([]);
+        showNotification("success", res.message);
+        setIsDepositModalOpen(false);
+        setDepositAmount("");
+        setDepositDesc("");
       } else {
-        showToast(res.message, "error");
+        showNotification("error", res.message);
       }
     });
   };
 
-  const handleTogglePayment = (userId: string, periodId: string) => {
-    startTransition(async () => {
-      const res = await toggleDuesPayment(userId, periodId);
-      if (res.success) {
-        showToast(res.message, "success");
-      } else {
-        showToast(res.message, "error");
-      }
-    });
-  };
-
-  const handleToggleUrunan = (userId: string, eventId: string) => {
-    startTransition(async () => {
-      const res = await toggleUrunanPayment(userId, eventId);
-      if (res.success) {
-        showToast(res.message, "success");
-      } else {
-        showToast(res.message, "error");
-      }
-    });
-  };
-
-  const handleCreateTransaction = (e: React.FormEvent) => {
+  // Submit Handler: Tagihan Serentak
+  const handleSubmitBulkBill = (e: React.FormEvent) => {
     e.preventDefault();
-    const amountNum = parseFloat(txAmount);
+    const amountNum = parseInt(billAmount, 10);
     if (isNaN(amountNum) || amountNum <= 0) {
-      showToast("Nominal transaksi tidak valid.", "error");
+      showNotification("error", "Nominal tagihan harus lebih dari Rp 0.");
       return;
     }
 
-    startTransition(async () => {
-      const res = await createCashTransaction({
-        type: txType,
-        amount: amountNum,
-        description: txDescription,
-        incomeCategory:
-          txType === TransactionType.INCOME ? txIncomeCategory : undefined,
-        expenseCategory:
-          txType === TransactionType.EXPENSE ? txExpenseCategory : undefined,
-        proofUrl: txProofUrl || undefined,
-      });
+    if (!billTitle.trim()) {
+      showNotification("error", "Judul/keterangan tagihan wajib diisi.");
+      return;
+    }
 
+    // Tentukan user target berdasarkan scope
+    let targetUsers = allMembers;
+    if (billTargetScope === "GEN_20") targetUsers = allMembers.filter(isGen20);
+    if (billTargetScope === "GEN_21") targetUsers = allMembers.filter(isGen21);
+
+    const userIds = targetUsers.map((u) => u.id);
+
+    startTransition(async () => {
+      const res = await createBulkBills(
+        userIds,
+        amountNum,
+        billTitle,
+        billCategory
+      );
       if (res.success) {
-        showToast(res.message, "success");
-        setIsTxModalOpen(false);
-        setTxAmount("");
-        setTxDescription("");
-        setTxProofUrl("");
+        showNotification("success", res.message);
+        setIsBulkBillModalOpen(false);
+        setBillTitle("");
       } else {
-        showToast(res.message, "error");
+        showNotification("error", res.message);
       }
     });
   };
 
-  const handleRecordAdvance = (e: React.FormEvent) => {
+  // Submit Handler: Finansial Bebas
+  const handleSubmitGlobalFinance = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!advanceUserId) {
-      showToast("Pilih anggota terlebih dahulu.", "error");
+    const amountNum = parseInt(globalAmount, 10);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      showNotification("error", "Nominal harus lebih dari Rp 0.");
       return;
     }
 
-    const selectedMember = allMembers.find((m) => m.id === advanceUserId);
-    if (!selectedMember) return;
-
-    if (advanceDepositType === "KAS_RUTIN") {
-      const paidPeriodIds = new Set(
-        selectedMember.payments.map((p) => p.kasPeriodId)
-      );
-      // Cari periode yang belum lunas sebanyak advancePeriodsCount
-      const unpaidPeriods = periods.filter((p) => !paidPeriodIds.has(p.id));
-      const targetPeriodIds = unpaidPeriods
-        .slice(0, advancePeriodsCount)
-        .map((p) => p.id);
-
-      if (targetPeriodIds.length === 0) {
-        showToast("Semua periode kas untuk anggota ini sudah lunas!", "error");
-        return;
-      }
-
-      startTransition(async () => {
-        const res = await recordAdvancePayment(advanceUserId, targetPeriodIds);
-        if (res.success) {
-          showToast(res.message, "success");
-          setIsAdvanceModalOpen(false);
-        } else {
-          showToast(res.message, "error");
-        }
-      });
-    } else {
-      // Setoran Urunan Insidental
-      if (!currentSelectedUrunanId) {
-        showToast("Pilih tagihan urunan yang ingin disetor.", "error");
-        return;
-      }
-
-      startTransition(async () => {
-        const res = await toggleUrunanPayment(
-          advanceUserId,
-          currentSelectedUrunanId
-        );
-        if (res.success) {
-          showToast(res.message, "success");
-          setIsAdvanceModalOpen(false);
-          setSelectedAdvanceUrunanId("");
-        } else {
-          showToast(res.message, "error");
-        }
-      });
+    if (!globalDesc.trim()) {
+      showNotification("error", "Keterangan transaksi wajib diisi.");
+      return;
     }
-  };
 
-  const handleBroadcastKasWA = () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const activePeriod = periods[periods.length - 1];
-    const message = formatKasBroadcastMessage(
-      {
-        amountPerPeriod: activePeriod?.amount || 5000,
-        periodName: activePeriod?.name || "Pekan Ini",
-      },
-      origin
-    );
-
-    const waLink = generateWhatsAppLink("", message);
-    window.open(waLink, "_blank", "noopener,noreferrer");
+    startTransition(async () => {
+      const res = await recordGlobalFinance(
+        globalType,
+        globalCategory,
+        amountNum,
+        globalDesc
+      );
+      if (res.success) {
+        showNotification("success", res.message);
+        setIsGlobalFinanceModalOpen(false);
+        setGlobalAmount("");
+        setGlobalDesc("");
+      } else {
+        showNotification("error", res.message);
+      }
+    });
   };
 
   return (
-    <div className="card-solid bg-card border-edge p-4 sm:p-5 shadow-sm flex flex-col gap-4">
-      {/* Toast Feedback */}
-      {feedbackMsg && (
+    <div className="space-y-4">
+      {/* ── NOTIFICATION TOAST ─────────────────────────────────────────── */}
+      {notification && (
         <div
-          className={`fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2 ${
-            feedbackMsg.type === "success"
-              ? "bg-ink text-surface"
-              : "bg-danger text-white"
+          className={`p-4 rounded-xl border text-xs font-semibold flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 ${
+            notification.type === "success"
+              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800"
           }`}
         >
-          {feedbackMsg.type === "success" ? (
-            <Check className="h-4 w-4 text-emerald-400" />
-          ) : (
-            <AlertCircle className="h-4 w-4 text-white" />
-          )}
-          <span>{feedbackMsg.text}</span>
+          <span>{notification.message}</span>
+          <button
+            type="button"
+            onClick={() => setNotification(null)}
+            className="p-1 hover:opacity-75 cursor-pointer shrink-0"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       )}
 
-      {/* Header Panel Bendahara */}
-      <div className="flex items-center justify-between border-b border-edge pb-3">
-        <div className="flex items-center gap-2.5">
-          <Wallet className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
-          <div>
-            <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
-              Panel Pembukuan Bendahara
-            </h3>
-            <span className="text-[10px] text-ink-muted">
-              Akses Pengurus: {currentUserRole}
+      {/* ── 1. GLOBAL DASHBOARD STATS ──────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Card 1: Total Uang Kas Riil */}
+        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-ink-muted uppercase tracking-wider">
+              Total Uang Kas Riil
             </span>
+            <Banknote className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+          </div>
+          <div className="pt-1">
+            <h3 className="text-2xl font-extrabold text-ink">
+              Rp {realBalance.toLocaleString("id-ID")}
+            </h3>
+            <p className="text-[11px] text-ink-muted mt-0.5">
+              Fisik Kas Organisasi (Income - Expense)
+            </p>
+          </div>
+        </div>
+
+        {/* Card 2: Total Tunggakan Anggota */}
+        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+              Total Tunggakan Anggota
+            </span>
+            <AlertCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+          </div>
+          <div className="pt-1">
+            <h3 className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+              - Rp {totalArrears.toLocaleString("id-ID")}
+            </h3>
+            <p className="text-[11px] text-ink-muted mt-0.5">
+              Dari {delinquentCount} anggota bersaldo negatif
+            </p>
+          </div>
+        </div>
+
+        {/* Card 3: Total Saldo Mengendap */}
+        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+              Simpanan / Bayar di Muka
+            </span>
+            <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+          </div>
+          <div className="pt-1">
+            <h3 className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+              + Rp {totalPositiveBalance.toLocaleString("id-ID")}
+            </h3>
+            <p className="text-[11px] text-ink-muted mt-0.5">
+              Saldo titipan anggota siap potong tagihan
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Tombol Aksi Cepat Bendahara */}
-      <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={() => setIsBillingModalOpen(true)}
-          className="w-full min-h-[44px] bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-        >
-          <PlusCircle className="h-4 w-4" />
-          <span>Buat Tagihan</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={handleBroadcastKasWA}
-          className="w-full min-h-[44px] bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-        >
-          <Share2 className="h-4 w-4" />
-          <span>Broadcast Tagihan via WA</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsAdvanceModalOpen(true)}
-          className="w-full min-h-[44px] bg-primary hover:bg-primary-hover active:scale-[0.99] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-        >
-          <CreditCard className="h-4 w-4" />
-          <span>Catat Setoran Kas &amp; Urunan</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsTxModalOpen(true)}
-          className="w-full min-h-[44px] bg-surface-container-low hover:bg-surface-container border border-edge text-ink rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-        >
-          <Receipt className="h-4 w-4 text-primary" />
-          <span>Catat Mutasi Kas</span>
-        </button>
-      </div>
-
-      {/* Pencarian Anggota & Filter Tabs */}
-      <div className="space-y-2 pt-1">
-        <div className="relative w-full">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-ink-muted">
-            <Search className="h-4 w-4" />
-          </span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama anggota atau divisi..."
-            className="w-full min-h-[44px] pl-9 pr-4 bg-card text-ink placeholder-ink-muted rounded-lg text-xs border border-edge outline-none focus:border-primary transition-colors"
-          />
+      {/* ── 2. ACTION BAR BENDAHARA ────────────────────────────────────── */}
+      <div className="card-solid bg-card p-5 rounded-2xl border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-bold text-ink">
+            Aksi Finansial Bendahara
+          </h3>
+          <p className="text-xs text-ink-muted mt-0.5">
+            Kelola setoran tunai, penarikan tagihan massal, atau operasional bebas.
+          </p>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Tombol 1: Catat Setoran */}
           <button
             type="button"
-            onClick={() => setFilterClass("ALL")}
-            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterClass === "ALL"
-                ? "bg-ink text-surface"
-                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-            }`}
+            onClick={() => {
+              setSelectedUserId(allMembers[0]?.id || "");
+              setDepositAmount("5000");
+              setDepositDesc("");
+              setIsDepositModalOpen(true);
+            }}
+            className="h-11 min-h-11 px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
           >
-            Semua ({allMembers.length})
+            <ArrowDownLeft className="h-4 w-4" />
+            <span>Catat Setoran</span>
           </button>
+
+          {/* Tombol 2: Tarik Tagihan Serentak */}
           <button
             type="button"
-            onClick={() => setFilterClass("KELAS_10")}
-            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterClass === "KELAS_10"
-                ? "bg-primary text-white"
-                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-            }`}
+            onClick={() => {
+              setBillTitle("");
+              setBillAmount("5000");
+              setIsBulkBillModalOpen(true);
+            }}
+            className="h-11 min-h-11 px-4 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
           >
-            ★ Kelas 10 (Gen 21) ({allMembers.filter(isGen21).length})
+            <ArrowUpRight className="h-4 w-4" />
+            <span>Tarik Tagihan Serentak</span>
           </button>
+
+          {/* Tombol 3: Catat Finansial Bebas */}
           <button
             type="button"
-            onClick={() => setFilterClass("KELAS_11")}
-            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterClass === "KELAS_11"
-                ? "bg-primary text-white"
-                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-            }`}
+            onClick={() => {
+              setGlobalAmount("");
+              setGlobalDesc("");
+              setIsGlobalFinanceModalOpen(true);
+            }}
+            className="h-11 min-h-11 px-3.5 bg-surface-container-low hover:bg-surface-container text-ink border border-edge active:scale-[0.98] text-xs font-bold rounded-xl inline-flex items-center gap-1.5 transition-all cursor-pointer"
           >
-            Kelas 11 (Gen 20) ({allMembers.filter(isGen20).length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterClass("NUNGGAK")}
-            className={`min-h-[36px] px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterClass === "NUNGGAK"
-                ? "bg-danger text-white"
-                : "bg-surface-container-low text-ink-secondary hover:text-ink border border-edge"
-            }`}
-          >
-            Tunggakan Saja
+            <PlusCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+            <span>Danus / Operasional</span>
           </button>
         </div>
       </div>
 
-      {/* Daftar Kartu Kas Anggota (Interactive Checklist Matrix) */}
-      <div className="space-y-3 pt-1">
-        {filteredMembers.length === 0 ? (
-          <div className="text-center py-6 text-xs text-ink-muted border border-dashed border-edge rounded-lg">
-            Tidak ada anggota yang cocok dengan filter pencarian.
+      {/* ── 3. MEMBER WALLET MATRIX TABLE ──────────────────────────────── */}
+      <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-ink">
+              Matriks Saldo Kas Anggota
+            </h3>
+            <p className="text-xs text-ink-muted">
+              Monitoring langsung saldo dompet dan tunggakan per anggota aktif.
+            </p>
           </div>
-        ) : (
-          filteredMembers.map((member) => {
-            const paidPeriodIds = new Set(
-              member.payments.map((p) => p.kasPeriodId)
-            );
-            const unpaidPeriods = periods.filter(
-              (p) => !paidPeriodIds.has(p.id)
-            );
-            const unpaidKasArrears = unpaidPeriods.reduce(
-              (sum, p) => sum + p.amount,
-              0
-            );
 
-            // Filter urunan aktif yang menargetkan anggota ini
-            const targetedUrunans = activeUrunanEvents.filter((event) =>
-              event.targetUsers.some((u) => u.id === member.id)
-            );
-            const unpaidUrunans = targetedUrunans.filter(
-              (event) => !event.payments.some((p) => p.userId === member.id)
-            );
-            const unpaidUrunanArrears = unpaidUrunans.reduce(
-              (sum, u) => sum + u.amount,
-              0
-            );
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Cari nama, kelas, divisi..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 min-h-10 pl-9 pr-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink placeholder:text-ink-muted focus:outline-hidden focus:ring-1 focus:ring-primary w-52 sm:w-60"
+              />
+            </div>
 
-            const totalArrears = unpaidKasArrears + unpaidUrunanArrears;
-            const isFullyPaid =
-              unpaidPeriods.length === 0 && unpaidUrunans.length === 0;
-
-            return (
-              <div
-                key={member.id}
-                className="rounded-xl border border-edge bg-card p-3.5 shadow-sm space-y-3"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-low text-xs font-bold text-ink border border-edge shrink-0">
-                      {member.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-xs font-bold text-ink truncate leading-tight">
-                        {member.name}
-                      </h4>
-                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-500 truncate w-full flex-row whitespace-nowrap">
-                        <span className="shrink-0">
-                          {isGen21(member)
-                            ? "Gen 21 (Kelas 10)"
-                            : isGen20(member)
-                            ? "Gen 20 (Kelas 11)"
-                            : (member.classGrade || "").replace("_", " ")}
-                        </span>
-                        <span>•</span>
-                        <span className="text-primary font-medium truncate">
-                          {member.mainDivision}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {isFullyPaid ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 text-[10px] font-bold shrink-0">
-                      <Check className="h-3 w-3" />
-                      Lunas
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 text-[10px] font-bold shrink-0">
-                      Nunggak Rp {totalArrears.toLocaleString("id-ID")}
-                    </span>
-                  )}
-                </div>
-
-                {/* Grid Periode Interaktif Toggle (Kas Rutin & Urunan) */}
-                {(periods.length > 0 || targetedUrunans.length > 0) && (
-                  <div
-                    className={`space-y-2 pt-1 ${
-                      targetedUrunans.length > 0
-                        ? "sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0"
-                        : ""
-                    }`}
-                  >
-                    {/* Grid Periode Kas Rutin */}
-                    {periods.length > 0 && (
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-semibold text-ink-muted block">
-                          Iuran Kas Rutin:
-                        </span>
-                        <div className="grid grid-cols-4 gap-1.5">
-                          {periods.map((period) => {
-                            const isPaid = paidPeriodIds.has(period.id);
-                            return (
-                              <button
-                                key={period.id}
-                                type="button"
-                                disabled={isPending}
-                                onClick={() =>
-                                  handleTogglePayment(member.id, period.id)
-                                }
-                                className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
-                                  isPaid
-                                    ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
-                                    : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
-                                }`}
-                                title={`Klik untuk ubah status P${period.periodNumber}`}
-                              >
-                                <span className="text-[10px] font-bold">
-                                  P{String(period.periodNumber).padStart(2, "0")}
-                                </span>
-                                <span
-                                  className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
-                                    isPaid
-                                      ? "bg-success text-white"
-                                      : "bg-danger text-white"
-                                  }`}
-                                >
-                                  {isPaid ? "L" : "N"}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Grid Tagihan Urunan Insidental */}
-                    {targetedUrunans.length > 0 && (
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-semibold text-ink-muted block">
-                          Tagihan Urunan:
-                        </span>
-                        <div className="grid grid-cols-4 gap-1.5">
-                          {targetedUrunans.map((urunan, uIdx) => {
-                            const isPaid = urunan.payments.some(
-                              (p) => p.userId === member.id
-                            );
-                            const urunanCode = `U${String(uIdx + 1).padStart(2, "0")}`;
-                            return (
-                              <button
-                                key={urunan.id}
-                                type="button"
-                                disabled={isPending}
-                                onClick={() =>
-                                  handleToggleUrunan(member.id, urunan.id)
-                                }
-                                className={`min-h-[44px] rounded-lg p-1 flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
-                                  isPaid
-                                    ? "bg-success-subtle text-success border-success/30 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300"
-                                    : "bg-danger-subtle text-danger border-danger/30 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300"
-                                }`}
-                                title={`${urunan.title} (Rp ${urunan.amount.toLocaleString("id-ID")}) - Klik untuk ubah status`}
-                              >
-                                <span className="text-[10px] font-bold">
-                                  {urunanCode}
-                                </span>
-                                <span
-                                  className={`w-3.5 h-3.5 mt-0.5 rounded-full text-[8px] flex items-center justify-center font-black ${
-                                    isPaid
-                                      ? "bg-success text-white"
-                                      : "bg-danger text-white"
-                                  }`}
-                                >
-                                  {isPaid ? "L" : "N"}
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* Modal 1: Catat Mutasi Kas Baru */}
-      {isTxModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-sm rounded-xl p-4 shadow-xl border border-edge space-y-3">
-            <div className="flex items-center justify-between border-b border-edge pb-2">
-              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
-                Catat Transaksi Kas
-              </h4>
+            {/* Filter Grade */}
+            <div className="flex items-center bg-surface-container-low p-1 rounded-xl border border-edge text-xs">
               <button
                 type="button"
-                onClick={() => setIsTxModalOpen(false)}
-                className="text-ink-muted hover:text-ink"
+                onClick={() => setGradeFilter("ALL")}
+                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
+                  gradeFilter === "ALL"
+                    ? "bg-card text-ink shadow-xs border border-edge"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+              >
+                Semua
+              </button>
+              <button
+                type="button"
+                onClick={() => setGradeFilter("GEN_20")}
+                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
+                  gradeFilter === "GEN_20"
+                    ? "bg-card text-ink shadow-xs border border-edge"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+              >
+                Kelas 11
+              </button>
+              <button
+                type="button"
+                onClick={() => setGradeFilter("GEN_21")}
+                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
+                  gradeFilter === "GEN_21"
+                    ? "bg-card text-ink shadow-xs border border-edge"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+              >
+                Kelas 10
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Member Table */}
+        <div className="overflow-x-auto rounded-xl border border-edge/70">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-surface-container-low border-b border-edge/80 text-ink-muted font-bold uppercase tracking-wider text-[11px]">
+              <tr>
+                <th className="px-4 py-3">Nama Anggota</th>
+                <th className="px-4 py-3">Kelas / Gen</th>
+                <th className="px-4 py-3">Divisi</th>
+                <th className="px-4 py-3 text-right">Saldo Kas</th>
+                <th className="px-4 py-3 text-center">Status</th>
+                <th className="px-4 py-3 text-right">Aksi Cepat</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-edge/60 bg-card">
+              {filteredMembers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-ink-muted">
+                    Tidak ditemukan anggota yang cocok dengan pencarian.
+                  </td>
+                </tr>
+              ) : (
+                filteredMembers.map((m) => {
+                  const isNeg = m.kasBalance < 0;
+                  const absVal = Math.abs(m.kasBalance);
+
+                  return (
+                    <tr
+                      key={m.id}
+                      className="hover:bg-surface-container-low/50 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-semibold text-ink">
+                        {m.name}
+                      </td>
+                      <td className="px-4 py-3 text-ink-secondary">
+                        {m.classGrade || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-ink-secondary">
+                        {m.mainDivision}
+                      </td>
+                      <td className="px-4 py-3 text-right font-mono font-bold">
+                        <span
+                          className={
+                            isNeg
+                              ? "text-rose-600 dark:text-rose-400"
+                              : "text-emerald-600 dark:text-emerald-400"
+                          }
+                        >
+                          {isNeg ? "-" : "+"} Rp {absVal.toLocaleString("id-ID")}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                            isNeg
+                              ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900"
+                              : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900"
+                          }`}
+                        >
+                          {isNeg ? "Nunggak" : "Aman"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleQuickDeposit(m)}
+                          className="h-8 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer"
+                          title={`Catat Setoran untuk ${m.name}`}
+                        >
+                          <CreditCard className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                          <span>Setoran</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── MODAL 1: CATAT SETORAN ANGGOTA ─────────────────────────────── */}
+      {isDepositModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-edge pb-3">
+              <div className="flex items-center gap-2">
+                <ArrowDownLeft className="h-5 w-5 text-emerald-600" />
+                <h3 className="text-sm font-bold text-ink">
+                  Catat Setoran Kas Anggota
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDepositModalOpen(false)}
+                className="p-1 rounded-lg text-ink-muted hover:text-ink cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateTransaction} className="space-y-3 text-xs">
-              {/* Jenis Transaksi */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setTxType(TransactionType.INCOME)}
-                  className={`min-h-[40px] rounded-lg font-bold border transition-colors ${
-                    txType === TransactionType.INCOME
-                      ? "bg-emerald-600 text-white border-emerald-600"
-                      : "bg-surface text-ink-secondary border-edge"
-                  }`}
-                >
-                  Pemasukan (+)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTxType(TransactionType.EXPENSE)}
-                  className={`min-h-[40px] rounded-lg font-bold border transition-colors ${
-                    txType === TransactionType.EXPENSE
-                      ? "bg-rose-600 text-white border-rose-600"
-                      : "bg-surface text-ink-secondary border-edge"
-                  }`}
-                >
-                  Pengeluaran (-)
-                </button>
-              </div>
-
-              {/* Kategori */}
+            <form onSubmit={handleSubmitDeposit} className="space-y-3.5">
               <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
-                  Kategori
-                </label>
-                {txType === TransactionType.INCOME ? (
-                  <select
-                    value={txIncomeCategory}
-                    onChange={(e) =>
-                      setTxIncomeCategory(e.target.value as IncomeCategory)
-                    }
-                    className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
-                  >
-                    <option value={IncomeCategory.KAS_RUTIN}>Kas Rutin</option>
-                    <option value={IncomeCategory.DANA_USAHA}>Dana Usaha</option>
-                    <option value={IncomeCategory.DONASI}>Donasi</option>
-                    <option value={IncomeCategory.SPONSOR}>Sponsor</option>
-                    <option value={IncomeCategory.SALDO_AWAL}>Saldo Awal</option>
-                  </select>
-                ) : (
-                  <select
-                    value={txExpenseCategory}
-                    onChange={(e) =>
-                      setTxExpenseCategory(e.target.value as ExpenseCategory)
-                    }
-                    className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none"
-                  >
-                    <option value={ExpenseCategory.ACARA}>Acara / Kegiatan</option>
-                    <option value={ExpenseCategory.KONSUMSI}>Konsumsi</option>
-                    <option value={ExpenseCategory.LOGISTIK}>Logistik & Alat</option>
-                    <option value={ExpenseCategory.KESEKRETARIATAN}>
-                      Kesekretariatan
-                    </option>
-                    <option value={ExpenseCategory.LAINNYA}>Lainnya</option>
-                  </select>
-                )}
-              </div>
-
-              {/* Nominal */}
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
-                  Nominal (Rp)
-                </label>
-                <input
-                  type="number"
-                  required
-                  min="1"
-                  value={txAmount}
-                  onChange={(e) => setTxAmount(e.target.value)}
-                  placeholder="Contoh: 50000"
-                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
-                />
-              </div>
-
-              {/* Deskripsi */}
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
-                  Deskripsi / Keterangan
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={txDescription}
-                  onChange={(e) => setTxDescription(e.target.value)}
-                  placeholder="Contoh: Pembelian snack rapat pleno"
-                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
-                />
-              </div>
-
-              {/* Proof URL */}
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
-                  Link Google Drive Nota (Opsional)
-                </label>
-                <input
-                  type="url"
-                  value={txProofUrl}
-                  onChange={(e) => setTxProofUrl(e.target.value)}
-                  placeholder="https://drive.google.com/..."
-                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2 border-t border-edge">
-                <button
-                  type="button"
-                  onClick={() => setIsTxModalOpen(false)}
-                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover text-white font-bold flex items-center justify-center gap-1"
-                >
-                  {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                  <span>Simpan</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal 2: Catat Advance Payment Kas & Urunan */}
-      {isAdvanceModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-sm rounded-xl p-4 shadow-xl border border-edge space-y-3">
-            <div className="flex items-center justify-between border-b border-edge pb-2">
-              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">
-                Catat Setoran Kas &amp; Urunan
-              </h4>
-              <button
-                type="button"
-                onClick={() => setIsAdvanceModalOpen(false)}
-                className="text-ink-muted hover:text-ink cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleRecordAdvance} className="space-y-3 text-xs">
-              {/* Pilihan Jenis Setoran: Kas Rutin vs Urunan Insidental */}
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
-                  Jenis Setoran
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setAdvanceDepositType("KAS_RUTIN")}
-                    className={`min-h-[40px] rounded-lg font-bold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                      advanceDepositType === "KAS_RUTIN"
-                        ? "bg-primary text-white border-primary shadow-xs"
-                        : "bg-surface-container-low text-ink-secondary hover:text-ink border-edge"
-                    }`}
-                  >
-                    <span>💰 Kas Rutin</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAdvanceDepositType("URUNAN")}
-                    className={`min-h-[40px] rounded-lg font-bold border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                      advanceDepositType === "URUNAN"
-                        ? "bg-purple-600 text-white border-purple-600 shadow-xs"
-                        : "bg-surface-container-low text-ink-secondary hover:text-ink border-edge"
-                    }`}
-                  >
-                    <span>🎯 Urunan Insidental</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Pemilihan Anggota */}
-              <div>
-                <label className="text-[11px] font-semibold text-ink-muted block mb-1">
+                <label className="text-xs font-bold text-ink block mb-1">
                   Pilih Anggota
                 </label>
                 <select
-                  value={advanceUserId}
-                  onChange={(e) => {
-                    setAdvanceUserId(e.target.value);
-                    setSelectedAdvanceUrunanId("");
-                  }}
-                  className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary"
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  required
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 >
                   {allMembers.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.name} ({(m.classGrade || "").replace("_", " ")} - {m.mainDivision})
+                      {m.name} ({m.classGrade || "-"}) - Saldo:{" "}
+                      {m.kasBalance < 0 ? "-" : "+"}Rp{" "}
+                      {Math.abs(m.kasBalance).toLocaleString("id-ID")}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* JIKA Kas Rutin: UI Counter (+ / -) yang sudah ada sebelumnya */}
-              {advanceDepositType === "KAS_RUTIN" ? (
-                <div>
-                  <label className="text-[11px] font-semibold text-ink-muted block mb-1.5">
-                    Jumlah Periode Kas Di Muka
-                  </label>
-                  <div className="flex items-center justify-between gap-3 p-2 bg-surface-container-low rounded-xl border border-edge">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setAdvancePeriodsCount((prev) => Math.max(1, prev - 1))
-                      }
-                      disabled={advancePeriodsCount <= 1}
-                      className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                      aria-label="Kurangi Periode"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Nominal Setoran Tunai (Rp)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  placeholder="Contoh: 10000"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  required
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                />
+                <p className="text-[11px] text-ink-muted mt-1">
+                  Input harus bilangan positif. Saldo anggota akan bertambah otomatis.
+                </p>
+              </div>
 
-                    <div className="flex flex-col items-center">
-                      <span className="text-base font-bold text-ink leading-tight">
-                        {advancePeriodsCount} Periode
-                      </span>
-                      <span className="text-[10px] text-ink-muted">
-                        ({advancePeriodsCount} pekan)
-                      </span>
-                    </div>
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Keterangan / Uraian (Opsional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Contoh: Iuran kas bulan Oktober tunai"
+                  value={depositDesc}
+                  onChange={(e) => setDepositDesc(e.target.value)}
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                />
+              </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setAdvancePeriodsCount((prev) => prev + 1)}
-                      className="h-10 w-10 min-h-[40px] rounded-lg bg-surface border border-edge flex items-center justify-center text-ink hover:bg-surface-container active:scale-95 transition-all cursor-pointer"
-                      aria-label="Tambah Periode"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <div className="mt-2 text-center text-xs font-semibold text-primary">
-                    Total: Rp {(advancePeriodsCount * 5000).toLocaleString("id-ID")}
-                  </div>
-                </div>
-              ) : (
-                /* JIKA Urunan Insidental: Dropdown Urunan Aktif yang belum lunas atau pesan nihil */
-                <div>
-                  <label className="text-[11px] font-semibold text-ink-muted block mb-1">
-                    Pilih Tagihan Urunan
-                  </label>
-                  {unpaidUrunansForSelectedMember.length === 0 ? (
-                    <div className="p-3 rounded-lg bg-surface-container-low border border-dashed border-edge text-center text-ink-muted text-xs">
-                      Anggota ini tidak memiliki tunggakan urunan.
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <select
-                        value={currentSelectedUrunanId}
-                        onChange={(e) =>
-                          setSelectedAdvanceUrunanId(e.target.value)
-                        }
-                        className="w-full min-h-[44px] px-3 bg-surface text-ink border border-edge rounded-lg outline-none focus:border-primary text-xs"
-                      >
-                        {unpaidUrunansForSelectedMember.map((urunan) => (
-                          <option key={urunan.id} value={urunan.id}>
-                            {urunan.title} — Rp{" "}
-                            {urunan.amount.toLocaleString("id-ID")}
-                          </option>
-                        ))}
-                      </select>
-
-                      {selectedUrunan && (
-                        <div className="mt-2 text-center text-xs font-semibold text-purple-600 dark:text-purple-400">
-                          Nominal Setoran: Rp{" "}
-                          {selectedUrunan.amount.toLocaleString("id-ID")}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-2 border-t border-edge">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-edge">
                 <button
                   type="button"
-                  onClick={() => setIsAdvanceModalOpen(false)}
-                  className="flex-1 min-h-[44px] rounded-lg bg-surface-container-low text-ink font-semibold hover:bg-surface-container transition-colors cursor-pointer"
+                  onClick={() => setIsDepositModalOpen(false)}
+                  className="h-11 min-h-11 px-4 text-xs font-semibold rounded-xl bg-surface-container-low hover:bg-surface-container text-ink transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  disabled={
-                    isPending ||
-                    (advanceDepositType === "URUNAN" &&
-                      unpaidUrunansForSelectedMember.length === 0)
-                  }
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
+                  disabled={isPending}
+                  className="h-11 min-h-11 px-5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                  <span>
-                    {advanceDepositType === "KAS_RUTIN"
-                      ? "Setor Kas"
-                      : "Setor Urunan"}
-                  </span>
+                  {isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                  <span>Simpan Setoran</span>
                 </button>
               </div>
             </form>
@@ -1070,261 +616,293 @@ export function TreasurerPanel({
         </div>
       )}
 
-      {/* Modal 3: Buat Tagihan Baru (Kas Rutin & Urunan Insidental) */}
-      {isBillingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-lg rounded-2xl p-5 shadow-2xl border border-edge space-y-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-edge pb-3 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <PlusCircle className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
-                <div>
-                  <h4 className="text-sm font-bold text-ink uppercase tracking-wider">
-                    Buat Tagihan Baru
-                  </h4>
-                  <p className="text-[11px] text-ink-muted">
-                    Sistem tagihan kas rutin global atau urunan insidental
-                  </p>
-                </div>
+      {/* ── MODAL 2: TARIK TAGIHAN SERENTAK ───────────────────────────── */}
+      {isBulkBillModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-edge pb-3">
+              <div className="flex items-center gap-2">
+                <ArrowUpRight className="h-5 w-5 text-rose-600" />
+                <h3 className="text-sm font-bold text-ink">
+                  Tarik Tagihan Kas Serentak
+                </h3>
               </div>
               <button
                 type="button"
-                onClick={() => setIsBillingModalOpen(false)}
-                className="text-ink-muted hover:text-ink cursor-pointer p-1 rounded-lg hover:bg-surface-container"
+                onClick={() => setIsBulkBillModalOpen(false)}
+                className="p-1 rounded-lg text-ink-muted hover:text-ink cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <form
-              onSubmit={handleCreateBilling}
-              className="space-y-3.5 text-xs overflow-y-auto flex-1 pr-1"
-            >
-              {/* Pilihan Tipe Tagihan: KAS_RUTIN vs URUNAN */}
+            <form onSubmit={handleSubmitBulkBill} className="space-y-3.5">
               <div>
-                <label className="text-[11px] font-bold text-ink block mb-1.5">
-                  Tipe Tagihan <span className="text-primary">*</span>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Sasaran Anggota
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setBillingType("KAS_RUTIN")}
-                    className={`min-h-[44px] rounded-xl font-bold border transition-all p-3 flex items-center justify-center gap-1.5 cursor-pointer ${
-                      billingType === "KAS_RUTIN"
-                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30"
-                        : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
+                    onClick={() => setBillTargetScope("ALL")}
+                    className={`h-10 min-h-10 text-xs font-semibold rounded-xl border transition-colors cursor-pointer ${
+                      billTargetScope === "ALL"
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
                     }`}
                   >
-                    <span className="text-xs font-bold flex items-center gap-1.5">
-                      💰 Kas Rutin
-                    </span>
+                    Semua ({allMembers.length})
                   </button>
-
                   <button
                     type="button"
-                    onClick={() => setBillingType("URUNAN")}
-                    className={`min-h-[44px] rounded-xl font-bold border transition-all p-3 flex items-center justify-center gap-1.5 cursor-pointer ${
-                      billingType === "URUNAN"
-                        ? "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-500 shadow-xs ring-1 ring-purple-500/30"
-                        : "bg-surface-container-low text-ink-muted border-edge hover:text-ink"
+                    onClick={() => setBillTargetScope("GEN_20")}
+                    className={`h-10 min-h-10 text-xs font-semibold rounded-xl border transition-colors cursor-pointer ${
+                      billTargetScope === "GEN_20"
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
                     }`}
                   >
-                    <span className="text-xs font-bold flex items-center gap-1.5">
-                      🎯 Urunan
-                    </span>
+                    Kelas 11 ({allMembers.filter(isGen20).length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBillTargetScope("GEN_21")}
+                    className={`h-10 min-h-10 text-xs font-semibold rounded-xl border transition-colors cursor-pointer ${
+                      billTargetScope === "GEN_21"
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
+                    }`}
+                  >
+                    Kelas 10 ({allMembers.filter(isGen21).length})
                   </button>
                 </div>
               </div>
 
-              {/* Judul Tagihan */}
               <div>
-                <label className="text-[11px] font-bold text-ink block mb-1">
-                  Nama Tagihan / Event <span className="text-primary">*</span>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Kategori Tagihan
+                </label>
+                <select
+                  value={billCategory}
+                  onChange={(e) =>
+                    setBillCategory(
+                      e.target.value as "TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL"
+                    )
+                  }
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                >
+                  <option value="TAGIHAN_RUTIN">
+                    Tagihan Rutin Kas Organisasi
+                  </option>
+                  <option value="TAGIHAN_INSIDENTAL">
+                    Tagihan Insidental / Urunan Khusus
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Nama / Uraian Tagihan
                 </label>
                 <input
                   type="text"
+                  placeholder="Contoh: Kas Rutin Periode November 2026"
+                  value={billTitle}
+                  onChange={(e) => setBillTitle(e.target.value)}
                   required
-                  value={billingTitle}
-                  onChange={(e) => setBillingTitle(e.target.value)}
-                  placeholder={
-                    billingType === "KAS_RUTIN"
-                      ? "Contoh: Kas Rutin Pekan Ke-4 September"
-                      : "Contoh: Urunan Sewa Bus Kunjungan Industri"
-                  }
-                  className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
               </div>
 
-              {/* Nominal & Tenggat Waktu */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div>
-                  <label className="text-[11px] font-bold text-ink block mb-1">
-                    Nominal per Anggota (Rp) <span className="text-primary">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    value={billingAmount}
-                    onChange={(e) => setBillingAmount(e.target.value)}
-                    placeholder="Contoh: 10000"
-                    className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-ink block mb-1">
-                    Tenggat Waktu (Opsional)
-                  </label>
-                  <input
-                    type="date"
-                    value={billingDueDate}
-                    onChange={(e) => setBillingDueDate(e.target.value)}
-                    className="w-full min-h-[42px] px-3 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs"
-                  />
-                </div>
-              </div>
-
-              {/* Keterangan */}
               <div>
-                <label className="text-[11px] font-bold text-ink block mb-1">
-                  Keterangan / Rincian Tagihan
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Nominal Potongan per Anggota (Rp)
                 </label>
-                <textarea
-                  rows={2}
-                  value={billingDescription}
-                  onChange={(e) => setBillingDescription(e.target.value)}
-                  placeholder="Deskripsi singkat tujuan penarikan dana atau rincian biaya..."
-                  className="w-full p-2.5 bg-surface text-ink border border-edge rounded-xl outline-none focus:border-primary text-xs resize-none"
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  placeholder="Contoh: 5000"
+                  value={billAmount}
+                  onChange={(e) => setBillAmount(e.target.value)}
+                  required
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
+                <p className="text-[11px] text-ink-muted mt-1">
+                  Saldo dompet anggota terpilih akan langsung terpotong secara serentak.
+                </p>
               </div>
 
-              {/* ========================================================= */}
-              {/* FITUR MULTI-SELECT ANGGOTA (HANYA MUNCUL JIKA TIPE URUNAN) */}
-              {/* ========================================================= */}
-              {billingType === "URUNAN" && (
-                <div className="space-y-2 pt-1 border-t border-edge">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[11px] font-bold text-ink block">
-                        Pilih Anggota Penanggung Urunan <span className="text-primary">*</span>
-                      </span>
-                      <span className="text-[10px] text-ink-muted">
-                        {selectedBillingMemberIds.length} dari {allMembers.length} anggota terpilih
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[10px]">
-                      <button
-                        type="button"
-                        onClick={handleSelectAllMembers}
-                        className="px-2 py-1 rounded-md bg-surface-container text-ink hover:text-primary font-semibold transition-colors cursor-pointer"
-                      >
-                        Pilih Semua
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDeselectAllMembers}
-                        className="px-2 py-1 rounded-md bg-surface-container text-ink-muted hover:text-rose-600 font-semibold transition-colors cursor-pointer"
-                      >
-                        Kosongkan
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Filter Pencarian Cepat Anggota Urunan */}
-                  <input
-                    type="text"
-                    value={billingMemberSearch}
-                    onChange={(e) => setBillingMemberSearch(e.target.value)}
-                    placeholder="Saring nama atau divisi anggota..."
-                    className="w-full h-8 px-2.5 bg-surface text-ink border border-edge rounded-lg text-[11px] outline-none focus:border-primary"
-                  />
-
-                  {/* Daftar Checklist Anggota */}
-                  <div className="max-h-48 overflow-y-auto space-y-1.5 p-2 bg-surface-container-low rounded-xl border border-edge">
-                    {allMembers
-                      .filter(
-                        (m) =>
-                          m.name
-                            .toLowerCase()
-                            .includes(billingMemberSearch.toLowerCase()) ||
-                          m.mainDivision
-                            .toLowerCase()
-                            .includes(billingMemberSearch.toLowerCase())
-                      )
-                      .map((member) => {
-                        const isSelected = selectedBillingMemberIds.includes(
-                          member.id
-                        );
-                        return (
-                          <label
-                            key={member.id}
-                            className={`flex items-center justify-between p-2 rounded-lg border transition-all cursor-pointer ${
-                              isSelected
-                                ? "bg-card border-purple-500/50 shadow-xs"
-                                : "bg-surface border-edge/60 hover:bg-card"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() =>
-                                  handleToggleSelectMember(member.id)
-                                }
-                                className="h-4 w-4 rounded text-purple-600 accent-purple-600 cursor-pointer"
-                              />
-                              <div className="min-w-0">
-                                <span className="text-xs font-semibold text-ink block truncate leading-tight">
-                                  {member.name}
-                                </span>
-                                <span className="text-[10px] text-ink-muted block truncate">
-                                  {isGen21(member)
-                                    ? "Gen 21 (Kelas 10)"
-                                    : isGen20(member)
-                                    ? "Gen 20 (Kelas 11)"
-                                    : (member.classGrade || "").replace("_", " ")}{" "}
-                                  • {member.mainDivision}
-                                </span>
-                              </div>
-                            </div>
-                            {isSelected && (
-                              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 shrink-0">
-                                Ditagih
-                              </span>
-                            )}
-                          </label>
-                        );
-                      })}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons Submit & Batal */}
-              <div className="flex gap-2 pt-3 border-t border-edge shrink-0">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-edge">
                 <button
                   type="button"
-                  onClick={() => setIsBillingModalOpen(false)}
-                  className="flex-1 min-h-[44px] rounded-xl bg-surface-container-low text-ink font-semibold hover:bg-surface-container transition-colors cursor-pointer"
+                  onClick={() => setIsBulkBillModalOpen(false)}
+                  className="h-11 min-h-11 px-4 text-xs font-semibold rounded-xl bg-surface-container-low hover:bg-surface-container text-ink transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="flex-1 min-h-[44px] rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                  className="h-11 min-h-11 px-5 bg-rose-700 hover:bg-rose-800 text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   {isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  <span>Terbitkan Tagihan</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 3: FINANSIAL BEBAS (DANUS / OPERASIONAL ACARA) ────────── */}
+      {isGlobalFinanceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-edge pb-3">
+              <div className="flex items-center gap-2">
+                <Receipt className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                <h3 className="text-sm font-bold text-ink">
+                  Catat Keuangan Global Organisasi
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsGlobalFinanceModalOpen(false)}
+                className="p-1 rounded-lg text-ink-muted hover:text-ink cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitGlobalFinance} className="space-y-3.5">
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Jenis Transaksi
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGlobalType("INCOME");
+                      setGlobalCategory(TransactionCategory.DANUS_SUKARELA);
+                    }}
+                    className={`h-11 min-h-11 text-xs font-semibold rounded-xl border transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 ${
+                      globalType === "INCOME"
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
+                    }`}
+                  >
+                    <ArrowDownLeft className="h-4 w-4" />
+                    <span>Pemasukan (Danus)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGlobalType("EXPENSE");
+                      setGlobalCategory(TransactionCategory.OPERASIONAL_ACARA);
+                    }}
+                    className={`h-11 min-h-11 text-xs font-semibold rounded-xl border transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 ${
+                      globalType === "EXPENSE"
+                        ? "bg-rose-700 text-white border-rose-700"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
+                    }`}
+                  >
+                    <ArrowUpRight className="h-4 w-4" />
+                    <span>Pengeluaran Acara</span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Kategori Transaksi
+                </label>
+                <select
+                  value={globalCategory}
+                  onChange={(e) =>
+                    setGlobalCategory(e.target.value as TransactionCategory)
+                  }
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                >
+                  {globalType === "INCOME" ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Menerbitkan...</span>
+                      <option value={TransactionCategory.DANUS_SUKARELA}>
+                        Dana Usaha / Pemasukan Sukarela
+                      </option>
+                      <option value={TransactionCategory.SETORAN_MEMBER}>
+                        Pemasukan Kas Umum
+                      </option>
                     </>
                   ) : (
                     <>
-                      <PlusCircle className="h-4 w-4" />
-                      <span>Terbitkan Tagihan</span>
+                      <option value={TransactionCategory.OPERASIONAL_ACARA}>
+                        Biaya Operasional Acara / Rapat
+                      </option>
+                      <option value={TransactionCategory.TAGIHAN_INSIDENTAL}>
+                        Pengeluaran Logistik / Kesekretariatan
+                      </option>
                     </>
                   )}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Nominal (Rp)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1000"
+                  placeholder="Contoh: 150000"
+                  value={globalAmount}
+                  onChange={(e) => setGlobalAmount(e.target.value)}
+                  required
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                />
+                <p className="text-[11px] text-ink-muted mt-1">
+                  Transaksi ini mempengaruhi kas riil tanpa mengubah saldo dompet personal anggota.
+                </p>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-ink block mb-1">
+                  Uraian / Deskripsi
+                </label>
+                <input
+                  type="text"
+                  placeholder="Contoh: Penjualan merchandise stiker expo"
+                  value={globalDesc}
+                  onChange={(e) => setGlobalDesc(e.target.value)}
+                  required
+                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-edge">
+                <button
+                  type="button"
+                  onClick={() => setIsGlobalFinanceModalOpen(false)}
+                  className="h-11 min-h-11 px-4 text-xs font-semibold rounded-xl bg-surface-container-low hover:bg-surface-container text-ink transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="h-11 min-h-11 px-5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                  <span>Catat Finansial</span>
                 </button>
               </div>
             </form>

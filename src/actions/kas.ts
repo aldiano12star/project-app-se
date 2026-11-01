@@ -1,24 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { assertRole } from "@/lib/rbac";
+import { assertRole, assertAuthenticated } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
-import {
-  Role,
-  TransactionType,
-  IncomeCategory,
-  ExpenseCategory,
-} from "@prisma/client";
-
-export interface CreateTransactionInput {
-  type: TransactionType;
-  amount: number;
-  description: string;
-  incomeCategory?: IncomeCategory;
-  expenseCategory?: ExpenseCategory;
-  proofUrl?: string;
-  date?: string;
-}
+import { Role, TransactionType, TransactionCategory } from "@prisma/client";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -26,61 +11,293 @@ export interface ActionResponse<T = unknown> {
   data?: T;
 }
 
+export interface RealMoneySummary {
+  totalIncome: number;
+  totalExpense: number;
+  realBalance: number;
+}
+
 /**
- * Mencatat transaksi umum pemasukan atau pengeluaran baru
+ * Menghitung Total Uang Kas Riil Organisasi.
+ * Total Uang Riil = (Sum of all INCOME amounts) - (Sum of all EXPENSE amounts).
+ * Catatan Fintech: BILL_DEDUCTION hanya memotong saldo virtual anggota dan TIDAK mempengaruhi uang riil fisik!
+ */
+export async function calculateRealMoney(): Promise<RealMoneySummary> {
+  try {
+    const [incomeAggregate, expenseAggregate] = await Promise.all([
+      prisma.ledgerTransaction.aggregate({
+        where: { type: TransactionType.INCOME },
+        _sum: { amount: true },
+      }),
+      prisma.ledgerTransaction.aggregate({
+        where: { type: TransactionType.EXPENSE },
+        _sum: { amount: true },
+      }),
+    ]);
+
+    const totalIncome = incomeAggregate._sum.amount || 0;
+    const totalExpense = expenseAggregate._sum.amount || 0;
+    const realBalance = totalIncome - totalExpense;
+
+    return {
+      totalIncome,
+      totalExpense,
+      realBalance,
+    };
+  } catch (error) {
+    console.error("[Kas Action] calculateRealMoney error:", error);
+    return {
+      totalIncome: 0,
+      totalExpense: 0,
+      realBalance: 0,
+    };
+  }
+}
+
+/**
+ * 1. RECORD DEPOSIT (Setoran Uang Riil Anggota)
+ * - Mencatat uang riil masuk (INCOME, SETORAN_MEMBER).
+ * - Menambah kasBalance anggota secara atomik (increment: amount).
  * Hanya dapat diakses oleh: BENDAHARA, ADMIN, OPERATOR
  */
-export async function createCashTransaction(
-  input: CreateTransactionInput
+export async function recordDeposit(
+  userId: string,
+  amount: number,
+  description: string
 ): Promise<ActionResponse> {
   try {
-    const user = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+    const officer = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
 
-    if (!input.amount || input.amount <= 0) {
+    if (!userId || userId.trim() === "") {
+      return {
+        success: false,
+        message: "Target anggota wajib dipilih.",
+      };
+    }
+
+    const cleanAmount = Math.round(Number(amount));
+    if (isNaN(cleanAmount) || cleanAmount <= 0) {
+      return {
+        success: false,
+        message: "Nominal setoran kas harus berupa angka positif lebih dari Rp 0.",
+      };
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, kasBalance: true },
+    });
+
+    if (!targetUser) {
+      return {
+        success: false,
+        message: "Data anggota tidak ditemukan dalam sistem.",
+      };
+    }
+
+    const cleanDescription =
+      description && description.trim() !== ""
+        ? description.trim()
+        : `Setoran kas dari ${targetUser.name}`;
+
+    // Ambil tahun ajaran aktif jika ada
+    const currentAcademicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+      select: { id: true },
+    });
+
+    // Eksekusi ACID Transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Catat transaksi di Ledger
+      const ledgerEntry = await tx.ledgerTransaction.create({
+        data: {
+          academicYearId: currentAcademicYear?.id || null,
+          type: TransactionType.INCOME,
+          category: TransactionCategory.SETORAN_MEMBER,
+          amount: cleanAmount,
+          description: cleanDescription,
+          userId: targetUser.id,
+          createdById: officer.id,
+          date: new Date(),
+        },
+      });
+
+      // 2. Tambahkan saldo dompet anggota (advance payment / cicilan lunas)
+      const updatedUser = await tx.user.update({
+        where: { id: targetUser.id },
+        data: {
+          kasBalance: { increment: cleanAmount },
+        },
+        select: { id: true, name: true, kasBalance: true },
+      });
+
+      return { ledgerEntry, updatedUser };
+    });
+
+    revalidatePath("/kas");
+    revalidatePath("/dashboard");
+    revalidatePath("/pengaturan");
+
+    return {
+      success: true,
+      message: `Berhasil mencatat setoran Rp ${cleanAmount.toLocaleString("id-ID")} untuk ${targetUser.name}. Saldo terbaru: Rp ${result.updatedUser.kasBalance.toLocaleString("id-ID")}`,
+      data: result,
+    };
+  } catch (error) {
+    console.error("[Kas Action] recordDeposit error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal memproses setoran kas anggota.",
+    };
+  }
+}
+
+/**
+ * 2. CREATE BULK BILLS (Penarikan Tagihan Serentak / Pemotongan Saldo)
+ * - Membuat transaksi pemotongan saldo virtual (BILL_DEDUCTION) untuk setiap anggota terpilih.
+ * - Mengurangi kasBalance anggota secara atomik (decrement: amount).
+ * Hanya dapat diakses oleh: BENDAHARA, ADMIN, OPERATOR
+ */
+export async function createBulkBills(
+  userIds: string[],
+  amount: number,
+  description: string,
+  category: "TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL" = "TAGIHAN_RUTIN"
+): Promise<ActionResponse> {
+  try {
+    const officer = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+
+    if (!userIds || userIds.length === 0) {
+      return {
+        success: false,
+        message: "Pilih minimal 1 anggota untuk dikenakan tagihan kas.",
+      };
+    }
+
+    const cleanAmount = Math.round(Number(amount));
+    if (isNaN(cleanAmount) || cleanAmount <= 0) {
+      return {
+        success: false,
+        message: "Nominal tagihan harus berupa angka positif lebih dari Rp 0.",
+      };
+    }
+
+    if (!description || description.trim() === "") {
+      return {
+        success: false,
+        message: "Keterangan/judul tagihan kas wajib diisi.",
+      };
+    }
+
+    const cleanDescription = description.trim();
+    const targetCategory =
+      category === "TAGIHAN_INSIDENTAL"
+        ? TransactionCategory.TAGIHAN_INSIDENTAL
+        : TransactionCategory.TAGIHAN_RUTIN;
+
+    // Ambil tahun ajaran aktif jika ada
+    const currentAcademicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+      select: { id: true },
+    });
+
+    const now = new Date();
+
+    // Eksekusi ACID Transaction
+    const affectedCount = await prisma.$transaction(async (tx) => {
+      // 1. Buat LedgerTransaction untuk setiap user
+      await tx.ledgerTransaction.createMany({
+        data: userIds.map((uid) => ({
+          academicYearId: currentAcademicYear?.id || null,
+          type: TransactionType.BILL_DEDUCTION,
+          category: targetCategory,
+          amount: cleanAmount,
+          description: cleanDescription,
+          userId: uid,
+          createdById: officer.id,
+          date: now,
+        })),
+      });
+
+      // 2. Potong saldo kasBalance masing-masing user
+      await tx.user.updateMany({
+        where: { id: { in: userIds } },
+        data: {
+          kasBalance: { decrement: cleanAmount },
+        },
+      });
+
+      return userIds.length;
+    });
+
+    revalidatePath("/kas");
+    revalidatePath("/dashboard");
+    revalidatePath("/pengaturan");
+
+    return {
+      success: true,
+      message: `Berhasil menerbitkan tagihan "${cleanDescription}" sebesar Rp ${cleanAmount.toLocaleString("id-ID")} kepada ${affectedCount} anggota.`,
+      data: { count: affectedCount },
+    };
+  } catch (error) {
+    console.error("[Kas Action] createBulkBills error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal menerbitkan tagihan serentak.",
+    };
+  }
+}
+
+/**
+ * 3. RECORD GLOBAL FINANCE (Pemasukan Danus / Pengeluaran Operasional Organisasi)
+ * - Tipe INCOME: Dana Usaha (DANUS_SUKARELA) -> Menambah uang riil, tidak memotong/menambah saldo personal.
+ * - Tipe EXPENSE: Operasional Kegiatan (OPERASIONAL_ACARA) -> Mengurangi uang riil.
+ * Hanya dapat diakses oleh: BENDAHARA, ADMIN, OPERATOR
+ */
+export async function recordGlobalFinance(
+  type: "INCOME" | "EXPENSE",
+  category: TransactionCategory,
+  amount: number,
+  description: string
+): Promise<ActionResponse> {
+  try {
+    const officer = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+
+    const cleanAmount = Math.round(Number(amount));
+    if (isNaN(cleanAmount) || cleanAmount <= 0) {
       return {
         success: false,
         message: "Nominal transaksi harus lebih dari Rp 0.",
       };
     }
 
-    if (!input.description || input.description.trim() === "") {
+    if (!description || description.trim() === "") {
       return {
         success: false,
-        message: "Deskripsi transaksi wajib diisi.",
+        message: "Uraian / deskripsi transaksi wajib diisi.",
       };
     }
 
-    // Ambil tahun ajaran aktif saat ini
-    let academicYear = await prisma.academicYear.findFirst({
+    const currentAcademicYear = await prisma.academicYear.findFirst({
       where: { isCurrent: true },
+      select: { id: true },
     });
 
-    if (!academicYear) {
-      academicYear = await prisma.academicYear.findFirst({
-        orderBy: { createdAt: "desc" },
-      });
-    }
+    const targetType =
+      type === "EXPENSE" ? TransactionType.EXPENSE : TransactionType.INCOME;
 
-    if (!academicYear) {
-      return {
-        success: false,
-        message: "Tahun ajaran aktif belum dikonfigurasi dalam sistem.",
-      };
-    }
-
-    const transaction = await prisma.transaction.create({
+    const ledgerEntry = await prisma.ledgerTransaction.create({
       data: {
-        academicYearId: academicYear.id,
-        type: input.type,
-        amount: Math.round(input.amount),
-        description: input.description.trim(),
-        incomeCategory:
-          input.type === TransactionType.INCOME ? input.incomeCategory : null,
-        expenseCategory:
-          input.type === TransactionType.EXPENSE ? input.expenseCategory : null,
-        proofUrl: input.proofUrl?.trim() || null,
-        date: input.date ? new Date(input.date) : new Date(),
-        createdById: user.id,
+        academicYearId: currentAcademicYear?.id || null,
+        type: targetType,
+        category,
+        amount: cleanAmount,
+        description: description.trim(),
+        userId: null, // Global organisasi (bukan milik satu orang)
+        createdById: officer.id,
+        date: new Date(),
       },
     });
 
@@ -89,516 +306,62 @@ export async function createCashTransaction(
 
     return {
       success: true,
-      message: `Transaksi ${
-        input.type === TransactionType.INCOME ? "pemasukan" : "pengeluaran"
-      } berhasil dicatat.`,
-      data: transaction,
+      message: `Berhasil mencatat transaksi ${
+        targetType === TransactionType.INCOME ? "pemasukan bebas" : "pengeluaran operasional"
+      } sebesar Rp ${cleanAmount.toLocaleString("id-ID")}.`,
+      data: ledgerEntry,
     };
   } catch (error) {
-    console.error("[Kas Action] createCashTransaction error:", error);
+    console.error("[Kas Action] recordGlobalFinance error:", error);
     return {
       success: false,
       message:
-        error instanceof Error
-          ? error.message
-          : "Gagal mencatat transaksi kas.",
+        error instanceof Error ? error.message : "Gagal mencatat transaksi finansial global.",
     };
   }
 }
 
 /**
- * Menandai status lunas atau membatalkan iuran anggota per periode.
- * Secara atomik membuat/menghapus catatan KasPayment DAN catatan Transaction Buku Kas Publik.
+ * 4. GET USER LEDGER TRANSACTIONS (Riwayat Mutasi Saldo Personal)
  */
-export async function toggleDuesPayment(
-  userId: string,
-  kasPeriodId: string
-): Promise<ActionResponse<{ isPaid: boolean }>> {
+export async function getUserLedgerTransactions(userId: string) {
   try {
-    const currentUser = await assertRole([
-      Role.BENDAHARA,
-      Role.ADMIN,
-      Role.OPERATOR,
-    ]);
+    const user = await assertAuthenticated();
+    // Anggota hanya bisa melihat riwayatnya sendiri, kecuali officer
+    const isOfficer =
+      user.role === Role.ADMIN ||
+      user.role === Role.OPERATOR ||
+      user.role === Role.BENDAHARA;
 
-    const [kasPeriod, targetMember] = await Promise.all([
-      prisma.kasPeriod.findUnique({
-        where: { id: kasPeriodId },
-        include: { academicYear: true },
-      }),
-      prisma.user.findUnique({
-        where: { id: userId },
-      }),
-    ]);
+    const targetId = isOfficer ? userId : user.id;
 
-    if (!kasPeriod) {
-      return {
-        success: false,
-        message: "Periode kas tidak ditemukan.",
-      };
-    }
+    return await prisma.ledgerTransaction.findMany({
+      where: { userId: targetId },
+      orderBy: { date: "desc" },
+      take: 50,
+    });
+  } catch (error) {
+    console.error("[Kas Action] getUserLedgerTransactions error:", error);
+    return [];
+  }
+}
 
-    if (!targetMember) {
-      return {
-        success: false,
-        message: "Data anggota tidak ditemukan.",
-      };
-    }
-
-    const txDescription = `Iuran ${kasPeriod.name} - ${targetMember.name}`;
-
-    // Cek apakah pembayaran sudah ada sebelumnya
-    const existingPayment = await prisma.kasPayment.findUnique({
-      where: {
-        kasPeriodId_userId: {
-          kasPeriodId,
-          userId,
+/**
+ * 5. GET GLOBAL LEDGER (Buku Kas Terpadu Publik Organisasi)
+ */
+export async function getGlobalLedger(limit: number = 50) {
+  try {
+    return await prisma.ledgerTransaction.findMany({
+      orderBy: { date: "desc" },
+      take: limit,
+      include: {
+        user: {
+          select: { id: true, name: true, classGrade: true },
         },
       },
     });
-
-    if (existingPayment) {
-      // BATALKAN LUNAS: Hapus KasPayment dan Hapus Transaction kas rutin terkait secara atomik
-      await prisma.$transaction(async (tx) => {
-        await tx.kasPayment.delete({
-          where: { id: existingPayment.id },
-        });
-
-        // Cari transaksi pemasukan kas rutin yang cocok dengan deskripsi
-        const matchingTx = await tx.transaction.findFirst({
-          where: {
-            academicYearId: kasPeriod.academicYearId,
-            type: TransactionType.INCOME,
-            incomeCategory: IncomeCategory.KAS_RUTIN,
-            description: txDescription,
-          },
-          orderBy: { createdAt: "desc" },
-        });
-
-        if (matchingTx) {
-          await tx.transaction.delete({
-            where: { id: matchingTx.id },
-          });
-        }
-      });
-
-      revalidatePath("/kas");
-      revalidatePath("/dashboard");
-
-      return {
-        success: true,
-        message: `Status iuran ${targetMember.name} (P${kasPeriod.periodNumber}) dibatalkan.`,
-        data: { isPaid: false },
-      };
-    } else {
-      // TANDAI LUNAS: Buat KasPayment dan Buat Transaction pemasukan secara atomik
-      await prisma.$transaction(async (tx) => {
-        await tx.kasPayment.create({
-          data: {
-            kasPeriodId,
-            userId,
-            amountPaid: kasPeriod.amount,
-            recordedBy: currentUser.name || currentUser.email || "Bendahara",
-            paidAt: new Date(),
-          },
-        });
-
-        await tx.transaction.create({
-          data: {
-            academicYearId: kasPeriod.academicYearId,
-            type: TransactionType.INCOME,
-            incomeCategory: IncomeCategory.KAS_RUTIN,
-            amount: kasPeriod.amount,
-            description: txDescription,
-            createdById: currentUser.id,
-            date: new Date(),
-          },
-        });
-      });
-
-      revalidatePath("/kas");
-      revalidatePath("/dashboard");
-
-      return {
-        success: true,
-        message: `Pembayaran iuran ${targetMember.name} (P${kasPeriod.periodNumber}) berhasil dicatat.`,
-        data: { isPaid: true },
-      };
-    }
   } catch (error) {
-    console.error("[Kas Action] toggleDuesPayment error:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui status pembayaran iuran.",
-    };
+    console.error("[Kas Action] getGlobalLedger error:", error);
+    return [];
   }
-}
-
-/**
- * Mencatat pembayaran di muka (Advance Payment) untuk beberapa periode sekaligus.
- * Mengintegrasikan pembuatan KasPayment dan Transaction pemasukan untuk setiap periode.
- */
-export async function recordAdvancePayment(
-  userId: string,
-  periodIds: string[]
-): Promise<ActionResponse> {
-  try {
-    const currentUser = await assertRole([
-      Role.BENDAHARA,
-      Role.ADMIN,
-      Role.OPERATOR,
-    ]);
-
-    if (!periodIds || periodIds.length === 0) {
-      return {
-        success: false,
-        message: "Pilih minimal 1 periode kas.",
-      };
-    }
-
-    const [targetMember, periods] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId } }),
-      prisma.kasPeriod.findMany({
-        where: { id: { in: periodIds } },
-        orderBy: { periodNumber: "asc" },
-      }),
-    ]);
-
-    if (!targetMember) {
-      return {
-        success: false,
-        message: "Anggota tidak ditemukan.",
-      };
-    }
-
-    let recordedCount = 0;
-
-    await prisma.$transaction(async (tx) => {
-      for (const period of periods) {
-        const existing = await tx.kasPayment.findUnique({
-          where: {
-            kasPeriodId_userId: {
-              kasPeriodId: period.id,
-              userId,
-            },
-          },
-        });
-
-        if (!existing) {
-          const txDescription = `Iuran ${period.name} - ${targetMember.name}`;
-
-          await tx.kasPayment.create({
-            data: {
-              kasPeriodId: period.id,
-              userId,
-              amountPaid: period.amount,
-              recordedBy: currentUser.name || currentUser.email || "Bendahara",
-              paidAt: new Date(),
-            },
-          });
-
-          await tx.transaction.create({
-            data: {
-              academicYearId: period.academicYearId,
-              type: TransactionType.INCOME,
-              incomeCategory: IncomeCategory.KAS_RUTIN,
-              amount: period.amount,
-              description: txDescription,
-              createdById: currentUser.id,
-              date: new Date(),
-            },
-          });
-
-          recordedCount++;
-        }
-      }
-    });
-
-    revalidatePath("/kas");
-    revalidatePath("/dashboard");
-
-    return {
-      success: true,
-      message: `Setoran kas di muka (${recordedCount} periode) untuk ${targetMember.name} berhasil disimpan.`,
-    };
-  } catch (error) {
-    console.error("[Kas Action] recordAdvancePayment error:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Gagal mencatat pembayaran di muka.",
-    };
-  }
-}
-
-export interface CreateBillingEventInput {
-  title: string;
-  description?: string;
-  type: "KAS_RUTIN" | "URUNAN";
-  amount: number;
-  dueDate?: string;
-  targetUserIds?: string[];
-}
-
-/**
- * Membuat Tagihan Baru (Kas Rutin Global / Urunan Insidental Anggota Spesifik)
- * Hanya dapat diakses oleh: BENDAHARA, ADMIN, OPERATOR
- */
-export async function createBillingEvent(
-  input: CreateBillingEventInput
-): Promise<ActionResponse> {
-  try {
-    const user = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
-
-    if (!input.title || input.title.trim() === "") {
-      return {
-        success: false,
-        message: "Judul tagihan wajib diisi.",
-      };
-    }
-
-    if (!input.amount || input.amount <= 0) {
-      return {
-        success: false,
-        message: "Nominal tagihan harus lebih dari Rp 0.",
-      };
-    }
-
-    if (input.type === "URUNAN" && (!input.targetUserIds || input.targetUserIds.length === 0)) {
-      return {
-        success: false,
-        message: "Pilih minimal 1 anggota untuk tagihan urunan insidental.",
-      };
-    }
-
-    // Ambil tahun ajaran aktif saat ini
-    let academicYear = await prisma.academicYear.findFirst({
-      where: { isCurrent: true },
-    });
-    if (!academicYear) {
-      academicYear = await prisma.academicYear.findFirst({
-        orderBy: { createdAt: "desc" },
-      });
-    }
-
-    // Simpan BillingEvent ke database aktif
-    await prisma.billingEvent.create({
-      data: {
-        title: input.title.trim(),
-        description: input.description?.trim() || null,
-        type: input.type,
-        amount: Math.round(input.amount),
-        dueDate: input.dueDate ? new Date(input.dueDate) : null,
-        createdById: user.id,
-        academicYearId: academicYear?.id || null,
-        ...(input.type === "URUNAN" && input.targetUserIds?.length
-          ? {
-              targetUsers: {
-                connect: input.targetUserIds.map((id) => ({ id })),
-              },
-            }
-          : {}),
-      },
-    });
-
-    revalidatePath("/kas");
-    revalidatePath("/dashboard");
-
-    return {
-      success: true,
-      message: `Tagihan ${
-        input.type === "KAS_RUTIN" ? "Kas Rutin" : "Urunan"
-      } "${input.title}" (${
-        input.type === "URUNAN"
-          ? `${input.targetUserIds?.length || 0} anggota terpilih`
-          : "seluruh anggota aktif"
-      }) berhasil dibuat.`,
-    };
-  } catch (error) {
-    console.error("[Kas Action] createBillingEvent error:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error ? error.message : "Gagal membuat tagihan baru.",
-    };
-  }
-}
-
-/**
- * Menandai status lunas atau membatalkan pembayaran Urunan Insidental anggota.
- * Menambah atau menghapus record di model BillingPayment serta menyinkronkan
- * mutasi kas publik (Transaction) secara atomik menggunakan Prisma Transaction.
- */
-export async function toggleUrunanPayment(
-  userId: string,
-  eventId: string
-): Promise<ActionResponse<{ isPaid: boolean }>> {
-  try {
-    const currentUser = await assertRole([
-      Role.BENDAHARA,
-      Role.ADMIN,
-      Role.OPERATOR,
-    ]);
-
-    const [billingEvent, targetMember] = await Promise.all([
-      prisma.billingEvent.findUnique({
-        where: { id: eventId },
-        include: { targetUsers: { select: { id: true } } },
-      }),
-      prisma.user.findUnique({
-        where: { id: userId },
-      }),
-    ]);
-
-    if (!billingEvent) {
-      return {
-        success: false,
-        message: "Tagihan urunan tidak ditemukan.",
-      };
-    }
-
-    if (!targetMember) {
-      return {
-        success: false,
-        message: "Data anggota tidak ditemukan.",
-      };
-    }
-
-    const txDescription = `Urunan: ${billingEvent.title} - ${targetMember.name}`;
-
-    // Periksa apakah pembayaran urunan sudah ada
-    const existingPayment = await prisma.billingPayment.findUnique({
-      where: {
-        billingEventId_userId: {
-          billingEventId: eventId,
-          userId,
-        },
-      },
-    });
-
-    if (existingPayment) {
-      // BATALKAN: Hapus BillingPayment dan Hapus Transaction pemasukan terkait secara atomik
-      await prisma.$transaction(async (tx) => {
-        await tx.billingPayment.delete({
-          where: { id: existingPayment.id },
-        });
-
-        const matchingTx = await tx.transaction.findFirst({
-          where: {
-            type: TransactionType.INCOME,
-            description: txDescription,
-          },
-          orderBy: { createdAt: "desc" },
-        });
-
-        if (matchingTx) {
-          await tx.transaction.delete({
-            where: { id: matchingTx.id },
-          });
-        }
-      });
-
-      revalidatePath("/kas");
-      revalidatePath("/dashboard");
-
-      return {
-        success: true,
-        message: `Status urunan "${billingEvent.title}" untuk ${targetMember.name} dibatalkan.`,
-        data: { isPaid: false },
-      };
-    } else {
-      // TANDAI LUNAS: Buat BillingPayment dan Buat Transaction pemasukan secara atomik
-      let academicYearId = billingEvent.academicYearId;
-      if (!academicYearId) {
-        const activeYear =
-          (await prisma.academicYear.findFirst({
-            where: { isCurrent: true },
-          })) ||
-          (await prisma.academicYear.findFirst({
-            orderBy: { createdAt: "desc" },
-          }));
-        academicYearId = activeYear?.id || null;
-      }
-
-      if (!academicYearId) {
-        return {
-          success: false,
-          message: "Tahun ajaran aktif belum dikonfigurasi dalam sistem.",
-        };
-      }
-
-      await prisma.$transaction(async (tx) => {
-        await tx.billingPayment.create({
-          data: {
-            billingEventId: eventId,
-            userId,
-            amountPaid: billingEvent.amount,
-            recordedBy: currentUser.name || currentUser.email || "Bendahara",
-            paidAt: new Date(),
-          },
-        });
-
-        await tx.transaction.create({
-          data: {
-            academicYearId,
-            type: TransactionType.INCOME,
-            amount: billingEvent.amount,
-            description: txDescription,
-            createdById: currentUser.id,
-            date: new Date(),
-          },
-        });
-      });
-
-      revalidatePath("/kas");
-      revalidatePath("/dashboard");
-
-      return {
-        success: true,
-        message: `Pembayaran urunan "${billingEvent.title}" untuk ${targetMember.name} berhasil dicatat.`,
-        data: { isPaid: true },
-      };
-    }
-  } catch (error) {
-    console.error("[Kas Action] toggleUrunanPayment error:", error);
-    return {
-      success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui status urunan.",
-    };
-  }
-}
-
-/**
- * Mencatat pelunasan Urunan secara langsung (jika belum lunas).
- */
-export async function recordUrunanPayment(
-  userId: string,
-  eventId: string
-): Promise<ActionResponse<{ isPaid: boolean }>> {
-  const existingPayment = await prisma.billingPayment.findUnique({
-    where: {
-      billingEventId_userId: {
-        billingEventId: eventId,
-        userId,
-      },
-    },
-  });
-
-  if (existingPayment) {
-    return {
-      success: true,
-      message: "Urunan untuk anggota ini sudah lunas.",
-      data: { isPaid: true },
-    };
-  }
-
-  return toggleUrunanPayment(userId, eventId);
 }

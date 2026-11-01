@@ -176,10 +176,10 @@ export async function exportKasCSV(): Promise<BackupResponse> {
   try {
     await assertRole([Role.ADMIN, Role.OPERATOR]);
 
-    const transactions = await prisma.transaction.findMany({
+    const transactions = await prisma.ledgerTransaction.findMany({
       orderBy: { date: "desc" },
       include: {
-        createdBy: {
+        user: {
           select: {
             name: true,
           },
@@ -193,18 +193,22 @@ export async function exportKasCSV(): Promise<BackupResponse> {
       "Kategori",
       "Nominal (Rp)",
       "Deskripsi / Uraian",
-      "Bukti / Link Nota",
-      "Pencatat Transaksi",
+      "Terkait Anggota",
     ];
 
     const rows = transactions.map((t) => [
       escapeCSV(new Date(t.date).toISOString().split("T")[0]),
-      escapeCSV(t.type === "INCOME" ? "PEMASUKAN" : "PENGELUARAN"),
-      escapeCSV(t.incomeCategory || t.expenseCategory || "-"),
+      escapeCSV(
+        t.type === "INCOME"
+          ? "PEMASUKAN"
+          : t.type === "EXPENSE"
+          ? "PENGELUARAN"
+          : "POTONG_SALDO"
+      ),
+      escapeCSV(t.category),
       escapeCSV(t.amount),
       escapeCSV(t.description),
-      escapeCSV(t.proofUrl || "-"),
-      escapeCSV(t.createdBy.name),
+      escapeCSV(t.user?.name || "Organisasi Global"),
     ]);
 
     const csvBody = [headers.map(escapeCSV).join(","), ...rows.map((r) => r.join(","))].join("\r\n");

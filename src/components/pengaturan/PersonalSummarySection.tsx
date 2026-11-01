@@ -94,7 +94,7 @@ export function PersonalSummarySection({
                   <span>✅ Seluruh iuran kas tercatat lunas.</span>
                 </p>
                 <p className="text-xs text-ink-secondary leading-relaxed">
-                  Terima kasih sudah tertib kas organisasi! Pembukuan Anda bersih ({kasSummary.paidPeriodCount}/{kasSummary.totalPeriodCount} periode terbayar).
+                  Terima kasih sudah tertib kas organisasi! Pembukuan saldo dompet kas Anda bersih dan aman.
                 </p>
               </div>
             ) : (

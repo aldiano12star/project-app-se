@@ -49,11 +49,11 @@ export async function executeRollover(
 
     // Hitung total saldo kas berjalan saat ini (Total Income - Total Expense)
     const [incomeAgg, expenseAgg] = await Promise.all([
-      prisma.transaction.aggregate({
+      prisma.ledgerTransaction.aggregate({
         where: { type: TransactionType.INCOME },
         _sum: { amount: true },
       }),
-      prisma.transaction.aggregate({
+      prisma.ledgerTransaction.aggregate({
         where: { type: TransactionType.EXPENSE },
         _sum: { amount: true },
       }),
