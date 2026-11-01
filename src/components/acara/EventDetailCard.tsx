@@ -28,6 +28,7 @@ export interface NestedMeetingData {
   title: string;
   date: Date | string;
   targetAudience: TargetAudience;
+  targetUserIds?: string[];
   notes?: string | null;
   eventId?: string | null;
   isRead?: boolean;
@@ -55,6 +56,7 @@ export interface EventDetailData {
   startDate: Date | string;
   endDate: Date | string;
   targetAudience?: TargetAudience;
+  targetUserIds?: string[];
   driveUrl?: string | null;
   notulensiText?: string | null;
   meetings?: NestedMeetingData[];

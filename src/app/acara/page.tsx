@@ -108,10 +108,16 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
       },
       orderBy: { startDate: "asc" },
       include: {
+        targetUsers: {
+          select: { id: true },
+        },
         meetings: {
           where: audienceFilter,
           orderBy: { date: "asc" },
           include: {
+            targetUsers: {
+              select: { id: true },
+            },
             readLogs: {
               where: { userId: dbUser.id },
             },
@@ -152,6 +158,9 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
       },
       orderBy: { date: "desc" },
       include: {
+        targetUsers: {
+          select: { id: true },
+        },
         readLogs: {
           where: { userId: dbUser.id },
         },
@@ -194,6 +203,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     startDate: ev.startDate,
     endDate: ev.endDate,
     targetAudience: ev.targetAudience,
+    targetUserIds: ev.targetUsers.map((u) => u.id),
     driveUrl: ev.driveUrl,
     notulensiText: ev.notulensiText,
     meetings: ev.meetings.map((m) => ({
@@ -201,6 +211,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
       title: m.title,
       date: m.date,
       targetAudience: m.targetAudience,
+      targetUserIds: m.targetUsers.map((u) => u.id),
       notes: m.notes,
       eventId: m.eventId,
       isRead: m.readLogs.length > 0,
@@ -234,6 +245,7 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     title: m.title,
     date: m.date,
     targetAudience: m.targetAudience,
+    targetUserIds: m.targetUsers.map((u) => u.id),
     notes: m.notes,
     eventId: null,
     isRead: m.readLogs.length > 0,

@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Role } from "@prisma/client";
+import { Role, TargetAudience } from "@prisma/client";
 import { Plus } from "lucide-react";
 import {
   SnakingPathCalendar,
   CalendarEventItem,
 } from "./SnakingPathCalendar";
 import { EventDetailData, NestedMeetingData } from "./EventDetailCard";
-import { AdminEventModal } from "./AdminEventModal";
+import { AdminEventModal, AdminEventInitialData } from "./AdminEventModal";
 import { MultiEventSelectorModal } from "./MultiEventSelectorModal";
 import {
   getEventTimeStatus,
@@ -89,9 +89,55 @@ export function AcaraClientView({
     currentUser.role === Role.ADMIN ||
     currentUser.role === Role.OPERATOR;
 
+  // State untuk Edit Agenda / Rapat Modal
+  const [editingItem, setEditingItem] = useState<AdminEventInitialData | null>(null);
+
   const handleOpenQr = (meetingId: string) => {
     setSelectedMeetingId(meetingId);
     setIsQrModalOpen(true);
+  };
+
+  const handleEditEvent = (ev: CalendarEventItem) => {
+    if (ev.isIndependentMeeting) {
+      setEditingItem({
+        id: ev.id,
+        type: "RAPAT",
+        title: ev.title,
+        startDate: ev.startDate,
+        targetAudience: ev.targetAudience || TargetAudience.ALL,
+        targetUserIds: ev.targetUserIds || [],
+        notes: ev.description || "",
+        eventId: null,
+      });
+    } else {
+      setEditingItem({
+        id: ev.id,
+        type: "ACARA_BESAR",
+        title: ev.title,
+        description: ev.description || "",
+        startDate: ev.startDate,
+        endDate: ev.endDate,
+        targetAudience: ev.targetAudience || TargetAudience.ALL,
+        targetUserIds: ev.targetUserIds || [],
+        driveUrl: ev.driveUrl || "",
+        notulensiText: ev.notulensiText || "",
+      });
+    }
+    setIsAdminModalOpen(true);
+  };
+
+  const handleEditMeeting = (m: NestedMeetingData) => {
+    setEditingItem({
+      id: m.id,
+      type: "RAPAT",
+      title: m.title,
+      startDate: m.date,
+      targetAudience: m.targetAudience || TargetAudience.ALL,
+      targetUserIds: m.targetUserIds || [],
+      notes: m.notes || "",
+      eventId: m.eventId || null,
+    });
+    setIsAdminModalOpen(true);
   };
 
   // Sinkronisasi state jika URL berubah
@@ -131,8 +177,10 @@ export function AcaraClientView({
       startDate: ev.startDate,
       endDate: ev.endDate,
       targetAudience: ev.targetAudience,
+      targetUserIds: ev.targetUserIds,
       isIndependentMeeting: false,
       driveUrl: ev.driveUrl,
+      notulensiText: ev.notulensiText,
       status,
       sectionsCount: ev.sections.length,
       completedTasksCount: completed,
@@ -151,6 +199,7 @@ export function AcaraClientView({
       startDate: m.date,
       endDate: m.date,
       targetAudience: m.targetAudience,
+      targetUserIds: m.targetUserIds,
       isIndependentMeeting: true,
       status,
       meetings: [m],
@@ -204,7 +253,10 @@ export function AcaraClientView({
         {isOfficer && (
           <button
             type="button"
-            onClick={() => setIsAdminModalOpen(true)}
+            onClick={() => {
+              setEditingItem(null);
+              setIsAdminModalOpen(true);
+            }}
             className="self-start sm:self-auto inline-flex w-auto items-center justify-center gap-1.5 h-11 min-h-11 px-5 py-2.5 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
           >
             <Plus className="h-4 w-4" />
@@ -221,6 +273,8 @@ export function AcaraClientView({
         events={calendarItems}
         currentUserRole={currentUser.role}
         onOpenQr={handleOpenQr}
+        onEditEvent={handleEditEvent}
+        onEditMeeting={handleEditMeeting}
         selectedDate={selectedDate}
         onSelectDate={handleSelectDate}
         onSelectEvent={handleSelectEvent}
@@ -239,12 +293,16 @@ export function AcaraClientView({
         />
       )}
 
-      {/* Modal Dialog Buat Agenda Baru (Admin/Operator) */}
+      {/* Modal Dialog Buat / Edit Agenda (Admin/Operator) */}
       <AdminEventModal
         isOpen={isAdminModalOpen}
-        onClose={() => setIsAdminModalOpen(false)}
+        onClose={() => {
+          setIsAdminModalOpen(false);
+          setEditingItem(null);
+        }}
         parentEvents={parentEventsList}
         allMembers={allMembers}
+        initialData={editingItem}
       />
 
       {/* Modal Dialog Pemilih Multi-Agenda pada Tanggal yang Sama */}

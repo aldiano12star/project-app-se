@@ -43,6 +43,15 @@ export interface CreateMeetingInput {
   notes?: string;
 }
 
+export interface UpdateMeetingInput {
+  title?: string;
+  date?: string;
+  targetAudience?: TargetAudience;
+  targetUserIds?: string[];
+  eventId?: string | null;
+  notes?: string | null;
+}
+
 export interface CreateTaskInput {
   sectionId: string;
   title: string;
@@ -1321,6 +1330,85 @@ export async function createMeeting(
     };
   } catch (error) {
     console.error("Gagal membuat sesi rapat:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Memperbarui Data Sesi Rapat
+ * Wewenang: OPERATOR, ADMIN
+ */
+export async function updateMeeting(
+  meetingId: string,
+  input: UpdateMeetingInput
+): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    const existingMeeting = await prisma.meeting.findUnique({
+      where: { id: meetingId },
+    });
+
+    if (!existingMeeting) {
+      return {
+        success: false,
+        message: "Sesi rapat tidak ditemukan.",
+      };
+    }
+
+    const updateData: {
+      title?: string;
+      date?: Date;
+      targetAudience?: TargetAudience;
+      targetUsers?: { set: { id: string }[] };
+      eventId?: string | null;
+      notes?: string | null;
+    } = {};
+
+    if (input.title !== undefined) updateData.title = input.title.trim();
+    if (input.date) {
+      const meetingDate = new Date(input.date);
+      if (!isNaN(meetingDate.getTime())) {
+        updateData.date = meetingDate;
+      }
+    }
+    if (input.targetAudience !== undefined) {
+      updateData.targetAudience = input.targetAudience;
+      if (input.targetAudience === TargetAudience.CUSTOM && input.targetUserIds) {
+        updateData.targetUsers = {
+          set: input.targetUserIds.map((id) => ({ id })),
+        };
+      } else if (input.targetAudience !== TargetAudience.CUSTOM) {
+        updateData.targetUsers = { set: [] };
+      }
+    }
+    if (input.eventId !== undefined) updateData.eventId = input.eventId || null;
+    if (input.notes !== undefined) updateData.notes = input.notes?.trim() || null;
+
+    await prisma.meeting.update({
+      where: { id: meetingId },
+      data: updateData,
+    });
+
+    revalidatePath("/acara");
+    if (existingMeeting.eventId) {
+      revalidatePath(`/acara/${existingMeeting.eventId}`);
+    }
+    if (input.eventId && input.eventId !== existingMeeting.eventId) {
+      revalidatePath(`/acara/${input.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Data sesi rapat berhasil diperbarui.",
+    };
+  } catch (error) {
+    console.error("Gagal memperbarui sesi rapat:", error);
     return {
       success: false,
       message:

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Calendar,
@@ -13,8 +13,29 @@ import {
   Search,
   Users,
 } from "lucide-react";
-import { createEvent, createMeeting, CreateEventInput } from "@/actions/acara";
+import {
+  createEvent,
+  updateEvent,
+  createMeeting,
+  updateMeeting,
+  CreateEventInput,
+} from "@/actions/acara";
 import { TargetAudience } from "@prisma/client";
+
+export interface AdminEventInitialData {
+  id: string;
+  type: "RAPAT" | "ACARA_BESAR";
+  title: string;
+  description?: string | null;
+  startDate?: Date | string;
+  endDate?: Date | string;
+  targetAudience: TargetAudience;
+  targetUserIds?: string[];
+  eventId?: string | null;
+  driveUrl?: string | null;
+  notulensiText?: string | null;
+  notes?: string | null;
+}
 
 interface AdminEventModalProps {
   isOpen: boolean;
@@ -27,6 +48,7 @@ interface AdminEventModalProps {
     classGrade?: string | null;
     mainDivision?: string | null;
   }[];
+  initialData?: AdminEventInitialData | null;
 }
 
 type EventCategoryType = "RAPAT" | "ACARA_BESAR";
@@ -57,9 +79,12 @@ export function AdminEventModal({
   onSuccess,
   parentEvents = [],
   allMembers = [],
+  initialData,
 }: AdminEventModalProps) {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [categoryType, setCategoryType] = useState<EventCategoryType>("RAPAT");
+  const [step, setStep] = useState<1 | 2>(initialData ? 2 : 1);
+  const [categoryType, setCategoryType] = useState<EventCategoryType>(
+    initialData ? initialData.type : "RAPAT"
+  );
 
   // State untuk form Rapat Singkat (1 Hari)
   const [rapatForm, setRapatForm] = useState<RapatFormState>({
@@ -93,6 +118,85 @@ export function AdminEventModal({
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Sinkronisasi data saat modal dibuka dalam mode Edit atau Create
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (initialData) {
+      setStep(2);
+      setCategoryType(initialData.type);
+      setErrorMessage(null);
+
+      if (initialData.type === "RAPAT") {
+        const d = initialData.startDate ? new Date(initialData.startDate) : new Date();
+        const dateStr = !isNaN(d.getTime()) ? d.toISOString().split("T")[0] : "";
+        const hours = !isNaN(d.getTime())
+          ? String(d.getHours()).padStart(2, "0")
+          : "09";
+        const minutes = !isNaN(d.getTime())
+          ? String(d.getMinutes()).padStart(2, "0")
+          : "00";
+
+        setRapatForm({
+          title: initialData.title || "",
+          date: dateStr,
+          startTime: `${hours}:${minutes}`,
+          endTime: "12:00",
+          targetAudience: initialData.targetAudience || TargetAudience.ALL,
+          targetUserIds: initialData.targetUserIds || [],
+          eventId: initialData.eventId || "",
+          location: "",
+          notes: initialData.notes || "",
+        });
+      } else {
+        const startStr = initialData.startDate
+          ? new Date(initialData.startDate).toISOString().split("T")[0]
+          : "";
+        const endStr = initialData.endDate
+          ? new Date(initialData.endDate).toISOString().split("T")[0]
+          : "";
+
+        setAcaraForm({
+          title: initialData.title || "",
+          description: initialData.description || "",
+          startDate: startStr,
+          endDate: endStr,
+          targetAudience: initialData.targetAudience || TargetAudience.ALL,
+          targetUserIds: initialData.targetUserIds || [],
+          driveUrl: initialData.driveUrl || "",
+          notulensiText: initialData.notulensiText || "",
+          autoGenerateSOP: false,
+        });
+      }
+    } else {
+      setStep(1);
+      setCategoryType("RAPAT");
+      setErrorMessage(null);
+      setRapatForm({
+        title: "",
+        date: "",
+        startTime: "09:00",
+        endTime: "11:30",
+        targetAudience: TargetAudience.ALL,
+        targetUserIds: [],
+        eventId: "",
+        location: "Ruang Eksploit / Lab Komputer",
+        notes: "",
+      });
+      setAcaraForm({
+        title: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        targetAudience: TargetAudience.ALL,
+        targetUserIds: [],
+        driveUrl: "",
+        notulensiText: "",
+        autoGenerateSOP: true,
+      });
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -222,17 +326,29 @@ export function AdminEventModal({
         .filter(Boolean)
         .join("\n\n");
 
-      const res = await createMeeting({
-        title: rapatForm.title.trim(),
-        date: startDateTime.toISOString(),
-        targetAudience: rapatForm.targetAudience,
-        targetUserIds:
-          rapatForm.targetAudience === TargetAudience.CUSTOM
-            ? rapatForm.targetUserIds
-            : undefined,
-        eventId: rapatForm.eventId.trim() ? rapatForm.eventId.trim() : null,
-        notes: combinedNotes || undefined,
-      });
+      const res = initialData
+        ? await updateMeeting(initialData.id, {
+            title: rapatForm.title.trim(),
+            date: startDateTime.toISOString(),
+            targetAudience: rapatForm.targetAudience,
+            targetUserIds:
+              rapatForm.targetAudience === TargetAudience.CUSTOM
+                ? rapatForm.targetUserIds
+                : undefined,
+            eventId: rapatForm.eventId.trim() ? rapatForm.eventId.trim() : null,
+            notes: combinedNotes || undefined,
+          })
+        : await createMeeting({
+            title: rapatForm.title.trim(),
+            date: startDateTime.toISOString(),
+            targetAudience: rapatForm.targetAudience,
+            targetUserIds:
+              rapatForm.targetAudience === TargetAudience.CUSTOM
+                ? rapatForm.targetUserIds
+                : undefined,
+            eventId: rapatForm.eventId.trim() ? rapatForm.eventId.trim() : null,
+            notes: combinedNotes || undefined,
+          });
 
       if (res.success) {
         onSuccess?.();
@@ -272,20 +388,34 @@ export function AdminEventModal({
     setIsLoading(true);
 
     try {
-      const res = await createEvent({
-        title: acaraForm.title.trim(),
-        description: acaraForm.description?.trim() || undefined,
-        startDate: acaraForm.startDate,
-        endDate: acaraForm.endDate,
-        targetAudience: acaraForm.targetAudience,
-        targetUserIds:
-          acaraForm.targetAudience === TargetAudience.CUSTOM
-            ? acaraForm.targetUserIds
-            : undefined,
-        driveUrl: acaraForm.driveUrl?.trim() || undefined,
-        notulensiText: acaraForm.notulensiText?.trim() || undefined,
-        autoGenerateSOP: acaraForm.autoGenerateSOP,
-      });
+      const res = initialData
+        ? await updateEvent(initialData.id, {
+            title: acaraForm.title.trim(),
+            description: acaraForm.description?.trim() || undefined,
+            startDate: acaraForm.startDate,
+            endDate: acaraForm.endDate,
+            targetAudience: acaraForm.targetAudience,
+            targetUserIds:
+              acaraForm.targetAudience === TargetAudience.CUSTOM
+                ? acaraForm.targetUserIds
+                : undefined,
+            driveUrl: acaraForm.driveUrl?.trim() || undefined,
+            notulensiText: acaraForm.notulensiText?.trim() || undefined,
+          })
+        : await createEvent({
+            title: acaraForm.title.trim(),
+            description: acaraForm.description?.trim() || undefined,
+            startDate: acaraForm.startDate,
+            endDate: acaraForm.endDate,
+            targetAudience: acaraForm.targetAudience,
+            targetUserIds:
+              acaraForm.targetAudience === TargetAudience.CUSTOM
+                ? acaraForm.targetUserIds
+                : undefined,
+            driveUrl: acaraForm.driveUrl?.trim() || undefined,
+            notulensiText: acaraForm.notulensiText?.trim() || undefined,
+            autoGenerateSOP: acaraForm.autoGenerateSOP,
+          });
 
       if (res.success) {
         onSuccess?.();
@@ -310,7 +440,11 @@ export function AdminEventModal({
             <Calendar className="w-5 h-5 text-slate-500 dark:text-slate-400" />
             <div>
               <h2 className="text-sm font-bold text-ink">
-                {step === 1
+                {initialData
+                  ? categoryType === "RAPAT"
+                    ? "Edit Sesi Rapat"
+                    : "Edit Program Kerja"
+                  : step === 1
                   ? "Pilih Jenis Agenda Kegiatan"
                   : categoryType === "RAPAT"
                   ? "Buat Rapat / Agenda Singkat"
@@ -394,20 +528,22 @@ export function AdminEventModal({
         {/* STEP 2: Formulir Input Sesuai Jenis Agenda */}
         {step === 2 && (
           <div className="flex flex-col flex-1 overflow-hidden">
-            {/* Navigasi Balik ke Step 1 */}
-            <div className="px-5 py-2.5 bg-surface-container-low/30 border-b border-edge flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-ink cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Ganti Jenis Agenda</span>
-              </button>
-              <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
-                {categoryType === "RAPAT" ? "Format Rapat" : "Format Proker"}
-              </span>
-            </div>
+            {/* Navigasi Balik ke Step 1 (Hanya jika mode Create baru) */}
+            {!initialData && (
+              <div className="px-5 py-2.5 bg-surface-container-low/30 border-b border-edge flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-ink cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Ganti Jenis Agenda</span>
+                </button>
+                <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                  {categoryType === "RAPAT" ? "Format Rapat" : "Format Proker"}
+                </span>
+              </div>
+            )}
 
             {/* FORMULIR RAPAT SINGKAT */}
             {categoryType === "RAPAT" && (
