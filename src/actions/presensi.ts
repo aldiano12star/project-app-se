@@ -9,6 +9,7 @@ import {
   isUserEligibleForAudience,
   buildAudienceFilter,
 } from "@/utils/audience";
+import { isTodayLocal } from "@/utils/eventStatus";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -215,6 +216,14 @@ export async function recordAttendance(
       return {
         success: false,
         message: "Sesi QR rapat telah kedaluwarsa.",
+      };
+    }
+
+    // Validasi Keamanan: Presensi QR hanya valid pada hari H rapat (perbandingan tanggal YYYY-MM-DD)
+    if (!isTodayLocal(meeting.date)) {
+      return {
+        success: false,
+        message: "Presensi gagal: QR hanya valid pada hari H rapat.",
       };
     }
 

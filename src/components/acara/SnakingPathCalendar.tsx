@@ -573,7 +573,7 @@ export function SnakingPathCalendar({
                   {/* ======================================================== */}
                   {/* THE NESTED CHILDREN: Meetings inside Parent Mega-Card   */}
                   {/* ======================================================== */}
-                  {childMeetings.length > 0 && (
+                  {childMeetings.length > 0 && !isIndependent && (
                     <div className="pt-2 space-y-2.5">
                       <div className="flex items-center justify-between px-1">
                         <span className="text-xs font-bold text-ink flex items-center gap-1.5">
@@ -662,10 +662,11 @@ export function SnakingPathCalendar({
                         <button
                           type="button"
                           onClick={() => onOpenQr(ev.id)}
-                          className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink text-xs font-bold inline-flex items-center justify-center gap-1.5 border border-edge transition-colors cursor-pointer"
+                          className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                          title="Tampilkan QR Presensi Sesi Rapat Ini"
                         >
                           <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                          <span>Tampilkan QR Presensi Rapat</span>
+                          <span>Tampilkan QR</span>
                         </button>
                       </div>
                     )

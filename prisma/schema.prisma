@@ -87,9 +87,9 @@ enum TaskStatus {
 
 enum AttendanceStatus {
   HADIR
-  IZIN
   SAKIT
-  ALPA
+  IZIN
+  ALPHA
 }
 
 model User {
