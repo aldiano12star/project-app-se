@@ -9,6 +9,10 @@ import Link from "next/link";
 import { Role, Division } from "@prisma/client";
 import { buildAudienceFilter } from "@/utils/audience";
 import {
+  getIndividualAttendanceStats,
+  getGlobalOrganizationalHealth,
+} from "@/utils/analytics";
+import {
   CheckCircle2,
   CalendarDays,
   Clock,
@@ -17,6 +21,8 @@ import {
   Radio,
   Layers,
   MessageSquare,
+  Activity,
+  CalendarCheck,
 } from "lucide-react";
 import {
   getJakartaDateParts,
@@ -93,10 +99,17 @@ export default async function DashboardPage() {
 
   // Tentukan batasan visibilitas target audience berdasarkan kelas/role dan custom target pengguna
   const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
+  const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  // Ambil Top 3 Leaderboard, acara terdekat (belum selesai & sesuai angkatan), presensi hari ini, dan tugas panitia
-  const [topContributors, recentEvents, todayAttendance, myAssignedTasks] =
-    await Promise.all([
+  // Ambil Top 3 Leaderboard, acara terdekat (belum selesai & sesuai angkatan), presensi hari ini, tugas panitia, dan analitik presensi
+  const [
+    topContributors,
+    recentEvents,
+    todayAttendance,
+    myAssignedTasks,
+    individualStats,
+    globalHealth,
+  ] = await Promise.all([
       prisma.user.findMany({
         where: { status: "ACTIVE" },
         orderBy: { totalPoints: "desc" },
@@ -165,6 +178,12 @@ export default async function DashboardPage() {
         },
         orderBy: { dueDate: "asc" },
       }),
+      !isOfficer
+        ? getIndividualAttendanceStats(dbUser.id, dbUser.classGrade, dbUser.role)
+        : Promise.resolve(null),
+      isOfficer
+        ? getGlobalOrganizationalHealth()
+        : Promise.resolve(null),
     ]);
 
   const nowParts = getJakartaDateParts(new Date());
@@ -392,6 +411,131 @@ export default async function DashboardPage() {
             </div>
           )}
         </section>
+
+        {/* ========================================================= */}
+        {/* MODUL ANALITIK: KESEHATAN ORGANISASI ATAU PRESENSI SAYA  */}
+        {/* ========================================================= */}
+        {isOfficer && globalHealth ? (
+          <section className="card-solid p-5 sm:p-6 rounded-2xl bg-card border border-edge shadow-xs space-y-3.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 p-2.5 shadow-xs bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                    Kesehatan Organisasi / Keaktifan Global
+                  </h2>
+                  <p className="text-xs text-ink-muted mt-0.5">
+                    Rasio kehadiran seluruh anggota aktif pada agenda rapat
+                  </p>
+                </div>
+              </div>
+
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border shrink-0 ${
+                  globalHealth.globalPercentage >= 75
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30"
+                    : "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800/60"
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>
+                  {globalHealth.globalPercentage >= 75
+                    ? "Keaktifan Memenuhi Target"
+                    : "Perlu Peningkatan"}
+                </span>
+              </span>
+            </div>
+
+            <div className="bg-surface-container-low rounded-xl p-4 border border-edge/60 space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-ink">
+                  Total Kehadiran Kolektif:
+                </span>
+                <span className="font-mono font-bold text-ink text-sm sm:text-base">
+                  {globalHealth.globalPercentage}%{" "}
+                  <span className="text-xs font-normal text-ink-muted">
+                    ({globalHealth.totalActual} dari {globalHealth.totalExpected} kehadiran diharapkan)
+                  </span>
+                </span>
+              </div>
+
+              <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/40">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    globalHealth.globalPercentage >= 75
+                      ? "bg-linear-to-r from-emerald-500 to-teal-400"
+                      : "bg-linear-to-r from-amber-500 to-rose-500"
+                  }`}
+                  style={{
+                    width: `${Math.min(globalHealth.globalPercentage, 100)}%`,
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        ) : individualStats ? (
+          <section className="card-solid p-5 sm:p-6 rounded-2xl bg-card border border-edge shadow-xs space-y-3.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl flex items-center justify-center shrink-0 border border-indigo-200 dark:border-indigo-800 p-2.5 shadow-xs bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+                  <CalendarCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                    Rekapitulasi Presensi Saya
+                  </h2>
+                  <p className="text-xs text-ink-muted mt-0.5">
+                    Tingkat kehadiran Anda pada rapat &amp; kegiatan resmi
+                  </p>
+                </div>
+              </div>
+
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border shrink-0 ${
+                  individualStats.percentage >= 75
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30"
+                    : "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800/60"
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>
+                  {individualStats.percentage >= 75
+                    ? "Memenuhi Syarat"
+                    : "Perlu Ditingkatkan"}
+                </span>
+              </span>
+            </div>
+
+            <div className="bg-surface-container-low rounded-xl p-4 border border-edge/60 space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-ink">
+                  Persentase Kehadiran:
+                </span>
+                <span className="font-mono font-bold text-ink text-sm sm:text-base">
+                  {individualStats.percentage}%{" "}
+                  <span className="text-xs font-normal text-ink-muted">
+                    ({individualStats.attended} dari {individualStats.eligible} pertemuan berhak hadir)
+                  </span>
+                </span>
+              </div>
+
+              <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/40">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    individualStats.percentage >= 75
+                      ? "bg-linear-to-r from-emerald-500 to-teal-400"
+                      : "bg-linear-to-r from-amber-500 to-rose-500"
+                  }`}
+                  style={{
+                    width: `${Math.min(individualStats.percentage, 100)}%`,
+                  }}
+                />
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* ========================================================= */}
         {/* MODUL 2 & 3: Grid Adaptif Layar Lebar (Podium & Acara)    */}

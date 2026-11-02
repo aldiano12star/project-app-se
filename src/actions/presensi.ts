@@ -237,18 +237,10 @@ export async function recordAttendance(
     );
 
     if (!isEligible) {
-      const targetLabel =
-        meeting.targetAudience === TargetAudience.CUSTOM
-          ? "peserta khusus terpilih"
-          : meeting.targetAudience === TargetAudience.GEN_20
-          ? "Kelas 11 (Gen 20)"
-          : meeting.targetAudience === TargetAudience.GEN_21
-          ? "Kelas 10 (Gen 21)"
-          : "Angkatan Khusus";
-
       return {
         success: false,
-        message: `Rapat ini dibatasi untuk ${targetLabel}. Akun Anda tidak termasuk dalam sasaran rapat ini.`,
+        message:
+          "Akses Ditolak: Anda bukan peserta yang terdaftar untuk sesi rapat ini.",
       };
     }
 
