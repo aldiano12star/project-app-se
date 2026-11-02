@@ -432,9 +432,17 @@ export function RapatDetailClientView({
                   const isUpdating = updatingUserId === item.userId;
 
                   const classDisplay =
-                    item.user.kelas && item.user.gen
-                      ? `Kelas ${item.user.kelas} (Gen ${item.user.gen})`
-                      : item.user.classGrade?.replace("_", " ") || "-";
+                    item.user.role === Role.KOLABORATOR
+                      ? "Kolaborator"
+                      : item.user.gen
+                      ? `Gen ${item.user.gen}`
+                      : item.user.classGrade === "KELAS_10"
+                      ? "Gen 21"
+                      : item.user.classGrade === "KELAS_11"
+                      ? "Gen 20"
+                      : item.user.classGrade === "KELAS_12"
+                      ? "Gen 19"
+                      : "-";
 
                   return (
                     <tr

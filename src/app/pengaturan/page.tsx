@@ -9,7 +9,7 @@ import {
   AttendanceSummaryData,
 } from "@/components/pengaturan/PersonalSummarySection";
 import { Role } from "@prisma/client";
-import { buildAudienceFilter } from "@/utils/audience";
+import { getIndividualAttendanceStats } from "@/utils/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -51,40 +51,27 @@ export default async function PengaturanPage() {
     redirect("/onboarding");
   }
 
-  // Tentukan batasan target audience yang berhak diikuti oleh user ini (termasuk CUSTOM)
-  const eligibleMeetingFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
-
-  // 2. Ambil rekap presensi mandiri (hanya rapat yang berhak diikuti user)
-  const [attendedCount, totalMeetings] = await Promise.all([
-    prisma.attendance.count({
-      where: {
-        userId: session.user.id,
-        status: "HADIR",
-        meeting: eligibleMeetingFilter,
-      },
-    }),
-    prisma.meeting.count({
-      where: eligibleMeetingFilter,
-    }),
-  ]);
-
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  const allUsersForAdmin = isOfficer
-    ? await prisma.user.findMany({
-        orderBy: [{ role: "asc" }, { name: "asc" }],
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          role: true,
-          classGrade: true,
-          mainDivision: true,
-          createdAt: true,
-        },
-      })
-    : [];
+  // 2. Ambil analitik presensi mandiri dan daftar user untuk admin secara paralel
+  const [individualStats, allUsersForAdmin] = await Promise.all([
+    getIndividualAttendanceStats(session.user.id, dbUser.classGrade, dbUser.role),
+    isOfficer
+      ? prisma.user.findMany({
+          orderBy: [{ role: "asc" }, { name: "asc" }],
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+            classGrade: true,
+            mainDivision: true,
+            createdAt: true,
+          },
+        })
+      : Promise.resolve([]),
+  ]);
 
   const formattedManagedUsers = allUsersForAdmin.map((u) => ({
     ...u,
@@ -103,19 +90,12 @@ export default async function PengaturanPage() {
     totalPeriodCount: 1,
   };
 
-  // Hitung Rekapitulasi Presensi Mandiri
-  const effectiveTotalMeetings = Math.max(totalMeetings, attendedCount);
-  const attendanceRate =
-    effectiveTotalMeetings > 0
-      ? Math.round((attendedCount / effectiveTotalMeetings) * 100)
-      : 100;
-  const isCompliant = attendanceRate >= 75;
-
+  // Rekapitulasi Presensi Mandiri berbasis Analytics Engine
   const attendanceSummary: AttendanceSummaryData = {
-    attendedCount,
-    totalMeetings: effectiveTotalMeetings,
-    attendanceRate,
-    isCompliant,
+    attendedCount: individualStats.attended,
+    totalMeetings: individualStats.eligible,
+    attendanceRate: individualStats.percentage,
+    isCompliant: individualStats.percentage >= 75,
   };
 
   const serializedUser: UserProfileData = {

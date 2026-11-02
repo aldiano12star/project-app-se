@@ -111,23 +111,24 @@ export function TreasurerPanel({
     return cg.includes("10") || k.includes("10") || cg === "X" || k === "X";
   };
 
-  // Helper pemformatan identitas Kelas & Generasi yang komprehensif
+  // Helper pemformatan identitas Kelas & Generasi yang ringkas & hemat ruang
   const formatGradeGen = (m: TreasurerMemberData) => {
-    const genVal = m.gen ?? m.generationNumber;
-    const genStr = genVal ? `Gen ${genVal}` : null;
-    const classStr =
-      m.kelas
-        ? `Kelas ${m.kelas}`
-        : m.classGrade === "KELAS_10"
-        ? "Kelas 10"
+    if (m.role === Role.KOLABORATOR || (m.role as string) === "KOLABORATOR") {
+      return "Kolaborator";
+    }
+    const genVal =
+      m.gen ??
+      m.generationNumber ??
+      (m.classGrade === "KELAS_10"
+        ? 21
         : m.classGrade === "KELAS_11"
-        ? "Kelas 11"
+        ? 20
         : m.classGrade === "KELAS_12"
-        ? "Kelas 12"
-        : m.classGrade;
+        ? 19
+        : null);
 
-    if (classStr && genStr) return `${classStr} (${genStr})`;
-    return classStr || genStr || "-";
+    if (genVal) return `Gen ${genVal}`;
+    return "-";
   };
 
   // Kalkulasi Statistik Finansial
