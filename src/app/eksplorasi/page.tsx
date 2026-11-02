@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { EksplorasiClientView } from "@/components/eksplorasi/EksplorasiClientView";
 import { ProjectCardData } from "@/components/eksplorasi/ProjectCard";
@@ -12,32 +12,13 @@ import { Role } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 export default async function EksplorasiPage() {
-  const session = await auth();
+  const current = await getCurrentDbUser();
 
-  if (!session?.user?.id) {
+  if (!current?.session?.user?.id || !current.dbUser) {
     redirect("/login");
   }
 
-  // Ambil data user aktif
-  const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      classGrade: true,
-      mainDivision: true,
-      monthlyPoints: true,
-      totalPoints: true,
-      isProfileCompleted: true,
-    },
-  });
-
-  if (!dbUser) {
-    redirect("/login");
-  }
+  const { session, dbUser } = current;
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");

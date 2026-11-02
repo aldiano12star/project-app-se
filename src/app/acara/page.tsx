@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { AcaraClientView } from "@/components/acara/AcaraClientView";
 import { EventDetailData, NestedMeetingData } from "@/components/acara/EventDetailCard";
@@ -18,11 +18,13 @@ interface AcaraPageProps {
 }
 
 export default async function AcaraPage({ searchParams }: AcaraPageProps) {
-  const session = await auth();
+  const current = await getCurrentDbUser();
 
-  if (!session?.user?.id) {
+  if (!current?.session?.user?.id || !current.dbUser) {
     redirect("/login");
   }
+
+  const { dbUser } = current;
 
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const initialMonth = resolvedSearchParams?.month
@@ -32,31 +34,9 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     ? parseInt(resolvedSearchParams.year, 10)
     : undefined;
 
-  // Fetching data user dan academicYear
-  const [dbUser, currentAcademicYear] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        role: true,
-        classGrade: true,
-        mainDivision: true,
-        monthlyPoints: true,
-        totalPoints: true,
-        isProfileCompleted: true,
-      },
-    }),
-    prisma.academicYear.findFirst({
-      where: { isCurrent: true },
-    }),
-  ]);
-
-  if (!dbUser) {
-    redirect("/login");
-  }
+  const currentAcademicYear = await prisma.academicYear.findFirst({
+    where: { isCurrent: true },
+  });
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");

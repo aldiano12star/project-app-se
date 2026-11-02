@@ -47,7 +47,14 @@ const NAV_ITEMS: NavItem[] = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
   const [isModalActive, setIsModalActive] = useState(false);
+
+  useEffect(() => {
+    setOptimisticPath(null);
+  }, [pathname]);
+
+  const activePath = optimisticPath || pathname;
 
   useEffect(() => {
     const checkModalInDOM = () => {
@@ -85,21 +92,21 @@ export function BottomNav() {
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =
-            pathname === item.href ||
+            activePath === item.href ||
             (item.href === "/eksplorasi" &&
-              (pathname === "/eksplorasi" ||
-                pathname.startsWith("/eksplorasi") ||
-                pathname === "/showcase" ||
-                pathname === "/arsip")) ||
+              (activePath === "/eksplorasi" ||
+                activePath.startsWith("/eksplorasi") ||
+                activePath === "/showcase" ||
+                activePath === "/arsip")) ||
             (item.href === "/aspirasi" &&
-              (pathname === "/aspirasi" ||
-                pathname.startsWith("/aspirasi") ||
-                pathname === "/suara" ||
-                pathname.startsWith("/suara"))) ||
+              (activePath === "/aspirasi" ||
+                activePath.startsWith("/aspirasi") ||
+                activePath === "/suara" ||
+                activePath.startsWith("/suara"))) ||
             (item.href !== "/dashboard" &&
               item.href !== "/aspirasi" &&
               item.href !== "/eksplorasi" &&
-              pathname.startsWith(item.href));
+              activePath.startsWith(item.href));
 
           if (isActive) {
             return (
@@ -107,6 +114,7 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
+                onClick={() => setOptimisticPath(item.href)}
                 className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
@@ -122,6 +130,7 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               prefetch={true}
+              onClick={() => setOptimisticPath(item.href)}
               title={item.label}
               aria-label={item.label}
               className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-[#E2E8F0] p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"

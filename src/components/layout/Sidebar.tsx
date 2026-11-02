@@ -54,7 +54,14 @@ interface SidebarProps {
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
   const [logoError, setLogoError] = useState(false);
+
+  React.useEffect(() => {
+    setOptimisticPath(null);
+  }, [pathname]);
+
+  const activePath = optimisticPath || pathname;
 
   return (
     <aside
@@ -102,21 +109,21 @@ export function Sidebar({ user }: SidebarProps) {
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =
-            pathname === item.href ||
+            activePath === item.href ||
             (item.href === "/eksplorasi" &&
-              (pathname === "/eksplorasi" ||
-                pathname.startsWith("/eksplorasi") ||
-                pathname === "/showcase" ||
-                pathname === "/arsip")) ||
+              (activePath === "/eksplorasi" ||
+                activePath.startsWith("/eksplorasi") ||
+                activePath === "/showcase" ||
+                activePath === "/arsip")) ||
             (item.href === "/aspirasi" &&
-              (pathname === "/aspirasi" ||
-                pathname.startsWith("/aspirasi") ||
-                pathname === "/suara" ||
-                pathname.startsWith("/suara"))) ||
+              (activePath === "/aspirasi" ||
+                activePath.startsWith("/aspirasi") ||
+                activePath === "/suara" ||
+                activePath.startsWith("/suara"))) ||
             (item.href !== "/dashboard" &&
               item.href !== "/aspirasi" &&
               item.href !== "/eksplorasi" &&
-              pathname.startsWith(item.href));
+              activePath.startsWith(item.href));
 
           if (isActive) {
             return (
@@ -124,6 +131,7 @@ export function Sidebar({ user }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
+                onClick={() => setOptimisticPath(item.href)}
                 className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold shadow-xs transition-all min-h-11"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
@@ -139,6 +147,7 @@ export function Sidebar({ user }: SidebarProps) {
               key={item.href}
               href={item.href}
               prefetch={true}
+              onClick={() => setOptimisticPath(item.href)}
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-ink-secondary hover:text-ink hover:bg-surface-container-high/60 border border-transparent font-medium transition-all min-h-11"
             >
               <Icon className="h-5 w-5 stroke-[1.8] text-ink-muted shrink-0" />

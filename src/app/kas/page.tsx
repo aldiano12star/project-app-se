@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { Role, TransactionType, TransactionCategory } from "@prisma/client";
 import { DigitalWalletCard } from "@/components/kas/DigitalWalletCard";
@@ -11,34 +11,13 @@ import { calculateRealMoney } from "@/actions/kas";
 import { Wallet, Users } from "lucide-react";
 
 export default async function KasPage() {
-  const session = await auth();
+  const current = await getCurrentDbUser();
 
-  if (!session?.user?.id) {
+  if (!current?.session?.user?.id || !current.dbUser) {
     redirect("/login");
   }
 
-  // 1. Ambil data pengguna terlebih dahulu untuk evaluasi role
-  const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      classGrade: true,
-      mainDivision: true,
-      status: true,
-      monthlyPoints: true,
-      totalPoints: true,
-      kasBalance: true,
-      isProfileCompleted: true,
-    },
-  });
-
-  if (!dbUser) {
-    redirect("/login");
-  }
+  const { session, dbUser } = current;
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");

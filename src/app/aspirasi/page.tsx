@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { AspirasiClientView } from "@/components/aspirasi/AspirasiClientView";
 import { FeedbackIssueData } from "@/components/aspirasi/FeedbackIssueCard";
@@ -11,32 +11,13 @@ import { Role, FeedbackType } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 export default async function AspirasiPage() {
-  const session = await auth();
+  const current = await getCurrentDbUser();
 
-  if (!session?.user?.id) {
+  if (!current?.session?.user?.id || !current.dbUser) {
     redirect("/login");
   }
 
-  // Fetching data user terlebih dahulu
-  const dbUser = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      classGrade: true,
-      mainDivision: true,
-      monthlyPoints: true,
-      totalPoints: true,
-      isProfileCompleted: true,
-    },
-  });
-
-  if (!dbUser) {
-    redirect("/login");
-  }
+  const { dbUser } = current;
 
   if (!dbUser.isProfileCompleted) {
     redirect("/onboarding");
