@@ -523,9 +523,12 @@ export function SnakingPathCalendar({
                       </div>
 
                       {isIndependent ? (
-                        <h3 className="text-base font-bold text-ink leading-snug">
+                        <Link
+                          href={`/acara/rapat/${ev.id}`}
+                          className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
+                        >
                           {ev.title}
-                        </h3>
+                        </Link>
                       ) : (
                         <Link
                           href={`/acara/${ev.id}`}
@@ -611,9 +614,12 @@ export function SnakingPathCalendar({
                             >
                               <div className="space-y-1 min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <span className="text-xs font-bold text-ink truncate">
+                                  <Link
+                                    href={`/acara/rapat/${meeting.id}`}
+                                    className="text-xs font-bold text-ink hover:text-primary transition-colors truncate block"
+                                  >
                                     {meeting.title}
-                                  </span>
+                                  </Link>
                                   {mBadge && meeting.targetAudience !== TargetAudience.ALL && (
                                     <span
                                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${mBadge.badgeClass}`}
@@ -679,32 +685,42 @@ export function SnakingPathCalendar({
 
                   {/* Tombol Aksi di Bawah Kartu */}
                   {isIndependent ? (
-                    isOfficer && (
-                      <div className="pt-1 flex items-center justify-end gap-2">
-                        {onEditEvent && (
-                          <button
-                            type="button"
-                            onClick={() => onEditEvent(ev)}
-                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
-                            title="Edit Rapat Mandiri Ini"
-                          >
-                            <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                            <span>Edit Rapat</span>
-                          </button>
-                        )}
-                        {onOpenQr && (
-                          <button
-                            type="button"
-                            onClick={() => onOpenQr(ev.id)}
-                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
-                            title="Tampilkan QR Presensi Sesi Rapat Ini"
-                          >
-                            <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                            <span>Tampilkan QR</span>
-                          </button>
-                        )}
-                      </div>
-                    )
+                    <div className="pt-1 flex items-center justify-between gap-2">
+                      <Link
+                        href={`/acara/rapat/${ev.id}`}
+                        className="h-11 min-h-11 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-semibold inline-flex items-center gap-1.5 transition-colors border border-edge"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 text-ink-muted" />
+                        <span>Detail &amp; Notulensi</span>
+                      </Link>
+
+                      {isOfficer && (
+                        <div className="flex items-center gap-2">
+                          {onEditEvent && (
+                            <button
+                              type="button"
+                              onClick={() => onEditEvent(ev)}
+                              className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                              title="Edit Rapat Mandiri Ini"
+                            >
+                              <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                              <span className="hidden sm:inline">Edit</span>
+                            </button>
+                          )}
+                          {onOpenQr && (
+                            <button
+                              type="button"
+                              onClick={() => onOpenQr(ev.id)}
+                              className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                              title="Tampilkan QR Presensi Sesi Rapat Ini"
+                            >
+                              <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                              <span>Tampilkan QR</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="pt-1 flex items-center gap-2">
                       <Link

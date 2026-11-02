@@ -183,14 +183,26 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     }),
     isOfficer
       ? prisma.user.findMany({
-          where: { status: "ACTIVE" },
+          where: {
+            status: "ACTIVE",
+            role: {
+              in: [
+                Role.MEMBER,
+                Role.KOLABORATOR,
+                Role.BENDAHARA,
+                Role.ADMIN,
+                Role.OPERATOR,
+              ],
+            },
+          },
           select: {
             id: true,
             name: true,
+            role: true,
             classGrade: true,
             mainDivision: true,
           },
-          orderBy: { name: "asc" },
+          orderBy: [{ role: "asc" }, { name: "asc" }],
         })
       : Promise.resolve([]),
   ]);

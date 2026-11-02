@@ -45,6 +45,7 @@ interface AdminEventModalProps {
   allMembers?: {
     id: string;
     name: string;
+    role?: string;
     classGrade?: string | null;
     mainDivision?: string | null;
   }[];
@@ -674,11 +675,20 @@ export function AdminEventModal({
                                   className="h-4 w-4 rounded text-purple-600 accent-purple-600 cursor-pointer"
                                 />
                                 <div className="min-w-0">
-                                  <span className="text-xs font-semibold text-ink block truncate leading-tight">
-                                    {member.name}
-                                  </span>
-                                  <span className="text-[10px] text-ink-muted block truncate">
-                                    {member.classGrade === "KELAS_10"
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-xs font-semibold text-ink truncate leading-tight">
+                                      {member.name}
+                                    </span>
+                                    {member.role === "KOLABORATOR" && (
+                                      <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                                        Kolaborator
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] text-ink-muted block truncate mt-0.5">
+                                    {member.role === "KOLABORATOR"
+                                      ? "Mitra Eksternal"
+                                      : member.classGrade === "KELAS_10"
                                       ? "Gen 21"
                                       : member.classGrade === "KELAS_11"
                                       ? "Gen 20"
@@ -939,11 +949,20 @@ export function AdminEventModal({
                                   className="h-4 w-4 rounded text-purple-600 accent-purple-600 cursor-pointer"
                                 />
                                 <div className="min-w-0">
-                                  <span className="text-xs font-semibold text-ink block truncate leading-tight">
-                                    {member.name}
-                                  </span>
-                                  <span className="text-[10px] text-ink-muted block truncate">
-                                    {member.classGrade === "KELAS_10"
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-xs font-semibold text-ink truncate leading-tight">
+                                      {member.name}
+                                    </span>
+                                    {member.role === "KOLABORATOR" && (
+                                      <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                                        Kolaborator
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] text-ink-muted block truncate mt-0.5">
+                                    {member.role === "KOLABORATOR"
+                                      ? "Mitra Eksternal"
+                                      : member.classGrade === "KELAS_10"
                                       ? "Gen 21"
                                       : member.classGrade === "KELAS_11"
                                       ? "Gen 20"

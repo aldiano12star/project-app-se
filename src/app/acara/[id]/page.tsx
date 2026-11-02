@@ -6,6 +6,7 @@ import { EventDetailClientView } from "@/components/acara/EventDetailClientView"
 import { EventDetailData } from "@/components/acara/EventDetailCard";
 import { BudgetItemData } from "@/components/acara/PrintRABModal";
 import { isUserEligibleForAudience } from "@/utils/audience";
+import { Role } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -89,13 +90,25 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
       },
     }),
     prisma.user.findMany({
-      where: { status: "ACTIVE" },
+      where: {
+        status: "ACTIVE",
+        role: {
+          in: [
+            Role.MEMBER,
+            Role.KOLABORATOR,
+            Role.BENDAHARA,
+            Role.ADMIN,
+            Role.OPERATOR,
+          ],
+        },
+      },
       select: {
         id: true,
         name: true,
+        role: true,
         classGrade: true,
       },
-      orderBy: { name: "asc" },
+      orderBy: [{ role: "asc" }, { name: "asc" }],
     }),
   ]);
 
@@ -104,6 +117,14 @@ export default async function AcaraDetailPage({ params }: AcaraDetailPageProps) 
   }
 
   if (!dbEvent) {
+    // Fallback: Jika ID adalah sesi rapat (Meeting), arahkan ke rute terdedikasi
+    const meeting = await prisma.meeting.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (meeting) {
+      redirect(`/acara/rapat/${id}`);
+    }
     notFound();
   }
 

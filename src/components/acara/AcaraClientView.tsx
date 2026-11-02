@@ -33,6 +33,7 @@ export interface AcaraClientViewProps {
   allMembers?: {
     id: string;
     name: string;
+    role?: Role;
     classGrade?: string | null;
     mainDivision?: string | null;
   }[];
