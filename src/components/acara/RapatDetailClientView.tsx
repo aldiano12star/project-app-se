@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -18,10 +18,17 @@ import {
   MessageSquare,
   X,
   Loader2,
+  FileText,
+  UserCheck,
+  Check,
 } from "lucide-react";
-import { Role, TargetAudience } from "@prisma/client";
+import { Role, TargetAudience, AttendanceStatus } from "@prisma/client";
 import { NotulensiCard } from "./NotulensiCard";
 import { deleteMeeting } from "@/actions/acara";
+import {
+  updateAttendanceStatus,
+  finalizeAttendance,
+} from "@/actions/presensi";
 import { getTargetAudienceBadge } from "@/utils/audience";
 import {
   generateWhatsAppLink,
@@ -35,14 +42,20 @@ const MeetingQrModal = dynamic(
 
 export interface RapatAttendanceItem {
   id: string;
-  checkedAt: Date | string;
+  userId: string;
   user: {
     id: string;
     name: string;
     classGrade?: string | null;
+    kelas?: string | null;
+    gen?: number | null;
     image?: string | null;
     mainDivision?: string | null;
+    role?: Role;
   };
+  status: AttendanceStatus | null;
+  checkedAt?: Date | string | null;
+  isManual?: boolean;
 }
 
 export interface RapatDetailData {
@@ -74,10 +87,27 @@ export function RapatDetailClientView({
   meeting,
 }: RapatDetailClientViewProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // State untuk updating status per baris
+  const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+
+  // Toast Notifikasi Sederhana
+  const [toastMessage, setToastMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  const showToast = (type: "success" | "error", text: string) => {
+    setToastMessage({ type, text });
+    setTimeout(() => setToastMessage(null), 4000);
+  };
 
   const isOfficer =
     currentUser.role === Role.ADMIN || currentUser.role === Role.OPERATOR;
@@ -115,6 +145,7 @@ export function RapatDetailClientView({
     window.open(waLink, "_blank", "noopener,noreferrer");
   };
 
+  // Handler Hapus Sesi Rapat
   const handleDeleteMeeting = async () => {
     setIsDeleting(true);
     setErrorMessage(null);
@@ -134,8 +165,86 @@ export function RapatDetailClientView({
     }
   };
 
+  // Handler Ganti Status Kehadiran Manual per Anggota
+  const handleStatusChange = (userId: string, newStatus: string) => {
+    if (!newStatus || newStatus === "BELUM_PRESENSI") return;
+
+    setUpdatingUserId(userId);
+    startTransition(async () => {
+      const res = await updateAttendanceStatus(
+        meeting.id,
+        userId,
+        newStatus as AttendanceStatus
+      );
+      setUpdatingUserId(null);
+      if (res.success) {
+        showToast("success", res.message);
+        router.refresh();
+      } else {
+        showToast("error", res.message);
+      }
+    });
+  };
+
+  // Handler Finalisasi Presensi (Set Alfa untuk Seluruh Anggota yang Belum Hadir)
+  const handleFinalizeAttendance = () => {
+    if (
+      !confirm(
+        "Tutup sesi presensi sekarang? Seluruh anggota sasaran yang belum hadir akan otomatis ditandai Alfa."
+      )
+    ) {
+      return;
+    }
+
+    setIsFinalizing(true);
+    startTransition(async () => {
+      const res = await finalizeAttendance(meeting.id);
+      setIsFinalizing(false);
+      if (res.success) {
+        showToast("success", res.message);
+        router.refresh();
+      } else {
+        showToast("error", res.message);
+      }
+    });
+  };
+
+  // Menghitung statistik absensi
+  const hadirCount = meeting.attendances.filter(
+    (a) => a.status === AttendanceStatus.HADIR
+  ).length;
+  const sakitCount = meeting.attendances.filter(
+    (a) => a.status === AttendanceStatus.SAKIT
+  ).length;
+  const izinCount = meeting.attendances.filter(
+    (a) => a.status === AttendanceStatus.IZIN
+  ).length;
+  const alfaCount = meeting.attendances.filter(
+    (a) => a.status === AttendanceStatus.ALPHA
+  ).length;
+
   return (
     <div className="space-y-5">
+      {/* Toast Feedback Notification */}
+      {toastMessage && (
+        <div
+          className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800"
+          }`}
+        >
+          <span>{toastMessage.text}</span>
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            className="p-1 cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Tombol Navigasi Kembali */}
       <div className="flex items-center justify-between">
         <Link
@@ -190,62 +299,112 @@ export function RapatDetailClientView({
           </p>
         </div>
 
-        {/* Action Buttons: Jarkom Broadcast WA & Tampilkan QR */}
-        <div className="pt-2 flex flex-wrap items-center gap-2.5 border-t border-edge/60">
-          <button
-            type="button"
-            onClick={handleShareWA}
-            className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs transition-all cursor-pointer"
-            title="Kirim Pesan Siaran Rapat Resmi ke WhatsApp"
-          >
-            <Share2 className="w-4 h-4" />
-            <span>Broadcast Jarkom WA</span>
-          </button>
+        {/* ── ACTION BUTTONS: 2-COLUMN GRID (ADMIN/OPERATOR) OR CENTERED ANCHOR ── */}
+        <div className="pt-2 border-t border-edge/60">
+          {isOfficer ? (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleShareWA}
+                className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                title="Kirim Pesan Siaran Rapat Resmi ke WhatsApp"
+              >
+                <Share2 className="w-4 h-4 shrink-0" />
+                <span>Kirim Jarkom</span>
+              </button>
 
-          {isOfficer && (
-            <button
-              type="button"
-              onClick={() => setIsQrModalOpen(true)}
-              className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-bold inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
-              title="Tampilkan QR Presensi Sesi Rapat Ini"
-            >
-              <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-              <span>Tampilkan QR Presensi</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                title="Buka QR Presensi Sesi Rapat Ini"
+              >
+                <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                <span>Buka QR</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <a
+                href="#notulensi-section"
+                className="h-11 min-h-11 px-6 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+              >
+                <FileText className="w-4 h-4 text-primary shrink-0" />
+                <span>Lihat Notulensi Rapat</span>
+              </a>
+            </div>
           )}
         </div>
       </section>
 
       {/* Kartu Notulensi Sesi Rapat */}
-      <NotulensiCard
-        eventId={meeting.eventId || undefined}
-        meetingId={meeting.id}
-        title={`Notulensi: ${meeting.title}`}
-        notes={meeting.notes}
-        date={meeting.date}
-        isRead={meeting.isRead}
-        currentUserRole={currentUser.role}
-      />
+      <div id="notulensi-section">
+        <NotulensiCard
+          eventId={meeting.eventId || undefined}
+          meetingId={meeting.id}
+          title={`Notulensi: ${meeting.title}`}
+          notes={meeting.notes}
+          date={meeting.date}
+          isRead={meeting.isRead}
+          currentUserRole={currentUser.role}
+        />
+      </div>
 
-      {/* Rekapitulasi Presensi Kehadiran Anggota */}
+      {/* ── ADVANCED ATTENDANCE TABLE & MANAGEMENT UI ──────────────────── */}
       <section className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-            <h3 className="text-sm font-bold text-ink">
-              Rekapitulasi Kehadiran Presensi
-            </h3>
+        {/* Table Header & Bulk Finalize Action */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-edge/70">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <h3 className="text-sm font-bold text-ink">
+                Rekapitulasi Kehadiran Presensi
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-muted">
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                {hadirCount} Hadir
+              </span>
+              <span>•</span>
+              <span className="text-amber-600 dark:text-amber-400 font-semibold">
+                {sakitCount} Sakit
+              </span>
+              <span>•</span>
+              <span className="text-sky-600 dark:text-sky-400 font-semibold">
+                {izinCount} Izin
+              </span>
+              <span>•</span>
+              <span className="text-rose-600 dark:text-rose-400 font-semibold">
+                {alfaCount} Alfa
+              </span>
+            </div>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-surface-container border border-edge text-ink">
-            {meeting.attendances.length} Peserta Hadir
-          </span>
+
+          {/* Tombol Tutup Presensi (Set Alfa) Khusus Pengurus */}
+          {isOfficer && (
+            <button
+              type="button"
+              onClick={handleFinalizeAttendance}
+              disabled={isFinalizing || isPending}
+              className="h-10 px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 shrink-0 self-start sm:self-auto"
+              title="Tandai seluruh anggota sasaran yang belum absen menjadi Alfa"
+            >
+              {isFinalizing ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <AlertTriangle className="w-3.5 h-3.5" />
+              )}
+              <span>Tutup Presensi (Set Alfa)</span>
+            </button>
+          )}
         </div>
 
+        {/* Tabel Anggota & Status Kehadiran */}
         {meeting.attendances.length === 0 ? (
           <div className="py-8 text-center bg-surface-container-low rounded-xl border border-edge/60 space-y-1.5">
             <CheckCircle2 className="w-6 h-6 text-slate-400 mx-auto" />
             <p className="text-xs text-ink-muted">
-              Belum ada anggota yang mencatat presensi pada sesi rapat ini.
+              Tidak ada data anggota sasaran untuk sesi rapat ini.
             </p>
           </div>
         ) : (
@@ -256,28 +415,112 @@ export function RapatDetailClientView({
                   <th className="px-4 py-3">Nama Anggota</th>
                   <th className="px-4 py-3">Kelas / Gen</th>
                   <th className="px-4 py-3">Divisi</th>
-                  <th className="px-4 py-3 text-right">Waktu Presensi</th>
+                  <th className="px-4 py-3 text-center">Waktu Presensi</th>
+                  <th className="px-4 py-3 text-right">Aksi / Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-edge/60 bg-card">
                 {meeting.attendances.map((item) => {
-                  const checkTime = new Date(item.checkedAt).toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
+                  const checkTime = item.checkedAt
+                    ? new Date(item.checkedAt).toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }) + " WIB"
+                    : "-";
+
+                  const currentStatus = item.status || "BELUM_PRESENSI";
+                  const isUpdating = updatingUserId === item.userId;
+
+                  const classDisplay =
+                    item.user.kelas && item.user.gen
+                      ? `Kelas ${item.user.kelas} (Gen ${item.user.gen})`
+                      : item.user.classGrade?.replace("_", " ") || "-";
+
                   return (
-                    <tr key={item.id} className="hover:bg-surface-container-low/50">
-                      <td className="px-4 py-2.5 font-semibold text-ink">
-                        {item.user.name}
+                    <tr
+                      key={item.id}
+                      className="hover:bg-surface-container-low/50 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-semibold text-ink">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span>{item.user.name}</span>
+                          {item.user.role === Role.KOLABORATOR && (
+                            <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                              Kolaborator
+                            </span>
+                          )}
+                          {item.isManual && (
+                            <span className="text-[9px] px-1.5 py-0.2 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
+                              Manual
+                            </span>
+                          )}
+                        </div>
                       </td>
-                      <td className="px-4 py-2.5 text-ink-secondary">
-                        {item.user.classGrade?.replace("_", " ") || "-"}
+                      <td className="px-4 py-3 text-ink-secondary">
+                        {classDisplay}
                       </td>
-                      <td className="px-4 py-2.5 text-ink-secondary">
+                      <td className="px-4 py-3 text-ink-secondary">
                         {item.user.mainDivision || "-"}
                       </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                        {checkTime} WIB
+                      <td className="px-4 py-3 text-center font-mono text-[11px] text-ink-muted">
+                        {checkTime}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {isOfficer ? (
+                          <div className="inline-flex items-center gap-1.5 justify-end">
+                            {isUpdating && (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin text-ink-muted shrink-0" />
+                            )}
+                            <select
+                              value={currentStatus}
+                              disabled={isUpdating || isPending}
+                              onChange={(e) =>
+                                handleStatusChange(item.userId, e.target.value)
+                              }
+                              className={`h-9 px-2.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-primary ${
+                                currentStatus === AttendanceStatus.HADIR
+                                  ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+                                  : currentStatus === AttendanceStatus.SAKIT
+                                  ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800"
+                                  : currentStatus === AttendanceStatus.IZIN
+                                  ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-800"
+                                  : currentStatus === AttendanceStatus.ALPHA
+                                  ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800"
+                                  : "bg-surface-container-low text-ink-muted border-edge"
+                              }`}
+                            >
+                              <option value="BELUM_PRESENSI">Belum Presensi</option>
+                              <option value={AttendanceStatus.HADIR}>Hadir</option>
+                              <option value={AttendanceStatus.SAKIT}>Sakit</option>
+                              <option value={AttendanceStatus.IZIN}>Izin</option>
+                              <option value={AttendanceStatus.ALPHA}>Alfa</option>
+                            </select>
+                          </div>
+                        ) : (
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                              currentStatus === AttendanceStatus.HADIR
+                                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                                : currentStatus === AttendanceStatus.SAKIT
+                                ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+                                : currentStatus === AttendanceStatus.IZIN
+                                ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800"
+                                : currentStatus === AttendanceStatus.ALPHA
+                                ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
+                                : "bg-surface-container text-ink-muted border-edge"
+                            }`}
+                          >
+                            {currentStatus === AttendanceStatus.HADIR
+                              ? "Hadir"
+                              : currentStatus === AttendanceStatus.SAKIT
+                              ? "Sakit"
+                              : currentStatus === AttendanceStatus.IZIN
+                              ? "Izin"
+                              : currentStatus === AttendanceStatus.ALPHA
+                              ? "Alfa"
+                              : "Belum Presensi"}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );

@@ -8,7 +8,7 @@ import {
 } from "@/components/acara/RapatDetailClientView";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { isUserEligibleForAudience } from "@/utils/audience";
-import { Role } from "@prisma/client";
+import { Role, TargetAudience } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +73,7 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
                 classGrade: true,
                 image: true,
                 mainDivision: true,
+                role: true,
               },
             },
           },
@@ -129,6 +130,112 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
     redirect("/acara");
   }
 
+  // Ambil daftar seluruh anggota yang berhak hadir berdasarkan targetAudience rapat
+  let eligibleWhere: Record<string, unknown> = {
+    status: "ACTIVE",
+    role: { not: Role.GUEST },
+  };
+
+  if (dbMeeting.targetAudience === TargetAudience.CUSTOM) {
+    eligibleWhere = {
+      id: { in: dbMeeting.targetUsers.map((u) => u.id) },
+    };
+  } else if (dbMeeting.targetAudience === TargetAudience.GEN_20) {
+    eligibleWhere = {
+      status: "ACTIVE",
+      role: { not: Role.GUEST },
+      OR: [
+        { gen: 20 },
+        { generationNumber: 20 },
+        { classGrade: "KELAS_11" },
+        { kelas: { contains: "11" } },
+        { kelas: "XI" },
+      ],
+    };
+  } else if (dbMeeting.targetAudience === TargetAudience.GEN_21) {
+    eligibleWhere = {
+      status: "ACTIVE",
+      role: { not: Role.GUEST },
+      OR: [
+        { gen: 21 },
+        { generationNumber: 21 },
+        { classGrade: "KELAS_10" },
+        { kelas: { contains: "10" } },
+        { kelas: "X" },
+      ],
+    };
+  } else {
+    // ALL: Seluruh anggota aktif selain GUEST dan KOLABORATOR
+    eligibleWhere = {
+      status: "ACTIVE",
+      role: { notIn: [Role.GUEST, Role.KOLABORATOR] },
+    };
+  }
+
+  const eligibleUsers = await prisma.user.findMany({
+    where: eligibleWhere,
+    select: {
+      id: true,
+      name: true,
+      classGrade: true,
+      kelas: true,
+      gen: true,
+      generationNumber: true,
+      image: true,
+      mainDivision: true,
+      role: true,
+    },
+    orderBy: { name: "asc" },
+  });
+
+  // Petakan record presensi yang sudah tercatat
+  const attendanceMap = new Map(
+    dbMeeting.attendances.map((a) => [a.userId, a])
+  );
+
+  // Gabungkan seluruh anggota yang berhak dan peserta ad-hoc
+  const allTableMembers = [
+    ...eligibleUsers.map((user) => {
+      const att = attendanceMap.get(user.id);
+      return {
+        id: att?.id || `unrecorded-${user.id}`,
+        userId: user.id,
+        user: {
+          id: user.id,
+          name: user.name,
+          classGrade: user.classGrade,
+          kelas: user.kelas,
+          gen: user.gen ?? user.generationNumber,
+          image: user.image,
+          mainDivision: user.mainDivision,
+          role: user.role,
+        },
+        status: att?.status || null,
+        checkedAt: att?.checkedAt || null,
+        isManual: att?.isManual || false,
+      };
+    }),
+    ...dbMeeting.attendances
+      .filter((a) => !eligibleUsers.some((u) => u.id === a.userId))
+      .map((att) => ({
+        id: att.id,
+        userId: att.userId,
+        user: {
+          id: att.user.id,
+          name: att.user.name,
+          classGrade: att.user.classGrade,
+          kelas: null,
+          gen: null,
+          image: att.user.image,
+          mainDivision: att.user.mainDivision,
+          role: att.user.role || Role.MEMBER,
+        },
+        status: att.status,
+        checkedAt: att.checkedAt,
+        isManual: att.isManual,
+      })),
+  ];
+
   const formattedMeeting: RapatDetailData = {
     id: dbMeeting.id,
     title: dbMeeting.title,
@@ -138,11 +245,7 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
     eventId: dbMeeting.eventId,
     event: dbMeeting.event,
     isRead: dbMeeting.readLogs.length > 0,
-    attendances: dbMeeting.attendances.map((att) => ({
-      id: att.id,
-      checkedAt: att.checkedAt,
-      user: att.user,
-    })),
+    attendances: allTableMembers,
   };
 
   return (

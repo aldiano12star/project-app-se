@@ -685,42 +685,32 @@ export function SnakingPathCalendar({
 
                   {/* Tombol Aksi di Bawah Kartu */}
                   {isIndependent ? (
-                    <div className="pt-1 flex items-center justify-between gap-2">
-                      <Link
-                        href={`/acara/rapat/${ev.id}`}
-                        className="h-11 min-h-11 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-semibold inline-flex items-center gap-1.5 transition-colors border border-edge"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5 text-ink-muted" />
-                        <span>Detail &amp; Notulensi</span>
-                      </Link>
-
-                      {isOfficer && (
-                        <div className="flex items-center gap-2">
-                          {onEditEvent && (
-                            <button
-                              type="button"
-                              onClick={() => onEditEvent(ev)}
-                              className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
-                              title="Edit Rapat Mandiri Ini"
-                            >
-                              <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                              <span className="hidden sm:inline">Edit</span>
-                            </button>
-                          )}
-                          {onOpenQr && (
-                            <button
-                              type="button"
-                              onClick={() => onOpenQr(ev.id)}
-                              className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
-                              title="Tampilkan QR Presensi Sesi Rapat Ini"
-                            >
-                              <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                              <span>Tampilkan QR</span>
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    isOfficer && (
+                      <div className="pt-1 flex items-center justify-end gap-2">
+                        {onEditEvent && (
+                          <button
+                            type="button"
+                            onClick={() => onEditEvent(ev)}
+                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                            title="Edit Rapat Mandiri Ini"
+                          >
+                            <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                            <span className="hidden sm:inline">Edit</span>
+                          </button>
+                        )}
+                        {onOpenQr && (
+                          <button
+                            type="button"
+                            onClick={() => onOpenQr(ev.id)}
+                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                            title="Tampilkan QR Presensi Sesi Rapat Ini"
+                          >
+                            <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                            <span>Tampilkan QR</span>
+                          </button>
+                        )}
+                      </div>
+                    )
                   ) : (
                     <div className="pt-1 flex items-center gap-2">
                       <Link

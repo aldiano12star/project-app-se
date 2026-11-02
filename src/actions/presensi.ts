@@ -390,3 +390,203 @@ export async function claimAttendance(
   }
 }
 
+/**
+ * Mengubah status kehadiran anggota secara manual untuk suatu sesi rapat (Admin/Operator).
+ * Mendukung status: HADIR, SAKIT, IZIN, ALPHA
+ */
+export async function updateAttendanceStatus(
+  meetingId: string,
+  userId: string,
+  status: AttendanceStatus
+): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    if (!meetingId || !userId) {
+      return {
+        success: false,
+        message: "ID rapat dan ID pengguna wajib disertakan.",
+      };
+    }
+
+    const meeting = await prisma.meeting.findUnique({
+      where: { id: meetingId },
+      select: { id: true, title: true, eventId: true },
+    });
+
+    if (!meeting) {
+      return {
+        success: false,
+        message: "Sesi rapat tidak ditemukan.",
+      };
+    }
+
+    const attendance = await prisma.attendance.upsert({
+      where: {
+        meetingId_userId: {
+          meetingId,
+          userId,
+        },
+      },
+      create: {
+        meetingId,
+        userId,
+        status,
+        isManual: true,
+        checkedAt: new Date(),
+      },
+      update: {
+        status,
+        isManual: true,
+      },
+    });
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/rapat/${meetingId}`);
+    if (meeting.eventId) {
+      revalidatePath(`/acara/${meeting.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: `Status kehadiran berhasil diubah menjadi ${status}.`,
+      data: attendance,
+    };
+  } catch (error) {
+    console.error("[Presensi Action] updateAttendanceStatus error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal memperbarui status kehadiran.",
+    };
+  }
+}
+
+/**
+ * Menutup sesi presensi dan secara massal menetapkan status ALPHA
+ * kepada seluruh anggota sasaran yang belum melakukan presensi.
+ */
+export async function finalizeAttendance(
+  meetingId: string
+): Promise<ActionResponse<{ count: number }>> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    if (!meetingId) {
+      return {
+        success: false,
+        message: "ID sesi rapat tidak valid.",
+      };
+    }
+
+    const meeting = await prisma.meeting.findUnique({
+      where: { id: meetingId },
+      include: {
+        targetUsers: { select: { id: true } },
+        attendances: { select: { userId: true } },
+      },
+    });
+
+    if (!meeting) {
+      return {
+        success: false,
+        message: "Sesi rapat tidak ditemukan.",
+      };
+    }
+
+    // Tentukan daftar seluruh anggota yang berhak hadir berdasarkan targetAudience
+    let eligibleUserIds: string[] = [];
+
+    if (meeting.targetAudience === TargetAudience.CUSTOM) {
+      eligibleUserIds = meeting.targetUsers.map((u) => u.id);
+    } else if (meeting.targetAudience === TargetAudience.GEN_20) {
+      const users = await prisma.user.findMany({
+        where: {
+          status: "ACTIVE",
+          role: { not: Role.GUEST },
+          OR: [
+            { gen: 20 },
+            { generationNumber: 20 },
+            { classGrade: "KELAS_11" },
+            { kelas: { contains: "11" } },
+            { kelas: "XI" },
+          ],
+        },
+        select: { id: true },
+      });
+      eligibleUserIds = users.map((u) => u.id);
+    } else if (meeting.targetAudience === TargetAudience.GEN_21) {
+      const users = await prisma.user.findMany({
+        where: {
+          status: "ACTIVE",
+          role: { not: Role.GUEST },
+          OR: [
+            { gen: 21 },
+            { generationNumber: 21 },
+            { classGrade: "KELAS_10" },
+            { kelas: { contains: "10" } },
+            { kelas: "X" },
+          ],
+        },
+        select: { id: true },
+      });
+      eligibleUserIds = users.map((u) => u.id);
+    } else {
+      // ALL: Seluruh anggota aktif selain GUEST dan KOLABORATOR
+      const users = await prisma.user.findMany({
+        where: {
+          status: "ACTIVE",
+          role: { notIn: [Role.GUEST, Role.KOLABORATOR] },
+        },
+        select: { id: true },
+      });
+      eligibleUserIds = users.map((u) => u.id);
+    }
+
+    // Identifikasi anggota yang belum memiliki catatan presensi
+    const attendedSet = new Set(meeting.attendances.map((a) => a.userId));
+    const missingUserIds = eligibleUserIds.filter((id) => !attendedSet.has(id));
+
+    if (missingUserIds.length === 0) {
+      return {
+        success: true,
+        message: "Semua peserta yang berhak telah memiliki catatan kehadiran.",
+        data: { count: 0 },
+      };
+    }
+
+    const now = new Date();
+    await prisma.attendance.createMany({
+      data: missingUserIds.map((uid) => ({
+        meetingId: meeting.id,
+        userId: uid,
+        status: AttendanceStatus.ALPHA,
+        isManual: true,
+        checkedAt: now,
+      })),
+      skipDuplicates: true,
+    });
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/rapat/${meetingId}`);
+    if (meeting.eventId) {
+      revalidatePath(`/acara/${meeting.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: `Presensi ditutup. Sebanyak ${missingUserIds.length} anggota yang tidak hadir ditandai Alfa.`,
+      data: { count: missingUserIds.length },
+    };
+  } catch (error) {
+    console.error("[Presensi Action] finalizeAttendance error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal menutup presensi rapat.",
+    };
+  }
+}
+
