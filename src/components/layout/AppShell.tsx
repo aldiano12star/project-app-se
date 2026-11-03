@@ -58,7 +58,7 @@ export function AppShell({
 
         {/* Slot Konten Utama */}
         <main
-          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto pb-32 overflow-y-auto ${
+          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto pb-32 ${
             showNav ? "md:pb-12" : "pb-8"
           }`}
         >

@@ -60,9 +60,9 @@ export function BottomNav() {
 
   useEffect(() => {
     const checkModalInDOM = () => {
-      // Deteksi modal overlay yang aktif di DOM (fixed inset-0 di luar nav)
+      // Deteksi modal overlay yang aktif di DOM (dialog atau backdrop modal, kecualikan nav & splash)
       const activeModal = document.querySelector(
-        '[role="dialog"], .fixed.inset-0:not([data-nav="true"])'
+        '[role="dialog"], .fixed.inset-0:not([data-nav="true"]):not([data-splash="true"])'
       );
       setIsModalActive(!!activeModal);
     };

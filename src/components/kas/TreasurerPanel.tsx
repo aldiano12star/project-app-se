@@ -334,42 +334,21 @@ export function TreasurerPanel({
         </div>
       )}
 
-      {/* ── 1. GLOBAL DASHBOARD STATS ──────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Card 1: Total Uang Kas Riil */}
-        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-ink-muted uppercase tracking-wider">
-              Total Uang Kas Riil
-            </span>
-            <Banknote className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          </div>
-          <div className="pt-1">
-            <h3 className="text-2xl font-extrabold text-ink">
-              Rp {realBalance.toLocaleString("id-ID")}
-            </h3>
-            <p className="text-[11px] text-ink-muted mt-0.5">
-              Fisik Kas Organisasi (Income - Expense)
-            </p>
-          </div>
+      {/* ── 1. GLOBAL DASHBOARD STATS (Fokus pada Tunggakan Tagihan) ─────── */}
+      <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+            Total Tunggakan Tagihan Anggota
+          </span>
+          <AlertCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
         </div>
-
-        {/* Card 2: Total Tunggakan Anggota */}
-        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
-              Total Tunggakan Anggota
-            </span>
-            <AlertCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          </div>
-          <div className="pt-1">
-            <h3 className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
-              - Rp {totalArrears.toLocaleString("id-ID")}
-            </h3>
-            <p className="text-[11px] text-ink-muted mt-0.5">
-              Dari {delinquentCount} anggota bersaldo negatif
-            </p>
-          </div>
+        <div className="pt-1">
+          <h3 className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
+            - Rp {totalArrears.toLocaleString("id-ID")}
+          </h3>
+          <p className="text-[11px] text-ink-muted mt-0.5">
+            Dari {delinquentCount} anggota yang memiliki tagihan belum lunas
+          </p>
         </div>
       </div>
 

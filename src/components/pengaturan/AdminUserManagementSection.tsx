@@ -13,6 +13,7 @@ import {
   Sparkles,
   ChevronDown,
   Clock,
+  Ban,
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 import { promoteUserRole } from "@/actions/profile";
@@ -47,6 +48,8 @@ function getRoleBadgeStyle(role: Role) {
       return "bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-300 dark:border-teal-500/50";
     case Role.GUEST:
       return "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700";
+    case Role.BLOCKED:
+      return "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-900";
     default:
       return "bg-surface-container text-ink-muted border-edge";
   }
@@ -66,6 +69,8 @@ function getRoleLabel(role: Role) {
       return "Kolaborator";
     case Role.GUEST:
       return "Menunggu Verifikasi";
+    case Role.BLOCKED:
+      return "Diblokir";
     default:
       return role;
   }
@@ -307,23 +312,24 @@ export function AdminUserManagementSection({
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handlePromote(u.id, Role.MEMBER)}
-                          className="h-11 min-h-[44px] px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           {isProcessing ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           ) : (
                             <UserCheck className="w-3.5 h-3.5" />
                           )}
-                          <span>Aktivasi Member</span>
+                          <span>Setujui sebagai Member</span>
                         </button>
 
                         <button
                           type="button"
                           disabled={isProcessing}
-                          onClick={() => handlePromote(u.id, Role.BENDAHARA)}
-                          className="h-11 min-h-[44px] px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          onClick={() => handlePromote(u.id, Role.BLOCKED)}
+                          className="h-11 min-h-11 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
-                          <span>Bendahara</span>
+                          <Ban className="w-3.5 h-3.5" />
+                          <span>Blokir Akses</span>
                         </button>
                       </>
                     ) : (
@@ -333,7 +339,7 @@ export function AdminUserManagementSection({
                         onChange={(e) =>
                           handlePromote(u.id, e.target.value as Role)
                         }
-                        className="h-11 min-h-[44px] px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+                        className="h-11 min-h-11 px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-hidden focus:ring-2 focus:ring-primary/30 cursor-pointer"
                       >
                         <option value={Role.MEMBER}>Set: Member</option>
                         <option value={Role.KOLABORATOR}>Set: Kolaborator</option>
@@ -343,6 +349,7 @@ export function AdminUserManagementSection({
                           <option value={Role.OPERATOR}>Set: Operator</option>
                         )}
                         <option value={Role.GUEST}>Set: Guest (Tangguhkan)</option>
+                        <option value={Role.BLOCKED}>Set: Blokir Akses</option>
                       </select>
                     )}
                   </div>

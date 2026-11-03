@@ -4,11 +4,10 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 export function SplashScreen() {
-  const [mounted, setMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [startScale, setStartScale] = useState(false);
   const [startProgress, setStartProgress] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     // Periksa apakah splash screen sudah pernah ditampilkan pada sesi tab browser ini
@@ -21,8 +20,6 @@ export function SplashScreen() {
     } catch {
       // Fallback jika sessionStorage dinonaktifkan / private browsing
     }
-
-    setMounted(true);
 
     // Trigger animasi scale dan progress bar pada frame berikutnya
     const frameId = requestAnimationFrame(() => {
@@ -52,12 +49,14 @@ export function SplashScreen() {
     };
   }, []);
 
-  if (!isVisible || !mounted) {
+  if (!isVisible) {
     return null;
   }
 
   return (
     <aside
+      id="se-splash-screen"
+      data-splash="true"
       aria-label="Loading Splash Screen"
       role="status"
       aria-live="polite"

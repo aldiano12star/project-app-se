@@ -22,6 +22,9 @@ export async function assertRole(allowedRoles: Role[]) {
 
 export async function assertActiveMember() {
   const user = await assertAuthenticated();
+  if (user.role === Role.BLOCKED) {
+    throw new Error("FORBIDDEN: Akun Anda telah diblokir permanen oleh pengurus organisasi.");
+  }
   if (user.role === Role.OPERATOR) return user;
 
   if (user.role === Role.GUEST) {

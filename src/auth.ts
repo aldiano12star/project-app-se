@@ -84,6 +84,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email },
         });
 
+        // Security Gatekeeper: Tolak keras akun yang diblokir oleh pengurus
+        if (existingUser?.role === Role.BLOCKED) {
+          console.warn(`[Auth] Blocked login attempt from banned email: ${email}`);
+          return false;
+        }
+
         if (!existingUser) {
           // Buat akun baru otomatis dengan role GUEST atau OPERATOR
           await prisma.user.create({

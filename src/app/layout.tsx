@@ -80,6 +80,9 @@ export default function RootLayout({
                     document.documentElement.classList.remove('dark');
                     document.documentElement.style.colorScheme = 'light';
                   }
+                  if (sessionStorage.getItem('se_splash_shown')) {
+                    document.documentElement.classList.add('splash-done');
+                  }
                 } catch (e) {}
               })();
             `,

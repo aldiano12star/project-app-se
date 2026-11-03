@@ -174,19 +174,19 @@ export default async function KasPage() {
           <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
         </section>
 
-        {/* ── 1. DIGITAL WALLET CARD (Member / Kolaborator Personal View) ── */}
+        {/* ── 1. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
+        <InvoiceListCard
+          invoices={userInvoices}
+          userKasBalance={dbUser.kasBalance}
+        />
+
+        {/* ── 2. RIWAYAT MUTASI KAS PERSONAL (Transaction Timeline) ─────── */}
         <DigitalWalletCard
           userName={dbUser.name}
           userRole={dbUser.role}
           classGrade={dbUser.classGrade}
           kasBalance={dbUser.kasBalance}
           transactions={personalTransactions}
-        />
-
-        {/* ── 2. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
-        <InvoiceListCard
-          invoices={userInvoices}
-          userKasBalance={dbUser.kasBalance}
         />
 
         {/* ── 3. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}

@@ -108,19 +108,10 @@ export function InvoiceListCard({
                 Rp {totalUnpaidAmount.toLocaleString("id-ID")}
               </p>
             </div>
-            <div className="text-right space-y-0.5">
-              <span className="text-[11px] font-medium text-ink-muted">
-                Saldo Kas Anda
+            <div className="text-right">
+              <span className="text-[11px] font-semibold text-rose-500 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-full">
+                {unpaidInvoices.length} Item Belum Diselesaikan
               </span>
-              <p
-                className={`text-sm font-bold tabular-nums ${
-                  userKasBalance >= totalUnpaidAmount
-                    ? "text-emerald-500"
-                    : "text-amber-500"
-                }`}
-              >
-                Rp {userKasBalance.toLocaleString("id-ID")}
-              </p>
             </div>
           </div>
         )}

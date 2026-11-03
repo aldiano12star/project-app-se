@@ -649,29 +649,28 @@ export function SnakingPathCalendar({
                                 )}
                               </div>
 
-                              {/* AKSI PENGURUS: EDIT & QR CODE */}
+                              {/* AKSI PENGURUS: NAKED EDIT & QR CODE */}
                               {isOfficer && (
-                                <div className="flex items-center gap-1.5 shrink-0">
+                                <div className="flex items-center gap-1 shrink-0">
                                   {onEditMeeting && (
                                     <button
                                       type="button"
                                       onClick={() => onEditMeeting(meeting)}
-                                      className="h-11 min-h-11 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                                      className="p-2 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                                       title="Edit Sesi Rapat Ini"
                                     >
-                                      <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                      <span className="hidden sm:inline">Edit</span>
+                                      <Pencil className="w-4 h-4" />
                                     </button>
                                   )}
                                   {onOpenQr && (
                                     <button
                                       type="button"
                                       onClick={() => onOpenQr(meeting.id)}
-                                      className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                                      className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                                       title="Tampilkan QR Presensi Sesi Rapat Ini"
                                     >
-                                      <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                                      <span>Tampilkan QR</span>
+                                      <QrCode className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                                      <span>QR</span>
                                     </button>
                                   )}
                                 </div>
@@ -686,26 +685,25 @@ export function SnakingPathCalendar({
                   {/* Tombol Aksi di Bawah Kartu */}
                   {isIndependent ? (
                     isOfficer && (
-                      <div className="pt-1 flex items-center justify-end gap-2">
+                      <div className="pt-1 flex items-center justify-end gap-1.5">
                         {onEditEvent && (
                           <button
                             type="button"
                             onClick={() => onEditEvent(ev)}
-                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                            className="p-2 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                             title="Edit Rapat Mandiri Ini"
                           >
-                            <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                            <span className="hidden sm:inline">Edit</span>
+                            <Pencil className="w-4 h-4" />
                           </button>
                         )}
                         {onOpenQr && (
                           <button
                             type="button"
                             onClick={() => onOpenQr(ev.id)}
-                            className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                            className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                             title="Tampilkan QR Presensi Sesi Rapat Ini"
                           >
-                            <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                            <QrCode className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                             <span>Tampilkan QR</span>
                           </button>
                         )}
