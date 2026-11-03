@@ -3,6 +3,7 @@
 import React, { useState, useTransition, useEffect } from "react";
 import { X, FileText, Save, Loader2, AlertCircle, Edit3 } from "lucide-react";
 import { updateNotulensi } from "@/actions/acara";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface EditNotulensiModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function EditNotulensiModal({
   eventTitle,
   onSuccess,
 }: EditNotulensiModalProps) {
+  useBodyScrollLock(isOpen);
   const [notes, setNotes] = useState(initialNotes || "");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();

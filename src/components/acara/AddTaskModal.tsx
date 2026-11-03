@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X, Plus, CheckSquare } from "lucide-react";
 import { addEventTask } from "@/actions/acara";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function AddTaskModal({
   defaultSectionId,
   onSuccess,
 }: AddTaskModalProps) {
+  useBodyScrollLock(isOpen);
   const [sectionId, setSectionId] = useState(
     defaultSectionId || sections[0]?.id || ""
   );

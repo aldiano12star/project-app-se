@@ -22,6 +22,7 @@ import { AddSectionModal } from "./AddSectionModal";
 import { EventRABSection } from "./EventRABSection";
 import { BudgetItemData } from "./PrintRABModal";
 import { deleteEvent } from "@/actions/acara";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface EventDetailClientViewProps {
   currentUser: {
@@ -58,6 +59,8 @@ export function EventDetailClientView({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null);
+
+  useBodyScrollLock(isDriveAlertOpen || isDeleteModalOpen);
 
   const isOfficer =
     currentUser.role === Role.ADMIN ||

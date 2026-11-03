@@ -60,7 +60,11 @@ export function SplashScreen() {
       aria-label="Loading Splash Screen"
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-[99999] bg-white flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-auto ${
+      style={{
+        backgroundColor: "#ffffff",
+        zIndex: 99999,
+      }}
+      className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-500 pointer-events-auto ${
         isFadingOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
@@ -80,11 +84,17 @@ export function SplashScreen() {
         />
       </div>
 
-      {/* Bottom Element: Minimalist Progress Bar */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-3/4 max-w-sm h-1.5 bg-gray-200 rounded-full overflow-hidden">
+      {/* Bottom Element: Minimalist Progress Bar (TugasNih Style) */}
+      <div
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 w-3/4 max-w-sm h-1.5 rounded-full overflow-hidden"
+        style={{ backgroundColor: "#e5e7eb" }}
+      >
         <div
-          className="h-full bg-primary rounded-full transition-all duration-[1500ms] ease-out"
-          style={{ width: startProgress ? "100%" : "0%" }}
+          className="h-full rounded-full transition-all duration-1500 ease-out"
+          style={{
+            backgroundColor: "#E11D2A",
+            width: startProgress ? "100%" : "0%",
+          }}
         />
       </div>
     </aside>

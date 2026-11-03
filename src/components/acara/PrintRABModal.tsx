@@ -2,6 +2,7 @@
 
 import React from "react";
 import { X, Printer, FileSpreadsheet, Download } from "lucide-react";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface BudgetItemData {
   id: string;
@@ -31,6 +32,7 @@ export function PrintRABModal({
   event,
   budgetItems,
 }: PrintRABModalProps) {
+  useBodyScrollLock(isOpen);
   if (!isOpen) return null;
 
   const totalBudget = budgetItems.reduce((sum, item) => sum + item.totalPrice, 0);

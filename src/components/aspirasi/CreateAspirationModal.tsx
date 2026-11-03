@@ -19,6 +19,7 @@ import {
   AspirationCategoryType,
   AspirationScopeType,
 } from "@/actions/aspirasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface CreateAspirationModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export function CreateAspirationModal({
   onClose,
   onSuccess,
 }: CreateAspirationModalProps) {
+  useBodyScrollLock(isOpen);
   const [targetScope, setTargetScope] = useState<AspirationScopeType>("PUBLIC");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

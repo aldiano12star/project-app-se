@@ -20,6 +20,7 @@ import {
   ShowcaseCategory,
   MemberOption,
 } from "@/actions/eksplorasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -44,6 +45,7 @@ export function CreateProjectModal({
   currentUserId,
   availableMembers: initialMembers,
 }: CreateProjectModalProps) {
+  useBodyScrollLock(isOpen);
   const [formData, setFormData] = useState<{
     title: string;
     description: string;

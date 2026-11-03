@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { executeRollover } from "@/actions/rollover";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 const CONFIRMATION_KEYWORD = "TUTUP BUKU PERIODE";
 
@@ -25,6 +26,7 @@ export function RolloverConfirmationModal({
   isOpen,
   onClose,
 }: RolloverConfirmationModalProps) {
+  useBodyScrollLock(isOpen);
   const [phase, setPhase] = useState<ModalPhase>("warning");
   const [confirmText, setConfirmText] = useState("");
   const [notes, setNotes] = useState("");

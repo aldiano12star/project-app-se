@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { createPoll } from "@/actions/aspirasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface CreatePollModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function CreatePollModal({
   onClose,
   onSuccess,
 }: CreatePollModalProps) {
+  useBodyScrollLock(isOpen);
   const [question, setQuestion] = useState("");
   const [description, setDescription] = useState("");
   const [options, setOptions] = useState<string[]>(["", ""]);

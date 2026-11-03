@@ -4,6 +4,7 @@ import React, { useState, useEffect, useTransition } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { QrCode, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { recordAttendance } from "@/actions/presensi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface AttendanceScannerModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export function AttendanceScannerModal({
   isOpen,
   onClose,
 }: AttendanceScannerModalProps) {
+  useBodyScrollLock(isOpen);
   const [feedback, setFeedback] = useState<{
     text: string;
     meetingTitle?: string;

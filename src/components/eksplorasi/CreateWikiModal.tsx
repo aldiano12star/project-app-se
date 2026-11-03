@@ -16,6 +16,7 @@ import {
   WikiCategory,
 } from "@/actions/eksplorasi";
 import { WikiArticleData } from "./WikiCard";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface CreateWikiModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export function CreateWikiModal({
   editArticle,
   onSuccess,
 }: CreateWikiModalProps) {
+  useBodyScrollLock(isOpen);
   const [formData, setFormData] = useState<SubmitWikiInput>({
     title: "",
     category: "PANDUAN_TEKNIS",

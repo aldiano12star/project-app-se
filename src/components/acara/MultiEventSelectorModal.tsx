@@ -16,6 +16,7 @@ import {
   getLocalDateString,
   formatEventSchedule,
 } from "@/utils/eventStatus";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface MultiEventSelectorModalProps {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export function MultiEventSelectorModal({
   selectedDate,
   events,
 }: MultiEventSelectorModalProps) {
+  useBodyScrollLock(isOpen);
   if (!isOpen || !selectedDate) return null;
 
   const dayName = INDONESIAN_DAYS[selectedDate.getDay()];

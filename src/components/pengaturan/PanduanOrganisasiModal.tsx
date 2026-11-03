@@ -20,6 +20,7 @@ import {
   Info,
 } from "lucide-react";
 import { Role } from "@prisma/client";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface PanduanOrganisasiModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export function PanduanOrganisasiModal({
   onClose,
   userRole,
 }: PanduanOrganisasiModalProps) {
+  useBodyScrollLock(isOpen);
   const [activeTab, setActiveTab] = useState<"umum" | "operator">("umum");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({
     umum_1: true, // Buka item pertama secara default

@@ -34,6 +34,7 @@ import {
   generateWhatsAppLink,
   formatEventBroadcastMessage,
 } from "@/utils/whatsappShare";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 const MeetingQrModal = dynamic(
   () => import("@/components/home/MeetingQrModal").then((mod) => mod.MeetingQrModal),
@@ -93,6 +94,8 @@ export function RapatDetailClientView({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useBodyScrollLock(isQrModalOpen || isDeleteModalOpen);
 
   // State untuk updating status per baris
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);

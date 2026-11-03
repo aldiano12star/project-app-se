@@ -9,10 +9,7 @@ import {
   Search,
   Check,
   X,
-  CreditCard,
-  AlertCircle,
   Loader2,
-  Banknote,
   Send,
 } from "lucide-react";
 import { Role, Division, TransactionCategory } from "@prisma/client";
@@ -25,6 +22,7 @@ import {
   InvoiceTrackerSection,
   TrackerInvoiceItem,
 } from "@/components/kas/InvoiceTrackerSection";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface TreasurerMemberData {
   id: string;
@@ -52,16 +50,18 @@ interface TreasurerPanelProps {
 export function TreasurerPanel({
   allMembers,
   invoices = [],
-  realBalance,
 }: TreasurerPanelProps) {
   const [isPending, startTransition] = useTransition();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [gradeFilter, setGradeFilter] = useState<"ALL" | "GEN_20" | "GEN_21">("ALL");
 
   // State Modals
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isBulkBillModalOpen, setIsBulkBillModalOpen] = useState(false);
   const [isGlobalFinanceModalOpen, setIsGlobalFinanceModalOpen] = useState(false);
+
+  // Global scroll lock saat modal apapun aktif
+  useBodyScrollLock(
+    isDepositModalOpen || isBulkBillModalOpen || isGlobalFinanceModalOpen
+  );
 
   // Form State: Setoran Anggota
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -134,27 +134,6 @@ export function TreasurerPanel({
     return "-";
   };
 
-  // Kalkulasi Statistik Finansial
-  const totalArrears = allMembers
-    .filter((m) => m.kasBalance < 0)
-    .reduce((sum, m) => sum + Math.abs(m.kasBalance), 0);
-
-  const delinquentCount = allMembers.filter((m) => m.kasBalance < 0).length;
-
-  // Filter Anggota untuk Matriks
-  const filteredMembers = allMembers.filter((m) => {
-    const matchesSearch =
-      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (m.classGrade || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.mainDivision.toLowerCase().includes(searchQuery.toLowerCase());
-
-    if (!matchesSearch) return false;
-
-    if (gradeFilter === "GEN_20") return isGen20(m);
-    if (gradeFilter === "GEN_21") return isGen21(m);
-    return true;
-  });
-
   // Filter Anggota untuk Target Custom di Modal Tagihan Massal
   const filteredCustomMembers = allMembers.filter((m) => {
     if (!customSearchQuery.trim()) return true;
@@ -196,14 +175,6 @@ export function TreasurerPanel({
       const merged = new Set([...prev, ...divUserIds]);
       return Array.from(merged);
     });
-  };
-
-  // Aksi Cepat Setoran untuk User Tertentu
-  const handleQuickDeposit = (user: TreasurerMemberData) => {
-    setSelectedUserId(user.id);
-    setDepositAmount(user.kasBalance < 0 ? String(Math.abs(user.kasBalance)) : "5000");
-    setDepositDesc(`Setoran kas dari ${user.name}`);
-    setIsDepositModalOpen(true);
   };
 
   // Submit Handler: Setoran Kas
@@ -334,25 +305,7 @@ export function TreasurerPanel({
         </div>
       )}
 
-      {/* ── 1. GLOBAL DASHBOARD STATS (Fokus pada Tunggakan Tagihan) ─────── */}
-      <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
-            Total Tunggakan Tagihan Anggota
-          </span>
-          <AlertCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-        </div>
-        <div className="pt-1">
-          <h3 className="text-2xl font-extrabold text-rose-600 dark:text-rose-400">
-            - Rp {totalArrears.toLocaleString("id-ID")}
-          </h3>
-          <p className="text-[11px] text-ink-muted mt-0.5">
-            Dari {delinquentCount} anggota yang memiliki tagihan belum lunas
-          </p>
-        </div>
-      </div>
-
-      {/* ── 2. ACTION BAR BENDAHARA ────────────────────────────────────── */}
+      {/* ── 1. ACTION BAR BENDAHARA ────────────────────────────────────── */}
       <div className="card-solid bg-card p-5 rounded-2xl border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-ink">
@@ -411,157 +364,12 @@ export function TreasurerPanel({
         </div>
       </div>
 
-      {/* ── 2.5. INVOICE TRACKER SECTION (Pantau Tagihan & Pelunasan Kilat) ─ */}
+      {/* ── 2. INVOICE TRACKER SECTION (Pantau Tagihan & Pelunasan Kilat) ─ */}
       <InvoiceTrackerSection
         invoices={invoices}
         onSuccess={(msg) => showNotification("success", msg)}
         onError={(msg) => showNotification("error", msg)}
       />
-
-      {/* ── 3. MEMBER WALLET MATRIX TABLE ──────────────────────────────── */}
-      <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h3 className="text-sm font-bold text-ink">
-              Matriks Saldo Kas Anggota
-            </h3>
-            <p className="text-xs text-ink-muted">
-              Monitoring langsung saldo dompet dan tunggakan per anggota aktif.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="h-4 w-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Cari nama, kelas, divisi..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 min-h-10 pl-9 pr-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink placeholder:text-ink-muted focus:outline-hidden focus:ring-1 focus:ring-primary w-52 sm:w-60"
-              />
-            </div>
-
-            {/* Filter Grade */}
-            <div className="flex items-center bg-surface-container-low p-1 rounded-xl border border-edge text-xs">
-              <button
-                type="button"
-                onClick={() => setGradeFilter("ALL")}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
-                  gradeFilter === "ALL"
-                    ? "bg-card text-ink shadow-xs border border-edge"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Semua
-              </button>
-              <button
-                type="button"
-                onClick={() => setGradeFilter("GEN_20")}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
-                  gradeFilter === "GEN_20"
-                    ? "bg-card text-ink shadow-xs border border-edge"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Kelas 11
-              </button>
-              <button
-                type="button"
-                onClick={() => setGradeFilter("GEN_21")}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
-                  gradeFilter === "GEN_21"
-                    ? "bg-card text-ink shadow-xs border border-edge"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                Kelas 10
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Member Table */}
-        <div className="overflow-x-auto rounded-xl border border-edge/70">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-surface-container-low border-b border-edge/80 text-ink-muted font-bold uppercase tracking-wider text-[11px]">
-              <tr>
-                <th className="px-4 py-3">Nama Anggota</th>
-                <th className="px-4 py-3">Kelas / Gen</th>
-                <th className="px-4 py-3">Divisi</th>
-                <th className="px-4 py-3 text-right">Saldo Kas</th>
-                <th className="px-4 py-3 text-center">Status</th>
-                <th className="px-4 py-3 text-right">Aksi Cepat</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-edge/60 bg-card">
-              {filteredMembers.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-ink-muted">
-                    Tidak ditemukan anggota yang cocok dengan pencarian.
-                  </td>
-                </tr>
-              ) : (
-                filteredMembers.map((m) => {
-                  const isNeg = m.kasBalance < 0;
-                  const absVal = Math.abs(m.kasBalance);
-
-                  return (
-                    <tr
-                      key={m.id}
-                      className="hover:bg-surface-container-low/50 transition-colors"
-                    >
-                      <td className="px-4 py-3 font-semibold text-ink">
-                        {m.name}
-                      </td>
-                      <td className="px-4 py-3 text-ink-secondary">
-                        {formatGradeGen(m)}
-                      </td>
-                      <td className="px-4 py-3 text-ink-secondary">
-                        {m.mainDivision}
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono font-bold">
-                        <span
-                          className={
-                            isNeg
-                              ? "text-rose-600 dark:text-rose-400"
-                              : "text-emerald-600 dark:text-emerald-400"
-                          }
-                        >
-                          {isNeg ? "-" : "+"} Rp {absVal.toLocaleString("id-ID")}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                            isNeg
-                              ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900"
-                              : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900"
-                          }`}
-                        >
-                          {isNeg ? "Nunggak" : "Aman"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleQuickDeposit(m)}
-                          className="h-8 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer"
-                          title={`Catat Setoran untuk ${m.name}`}
-                        >
-                          <CreditCard className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-                          <span>Setoran</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       {/* ── MODAL 1: CATAT SETORAN ANGGOTA ─────────────────────────────── */}
       {isDepositModalOpen && (

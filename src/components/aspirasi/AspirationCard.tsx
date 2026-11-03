@@ -25,6 +25,7 @@ import {
   AspirationStatusType,
   AspirationScopeType,
 } from "@/actions/aspirasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface AspirationCardData {
   id: string;
@@ -97,6 +98,8 @@ export function AspirationCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  useBodyScrollLock(isDeleteModalOpen);
 
   const isPrivate = aspiration.targetScope === "PRIVATE_ADMIN";
   const isOperator = currentUserRole === Role.OPERATOR;

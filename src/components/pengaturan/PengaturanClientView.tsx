@@ -7,7 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import { ProfileHeroCard, UserProfileData } from "./ProfileHeroCard";
 import {
   PersonalSummarySection,
-  KasSummaryData,
   AttendanceSummaryData,
 } from "./PersonalSummarySection";
 import { SettingsSection } from "./SettingsSection";
@@ -25,7 +24,6 @@ const KTADigitalModal = dynamic(
 
 interface PengaturanClientViewProps {
   user: UserProfileData;
-  kasSummary: KasSummaryData;
   attendanceSummary: AttendanceSummaryData;
   managedUsers?: ManagedUser[];
 }
@@ -40,7 +38,6 @@ function formatGrade(grade?: string | null) {
 
 export function PengaturanClientView({
   user,
-  kasSummary,
   attendanceSummary,
   managedUsers = [],
 }: PengaturanClientViewProps) {
@@ -77,9 +74,8 @@ export function PengaturanClientView({
         {/* 1. Profile Hero Card with Gamification & Level XP */}
         <ProfileHeroCard user={user} onOpenKTA={() => setIsKTAOpen(true)} />
 
-        {/* 2. Personal Summary Section (Status Kas & Presensi Mandiri Privat) */}
+        {/* 2. Personal Summary Section (Presensi Mandiri Privat) */}
         <PersonalSummarySection
-          kasSummary={kasSummary}
           attendanceSummary={attendanceSummary}
         />
 

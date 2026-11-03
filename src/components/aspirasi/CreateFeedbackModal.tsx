@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { FeedbackType } from "@prisma/client";
 import { submitFeedbackIssue } from "@/actions/aspirasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface CreateFeedbackModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export function CreateFeedbackModal({
   onSuccess,
   defaultType = FeedbackType.PUBLIC_ISSUE,
 }: CreateFeedbackModalProps) {
+  useBodyScrollLock(isOpen);
   const [type, setType] = useState<FeedbackType>(defaultType);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(

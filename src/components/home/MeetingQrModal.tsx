@@ -10,6 +10,7 @@ import {
 } from "@/actions/presensi";
 import { getTargetAudienceBadge } from "@/utils/audience";
 import { TargetAudience } from "@prisma/client";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface MeetingQrModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export function MeetingQrModal({
   meetingId,
   initialSession,
 }: MeetingQrModalProps) {
+  useBodyScrollLock(isOpen);
   const [sessionData, setSessionData] = useState<MeetingSessionData | null>(
     initialSession || null
   );

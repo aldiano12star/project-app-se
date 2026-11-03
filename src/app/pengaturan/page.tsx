@@ -5,7 +5,6 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PengaturanClientView } from "@/components/pengaturan/PengaturanClientView";
 import { UserProfileData } from "@/components/pengaturan/ProfileHeroCard";
 import {
-  KasSummaryData,
   AttendanceSummaryData,
 } from "@/components/pengaturan/PersonalSummarySection";
 import { Role } from "@prisma/client";
@@ -78,18 +77,6 @@ export default async function PengaturanPage() {
     createdAt: u.createdAt.toISOString(),
   }));
 
-  // Hitung Status Tunggakan Kas Mandiri berdasarkan Saldo Dompet Kas (Fintech-grade)
-  const isKasPaid = dbUser.kasBalance >= 0;
-  const totalArrears = isKasPaid ? 0 : Math.abs(dbUser.kasBalance);
-
-  const kasSummary: KasSummaryData = {
-    isPaid: isKasPaid,
-    totalArrears,
-    unpaidPeriodNames: isKasPaid ? [] : ["Tagihan Iuran Kas"],
-    paidPeriodCount: isKasPaid ? 1 : 0,
-    totalPeriodCount: 1,
-  };
-
   // Rekapitulasi Presensi Mandiri berbasis Analytics Engine
   const attendanceSummary: AttendanceSummaryData = {
     attendedCount: individualStats.attended,
@@ -118,7 +105,6 @@ export default async function PengaturanPage() {
     <AppShell user={dbUser}>
       <PengaturanClientView
         user={serializedUser}
-        kasSummary={kasSummary}
         attendanceSummary={attendanceSummary}
         managedUsers={formattedManagedUsers}
       />

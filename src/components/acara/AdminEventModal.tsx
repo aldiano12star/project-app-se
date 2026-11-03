@@ -21,6 +21,7 @@ import {
   CreateEventInput,
 } from "@/actions/acara";
 import { TargetAudience } from "@prisma/client";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface AdminEventInitialData {
   id: string;
@@ -82,6 +83,7 @@ export function AdminEventModal({
   allMembers = [],
   initialData,
 }: AdminEventModalProps) {
+  useBodyScrollLock(isOpen);
   const [step, setStep] = useState<1 | 2>(initialData ? 2 : 1);
   const [categoryType, setCategoryType] = useState<EventCategoryType>(
     initialData ? initialData.type : "RAPAT"

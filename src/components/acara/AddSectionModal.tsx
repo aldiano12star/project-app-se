@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X, FolderPlus } from "lucide-react";
 import { addEventSection } from "@/actions/acara";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface AddSectionModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function AddSectionModal({
   eventId,
   onSuccess,
 }: AddSectionModalProps) {
+  useBodyScrollLock(isOpen);
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

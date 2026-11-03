@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import { votePoll, closePoll, deletePoll } from "@/actions/aspirasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface PollOptionData {
   id: string;
@@ -53,6 +54,8 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
     type: "success" | "error";
     message: string;
   } | null>(null);
+
+  useBodyScrollLock(isDeleteModalOpen);
 
   const isAuthor = Boolean(
     currentUserId && poll.createdById && poll.createdById === currentUserId

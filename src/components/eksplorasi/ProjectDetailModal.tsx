@@ -21,6 +21,7 @@ import {
 import { Role } from "@prisma/client";
 import { ProjectCardData } from "./ProjectCard";
 import { toggleLikeProject, deleteShowcaseProject } from "@/actions/eksplorasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface ProjectDetailModalProps {
   project: ProjectCardData | null;
@@ -135,6 +136,7 @@ export function ProjectDetailModal({
   onClose,
   currentUser,
 }: ProjectDetailModalProps) {
+  useBodyScrollLock(isOpen);
   const [isLiked, setIsLiked] = useState(Boolean(project?.isLiked));
   const [likesCount, setLikesCount] = useState(project?.likesCount ?? 0);
   const [isLiking, setIsLiking] = useState(false);

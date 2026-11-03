@@ -15,6 +15,7 @@ import {
 import { Role } from "@prisma/client";
 import { WikiArticleData } from "./WikiCard";
 import { deleteWikiArticle } from "@/actions/eksplorasi";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface WikiDetailModalProps {
   article: WikiArticleData | null;
@@ -34,6 +35,7 @@ export function WikiDetailModal({
   onOpenEdit,
   currentUser,
 }: WikiDetailModalProps) {
+  useBodyScrollLock(isOpen);
   const [copied, setCopied] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isDeleting, startDeleteTransition] = useTransition();

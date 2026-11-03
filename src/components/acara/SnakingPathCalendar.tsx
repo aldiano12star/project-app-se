@@ -32,6 +32,7 @@ import {
 import { Role, TargetAudience } from "@prisma/client";
 import { NestedMeetingData } from "./EventDetailCard";
 import { getTargetAudienceBadge } from "@/utils/audience";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export interface CalendarEventItem {
   id: string;
@@ -98,6 +99,8 @@ export function SnakingPathCalendar({
   // State untuk Month-Year Picker Modal
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [pickerYear, setPickerYear] = useState<number>(currentYear);
+
+  useBodyScrollLock(isPickerOpen);
 
   // Ambil data hari ini berbasis zona waktu Jakarta (WIB)
   const todayJakarta = getJakartaDateParts(new Date());

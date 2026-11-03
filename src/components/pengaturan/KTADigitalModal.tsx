@@ -6,6 +6,7 @@ import { X, CheckCircle2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { UserProfileData } from "./ProfileHeroCard";
 import { Division } from "@prisma/client";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface KTADigitalModalProps {
   isOpen: boolean;
@@ -66,6 +67,8 @@ export function KTADigitalModal({
   onClose,
   user,
 }: KTADigitalModalProps) {
+  useBodyScrollLock(isOpen);
+
   if (!isOpen) return null;
 
   const initials = user.name
