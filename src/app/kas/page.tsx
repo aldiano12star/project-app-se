@@ -4,6 +4,7 @@ import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { Role, TransactionType, TransactionCategory } from "@prisma/client";
 import { DigitalWalletCard } from "@/components/kas/DigitalWalletCard";
+import { InvoiceListCard } from "@/components/kas/InvoiceListCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
 import { TreasurerPanel } from "@/components/kas/TreasurerPanel";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
@@ -55,8 +56,8 @@ export default async function KasPage() {
     dbUser.role === Role.BENDAHARA ||
     dbUser.role === Role.OPERATOR;
 
-  // 2. Ambil data transaksi personal (disaring khusus jika KOLABORATOR)
-  const [personalTransactions, globalTransactions, allMembers, realMoney] =
+  // 2. Ambil data transaksi personal, invoices, & buku kas
+  const [personalTransactions, globalTransactions, allMembers, realMoney, userInvoices] =
     await Promise.all([
       prisma.ledgerTransaction.findMany({
         where: {
@@ -127,6 +128,10 @@ export default async function KasPage() {
           })
         : Promise.resolve([]),
       !isKolaborator ? calculateRealMoney() : Promise.resolve({ totalIncome: 0, totalExpense: 0, realBalance: 0 }),
+      prisma.invoice.findMany({
+        where: { userId: session.user.id },
+        orderBy: [{ status: "asc" }, { dueDate: "asc" }, { createdAt: "desc" }],
+      }),
     ]);
 
   return (
@@ -156,7 +161,13 @@ export default async function KasPage() {
           transactions={personalTransactions}
         />
 
-        {/* ── 2. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}
+        {/* ── 2. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
+        <InvoiceListCard
+          invoices={userInvoices}
+          userKasBalance={dbUser.kasBalance}
+        />
+
+        {/* ── 3. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}
         {isKolaborator && (
           <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge text-center space-y-2">
             <div className="flex items-center justify-center gap-2 text-ink font-bold text-xs sm:text-sm">

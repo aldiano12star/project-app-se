@@ -58,8 +58,8 @@ export function AppShell({
 
         {/* Slot Konten Utama */}
         <main
-          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
-            showNav ? "pb-32 md:pb-12" : "pb-8"
+          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto pb-24 overflow-y-auto ${
+            showNav ? "md:pb-12" : "pb-8"
           }`}
         >
           {children}
@@ -69,10 +69,10 @@ export function AppShell({
         <footer className="py-4 px-4 text-center text-xs text-ink-muted/70 select-none">
           <p>&copy; 2026 Saba ExploIT. Powered by SE-Core.</p>
         </footer>
-
-        {/* Navigasi Bawah (Hanya Mobile via md:hidden) */}
-        {showNav && <BottomNav />}
       </div>
+
+      {/* Navigasi Bawah (Hanya Mobile via md:hidden) - Diekstrak ke root level AppShell */}
+      {showNav && <BottomNav />}
     </div>
   );
 }

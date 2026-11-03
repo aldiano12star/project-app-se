@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Role } from "@prisma/client";
-import { Zap } from "lucide-react";
+import { Zap, Bell } from "lucide-react";
+import { getUnreadNotificationCount } from "@/actions/notification";
 
 interface TopHeaderUser {
   id?: string;
@@ -22,8 +23,23 @@ interface TopHeaderProps {
 
 export function TopHeader({ user }: TopHeaderProps) {
   const [logoError, setLogoError] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const role = user?.role || "GUEST";
   const points = user?.totalPoints ?? user?.monthlyPoints ?? 0;
+
+  useEffect(() => {
+    let isMounted = true;
+    if (user?.id) {
+      getUnreadNotificationCount()
+        .then((count) => {
+          if (isMounted) setUnreadCount(count);
+        })
+        .catch(() => {});
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
 
   const initials = user?.name
     ? user.name
@@ -74,7 +90,7 @@ export function TopHeader({ user }: TopHeaderProps) {
         </div>
 
         {/* Action Widgets & User Profile Avatar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* XP Pill: Khusus anggota reguler/pengurus, disembunyikan untuk KOLABORATOR */}
           {role !== "KOLABORATOR" && (
             <div className="flex items-center gap-1.5 rounded-full border border-edge bg-surface-container-low px-3 py-1.5 min-h-9">
@@ -85,6 +101,22 @@ export function TopHeader({ user }: TopHeaderProps) {
               </span>
             </div>
           )}
+
+          {/* Kotak Masuk (Mailbox Notifikasi Personal) */}
+          <Link
+            href="/kotak-masuk"
+            aria-label="Kotak Masuk Notifikasi"
+            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full text-slate-500 hover:text-ink hover:bg-surface-container-low transition-colors active:scale-95 cursor-pointer"
+            title="Kotak Masuk"
+          >
+            <Bell className="h-5 w-5 stroke-[1.8]" />
+            {unreadCount > 0 && (
+              <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
+              </span>
+            )}
+          </Link>
 
           {/* Avatar Profil dengan Role Ring (Pintu Navigasi Langsung ke /pengaturan) */}
           <Link

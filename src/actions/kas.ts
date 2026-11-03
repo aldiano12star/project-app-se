@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { assertRole, assertAuthenticated } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
-import { Role, TransactionType, TransactionCategory } from "@prisma/client";
+import { Role, TransactionType, TransactionCategory, InvoiceType, InvoiceStatus, NotifType } from "@prisma/client";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -248,10 +248,40 @@ export async function createBulkBills(
         },
       });
 
+      // 3. Sinkronkan ke model Invoice & Notification
+      const invoiceType =
+        targetCategory === TransactionCategory.TAGIHAN_RUTIN
+          ? InvoiceType.KAS
+          : InvoiceType.URUNAN;
+
+      await tx.invoice.createMany({
+        data: targetUserIds.map((uid) => ({
+          userId: uid,
+          title: cleanDescription,
+          amount: cleanAmount,
+          type: invoiceType,
+          status: InvoiceStatus.UNPAID,
+          createdAt: now,
+          updatedAt: now,
+        })),
+      });
+
+      await tx.notification.createMany({
+        data: targetUserIds.map((uid) => ({
+          userId: uid,
+          title: `Tagihan Baru: ${cleanDescription}`,
+          message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa dompet kas Anda.`,
+          type: NotifType.BILLING,
+          actionUrl: "/kas",
+          createdAt: now,
+        })),
+      });
+
       return targetUserIds.length;
     });
 
     revalidatePath("/kas");
+    revalidatePath("/kotak-masuk");
     revalidatePath("/dashboard");
     revalidatePath("/pengaturan");
 

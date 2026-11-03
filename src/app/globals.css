@@ -88,6 +88,7 @@
   --color-on-primary: var(--saba-on-primary);
 
   /* Surfaces & Neutrals */
+  --color-background: var(--saba-surface);
   --color-surface: var(--saba-surface);
   --color-surface-bg-light: #F8FAFC;
   --color-surface-bg-dark: #0B0F19;
@@ -177,7 +178,7 @@ body {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 

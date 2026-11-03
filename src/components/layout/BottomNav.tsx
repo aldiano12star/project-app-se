@@ -48,11 +48,13 @@ const NAV_ITEMS: NavItem[] = [
 export function BottomNav() {
   const pathname = usePathname();
   const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
+  const [prevPathname, setPrevPathname] = useState(pathname);
   const [isModalActive, setIsModalActive] = useState(false);
 
-  useEffect(() => {
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setOptimisticPath(null);
-  }, [pathname]);
+  }
 
   const activePath = optimisticPath || pathname;
 
@@ -84,11 +86,11 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-4 right-4 max-w-sm mx-auto z-50 px-5 py-2.5 rounded-full flex items-center justify-between bg-white/80 backdrop-blur-lg border border-slate-200/80 shadow-lg text-slate-500 dark:bg-[#151D2A]/80 dark:border-[#27344A] dark:text-slate-400 transition-colors md:hidden ${
+      className={`fixed bottom-0 left-0 w-full z-100 bg-background border-t border-edge md:hidden pb-safe transition-colors ${
         isModalActive ? "hidden" : ""
       }`}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full max-w-md mx-auto px-4 py-2">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =
