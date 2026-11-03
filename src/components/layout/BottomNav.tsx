@@ -86,11 +86,11 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-0 left-0 w-full z-100 bg-background border-t border-edge md:hidden pb-safe transition-colors ${
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
         isModalActive ? "hidden" : ""
       }`}
     >
-      <div className="flex items-center justify-between w-full max-w-md mx-auto px-4 py-2">
+      <div className="flex items-center justify-between w-full">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =

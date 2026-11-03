@@ -6,6 +6,7 @@ import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { InstallPWAPrompt } from "@/components/pwa/InstallPWAPrompt";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 
 /* Inter — font default Saba ExploIT (DESIGN.md).
    next/font self-hosting: nol request ke Google saat runtime, tanpa layout shift. */
@@ -86,6 +87,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} min-h-screen bg-surface text-ink flex flex-col antialiased`}>
+        <SplashScreen />
         <ThemeProvider>
           <Suspense fallback={null}>
             <NavigationProgressBar />

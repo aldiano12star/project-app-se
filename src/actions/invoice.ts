@@ -327,3 +327,140 @@ export async function markInvoiceAsPaidManually(invoiceId: string): Promise<Acti
     };
   }
 }
+
+/**
+ * Pelunasan Kilat Tagihan oleh Bendahara (Quick Settle via Hidden Wallet):
+ * Menghitung kekurangan dana untuk invoice ini, secara otomatis menyetorkan
+ * kekurangan tersebut ke kas dan dompet virtual user, lalu langsung memotongnya
+ * hingga invoice berstatus PAID secara atomik.
+ */
+export async function quickSettleInvoice(invoiceId: string): Promise<ActionResponse> {
+  try {
+    const officer = await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            kasBalance: true,
+          },
+        },
+      },
+    });
+
+    if (!invoice) {
+      return {
+        success: false,
+        message: "Tagihan tidak ditemukan.",
+      };
+    }
+
+    if (invoice.status === InvoiceStatus.PAID) {
+      return {
+        success: false,
+        message: "Tagihan ini sudah berstatus lunas.",
+      };
+    }
+
+    // Hitung saldo tersedia (jika saldo sekarang positif) dan kekurangan dana untuk invoice ini
+    const availableBalance = Math.max(0, invoice.user.kasBalance);
+    const missingAmount = Math.max(0, invoice.amount - availableBalance);
+
+    // Ambil tahun ajaran aktif jika ada
+    const currentAcademicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+      select: { id: true },
+    });
+
+    const now = new Date();
+
+    await prisma.$transaction(async (tx) => {
+      // 1. Jika ada kekurangan dana, catat setoran tunai riil (INCOME) & top up kasBalance
+      if (missingAmount > 0) {
+        await tx.ledgerTransaction.create({
+          data: {
+            academicYearId: currentAcademicYear?.id || null,
+            userId: invoice.userId,
+            type: TransactionType.INCOME,
+            category: TransactionCategory.SETORAN_MEMBER,
+            amount: missingAmount,
+            description: `Setoran tunai pelunasan: ${invoice.title} (${invoice.user.name})`,
+            createdById: officer.id,
+            date: now,
+          },
+        });
+
+        await tx.user.update({
+          where: { id: invoice.userId },
+          data: {
+            kasBalance: { increment: missingAmount },
+          },
+        });
+      }
+
+      // 2. Potong saldo virtual user sesuai nominal tagihan (BILL_DEDUCTION)
+      await tx.user.update({
+        where: { id: invoice.userId },
+        data: {
+          kasBalance: { decrement: invoice.amount },
+        },
+      });
+
+      await tx.ledgerTransaction.create({
+        data: {
+          academicYearId: currentAcademicYear?.id || null,
+          userId: invoice.userId,
+          type: TransactionType.BILL_DEDUCTION,
+          category:
+            invoice.type === InvoiceType.KAS
+              ? TransactionCategory.TAGIHAN_RUTIN
+              : TransactionCategory.TAGIHAN_INSIDENTAL,
+          amount: invoice.amount,
+          description: `Pelunasan: ${invoice.title}`,
+          createdById: officer.id,
+          date: now,
+        },
+      });
+
+      // 3. Update status invoice menjadi PAID
+      await tx.invoice.update({
+        where: { id: invoiceId },
+        data: {
+          status: InvoiceStatus.PAID,
+        },
+      });
+
+      // 4. Terbitkan notifikasi konfirmasi pelunasan
+      await tx.notification.create({
+        data: {
+          userId: invoice.userId,
+          title: "Tagihan Berhasil Dilunasi",
+          message: `Tagihan "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString(
+            "id-ID"
+          )} telah dilunasi dan diverifikasi oleh bendahara.`,
+          type: NotifType.BILLING,
+          actionUrl: "/kas",
+          createdAt: now,
+        },
+      });
+    });
+
+    revalidatePath("/kas");
+    revalidatePath("/kotak-masuk");
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: `Tagihan "${invoice.title}" milik ${invoice.user.name} berhasil dilunasi.`,
+    };
+  } catch (error) {
+    console.error("[Invoice] quickSettleInvoice error:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Gagal memproses pelunasan kilat.",
+    };
+  }
+}

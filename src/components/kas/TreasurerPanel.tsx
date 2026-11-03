@@ -2,7 +2,6 @@
 
 import React, { useState, useTransition } from "react";
 import {
-  Wallet,
   ArrowDownLeft,
   ArrowUpRight,
   PlusCircle,
@@ -11,11 +10,8 @@ import {
   Check,
   X,
   CreditCard,
-  UserCheck,
   AlertCircle,
   Loader2,
-  Users,
-  Layers,
   Banknote,
   Send,
 } from "lucide-react";
@@ -25,6 +21,10 @@ import {
   createBulkBills,
   recordGlobalFinance,
 } from "@/actions/kas";
+import {
+  InvoiceTrackerSection,
+  TrackerInvoiceItem,
+} from "@/components/kas/InvoiceTrackerSection";
 
 export interface TreasurerMemberData {
   id: string;
@@ -41,19 +41,18 @@ export interface TreasurerMemberData {
 }
 
 interface TreasurerPanelProps {
-  currentUserRole: Role;
+  currentUserRole?: Role;
   allMembers: TreasurerMemberData[];
+  invoices?: TrackerInvoiceItem[];
   realBalance: number;
-  totalIncome: number;
-  totalExpense: number;
+  totalIncome?: number;
+  totalExpense?: number;
 }
 
 export function TreasurerPanel({
-  currentUserRole,
   allMembers,
+  invoices = [],
   realBalance,
-  totalIncome,
-  totalExpense,
 }: TreasurerPanelProps) {
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,7 +69,11 @@ export function TreasurerPanel({
   const [depositDesc, setDepositDesc] = useState<string>("");
 
   // Form State: Tagihan Serentak
-  const [billTargetScope, setBillTargetScope] = useState<"ALL" | "GEN_20" | "GEN_21">("ALL");
+  const [billTargetScope, setBillTargetScope] = useState<
+    "ALL" | "GEN_20" | "GEN_21" | "CUSTOM"
+  >("ALL");
+  const [customSelectedUserIds, setCustomSelectedUserIds] = useState<string[]>([]);
+  const [customSearchQuery, setCustomSearchQuery] = useState("");
   const [billCategory, setBillCategory] = useState<"TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL">("TAGIHAN_RUTIN");
   const [billAmount, setBillAmount] = useState<string>("5000");
   const [billTitle, setBillTitle] = useState<string>("");
@@ -136,10 +139,6 @@ export function TreasurerPanel({
     .filter((m) => m.kasBalance < 0)
     .reduce((sum, m) => sum + Math.abs(m.kasBalance), 0);
 
-  const totalPositiveBalance = allMembers
-    .filter((m) => m.kasBalance > 0)
-    .reduce((sum, m) => sum + m.kasBalance, 0);
-
   const delinquentCount = allMembers.filter((m) => m.kasBalance < 0).length;
 
   // Filter Anggota untuk Matriks
@@ -155,6 +154,49 @@ export function TreasurerPanel({
     if (gradeFilter === "GEN_21") return isGen21(m);
     return true;
   });
+
+  // Filter Anggota untuk Target Custom di Modal Tagihan Massal
+  const filteredCustomMembers = allMembers.filter((m) => {
+    if (!customSearchQuery.trim()) return true;
+    const q = customSearchQuery.toLowerCase();
+    return (
+      m.name.toLowerCase().includes(q) ||
+      (m.classGrade || "").toLowerCase().includes(q) ||
+      m.mainDivision.toLowerCase().includes(q)
+    );
+  });
+
+  const DIVISIONS: Division[] = [
+    Division.PROGRAMMING,
+    Division.DESIGN,
+    Division.PHOTOGRAPHY,
+    Division.CINEMATOGRAPHY,
+    Division.TECHNOPRENEURSHIP,
+  ];
+
+  const handleToggleSelectUser = (id: string) => {
+    setCustomSelectedUserIds((prev) =>
+      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllCustom = () => {
+    setCustomSelectedUserIds(allMembers.map((m) => m.id));
+  };
+
+  const handleDeselectAllCustom = () => {
+    setCustomSelectedUserIds([]);
+  };
+
+  const handleSelectDivisionCustom = (div: Division) => {
+    const divUserIds = allMembers
+      .filter((m) => m.mainDivision === div)
+      .map((m) => m.id);
+    setCustomSelectedUserIds((prev) => {
+      const merged = new Set([...prev, ...divUserIds]);
+      return Array.from(merged);
+    });
+  };
 
   // Aksi Cepat Setoran untuk User Tertentu
   const handleQuickDeposit = (user: TreasurerMemberData) => {
@@ -203,7 +245,14 @@ export function TreasurerPanel({
     // Tentukan user target berdasarkan scope
     let targetUsers = allMembers;
     if (billTargetScope === "GEN_20") targetUsers = allMembers.filter(isGen20);
-    if (billTargetScope === "GEN_21") targetUsers = allMembers.filter(isGen21);
+    else if (billTargetScope === "GEN_21") targetUsers = allMembers.filter(isGen21);
+    else if (billTargetScope === "CUSTOM") {
+      if (customSelectedUserIds.length === 0) {
+        showNotification("error", "Pilih minimal satu anggota target tagihan.");
+        return;
+      }
+      targetUsers = allMembers.filter((u) => customSelectedUserIds.includes(u.id));
+    }
 
     // Proteksi Finansial: KOLABORATOR hanya membayar tagihan insidental, kecualikan dari tagihan rutin
     if (billCategory === "TAGIHAN_RUTIN") {
@@ -286,7 +335,7 @@ export function TreasurerPanel({
       )}
 
       {/* ── 1. GLOBAL DASHBOARD STATS ──────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Card 1: Total Uang Kas Riil */}
         <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
           <div className="flex items-center justify-between">
@@ -319,24 +368,6 @@ export function TreasurerPanel({
             </h3>
             <p className="text-[11px] text-ink-muted mt-0.5">
               Dari {delinquentCount} anggota bersaldo negatif
-            </p>
-          </div>
-        </div>
-
-        {/* Card 3: Total Saldo Mengendap */}
-        <div className="card-solid bg-card p-5 rounded-2xl border border-edge shadow-xs space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-              Simpanan / Bayar di Muka
-            </span>
-            <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          </div>
-          <div className="pt-1">
-            <h3 className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-              + Rp {totalPositiveBalance.toLocaleString("id-ID")}
-            </h3>
-            <p className="text-[11px] text-ink-muted mt-0.5">
-              Saldo titipan anggota siap potong tagihan
             </p>
           </div>
         </div>
@@ -375,6 +406,8 @@ export function TreasurerPanel({
             onClick={() => {
               setBillTitle("");
               setBillAmount("5000");
+              setBillTargetScope("ALL");
+              setCustomSelectedUserIds([]);
               setIsBulkBillModalOpen(true);
             }}
             className="h-11 min-h-11 px-4 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
@@ -398,6 +431,13 @@ export function TreasurerPanel({
           </button>
         </div>
       </div>
+
+      {/* ── 2.5. INVOICE TRACKER SECTION (Pantau Tagihan & Pelunasan Kilat) ─ */}
+      <InvoiceTrackerSection
+        invoices={invoices}
+        onSuccess={(msg) => showNotification("success", msg)}
+        onError={(msg) => showNotification("error", msg)}
+      />
 
       {/* ── 3. MEMBER WALLET MATRIX TABLE ──────────────────────────────── */}
       <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
@@ -646,7 +686,7 @@ export function TreasurerPanel({
       {/* ── MODAL 2: TARIK TAGIHAN SERENTAK ───────────────────────────── */}
       {isBulkBillModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl p-5 sm:p-6 space-y-4">
+          <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-edge pb-3">
               <div className="flex items-center gap-2">
                 <ArrowUpRight className="h-5 w-5 text-rose-600" />
@@ -668,7 +708,7 @@ export function TreasurerPanel({
                 <label className="text-xs font-bold text-ink block mb-1">
                   Sasaran Anggota
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <button
                     type="button"
                     onClick={() => setBillTargetScope("ALL")}
@@ -702,7 +742,116 @@ export function TreasurerPanel({
                   >
                     Kelas 10 ({allMembers.filter(isGen21).length})
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setBillTargetScope("CUSTOM")}
+                    className={`h-10 min-h-10 text-xs font-semibold rounded-xl border transition-colors cursor-pointer ${
+                      billTargetScope === "CUSTOM"
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface-container-low text-ink border-edge hover:bg-surface-container"
+                    }`}
+                  >
+                    Khusus ({customSelectedUserIds.length})
+                  </button>
                 </div>
+
+                {/* MULTI-SELECT CHECKLIST JIKA CUSTOM */}
+                {billTargetScope === "CUSTOM" && (
+                  <div className="mt-2.5 space-y-2.5 p-3 rounded-xl bg-surface-container-low border border-edge">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-bold text-ink block">
+                          Pilih Anggota Sasaran <span className="text-primary">*</span>
+                        </span>
+                        <span className="text-[10px] text-ink-muted">
+                          {customSelectedUserIds.length} dari {allMembers.length} anggota terpilih
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px]">
+                        <button
+                          type="button"
+                          onClick={handleSelectAllCustom}
+                          className="px-2 py-1 rounded-md bg-card text-ink hover:text-primary font-semibold border border-edge transition-colors cursor-pointer"
+                        >
+                          Pilih Semua
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDeselectAllCustom}
+                          className="px-2 py-1 rounded-md bg-card text-ink-muted hover:text-rose-600 font-semibold border border-edge transition-colors cursor-pointer"
+                        >
+                          Kosongkan
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Filter Cepat per Divisi */}
+                    <div className="flex flex-wrap items-center gap-1">
+                      <span className="text-[10px] font-bold text-ink-muted mr-1">Divisi:</span>
+                      {DIVISIONS.map((div) => (
+                        <button
+                          key={div}
+                          type="button"
+                          onClick={() => handleSelectDivisionCustom(div)}
+                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
+                        >
+                          +{div.slice(0, 4)}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Filter Input Pencarian */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={customSearchQuery}
+                        onChange={(e) => setCustomSearchQuery(e.target.value)}
+                        placeholder="Saring nama, kelas, atau divisi..."
+                        className="w-full h-8 pl-8 pr-2.5 bg-card text-ink border border-edge rounded-lg text-xs outline-hidden focus:border-primary"
+                      />
+                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+
+                    {/* Daftar Checklist Anggota */}
+                    <div className="max-h-44 overflow-y-auto space-y-1 p-1 bg-card rounded-lg border border-edge">
+                      {filteredCustomMembers.length === 0 ? (
+                        <p className="text-[11px] text-ink-muted text-center py-3">
+                          Tidak ada anggota yang cocok dengan pencarian.
+                        </p>
+                      ) : (
+                        filteredCustomMembers.map((member) => {
+                          const isSelected = customSelectedUserIds.includes(member.id);
+                          return (
+                            <label
+                              key={member.id}
+                              onClick={() => handleToggleSelectUser(member.id)}
+                              className={`flex items-center justify-between p-2 rounded-lg border transition-all cursor-pointer ${
+                                isSelected
+                                  ? "bg-primary/10 border-primary/40"
+                                  : "bg-surface-container-low/40 hover:bg-surface-container-low border-transparent"
+                              }`}
+                            >
+                              <div className="space-y-0.5 min-w-0 pr-2">
+                                <span className="text-xs font-semibold text-ink block truncate">
+                                  {member.name}
+                                </span>
+                                <span className="text-[10px] text-ink-muted block">
+                                  {formatGradeGen(member)} • {member.mainDivision}
+                                </span>
+                              </div>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {}}
+                                className="w-4 h-4 rounded text-primary border-edge focus:ring-primary cursor-pointer shrink-0"
+                              />
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

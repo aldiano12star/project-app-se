@@ -57,7 +57,7 @@ export default async function KasPage() {
     dbUser.role === Role.OPERATOR;
 
   // 2. Ambil data transaksi personal, invoices, & buku kas
-  const [personalTransactions, globalTransactions, allMembers, realMoney, userInvoices] =
+  const [personalTransactions, globalTransactions, allMembers, realMoney, userInvoices, allInvoices] =
     await Promise.all([
       prisma.ledgerTransaction.findMany({
         where: {
@@ -132,6 +132,28 @@ export default async function KasPage() {
         where: { userId: session.user.id },
         orderBy: [{ status: "asc" }, { dueDate: "asc" }, { createdAt: "desc" }],
       }),
+      isTreasurer
+        ? prisma.invoice.findMany({
+            orderBy: [{ createdAt: "desc" }],
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  role: true,
+                  classGrade: true,
+                  generationNumber: true,
+                  gen: true,
+                  kelas: true,
+                  mainDivision: true,
+                  kasBalance: true,
+                },
+              },
+            },
+            take: 300,
+          })
+        : Promise.resolve([]),
     ]);
 
   return (
@@ -185,6 +207,7 @@ export default async function KasPage() {
           <TreasurerPanel
             currentUserRole={dbUser.role}
             allMembers={allMembers}
+            invoices={allInvoices}
             realBalance={realMoney.realBalance}
             totalIncome={realMoney.totalIncome}
             totalExpense={realMoney.totalExpense}

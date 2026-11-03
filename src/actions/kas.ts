@@ -224,31 +224,8 @@ export async function createBulkBills(
 
     const now = new Date();
 
-    // Eksekusi ACID Transaction
+    // Eksekusi ACID Transaction: Terbitkan Tagihan (Invoice) & Notifikasi ke seluruh target
     const affectedCount = await prisma.$transaction(async (tx) => {
-      // 1. Buat LedgerTransaction untuk setiap user
-      await tx.ledgerTransaction.createMany({
-        data: targetUserIds.map((uid) => ({
-          academicYearId: currentAcademicYear?.id || null,
-          type: TransactionType.BILL_DEDUCTION,
-          category: targetCategory,
-          amount: cleanAmount,
-          description: cleanDescription,
-          userId: uid,
-          createdById: officer.id,
-          date: now,
-        })),
-      });
-
-      // 2. Potong saldo kasBalance masing-masing user
-      await tx.user.updateMany({
-        where: { id: { in: targetUserIds } },
-        data: {
-          kasBalance: { decrement: cleanAmount },
-        },
-      });
-
-      // 3. Sinkronkan ke model Invoice & Notification
       const invoiceType =
         targetCategory === TransactionCategory.TAGIHAN_RUTIN
           ? InvoiceType.KAS
@@ -270,7 +247,7 @@ export async function createBulkBills(
         data: targetUserIds.map((uid) => ({
           userId: uid,
           title: `Tagihan Baru: ${cleanDescription}`,
-          message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa dompet kas Anda.`,
+          message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa rincian tagihan kas Anda.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
           createdAt: now,
