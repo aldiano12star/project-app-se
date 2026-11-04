@@ -75,6 +75,41 @@ const DIVISIONS = [
   "TECHNOPRENEURSHIP",
 ];
 
+/**
+ * Memformat objek Date atau ISO string ke format standar input datetime-local: "YYYY-MM-DDThh:mm"
+ * Memperhitungkan zona waktu lokal pengguna agar tidak terjadi pergeseran jam/tanggal.
+ */
+function formatToDateTimeLocal(dateInput?: string | Date | null): string {
+  if (!dateInput) return "";
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return "";
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+/**
+ * Memformat objek Date atau ISO string ke format tanggal lokal: "YYYY-MM-DD"
+ */
+function formatToLocalDate(dateInput?: string | Date | null): string {
+  if (!dateInput) return "";
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return "";
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+
+  return `${year}-${month}-${day}`;
+}
+
 export function AdminEventModal({
   isOpen,
   onClose,
@@ -133,7 +168,7 @@ export function AdminEventModal({
 
       if (initialData.type === "RAPAT") {
         const d = initialData.startDate ? new Date(initialData.startDate) : new Date();
-        const dateStr = !isNaN(d.getTime()) ? d.toISOString().split("T")[0] : "";
+        const dateStr = formatToLocalDate(d);
         const hours = !isNaN(d.getTime())
           ? String(d.getHours()).padStart(2, "0")
           : "09";
@@ -153,12 +188,8 @@ export function AdminEventModal({
           notes: initialData.notes || "",
         });
       } else {
-        const startStr = initialData.startDate
-          ? new Date(initialData.startDate).toISOString().split("T")[0]
-          : "";
-        const endStr = initialData.endDate
-          ? new Date(initialData.endDate).toISOString().split("T")[0]
-          : "";
+        const startStr = formatToDateTimeLocal(initialData.startDate);
+        const endStr = formatToDateTimeLocal(initialData.endDate);
 
         setAcaraForm({
           title: initialData.title || "",

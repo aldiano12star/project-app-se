@@ -14,6 +14,7 @@ import {
   Loader2,
   Filter,
   Users,
+  X,
 } from "lucide-react";
 import { InvoiceStatus, InvoiceType, Role, Division } from "@prisma/client";
 import { quickSettleInvoice } from "@/actions/invoice";
@@ -59,6 +60,10 @@ export function InvoiceTrackerSection({
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [searchQueries, setSearchQueries] = useState<Record<string, string>>({});
   const [statusFilters, setStatusFilters] = useState<Record<string, "ALL" | "UNPAID" | "PAID">>({});
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Group invoices by title + type
   const groupedInvoices = React.useMemo(() => {
@@ -105,16 +110,21 @@ export function InvoiceTrackerSection({
 
   const handleQuickSettle = (invoiceId: string) => {
     setSettlingInvoiceId(invoiceId);
+    setFeedback(null);
     startTransition(async () => {
       try {
         const res = await quickSettleInvoice(invoiceId);
         if (res.success) {
+          setFeedback({ type: "success", message: res.message });
           onSuccess?.(res.message);
         } else {
+          setFeedback({ type: "error", message: res.message });
           onError?.(res.message);
         }
       } catch {
-        onError?.("Gagal melakukan pelunasan tagihan.");
+        const errMsg = "Gagal melakukan pelunasan tagihan.";
+        setFeedback({ type: "error", message: errMsg });
+        onError?.(errMsg);
       } finally {
         setSettlingInvoiceId(null);
       }
@@ -154,6 +164,33 @@ export function InvoiceTrackerSection({
 
   return (
     <div className="space-y-3">
+      {/* ── NOTIFICATION FEEDBACK TOAST ─────────────────────────────────── */}
+      {feedback && (
+        <div
+          className={`p-4 rounded-xl border text-xs font-semibold flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 ${
+            feedback.type === "success"
+              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {feedback.type === "success" ? (
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+            ) : (
+              <AlertCircle className="h-4 w-4 shrink-0" />
+            )}
+            <span>{feedback.message}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFeedback(null)}
+            className="p-1 hover:opacity-75 cursor-pointer shrink-0"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between px-1">
         <div>
           <h3 className="text-sm font-bold text-ink">

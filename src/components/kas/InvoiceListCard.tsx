@@ -1,19 +1,13 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React from "react";
 import { Invoice, InvoiceStatus, InvoiceType } from "@prisma/client";
 import {
   Receipt,
   CheckCircle2,
   Clock,
   Sparkles,
-  Check,
-  Loader2,
-  AlertCircle,
-  X,
-  Wallet,
 } from "lucide-react";
-import { payInvoiceWithWallet } from "@/actions/invoice";
 
 interface InvoiceListCardProps {
   invoices: Invoice[];
@@ -24,69 +18,13 @@ export function InvoiceListCard({
   invoices,
   userKasBalance = 0,
 }: InvoiceListCardProps) {
-  const [isPending, startTransition] = useTransition();
-  const [payingInvoiceId, setPayingInvoiceId] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-
   const unpaidInvoices = invoices.filter((i) => i.status === InvoiceStatus.UNPAID);
   const paidInvoices = invoices.filter((i) => i.status === InvoiceStatus.PAID);
 
   const totalUnpaidAmount = unpaidInvoices.reduce((acc, curr) => acc + curr.amount, 0);
 
-  const handlePay = (invoiceId: string) => {
-    setPayingInvoiceId(invoiceId);
-    setFeedback(null);
-    startTransition(async () => {
-      try {
-        const res = await payInvoiceWithWallet(invoiceId);
-        if (res.success) {
-          setFeedback({ type: "success", message: res.message });
-        } else {
-          setFeedback({ type: "error", message: res.message });
-        }
-      } catch {
-        setFeedback({
-          type: "error",
-          message: "Terjadi kesalahan saat memproses pembayaran tagihan.",
-        });
-      } finally {
-        setPayingInvoiceId(null);
-      }
-    });
-  };
-
   return (
     <div className="space-y-4">
-      {/* ── FEEDBACK NOTIFICATION ────────────────────────────────────────── */}
-      {feedback && (
-        <div
-          className={`p-4 rounded-xl border text-xs font-semibold flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2 ${
-            feedback.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
-              : "bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            {feedback.type === "success" ? (
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
-            ) : (
-              <AlertCircle className="h-4 w-4 shrink-0" />
-            )}
-            <span>{feedback.message}</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setFeedback(null)}
-            className="p-1 hover:opacity-75 cursor-pointer shrink-0"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
-
       {/* Header Tagihan & Total Tunggakan */}
       <div className="card-solid p-6 space-y-5">
         <div className="flex items-center justify-between">
@@ -132,7 +70,7 @@ export function InvoiceListCard({
               </span>
             </div>
             <p className="text-xs font-medium text-amber-600 dark:text-amber-400 pt-0.5">
-              Gunakan saldo dompet Anda untuk melunasi tagihan secara mandiri, atau temui Bendahara untuk setoran tunai.
+              Mohon segera temui Bendahara untuk konfirmasi pelunasan tagihan aktif Anda.
             </p>
           </div>
         ) : (
@@ -153,8 +91,6 @@ export function InvoiceListCard({
           ) : (
             unpaidInvoices.map((inv) => {
               const isDuePassed = inv.dueDate && new Date(inv.dueDate) < new Date();
-              const hasEnoughBalance = userKasBalance >= inv.amount;
-              const isProcessing = payingInvoiceId === inv.id;
 
               return (
                 <div
@@ -201,34 +137,9 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 self-start sm:self-center">
-                    {hasEnoughBalance ? (
-                      <button
-                        type="button"
-                        disabled={isProcessing || isPending}
-                        onClick={() => handlePay(inv.id)}
-                        className="h-8 px-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50"
-                        title="Lunaskan tagihan ini menggunakan saldo dompet Anda"
-                      >
-                        {isProcessing ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <Check className="h-3.5 w-3.5" />
-                        )}
-                        <span>Lunaskan</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled
-                        className="h-8 px-3 rounded-xl bg-surface-container-low text-ink-muted border border-edge opacity-60 cursor-not-allowed text-xs font-semibold inline-flex items-center gap-1"
-                        title={`Saldo dompet Anda (Rp ${userKasBalance.toLocaleString("id-ID")}) kurang untuk melunasi tagihan ini`}
-                      >
-                        <Wallet className="h-3.5 w-3.5" />
-                        <span>Saldo Kurang</span>
-                      </button>
-                    )}
-                  </div>
+                  <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl self-start sm:self-center">
+                    Belum Lunas
+                  </span>
                 </div>
               );
             })

@@ -364,13 +364,6 @@ export function TreasurerPanel({
         </div>
       </div>
 
-      {/* ── 2. INVOICE TRACKER SECTION (Pantau Tagihan & Pelunasan Kilat) ─ */}
-      <InvoiceTrackerSection
-        invoices={invoices}
-        onSuccess={(msg) => showNotification("success", msg)}
-        onError={(msg) => showNotification("error", msg)}
-      />
-
       {/* ── MODAL 1: CATAT SETORAN ANGGOTA ─────────────────────────────── */}
       {isDepositModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">

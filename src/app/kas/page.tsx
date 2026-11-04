@@ -3,10 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentDbUser } from "@/lib/currentUser";
 import { AppShell } from "@/components/layout/AppShell";
 import { Role, TransactionType, TransactionCategory } from "@prisma/client";
-import { DigitalWalletCard } from "@/components/kas/DigitalWalletCard";
+import { DigitalWalletCard, MutationHistory } from "@/components/kas/DigitalWalletCard";
 import { InvoiceListCard } from "@/components/kas/InvoiceListCard";
 import { PublicCashLedger } from "@/components/kas/PublicCashLedger";
 import { TreasurerPanel } from "@/components/kas/TreasurerPanel";
+import { InvoiceTrackerSection } from "@/components/kas/InvoiceTrackerSection";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { calculateRealMoney } from "@/actions/kas";
 import { Wallet, Users } from "lucide-react";
@@ -174,34 +175,24 @@ export default async function KasPage() {
           <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
         </section>
 
-        {/* ── 1. TREASURER CONTROL MATRIX (Tampil di Paling Atas Khusus Pengurus) ── */}
-        {isTreasurer && (
-          <TreasurerPanel
-            currentUserRole={dbUser.role}
-            allMembers={allMembers}
-            invoices={allInvoices}
-            realBalance={realMoney.realBalance}
-            totalIncome={realMoney.totalIncome}
-            totalExpense={realMoney.totalExpense}
-          />
-        )}
-
-        {/* ── 2. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
-        <InvoiceListCard
-          invoices={userInvoices}
-          userKasBalance={dbUser.kasBalance}
-        />
-
-        {/* ── 3. RIWAYAT MUTASI KAS PERSONAL (Transaction Timeline) ─────── */}
+        {/* ── 1. DIGITAL WALLET CARD (Dompet Saya) ──────────────────────── */}
         <DigitalWalletCard
           userName={dbUser.name}
           userRole={dbUser.role}
           classGrade={dbUser.classGrade}
           kasBalance={dbUser.kasBalance}
-          transactions={personalTransactions}
         />
 
-        {/* ── 4. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}
+        {/* ── 2. INVOICE LIST CARD (Tagihan Saya) ───────────────────────── */}
+        <InvoiceListCard
+          invoices={userInvoices}
+          userKasBalance={dbUser.kasBalance}
+        />
+
+        {/* ── 3. MUTATION HISTORY (Riwayat Mutasi Saldo Kas) ────────────── */}
+        <MutationHistory transactions={personalTransactions} />
+
+        {/* ── KOLABORATOR INFORMATIVE NOTICE ───────────────────────────── */}
         {isKolaborator && (
           <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge text-center space-y-2">
             <div className="flex items-center justify-center gap-2 text-ink font-bold text-xs sm:text-sm">
@@ -214,7 +205,26 @@ export default async function KasPage() {
           </div>
         )}
 
-        {/* ── 5. BUKU KAS PUBLIK TERPADU (Hanya untuk Anggota Internal) ── */}
+        {/* ── 4. TREASURER PANEL (Aksi Finansial Bendahara - Khusus Pengurus) ── */}
+        {isTreasurer && (
+          <TreasurerPanel
+            currentUserRole={dbUser.role}
+            allMembers={allMembers}
+            invoices={allInvoices}
+            realBalance={realMoney.realBalance}
+            totalIncome={realMoney.totalIncome}
+            totalExpense={realMoney.totalExpense}
+          />
+        )}
+
+        {/* ── 5. INVOICE TRACKER SECTION (Pantau Tagihan & Invoice Massal) ─ */}
+        {isTreasurer && (
+          <InvoiceTrackerSection
+            invoices={allInvoices}
+          />
+        )}
+
+        {/* ── 6. PUBLIC CASH LEDGER (Buku Kas Publik Terpadu) ───────────── */}
         {!isKolaborator && (
           <PublicCashLedger
             transactions={globalTransactions}
