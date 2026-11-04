@@ -166,21 +166,21 @@ export async function createInvoice({
 
 /**
  * Membayar Tagihan menggunakan Saldo Kas Dompet Digital anggota (kasBalance).
- * Memotong saldo virtual dan mengubah status tagihan menjadi PAID.
+ * Dibatasi secara ketat hanya dapat dieksekusi atau divalidasi oleh Bendahara / Admin.
  */
 export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionResponse> {
   try {
-    const user = await assertAuthenticated();
+    await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
 
     const invoice = await prisma.invoice.findUnique({
       where: { id: invoiceId },
       include: { user: true },
     });
 
-    if (!invoice || invoice.userId !== user.id) {
+    if (!invoice) {
       return {
         success: false,
-        message: "Tagihan tidak ditemukan atau bukan milik akun Anda.",
+        message: "Tagihan tidak ditemukan.",
       };
     }
 
@@ -194,14 +194,14 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
     if (invoice.user.kasBalance < invoice.amount) {
       return {
         success: false,
-        message: `Saldo kas tidak mencukupi (Saldo: Rp ${invoice.user.kasBalance.toLocaleString("id-ID")}, Tagihan: Rp ${invoice.amount.toLocaleString("id-ID")}). Silakan lakukan setoran ke bendahara terlebih dahulu.`,
+        message: `Saldo kas anggota tidak mencukupi (Saldo: Rp ${invoice.user.kasBalance.toLocaleString("id-ID")}, Tagihan: Rp ${invoice.amount.toLocaleString("id-ID")}).`,
       };
     }
 
     // Transaksi Atomik: Potong Saldo Kas & Update Invoice
     await prisma.$transaction(async (tx) => {
       await tx.user.update({
-        where: { id: user.id },
+        where: { id: invoice.userId },
         data: {
           kasBalance: { decrement: invoice.amount },
         },
@@ -209,7 +209,7 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
 
       await tx.ledgerTransaction.create({
         data: {
-          userId: user.id,
+          userId: invoice.userId,
           type: TransactionType.BILL_DEDUCTION,
           category:
             invoice.type === InvoiceType.KAS
@@ -230,9 +230,9 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
       // Kirim konfirmasi notifikasi pelunasan
       await tx.notification.create({
         data: {
-          userId: user.id,
+          userId: invoice.userId,
           title: "Tagihan Lunas",
-          message: `Pembayaran ${invoice.title} sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan.`,
+          message: `Pembayaran ${invoice.title} sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan oleh bendahara.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
         },

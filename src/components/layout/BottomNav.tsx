@@ -86,7 +86,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
         isModalActive ? "hidden" : ""
       }`}
     >

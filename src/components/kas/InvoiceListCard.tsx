@@ -1,75 +1,28 @@
 "use client";
 
-import { useState } from "react";
 import { Invoice, InvoiceStatus, InvoiceType } from "@prisma/client";
-import { payInvoiceWithWallet } from "@/actions/invoice";
 import {
   Receipt,
   CheckCircle2,
-  Wallet,
   Clock,
   Sparkles,
 } from "lucide-react";
 
 interface InvoiceListCardProps {
   invoices: Invoice[];
-  userKasBalance: number;
+  userKasBalance?: number;
 }
 
 export function InvoiceListCard({
   invoices,
-  userKasBalance,
 }: InvoiceListCardProps) {
-  const [loadingInvoiceId, setLoadingInvoiceId] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-
   const unpaidInvoices = invoices.filter((i) => i.status === InvoiceStatus.UNPAID);
   const paidInvoices = invoices.filter((i) => i.status === InvoiceStatus.PAID);
 
   const totalUnpaidAmount = unpaidInvoices.reduce((acc, curr) => acc + curr.amount, 0);
 
-  const handlePay = async (invoiceId: string) => {
-    setLoadingInvoiceId(invoiceId);
-    setFeedback(null);
-    try {
-      const res = await payInvoiceWithWallet(invoiceId);
-      if (res.success) {
-        setFeedback({ type: "success", message: res.message });
-      } else {
-        setFeedback({ type: "error", message: res.message });
-      }
-    } catch {
-      setFeedback({ type: "error", message: "Terjadi kesalahan saat memproses pembayaran." });
-    } finally {
-      setLoadingInvoiceId(null);
-    }
-  };
-
   return (
     <div className="space-y-4">
-      {/* Feedback Alert */}
-      {feedback && (
-        <div
-          className={`p-4 rounded-2xl border text-xs flex items-center justify-between gap-3 animate-in fade-in duration-200 ${
-            feedback.type === "success"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-              : "bg-rose-500/10 border-rose-500/30 text-rose-400"
-          }`}
-        >
-          <span>{feedback.message}</span>
-          <button
-            type="button"
-            onClick={() => setFeedback(null)}
-            className="text-xs font-semibold hover:underline cursor-pointer"
-          >
-            Tutup
-          </button>
-        </div>
-      )}
-
       {/* Header Tagihan & Total Tunggakan */}
       <div className="card-solid p-6 space-y-5">
         <div className="flex items-center justify-between">
@@ -130,7 +83,6 @@ export function InvoiceListCard({
           ) : (
             unpaidInvoices.map((inv) => {
               const isDuePassed = inv.dueDate && new Date(inv.dueDate) < new Date();
-              const canPayWithWallet = userKasBalance >= inv.amount;
 
               return (
                 <div
@@ -177,25 +129,9 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  {canPayWithWallet ? (
-                    <button
-                      type="button"
-                      onClick={() => handlePay(inv.id)}
-                      disabled={loadingInvoiceId === inv.id}
-                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all min-h-11 cursor-pointer active:scale-98 bg-primary text-white hover:bg-primary/90 shadow-xs"
-                    >
-                      <Wallet className="h-3.5 w-3.5" />
-                      <span>
-                        {loadingInvoiceId === inv.id
-                          ? "Memproses..."
-                          : "Bayar via Saldo"}
-                      </span>
-                    </button>
-                  ) : (
-                    <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl self-start sm:self-center">
-                      Belum Dibayar
-                    </span>
-                  )}
+                  <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl self-start sm:self-center">
+                    Belum Lunas
+                  </span>
                 </div>
               );
             })
