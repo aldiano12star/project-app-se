@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole, assertActiveMember } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { Role, TaskStatus, TargetAudience } from "@prisma/client";
+import { broadcastNotification } from "@/lib/web-push";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -234,6 +235,18 @@ export async function createEvent(
 
     revalidatePath("/acara");
     revalidatePath("/dashboard");
+
+    // Trigger Web Push Notification ke seluruh anggota
+    try {
+      await broadcastNotification({
+        title: `Kegiatan Baru: ${newEvent.title}`,
+        body: `Program kerja "${newEvent.title}" telah dipublikasikan di kalender organisasi.`,
+        url: `/acara/${newEvent.id}`,
+        tag: `event-${newEvent.id}`,
+      });
+    } catch (pushErr) {
+      console.error("[Acara] Gagal mengirim broadcast web push:", pushErr);
+    }
 
     return {
       success: true,
@@ -1322,6 +1335,30 @@ export async function createMeeting(
       revalidatePath(`/acara/${input.eventId}`);
     }
     revalidatePath("/dashboard");
+
+    // Trigger Web Push Notification ke audiens rapat
+    try {
+      const targetUserIds =
+        input.targetAudience === TargetAudience.CUSTOM && input.targetUserIds
+          ? input.targetUserIds
+          : undefined;
+
+      await broadcastNotification(
+        {
+          title: `Agenda Rapat: ${newMeeting.title}`,
+          body: `Rapat baru telah dijadwalkan pada ${meetingDate.toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "numeric",
+            month: "short",
+          })}. Buka untuk melihat detail notulensi & presensi.`,
+          url: input.eventId ? `/acara/${input.eventId}` : "/acara",
+          tag: `meeting-${newMeeting.id}`,
+        },
+        targetUserIds
+      );
+    } catch (pushErr) {
+      console.error("[Meeting] Gagal mengirim web push rapat:", pushErr);
+    }
 
     return {
       success: true,

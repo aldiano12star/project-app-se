@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
@@ -30,6 +30,12 @@ import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
 import { useTheme } from "@/components/theme/ThemeProvider";
 import { Role } from "@prisma/client";
+import {
+  isPushSupported,
+  getActivePushSubscription,
+  subscribeToPush,
+  unsubscribeFromPush,
+} from "@/lib/pwa-utils";
 
 const RolloverConfirmationModal = dynamic(
   () => import("./RolloverConfirmationModal").then((mod) => mod.RolloverConfirmationModal),
@@ -55,19 +61,41 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
   // Modal Panduan & Knowledge Base
   const [isPanduanOpen, setIsPanduanOpen] = useState(false);
 
-  // Notifikasi & Preferensi
-  const [notifMeeting, setNotifMeeting] = useState(true);
+  // Notifikasi & Preferensi PWA Web Push
+  const [notifMeeting, setNotifMeeting] = useState(false);
+  const [isPushToggling, setIsPushToggling] = useState(false);
+
+  useEffect(() => {
+    async function checkSubscription() {
+      if (isPushSupported()) {
+        const sub = await getActivePushSubscription();
+        setNotifMeeting(!!sub && Notification.permission === "granted");
+      }
+    }
+    checkSubscription();
+  }, []);
 
   const handleToggleMeetingNotif = async (checked: boolean) => {
-    setNotifMeeting(checked);
-    if (checked && typeof window !== "undefined" && "Notification" in window) {
-      try {
-        if (Notification.permission === "default") {
-          await Notification.requestPermission();
+    setIsPushToggling(true);
+    try {
+      if (checked) {
+        const res = await subscribeToPush();
+        if (res.success) {
+          setNotifMeeting(true);
+        } else {
+          setNotifMeeting(false);
+          alert(res.error || "Gagal mengaktifkan notifikasi push.");
         }
-      } catch (e) {
-        console.error("Gagal meminta izin notifikasi:", e);
+      } else {
+        const res = await unsubscribeFromPush();
+        if (res.success) {
+          setNotifMeeting(false);
+        }
       }
+    } catch (e) {
+      console.error("[Settings] Gagal toggle notifikasi:", e);
+    } finally {
+      setIsPushToggling(false);
     }
   };
 
@@ -445,10 +473,11 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               <input
                 type="checkbox"
                 checked={notifMeeting}
+                disabled={isPushToggling}
                 onChange={(e) => handleToggleMeetingNotif(e.target.checked)}
-                className="sr-only peer"
+                className="sr-only peer disabled:opacity-50"
               />
-              <div className="w-11 h-6 bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-edge" />
+              <div className="w-11 h-6 bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-edge peer-disabled:opacity-50" />
             </label>
           </div>
 

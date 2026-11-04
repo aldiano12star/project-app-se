@@ -9,49 +9,69 @@ import {
   Loader2,
   Sparkles,
   Send,
+  Smartphone,
 } from "lucide-react";
+import {
+  isPushSupported,
+  getActivePushSubscription,
+  subscribeToPush,
+} from "@/lib/pwa-utils";
 
 export function NotificationSettingsCard() {
   const [permission, setPermission] = useState<
     NotificationPermission | "unsupported" | "loading"
   >("loading");
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
   const [testSent, setTestSent] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if ("Notification" in window) {
-        setPermission(Notification.permission);
-      } else {
+    async function checkStatus() {
+      if (!isPushSupported()) {
         setPermission("unsupported");
+        return;
       }
+
+      setPermission(Notification.permission);
+      const sub = await getActivePushSubscription();
+      setIsSubscribed(!!sub);
     }
+
+    checkStatus();
   }, []);
 
   const handleRequestPermission = async () => {
-    if (typeof window === "undefined" || !("Notification" in window)) {
-      setPermission("unsupported");
-      return;
-    }
-
     setIsRequesting(true);
-    try {
-      const result = await Notification.requestPermission();
-      setPermission(result);
+    setFeedback(null);
 
-      if (result === "granted" && "serviceWorker" in navigator) {
-        // Kirim notifikasi uji coba via Service Worker jika tersedia
-        const registration = await navigator.serviceWorker.ready;
-        await registration.showNotification("Saba ExploIT Notifikasi", {
-          body: "Selamat! Notifikasi rapat & iuran kas Saba ExploIT telah aktif di perangkat Anda. 🚀",
-          icon: "/logo.png",
-          badge: "/logo.png",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...({ vibrate: [100, 50, 100] } as any),
-        });
+    try {
+      const result = await subscribeToPush();
+      if (result.success) {
+        setPermission("granted");
+        setIsSubscribed(true);
+        setFeedback("Perangkat Anda kini terhubung dengan notifikasi instan.");
+
+        // Notifikasi konfirmasi selamat datang
+        if ("serviceWorker" in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("Saba ExploIT Push Aktif 🚀", {
+            body: "Perangkat ini siap menerima agenda rapat & tagihan kas secara real-time.",
+            icon: "/icons/icon-192.png",
+            badge: "/icons/icon-192.png",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...({ vibrate: [100, 50, 100] } as any),
+          });
+        }
+      } else {
+        setFeedback(result.error || "Gagal menghubungkan notifikasi.");
+        if (typeof window !== "undefined" && "Notification" in window) {
+          setPermission(Notification.permission);
+        }
       }
-    } catch (err) {
-      console.error("[Notifikasi] Gagal meminta izin notifikasi:", err);
+    } catch (err: any) {
+      console.error("[Notifikasi] Error handleRequestPermission:", err);
+      setFeedback("Terjadi kendala saat mengaktifkan notifikasi.");
     } finally {
       setIsRequesting(false);
     }
@@ -67,15 +87,15 @@ export function NotificationSettingsCard() {
           const registration = await navigator.serviceWorker.ready;
           await registration.showNotification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/logo.png",
-            badge: "/logo.png",
+            icon: "/icons/icon-192.png",
+            badge: "/icons/icon-192.png",
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...({ vibrate: [100, 50, 100] } as any),
           });
         } else {
           new Notification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/logo.png",
+            icon: "/icons/icon-192.png",
           });
         }
       } catch (err) {
@@ -90,14 +110,14 @@ export function NotificationSettingsCard() {
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 text-primary flex items-center justify-center shrink-0">
-            <Bell className="w-4 h-4" />
+            <Smartphone className="w-4 h-4" />
           </div>
           <div>
             <span className="text-xs sm:text-sm font-bold text-ink">
-              🔔 Notifikasi Rapat &amp; Kas
+              🔔 Notifikasi Web Push (OS Native)
             </span>
             <p className="text-[11px] text-ink-muted">
-              Pemberitahuan agenda rapat dan pengingat kas mingguan
+              Pemberitahuan agenda rapat dan tagihan kas langsung di layar HP/Desktop
             </p>
           </div>
         </div>
@@ -107,15 +127,20 @@ export function NotificationSettingsCard() {
           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono">
             ...
           </span>
-        ) : permission === "granted" ? (
+        ) : permission === "granted" && isSubscribed ? (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 font-mono shrink-0">
             <CheckCircle2 className="w-3 h-3" />
-            <span>Aktif ✅</span>
+            <span>Terkoneksi ✅</span>
+          </span>
+        ) : permission === "granted" ? (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/30 font-mono shrink-0">
+            <CheckCircle2 className="w-3 h-3" />
+            <span>Izin Aktif</span>
           </span>
         ) : permission === "denied" ? (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 font-mono shrink-0">
             <XCircle className="w-3 h-3" />
-            <span>Dinonaktifkan / Diblokir ⚠️</span>
+            <span>Diblokir ⚠️</span>
           </span>
         ) : permission === "unsupported" ? (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono shrink-0">
@@ -129,27 +154,33 @@ export function NotificationSettingsCard() {
         )}
       </div>
 
+      {feedback && (
+        <p className="text-[11px] text-ink-secondary bg-surface-container/60 p-2 rounded-lg border border-edge">
+          {feedback}
+        </p>
+      )}
+
       {/* Description & Action Button */}
-      {permission === "default" && (
+      {(!isSubscribed || permission !== "granted") && permission !== "unsupported" && permission !== "denied" && (
         <div className="pt-2 border-t border-edge/60 space-y-2.5">
           <p className="text-[11px] text-ink-secondary leading-relaxed">
-            Aktifkan izin notifikasi peramban agar Anda tidak ketinggalan jadwal rapat pleno, tugas seksi acara, dan informasi kas organisasi.
+            Hubungkan browser perangkat ini untuk menerima pemberitahuan langsung saat rapat pleno dibuat atau saat ada tagihan kas baru.
           </p>
           <button
             type="button"
             onClick={handleRequestPermission}
             disabled={isRequesting}
-            className="w-full h-10 min-h-[40px] px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+            className="w-full h-10 min-h-10 px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
             {isRequesting ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Menghubungkan Peramban...</span>
+                <span>Menghubungkan ke Server Push...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Aktifkan Notifikasi HP</span>
+                <span>Aktifkan Notifikasi di Perangkat Ini</span>
               </>
             )}
           </button>
@@ -159,7 +190,7 @@ export function NotificationSettingsCard() {
       {permission === "granted" && (
         <div className="pt-2 border-t border-edge/60 flex items-center justify-between gap-2">
           <p className="text-[11px] text-ink-muted">
-            Perangkat siap menerima pemberitahuan otomatis.
+            Perangkat siap menerima pemberitahuan otomatis di latar belakang.
           </p>
           <button
             type="button"

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { InvoiceStatus, InvoiceType, NotifType, Role, TransactionCategory, TransactionType } from "@prisma/client";
+import { broadcastNotification } from "@/lib/web-push";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -151,6 +152,22 @@ export async function createInvoice({
 
     revalidatePath("/kas");
     revalidatePath("/kotak-masuk");
+
+    // Trigger Web Push Notification ke anggota yang menerima tagihan
+    try {
+      await broadcastNotification(
+        {
+          title: `Tagihan Kas: ${title.trim()}`,
+          body: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Cek dompet kas Anda.`,
+          url: "/kas",
+          tag: `billing-invoice`,
+        },
+        userIds
+      );
+    } catch (pushErr) {
+      console.error("[Invoice] Gagal mengirim Web Push tagihan:", pushErr);
+    }
+
     return {
       success: true,
       message: `Berhasil menerbitkan tagihan untuk ${userIds.length} anggota.`,

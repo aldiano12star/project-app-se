@@ -94,35 +94,41 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || 'Ada pembaruan penting di SE-Core',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
+    icon: data.icon || '/icons/icon-192.png',
+    badge: data.badge || '/icons/icon-192.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/',
     },
+    tag: data.tag || 'general',
+    renotify: true,
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'SE-Core', options)
+    self.registration.showNotification(data.title || 'Saba ExploIT', options)
   );
 });
 
 // 5. Listener saat notifikasi diklik oleh pengguna
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const urlToOpen = (event.notification.data && event.notification.data.url) || '/';
+  const rawUrl = (event.notification.data && event.notification.data.url) || '/';
+  const targetUrl = new URL(rawUrl, self.location.origin).href;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if ('focus' in client && client.url.includes(self.location.origin)) {
-          if (client.url === urlToOpen) {
+          if (client.url === targetUrl) {
             return client.focus();
+          }
+          if ('navigate' in client) {
+            return client.navigate(targetUrl).then((c) => c?.focus());
           }
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow(urlToOpen);
+        return clients.openWindow(targetUrl);
       }
     })
   );

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertRole } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { NotifType, Role } from "@prisma/client";
+import { sendNotificationToUser } from "@/lib/web-push";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -162,6 +163,18 @@ export async function sendPersonalNotification({
         actionUrl: actionUrl?.trim() || null,
       },
     });
+
+    // Kirim Web Push Notification secara langsung ke perangkat anggota
+    try {
+      await sendNotificationToUser(userId, {
+        title: title.trim(),
+        body: message.trim(),
+        url: actionUrl?.trim() || "/kotak-masuk",
+        tag: `personal-${type.toLowerCase()}`,
+      });
+    } catch (pushErr) {
+      console.error("[Notification] Gagal mengirim Web Push personal:", pushErr);
+    }
 
     return {
       success: true,
