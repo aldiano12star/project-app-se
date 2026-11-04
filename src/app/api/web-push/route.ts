@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
+export async function GET() {
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
+  return NextResponse.json({
+    publicKey,
+    configured: Boolean(publicKey),
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();

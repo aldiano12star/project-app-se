@@ -434,13 +434,13 @@ export function InvoiceTrackerSection({
                                       <CheckCircle2 className="h-3.5 w-3.5" />
                                       Selesai
                                     </span>
-                                  ) : (
+                                  ) : userBal >= item.amount ? (
                                     <button
                                       type="button"
                                       disabled={isProcessing || isPending}
                                       onClick={() => handleQuickSettle(item.id)}
                                       className="h-8 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold text-xs inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50"
-                                      title={`Lunaskan tagihan ${item.user.name}`}
+                                      title={`Lunaskan tagihan ${item.user.name} via saldo dompet`}
                                     >
                                       {isProcessing ? (
                                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -448,6 +448,16 @@ export function InvoiceTrackerSection({
                                         <Check className="h-3.5 w-3.5" />
                                       )}
                                       <span>Lunaskan</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      disabled
+                                      className="h-8 px-2.5 rounded-lg bg-surface-container-low text-ink-muted border border-edge opacity-60 cursor-not-allowed text-xs font-semibold inline-flex items-center gap-1"
+                                      title={`Saldo ${item.user.name} (Rp ${userBal.toLocaleString("id-ID")}) tidak mencukupi untuk tagihan Rp ${item.amount.toLocaleString("id-ID")}. Catat setoran terlebih dahulu.`}
+                                    >
+                                      <Wallet className="h-3 w-3" />
+                                      <span>Saldo Kurang</span>
                                     </button>
                                   )}
                                 </td>

@@ -36,13 +36,13 @@ export function DigitalWalletCard({
 
   return (
     <div className="space-y-4">
-      {/* ── 1. KARTU SALDO TITIPAN KAS (Clean & Minimalist) ────────── */}
+      {/* ── 1. KARTU DOMPET SAYA (Clean & Minimalist) ────────── */}
       <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-              Saldo Titipan Kas
+              Dompet Saya
             </span>
           </div>
 

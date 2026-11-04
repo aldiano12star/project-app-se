@@ -182,12 +182,13 @@ export async function createInvoice({
 }
 
 /**
- * Membayar Tagihan menggunakan Saldo Kas Dompet Digital anggota (kasBalance).
- * Dibatasi secara ketat hanya dapat dieksekusi atau divalidasi oleh Bendahara / Admin.
+ * Membayar Tagihan menggunakan Saldo Dompet Digital anggota (kasBalance).
+ * Dapat dieksekusi mandiri oleh pemilik tagihan (self-service) atau oleh Bendahara / Admin / Operator.
+ * Internal transfer murni: memotong dompet & status PAID tanpa menyuntikkan INCOME ke buku kas riil.
  */
 export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionResponse> {
   try {
-    await assertRole([Role.BENDAHARA, Role.ADMIN, Role.OPERATOR]);
+    const currentUser = await assertAuthenticated();
 
     const invoice = await prisma.invoice.findUnique({
       where: { id: invoiceId },
@@ -208,14 +209,35 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
       };
     }
 
-    if (invoice.user.kasBalance < invoice.amount) {
+    const isOfficer =
+      currentUser.role === Role.BENDAHARA ||
+      currentUser.role === Role.ADMIN ||
+      currentUser.role === Role.OPERATOR;
+
+    // Proteksi Otorisasi: Hanya pemilik tagihan atau pengurus yang berwenang
+    if (invoice.userId !== currentUser.id && !isOfficer) {
       return {
         success: false,
-        message: `Saldo kas anggota tidak mencukupi (Saldo: Rp ${invoice.user.kasBalance.toLocaleString("id-ID")}, Tagihan: Rp ${invoice.amount.toLocaleString("id-ID")}).`,
+        message: "Akses ditolak: Anda tidak memiliki izin untuk membayar tagihan ini.",
       };
     }
 
-    // Transaksi Atomik: Potong Saldo Kas & Update Invoice
+    if (invoice.user.kasBalance < invoice.amount) {
+      return {
+        success: false,
+        message: `Saldo dompet tidak mencukupi (Saldo: Rp ${invoice.user.kasBalance.toLocaleString("id-ID")}, Tagihan: Rp ${invoice.amount.toLocaleString("id-ID")}). Silakan lakukan setoran ke Bendahara terlebih dahulu.`,
+      };
+    }
+
+    // Ambil tahun ajaran aktif jika ada
+    const currentAcademicYear = await prisma.academicYear.findFirst({
+      where: { isCurrent: true },
+      select: { id: true },
+    });
+
+    const now = new Date();
+
+    // Transaksi Atomik: Potong Saldo Dompet & Update Invoice (Internal Transfer Murni)
     await prisma.$transaction(async (tx) => {
       await tx.user.update({
         where: { id: invoice.userId },
@@ -226,6 +248,7 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
 
       await tx.ledgerTransaction.create({
         data: {
+          academicYearId: currentAcademicYear?.id || null,
           userId: invoice.userId,
           type: TransactionType.BILL_DEDUCTION,
           category:
@@ -234,6 +257,8 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
               : TransactionCategory.TAGIHAN_INSIDENTAL,
           amount: invoice.amount,
           description: `Pelunasan: ${invoice.title}`,
+          createdById: currentUser.id,
+          date: now,
         },
       });
 
@@ -248,16 +273,18 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
       await tx.notification.create({
         data: {
           userId: invoice.userId,
-          title: "Tagihan Lunas",
-          message: `Pembayaran ${invoice.title} sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan oleh bendahara.`,
+          title: "Tagihan Berhasil Dilunasi",
+          message: `Pembayaran "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan melalui dompet Anda.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
+          createdAt: now,
         },
       });
     });
 
     revalidatePath("/kas");
     revalidatePath("/kotak-masuk");
+    revalidatePath("/dashboard");
     return {
       success: true,
       message: `Tagihan "${invoice.title}" berhasil dilunasi.`,
@@ -346,10 +373,10 @@ export async function markInvoiceAsPaidManually(invoiceId: string): Promise<Acti
 }
 
 /**
- * Pelunasan Kilat Tagihan oleh Bendahara (Quick Settle via Hidden Wallet):
- * Menghitung kekurangan dana untuk invoice ini, secara otomatis menyetorkan
- * kekurangan tersebut ke kas dan dompet virtual user, lalu langsung memotongnya
- * hingga invoice berstatus PAID secara atomik.
+ * Pelunasan Kilat Tagihan oleh Bendahara via Dompet Anggota:
+ * Memotong saldo dompet anggota secara langsung untuk melunasi tagihan (Internal Transfer).
+ * TIDAK MENYUNTIKKAN INCOME GANDA: Jika saldo anggota kurang, bendahara WAJIB mencatat
+ * uang fisik riil terlebih dahulu via "Catat Setoran".
  */
 export async function quickSettleInvoice(invoiceId: string): Promise<ActionResponse> {
   try {
@@ -382,9 +409,13 @@ export async function quickSettleInvoice(invoiceId: string): Promise<ActionRespo
       };
     }
 
-    // Hitung saldo tersedia (jika saldo sekarang positif) dan kekurangan dana untuk invoice ini
-    const availableBalance = Math.max(0, invoice.user.kasBalance);
-    const missingAmount = Math.max(0, invoice.amount - availableBalance);
+    // Proteksi Saldo: Mencegah uang hantu atau saldo negatif
+    if (invoice.user.kasBalance < invoice.amount) {
+      return {
+        success: false,
+        message: `Saldo anggota tidak mencukupi (Saldo: Rp ${invoice.user.kasBalance.toLocaleString("id-ID")}, Tagihan: Rp ${invoice.amount.toLocaleString("id-ID")}). Harap catat setoran uang riil terlebih dahulu via tombol "Catat Setoran".`,
+      };
+    }
 
     // Ambil tahun ajaran aktif jika ada
     const currentAcademicYear = await prisma.academicYear.findFirst({
@@ -395,30 +426,7 @@ export async function quickSettleInvoice(invoiceId: string): Promise<ActionRespo
     const now = new Date();
 
     await prisma.$transaction(async (tx) => {
-      // 1. Jika ada kekurangan dana, catat setoran tunai riil (INCOME) & top up kasBalance
-      if (missingAmount > 0) {
-        await tx.ledgerTransaction.create({
-          data: {
-            academicYearId: currentAcademicYear?.id || null,
-            userId: invoice.userId,
-            type: TransactionType.INCOME,
-            category: TransactionCategory.SETORAN_MEMBER,
-            amount: missingAmount,
-            description: `Setoran tunai pelunasan: ${invoice.title} (${invoice.user.name})`,
-            createdById: officer.id,
-            date: now,
-          },
-        });
-
-        await tx.user.update({
-          where: { id: invoice.userId },
-          data: {
-            kasBalance: { increment: missingAmount },
-          },
-        });
-      }
-
-      // 2. Potong saldo virtual user sesuai nominal tagihan (BILL_DEDUCTION)
+      // 1. Potong saldo dompet anggota sesuai nominal tagihan (BILL_DEDUCTION)
       await tx.user.update({
         where: { id: invoice.userId },
         data: {
@@ -426,6 +434,7 @@ export async function quickSettleInvoice(invoiceId: string): Promise<ActionRespo
         },
       });
 
+      // 2. Catat mutasi internal sebagai pemotongan tagihan (Bukan pemasukan riil / kas baru)
       await tx.ledgerTransaction.create({
         data: {
           academicYearId: currentAcademicYear?.id || null,
@@ -457,7 +466,7 @@ export async function quickSettleInvoice(invoiceId: string): Promise<ActionRespo
           title: "Tagihan Berhasil Dilunasi",
           message: `Tagihan "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString(
             "id-ID"
-          )} telah dilunasi dan diverifikasi oleh bendahara.`,
+          )} telah dilunasi dari dompet Anda dan diverifikasi oleh bendahara.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
           createdAt: now,

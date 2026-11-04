@@ -55,9 +55,27 @@ export async function subscribeToPush(): Promise<{
     return { success: false, error: "Browser tidak mendukung Notifikasi Web Push." };
   }
 
-  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  let vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+
+  // Fallback: Jika environment variable client belum ter-inline saat build/dev bundling
   if (!vapidPublicKey) {
-    console.error("[PWA] NEXT_PUBLIC_VAPID_PUBLIC_KEY belum dikonfigurasi.");
+    try {
+      const res = await fetch("/api/web-push", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.publicKey) {
+          vapidPublicKey = data.publicKey;
+        }
+      }
+    } catch (fetchError) {
+      console.warn("[PWA] Gagal mengambil fallback public VAPID key dari server:", fetchError);
+    }
+  }
+
+  if (!vapidPublicKey) {
+    console.error(
+      "[PWA] NEXT_PUBLIC_VAPID_PUBLIC_KEY belum dikonfigurasi di client (.env) maupun respons API /api/web-push."
+    );
     return { success: false, error: "Kunci VAPID belum dikonfigurasi di server." };
   }
 

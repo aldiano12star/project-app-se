@@ -174,13 +174,25 @@ export default async function KasPage() {
           <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
         </section>
 
-        {/* ── 1. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
+        {/* ── 1. TREASURER CONTROL MATRIX (Tampil di Paling Atas Khusus Pengurus) ── */}
+        {isTreasurer && (
+          <TreasurerPanel
+            currentUserRole={dbUser.role}
+            allMembers={allMembers}
+            invoices={allInvoices}
+            realBalance={realMoney.realBalance}
+            totalIncome={realMoney.totalIncome}
+            totalExpense={realMoney.totalExpense}
+          />
+        )}
+
+        {/* ── 2. INVOICE LIST CARD (Tagihan Kas & Urunan Personal) ──────── */}
         <InvoiceListCard
           invoices={userInvoices}
           userKasBalance={dbUser.kasBalance}
         />
 
-        {/* ── 2. RIWAYAT MUTASI KAS PERSONAL (Transaction Timeline) ─────── */}
+        {/* ── 3. RIWAYAT MUTASI KAS PERSONAL (Transaction Timeline) ─────── */}
         <DigitalWalletCard
           userName={dbUser.name}
           userRole={dbUser.role}
@@ -189,7 +201,7 @@ export default async function KasPage() {
           transactions={personalTransactions}
         />
 
-        {/* ── 3. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}
+        {/* ── 4. KOLABORATOR INFORMATIVE NOTICE ─────────────────────────── */}
         {isKolaborator && (
           <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge text-center space-y-2">
             <div className="flex items-center justify-center gap-2 text-ink font-bold text-xs sm:text-sm">
@@ -202,19 +214,7 @@ export default async function KasPage() {
           </div>
         )}
 
-        {/* ── 3. TREASURER CONTROL MATRIX (Tampil Khusus Pengurus) ──────── */}
-        {isTreasurer && (
-          <TreasurerPanel
-            currentUserRole={dbUser.role}
-            allMembers={allMembers}
-            invoices={allInvoices}
-            realBalance={realMoney.realBalance}
-            totalIncome={realMoney.totalIncome}
-            totalExpense={realMoney.totalExpense}
-          />
-        )}
-
-        {/* ── 4. BUKU KAS PUBLIK TERPADU (Hanya untuk Anggota Internal) ── */}
+        {/* ── 5. BUKU KAS PUBLIK TERPADU (Hanya untuk Anggota Internal) ── */}
         {!isKolaborator && (
           <PublicCashLedger
             transactions={globalTransactions}

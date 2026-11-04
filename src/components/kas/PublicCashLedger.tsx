@@ -52,6 +52,9 @@ export function PublicCashLedger({
     return t.type === filterType;
   });
 
+  // Batasi daftar awal maksimal 15 item agar tidak membebani DOM halaman
+  const displayedTransactions = filteredTransactions.slice(0, 15);
+
   return (
     <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
       {/* Header & Filter Bar */}
@@ -139,7 +142,7 @@ export function PublicCashLedger({
       </div>
 
       {/* Daftar Transaksi (Maksimal 400px dengan Scroll Internal) */}
-      {filteredTransactions.length === 0 ? (
+      {displayedTransactions.length === 0 ? (
         <div className="py-10 text-center space-y-2 bg-surface-container-low rounded-xl border border-edge/60">
           <Layers className="h-6 w-6 text-slate-400 mx-auto" />
           <p className="text-xs text-ink-muted">
@@ -148,7 +151,7 @@ export function PublicCashLedger({
         </div>
       ) : (
         <div className="divide-y divide-edge/70 max-h-[400px] overflow-y-auto pr-2">
-          {filteredTransactions.map((t) => {
+          {displayedTransactions.map((t) => {
             const isIncome = t.type === TransactionType.INCOME;
             const dateStr = new Date(t.date).toLocaleDateString("id-ID", {
               day: "numeric",
