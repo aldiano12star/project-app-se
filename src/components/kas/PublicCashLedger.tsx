@@ -106,37 +106,39 @@ export function PublicCashLedger({
         </div>
       </div>
 
-      {/* Ringkasan Finansial Singkat */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+      {/* Ringkasan Finansial Singkat (Full-Width Saldo + 2-Column Pemasukan/Pengeluaran) */}
+      <div className="space-y-3">
+        <div className="p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
           <span className="text-[11px] text-ink-muted block font-medium">
             Saldo Kas Riil Tersedia
           </span>
-          <span className="text-base sm:text-lg font-extrabold text-ink">
+          <span className="text-xl sm:text-2xl font-extrabold text-ink">
             Rp {totalBalance.toLocaleString("id-ID")}
           </span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
-            Total Dana Masuk
-          </span>
-          <span className="text-base sm:text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
-            + Rp {totalIncome.toLocaleString("id-ID")}
-          </span>
-        </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
+              Total Dana Masuk
+            </span>
+            <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400">
+              + Rp {totalIncome.toLocaleString("id-ID")}
+            </span>
+          </div>
 
-        <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
-          <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
-            Total Pengeluaran
-          </span>
-          <span className="text-base sm:text-lg font-extrabold text-rose-600 dark:text-rose-400">
-            - Rp {totalExpense.toLocaleString("id-ID")}
-          </span>
+          <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+            <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
+              Total Pengeluaran
+            </span>
+            <span className="text-sm sm:text-base font-extrabold text-rose-600 dark:text-rose-400">
+              - Rp {totalExpense.toLocaleString("id-ID")}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Daftar Transaksi */}
+      {/* Daftar Transaksi (Maksimal 400px dengan Scroll Internal) */}
       {filteredTransactions.length === 0 ? (
         <div className="py-10 text-center space-y-2 bg-surface-container-low rounded-xl border border-edge/60">
           <Layers className="h-6 w-6 text-slate-400 mx-auto" />
@@ -145,7 +147,7 @@ export function PublicCashLedger({
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-edge/70">
+        <div className="divide-y divide-edge/70 max-h-[400px] overflow-y-auto pr-2">
           {filteredTransactions.map((t) => {
             const isIncome = t.type === TransactionType.INCOME;
             const dateStr = new Date(t.date).toLocaleDateString("id-ID", {

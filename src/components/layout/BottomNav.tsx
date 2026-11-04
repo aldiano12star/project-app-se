@@ -86,7 +86,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
+      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
         isModalActive ? "hidden" : ""
       }`}
     >
@@ -117,7 +117,7 @@ export function BottomNav() {
                 href={item.href}
                 prefetch={true}
                 onClick={() => setOptimisticPath(item.href)}
-                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-xs min-h-11 shrink-0"
+                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2.5 transition-all shadow-xs min-h-11 shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs font-semibold leading-none tracking-tight">

@@ -97,10 +97,10 @@ export function InvoiceListCard({
           )}
         </div>
 
-        {/* Ringkasan Tunggakan */}
-        {unpaidInvoices.length > 0 && (
-          <div className="p-4 rounded-2xl bg-surface-container-low border border-edge flex items-center justify-between gap-4">
-            <div className="space-y-0.5">
+        {/* Ringkasan Tunggakan & Teks Motivasi Dinamis */}
+        {unpaidInvoices.length > 0 ? (
+          <div className="p-4 rounded-2xl bg-surface-container-low border border-edge space-y-2">
+            <div className="flex items-center justify-between">
               <span className="text-[11px] font-medium text-ink-muted">
                 Total Tagihan Tertunda
               </span>
@@ -108,11 +108,15 @@ export function InvoiceListCard({
                 Rp {totalUnpaidAmount.toLocaleString("id-ID")}
               </p>
             </div>
-            <div className="text-right">
-              <span className="text-[11px] font-semibold text-rose-500 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-full">
-                {unpaidInvoices.length} Item Belum Diselesaikan
-              </span>
-            </div>
+            <p className="text-xs font-medium text-amber-600 dark:text-amber-400 pt-1 border-t border-edge/60">
+              Mohon segera temui Bendahara untuk melunasi tagihan aktif Anda.
+            </p>
+          </div>
+        ) : (
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              Hebat! Tidak ada tagihan tertunda. Pertahankan dedikasimu untuk organisasi!
+            </p>
           </div>
         )}
 
@@ -173,25 +177,25 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handlePay(inv.id)}
-                    disabled={loadingInvoiceId === inv.id}
-                    className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all min-h-11 cursor-pointer active:scale-98 ${
-                      canPayWithWallet
-                        ? "bg-primary text-white hover:bg-primary/90 shadow-xs"
-                        : "bg-surface-container-low text-ink-muted border border-edge hover:text-ink"
-                    }`}
-                  >
-                    <Wallet className="h-3.5 w-3.5" />
-                    <span>
-                      {loadingInvoiceId === inv.id
-                        ? "Memproses..."
-                        : canPayWithWallet
-                        ? "Bayar via Saldo"
-                        : "Setor ke Bendahara"}
+                  {canPayWithWallet ? (
+                    <button
+                      type="button"
+                      onClick={() => handlePay(inv.id)}
+                      disabled={loadingInvoiceId === inv.id}
+                      className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all min-h-11 cursor-pointer active:scale-98 bg-primary text-white hover:bg-primary/90 shadow-xs"
+                    >
+                      <Wallet className="h-3.5 w-3.5" />
+                      <span>
+                        {loadingInvoiceId === inv.id
+                          ? "Memproses..."
+                          : "Bayar via Saldo"}
+                      </span>
+                    </button>
+                  ) : (
+                    <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl self-start sm:self-center">
+                      Belum Dibayar
                     </span>
-                  </button>
+                  )}
                 </div>
               );
             })

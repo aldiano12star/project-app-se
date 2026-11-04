@@ -1,13 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import dynamic from "next/dynamic";
 import { Globe, Lock, Vote, Plus, ShieldCheck, Search } from "lucide-react";
 import { FeedbackType, IssueStatus, Role } from "@prisma/client";
 import { FeedbackIssueCard, FeedbackIssueData } from "./FeedbackIssueCard";
-import { CreateFeedbackModal } from "./CreateFeedbackModal";
 import { PollCard, PollCardData } from "./PollCard";
-import { CreatePollModal } from "./CreatePollModal";
+
+const CreateFeedbackModal = dynamic(
+  () =>
+    import("./CreateFeedbackModal").then((mod) => mod.CreateFeedbackModal),
+  { ssr: false }
+);
+
+const CreatePollModal = dynamic(
+  () => import("./CreatePollModal").then((mod) => mod.CreatePollModal),
+  { ssr: false }
+);
 
 interface AspirasiClientViewProps {
   currentUser: {

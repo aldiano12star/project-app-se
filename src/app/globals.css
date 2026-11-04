@@ -27,10 +27,10 @@
   --saba-ink-secondary: #475569;
   --saba-ink-muted: #64748B;
 
-  /* Brand Action — Rose Crimson (#E11D48) */
-  --saba-primary: #E11D48;
+  /* Brand Action — Saba Red (#E11D2A) */
+  --saba-primary: #E11D2A;
   --saba-primary-hover: #BE123C;
-  --saba-primary-subtle: #FFE4E6;
+  --saba-primary-subtle: #FEE2E2;
   --saba-on-primary: #FFFFFF;
 
   /* Semantic Refresh (Light Mode High-Contrast) */
@@ -59,11 +59,11 @@
   --saba-ink-secondary: #94A3B8;
   --saba-ink-muted: #64748B;
 
-  /* Brand Action — Rose Pastel (#FB7185) */
-  --saba-primary: #FB7185;
-  --saba-primary-hover: #F43F5E;
-  --saba-primary-subtle: #881337;
-  --saba-on-primary: #0F172A;
+  /* Brand Action — Saba Red (#E11D2A) */
+  --saba-primary: #E11D2A;
+  --saba-primary-hover: #BE123C;
+  --saba-primary-subtle: #450A0A;
+  --saba-on-primary: #FFFFFF;
 
   /* Semantic Refresh (Dark Mode Pastel) */
   --saba-success: #34D399;

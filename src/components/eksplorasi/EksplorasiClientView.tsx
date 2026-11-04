@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import {
   Sparkles,
   BookOpen,
@@ -12,11 +13,29 @@ import { ProjectCardData } from "./ProjectCard";
 import { WikiArticleData } from "./WikiCard";
 import { ShowcaseTab } from "./ShowcaseTab";
 import { WikiTab } from "./WikiTab";
-import { CreateProjectModal } from "./CreateProjectModal";
-import { CreateWikiModal } from "./CreateWikiModal";
-import { WikiDetailModal } from "./WikiDetailModal";
-import { ProjectDetailModal } from "./ProjectDetailModal";
 import { MemberOption } from "@/actions/eksplorasi";
+
+const CreateProjectModal = dynamic(
+  () =>
+    import("./CreateProjectModal").then((mod) => mod.CreateProjectModal),
+  { ssr: false }
+);
+
+const CreateWikiModal = dynamic(
+  () => import("./CreateWikiModal").then((mod) => mod.CreateWikiModal),
+  { ssr: false }
+);
+
+const WikiDetailModal = dynamic(
+  () => import("./WikiDetailModal").then((mod) => mod.WikiDetailModal),
+  { ssr: false }
+);
+
+const ProjectDetailModal = dynamic(
+  () =>
+    import("./ProjectDetailModal").then((mod) => mod.ProjectDetailModal),
+  { ssr: false }
+);
 
 interface EksplorasiClientViewProps {
   currentUser: {

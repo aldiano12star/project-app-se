@@ -594,7 +594,7 @@ export function SnakingPathCalendar({
                           <span>Sesi Rapat Koordinasi ({childMeetings.length})</span>
                         </span>
                         <span className="text-[10px] text-ink-muted">
-                          Terkait Program Kerja Ini
+                          Lihat Detail
                         </span>
                       </div>
 
@@ -713,13 +713,13 @@ export function SnakingPathCalendar({
                       </div>
                     )
                   ) : (
-                    <div className="pt-1 flex items-center gap-2">
+                    <div className="pt-1 flex items-center justify-center gap-2 w-full">
                       <Link
                         href={`/acara/${ev.id}`}
-                        className="flex-1 h-11 min-h-11 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-edge"
+                        className="flex-1 h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl flex items-center justify-center text-center gap-2 transition-colors border border-edge"
                       >
                         <span>Buka Workspace &amp; Kepanitiaan</span>
-                        <ArrowRight className="h-3.5 w-3.5 text-ink-muted" />
+                        <ArrowRight className="h-3.5 w-3.5 text-ink-muted shrink-0" />
                       </Link>
                       {isOfficer && onEditEvent && (
                         <button

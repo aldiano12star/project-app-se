@@ -32,10 +32,6 @@ export function DashboardMeetingWidget({
               </h2>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-            Sesi Terbuka
-          </span>
         </div>
 
         <p className="text-sm text-ink-secondary leading-relaxed">

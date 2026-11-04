@@ -271,15 +271,10 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            {todayAttendance ? (
+            {todayAttendance && (
               <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/40 shrink-0">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Presensi Hadir</span>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 bg-surface-container-low text-slate-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-edge shrink-0">
-                <Clock className="h-4 w-4 text-slate-500" />
-                <span>Siap Rapat</span>
               </span>
             )}
           </div>
@@ -396,7 +391,7 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
-                    Kesehatan Organisasi / Keaktifan Global
+                    Keaktifan Global
                   </h2>
                   <p className="text-xs text-ink-muted mt-0.5">
                     Rasio kehadiran seluruh anggota aktif pada agenda rapat

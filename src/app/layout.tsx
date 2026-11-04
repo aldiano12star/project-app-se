@@ -14,6 +14,7 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
 export const viewport: Viewport = {
@@ -61,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased bg-white dark:bg-surface`}
       suppressHydrationWarning
     >
       <head>

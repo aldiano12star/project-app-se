@@ -10,12 +10,24 @@ import {
   CalendarEventItem,
 } from "./SnakingPathCalendar";
 import { EventDetailData, NestedMeetingData } from "./EventDetailCard";
-import { AdminEventModal, AdminEventInitialData } from "./AdminEventModal";
-import { MultiEventSelectorModal } from "./MultiEventSelectorModal";
+import { AdminEventInitialData } from "./AdminEventModal";
 import {
   getEventTimeStatus,
   getJakartaDateParts,
 } from "@/utils/eventStatus";
+
+const AdminEventModal = dynamic(
+  () => import("./AdminEventModal").then((mod) => mod.AdminEventModal),
+  { ssr: false }
+);
+
+const MultiEventSelectorModal = dynamic(
+  () =>
+    import("./MultiEventSelectorModal").then(
+      (mod) => mod.MultiEventSelectorModal
+    ),
+  { ssr: false }
+);
 
 const MeetingQrModal = dynamic(
   () => import("@/components/home/MeetingQrModal").then((mod) => mod.MeetingQrModal),

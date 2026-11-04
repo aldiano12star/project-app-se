@@ -57,7 +57,19 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
 
   // Notifikasi & Preferensi
   const [notifMeeting, setNotifMeeting] = useState(true);
-  const [notifKas, setNotifKas] = useState(true);
+
+  const handleToggleMeetingNotif = async (checked: boolean) => {
+    setNotifMeeting(checked);
+    if (checked && typeof window !== "undefined" && "Notification" in window) {
+      try {
+        if (Notification.permission === "default") {
+          await Notification.requestPermission();
+        }
+      } catch (e) {
+        console.error("Gagal meminta izin notifikasi:", e);
+      }
+    }
+  };
 
   // Accordion Toggles
   const [showContactForm, setShowContactForm] = useState(false);
@@ -416,46 +428,31 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
 
         <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
           {/* Row 1: Notifikasi Rapat & Acara */}
-          <div className="min-h-[48px] px-4 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
-              <span className="text-xs sm:text-sm font-semibold text-ink">
-                Notifikasi Rapat &amp; Acara
-              </span>
+          <div className="min-h-[48px] px-4 py-3.5 flex justify-between items-start gap-4">
+            <div className="flex items-start gap-3 min-w-0 flex-1">
+              <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5 min-w-0">
+                <span className="text-xs sm:text-sm font-semibold text-ink block leading-snug">
+                  Notifikasi Rapat &amp; Acara
+                </span>
+                <p className="text-[11px] text-ink-muted leading-relaxed">
+                  Pemberitahuan agenda rapat dan pengingat jadwal kegiatan organisasi
+                </p>
+              </div>
             </div>
 
-            <label className="relative inline-flex items-center cursor-pointer min-h-[44px] min-w-[44px] justify-end">
+            <label className="relative inline-flex items-center cursor-pointer min-h-[44px] min-w-[44px] justify-end shrink-0 pt-0.5">
               <input
                 type="checkbox"
                 checked={notifMeeting}
-                onChange={(e) => setNotifMeeting(e.target.checked)}
+                onChange={(e) => handleToggleMeetingNotif(e.target.checked)}
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-edge" />
             </label>
           </div>
 
-          {/* Row 2: Pengingat Iuran Kas Mingguan */}
-          <div className="min-h-[48px] px-4 py-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Wallet className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
-              <span className="text-xs sm:text-sm font-semibold text-ink">
-                Pengingat Iuran Kas Mingguan
-              </span>
-            </div>
-
-            <label className="relative inline-flex items-center cursor-pointer min-h-[44px] min-w-[44px] justify-end">
-              <input
-                type="checkbox"
-                checked={notifKas}
-                onChange={(e) => setNotifKas(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-surface-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[11px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-edge" />
-            </label>
-          </div>
-
-          {/* Row 3: Mode Tampilan / Tema Antarmuka */}
+          {/* Row 2: Mode Tampilan / Tema Antarmuka */}
           <div className="min-h-[52px] px-4 py-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               {resolvedTheme === "dark" ? (
