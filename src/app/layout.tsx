@@ -6,7 +6,7 @@ import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { InstallPWAPrompt } from "@/components/pwa/InstallPWAPrompt";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar";
-import { SplashScreen } from "@/components/ui/SplashScreen";
+import { SplashScreen } from "@/components/layout/SplashScreen";
 
 /* Inter — font default Saba ExploIT (DESIGN.md).
    next/font self-hosting: nol request ke Google saat runtime, tanpa layout shift. */
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/logo.png",
-    apple: "/icons/apple-touch-icon.png",
+    apple: "/logo.png",
   },
   robots: {
     index: false,

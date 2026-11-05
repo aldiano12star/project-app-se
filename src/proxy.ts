@@ -19,6 +19,7 @@ export function proxy(request: NextRequest) {
   const isPublicPage =
     pathname === "/" ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/web-push") ||
     isPublicPwaFile;
 
   // Jika aset publik atau berkas PWA, lanjutkan langsung dengan respon 200

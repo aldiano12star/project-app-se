@@ -45,6 +45,19 @@ export function NotificationSettingsCard() {
     setIsRequesting(true);
     setFeedback(null);
 
+    // Safety timeout untuk memastikan spinner tombol tidak pernah macet
+    const safetyTimer = setTimeout(() => {
+      setIsRequesting((current) => {
+        if (current) {
+          setFeedback(
+            "Waktu permintaan habis. Pastikan peramban mengizinkan notifikasi dan coba lagi."
+          );
+          return false;
+        }
+        return current;
+      });
+    }, 10000);
+
     try {
       const result = await subscribeToPush();
       if (result.success) {
@@ -54,14 +67,18 @@ export function NotificationSettingsCard() {
 
         // Notifikasi konfirmasi selamat datang
         if ("serviceWorker" in navigator) {
-          const registration = await navigator.serviceWorker.ready;
-          await registration.showNotification("Saba ExploIT Push Aktif 🚀", {
-            body: "Perangkat ini siap menerima agenda rapat & tagihan kas secara real-time.",
-            icon: "/icons/icon-192.png",
-            badge: "/icons/icon-192.png",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ...({ vibrate: [100, 50, 100] } as any),
-          });
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification("Saba ExploIT Push Aktif 🚀", {
+              body: "Perangkat ini siap menerima agenda rapat & tagihan kas secara real-time.",
+              icon: "/logo.png",
+              badge: "/logo.png",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...({ vibrate: [100, 50, 100] } as any),
+            });
+          } catch (notifErr) {
+            console.warn("[Notifikasi] Local welcome notification error:", notifErr);
+          }
         }
       } else {
         setFeedback(result.error || "Gagal menghubungkan notifikasi.");
@@ -73,6 +90,7 @@ export function NotificationSettingsCard() {
       console.error("[Notifikasi] Error handleRequestPermission:", err);
       setFeedback("Terjadi kendala saat mengaktifkan notifikasi.");
     } finally {
+      clearTimeout(safetyTimer);
       setIsRequesting(false);
     }
   };
@@ -87,15 +105,15 @@ export function NotificationSettingsCard() {
           const registration = await navigator.serviceWorker.ready;
           await registration.showNotification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/icons/icon-192.png",
-            badge: "/icons/icon-192.png",
+            icon: "/logo.png",
+            badge: "/logo.png",
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...({ vibrate: [100, 50, 100] } as any),
           });
         } else {
           new Notification("Uji Notifikasi Saba ExploIT", {
             body: "Pengingat Rapat: Rapat Pleno Saba ExploIT akan dimulai pukul 15.30 WIB di Lab Komputer.",
-            icon: "/icons/icon-192.png",
+            icon: "/logo.png",
           });
         }
       } catch (err) {

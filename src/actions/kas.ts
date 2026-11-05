@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertRole, assertAuthenticated } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { Role, TransactionType, TransactionCategory, InvoiceType, InvoiceStatus, NotifType } from "@prisma/client";
+import { broadcastNotification, sendNotificationToUser } from "@/lib/web-push";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -138,6 +139,18 @@ export async function recordDeposit(
     revalidatePath("/dashboard");
     revalidatePath("/pengaturan");
 
+    // Trigger Web Push Notification ke anggota yang menerima setoran
+    try {
+      await sendNotificationToUser(targetUser.id, {
+        title: "Setoran Kas Diterima 💰",
+        body: `Bendahara telah mencatat setoran sebesar Rp ${cleanAmount.toLocaleString("id-ID")}. Saldo dompet Anda: Rp ${result.updatedUser.kasBalance.toLocaleString("id-ID")}.`,
+        url: "/kas",
+        tag: `deposit-${targetUser.id}`,
+      });
+    } catch (pushErr) {
+      console.warn("[Kas Action] Web push setoran error:", pushErr);
+    }
+
     return {
       success: true,
       message: `Berhasil mencatat setoran Rp ${cleanAmount.toLocaleString("id-ID")} untuk ${targetUser.name}. Saldo terbaru: Rp ${result.updatedUser.kasBalance.toLocaleString("id-ID")}`,
@@ -261,6 +274,21 @@ export async function createBulkBills(
     revalidatePath("/kotak-masuk");
     revalidatePath("/dashboard");
     revalidatePath("/pengaturan");
+
+    // Trigger Web Push Notification serentak ke seluruh sasaran anggota
+    try {
+      await broadcastNotification(
+        {
+          title: `Tagihan Kas: ${cleanDescription}`,
+          body: `Tagihan kas sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Silakan periksa dompet kas Anda.`,
+          url: "/kas",
+          tag: `bulk-billing`,
+        },
+        targetUserIds
+      );
+    } catch (pushErr) {
+      console.warn("[Kas Action] Web push createBulkBills error:", pushErr);
+    }
 
     return {
       success: true,

@@ -306,7 +306,7 @@ export function TreasurerPanel({
       )}
 
       {/* ── 1. ACTION BAR BENDAHARA ────────────────────────────────────── */}
-      <div className="card-solid bg-card p-5 rounded-2xl border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="card-solid bg-card p-5 rounded-2xl border border-edge space-y-4">
         <div>
           <h3 className="text-sm font-bold text-ink">
             Aksi Finansial Bendahara
@@ -316,39 +316,42 @@ export function TreasurerPanel({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Tombol 1: Catat Setoran */}
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedUserId(allMembers[0]?.id || "");
-              setDepositAmount("5000");
-              setDepositDesc("");
-              setIsDepositModalOpen(true);
-            }}
-            className="h-11 min-h-11 px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-          >
-            <ArrowDownLeft className="h-4 w-4" />
-            <span>Catat Setoran</span>
-          </button>
+        <div className="space-y-3">
+          {/* Top Row: Grid 2 Kolom (Equal Width) */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Tombol 1: Catat Setoran (Kiri) */}
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedUserId(allMembers[0]?.id || "");
+                setDepositAmount("5000");
+                setDepositDesc("");
+                setIsDepositModalOpen(true);
+              }}
+              className="h-11 min-h-11 w-full px-4 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+            >
+              <ArrowDownLeft className="h-4 w-4 shrink-0" />
+              <span className="truncate">Catat Setoran</span>
+            </button>
 
-          {/* Tombol 2: Tarik Tagihan Serentak */}
-          <button
-            type="button"
-            onClick={() => {
-              setBillTitle("");
-              setBillAmount("5000");
-              setBillTargetScope("ALL");
-              setCustomSelectedUserIds([]);
-              setIsBulkBillModalOpen(true);
-            }}
-            className="h-11 min-h-11 px-4 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-          >
-            <ArrowUpRight className="h-4 w-4" />
-            <span>Tarik Tagihan Serentak</span>
-          </button>
+            {/* Tombol 2: Tarik Tagihan (Kanan) */}
+            <button
+              type="button"
+              onClick={() => {
+                setBillTitle("");
+                setBillAmount("5000");
+                setBillTargetScope("ALL");
+                setCustomSelectedUserIds([]);
+                setIsBulkBillModalOpen(true);
+              }}
+              className="h-11 min-h-11 w-full px-4 bg-rose-700 hover:bg-rose-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+            >
+              <ArrowUpRight className="h-4 w-4 shrink-0" />
+              <span className="truncate">Tarik Tagihan</span>
+            </button>
+          </div>
 
-          {/* Tombol 3: Catat Finansial Bebas */}
+          {/* Bottom Row: Danus / Operasional Spanning Full Width */}
           <button
             type="button"
             onClick={() => {
@@ -356,9 +359,9 @@ export function TreasurerPanel({
               setGlobalDesc("");
               setIsGlobalFinanceModalOpen(true);
             }}
-            className="h-11 min-h-11 px-3.5 bg-surface-container-low hover:bg-surface-container text-ink border border-edge active:scale-[0.98] text-xs font-bold rounded-xl inline-flex items-center gap-1.5 transition-all cursor-pointer"
+            className="w-full h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink border border-edge active:scale-[0.98] text-xs font-bold rounded-xl inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer"
           >
-            <PlusCircle className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+            <PlusCircle className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0" />
             <span>Danus / Operasional</span>
           </button>
         </div>

@@ -1,5 +1,5 @@
 // SE-Core - Vanilla Service Worker (PWA Caching & Push Notifications)
-const CACHE_NAME = 'se-core-v1';
+const CACHE_NAME = 'se-core-v2';
 const PRECACHE_URLS = ['/', '/offline.html'];
 
 // 1. Event Install: Precache halaman utama & fallback offline
@@ -94,8 +94,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || 'Ada pembaruan penting di SE-Core',
-    icon: data.icon || '/icons/icon-192.png',
-    badge: data.badge || '/icons/icon-192.png',
+    icon: data.icon || '/logo.png',
+    badge: data.badge || '/logo.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/',

@@ -1,16 +1,34 @@
 import webpush from "web-push";
 import { prisma } from "@/lib/prisma";
 
-const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-const vapidSubject = process.env.VAPID_SUBJECT || "mailto:admin@sabaexploit.org";
+let isVapidConfigured = false;
 
-if (vapidPublicKey && vapidPrivateKey) {
-  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-} else {
-  console.warn(
-    "[WebPush] VAPID keys belum terkonfigurasi secara lengkap di environment variable."
-  );
+function ensureVapidConfiguration(): boolean {
+  const vapidPublicKey =
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
+    process.env.VAPID_PUBLIC_KEY;
+  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+  const vapidSubject =
+    process.env.VAPID_SUBJECT || "mailto:admin@sabaexploit.org";
+
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    console.warn(
+      "[WebPush] VAPID keys belum terkonfigurasi secara lengkap di environment variable (NEXT_PUBLIC_VAPID_PUBLIC_KEY & VAPID_PRIVATE_KEY)."
+    );
+    return false;
+  }
+
+  if (!isVapidConfigured) {
+    try {
+      webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+      isVapidConfigured = true;
+    } catch (err) {
+      console.error("[WebPush] Gagal mengatur VAPID details:", err);
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export interface WebPushPayload {
@@ -30,8 +48,8 @@ export async function sendNotificationToUser(
   userId: string,
   payload: WebPushPayload
 ): Promise<{ successCount: number; failureCount: number }> {
-  if (!vapidPublicKey || !vapidPrivateKey) {
-    console.warn("[WebPush] Pengiriman dibatalkan: VAPID keys belum diatur.");
+  if (!ensureVapidConfiguration()) {
+    console.warn("[WebPush] Pengiriman dibatalkan: VAPID keys belum valid.");
     return { successCount: 0, failureCount: 0 };
   }
 
@@ -108,8 +126,8 @@ export async function broadcastNotification(
   payload: WebPushPayload,
   targetUserIds?: string[]
 ): Promise<{ successCount: number; failureCount: number }> {
-  if (!vapidPublicKey || !vapidPrivateKey) {
-    console.warn("[WebPush] Broadcast dibatalkan: VAPID keys belum diatur.");
+  if (!ensureVapidConfiguration()) {
+    console.warn("[WebPush] Broadcast dibatalkan: VAPID keys belum valid.");
     return { successCount: 0, failureCount: 0 };
   }
 
