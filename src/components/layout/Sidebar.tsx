@@ -11,6 +11,7 @@ import {
   Compass,
   MessageSquareText,
   Settings,
+  Trophy,
 } from "lucide-react";
 import type { AppShellUser } from "./AppShell";
 
@@ -45,6 +46,11 @@ const NAV_ITEMS: NavItem[] = [
     label: "Aspirasi",
     href: "/aspirasi",
     icon: MessageSquareText,
+  },
+  {
+    label: "Hall of Fame",
+    href: "/hall-of-fame",
+    icon: Trophy,
   },
 ];
 

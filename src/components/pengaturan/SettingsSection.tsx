@@ -24,6 +24,7 @@ import {
   Lock,
   Save,
   RefreshCcw,
+  Trophy,
 } from "lucide-react";
 import { UserProfileData } from "./ProfileHeroCard";
 import { updateProfileContact, updatePassword } from "@/actions/profile";
@@ -37,8 +38,8 @@ import {
   unsubscribeFromPush,
 } from "@/lib/pwa-utils";
 
-const RolloverConfirmationModal = dynamic(
-  () => import("./RolloverConfirmationModal").then((mod) => mod.RolloverConfirmationModal),
+const RolloverWizardModal = dynamic(
+  () => import("./RolloverWizardModal").then((mod) => mod.RolloverWizardModal),
   { ssr: false }
 );
 
@@ -531,6 +532,25 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
               </button>
             </div>
           </div>
+
+          {/* Row 3: Hall of Fame (Lorong Waktu Abadi) */}
+          <Link
+            href="/hall-of-fame"
+            className="min-h-[52px] px-4 py-3 flex items-center justify-between gap-3 hover:bg-surface-container-low transition-colors group cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Trophy className="w-5 h-5 text-amber-500 shrink-0" />
+              <div>
+                <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
+                  Hall of Fame (Lorong Waktu)
+                </span>
+                <p className="text-[11px] text-ink-muted">
+                  Galeri sejarah abadi: arsip juara, acara, &amp; karya lintas generasi
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-primary transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </section>
 
@@ -543,7 +563,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             ⚙️ Manajemen Sistem Operator
           </h3>
           <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
-            {/* Row: Ganti Periode Kepengurusan (Rollover) */}
+            {/* Row: Ganti Periode Kepengurusan (Rollover Wizard) */}
             <button
               type="button"
               onClick={() => setIsRolloverModalOpen(true)}
@@ -553,16 +573,16 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 <RefreshCcw className="w-5 h-5 text-rose-500 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
-                    Ganti Periode Kepengurusan
+                    Ganti Periode &amp; Kurasi Hall of Fame
                   </span>
                   <p className="text-[10px] text-ink-muted leading-relaxed">
-                    Rollover tahunan: tutup buku kas & promosikan kelas anggota
+                    End-of-Year Wizard: abadikan juara, acara, &amp; karya ke lorong waktu
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
-                  Bahaya
+                  Operator
                 </span>
                 <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
               </div>
@@ -629,8 +649,8 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
       </section>
     </div>
 
-    {/* Modal Rollover - di luar div utama agar full-screen overlay */}
-    <RolloverConfirmationModal
+    {/* Modal Rollover Wizard - di luar div utama agar full-screen overlay */}
+    <RolloverWizardModal
       isOpen={isRolloverModalOpen}
       onClose={() => setIsRolloverModalOpen(false)}
     />

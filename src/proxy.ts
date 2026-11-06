@@ -20,6 +20,7 @@ export function proxy(request: NextRequest) {
     pathname === "/" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/web-push") ||
+    pathname.startsWith("/hall-of-fame") ||
     isPublicPwaFile;
 
   // Jika aset publik atau berkas PWA, lanjutkan langsung dengan respon 200

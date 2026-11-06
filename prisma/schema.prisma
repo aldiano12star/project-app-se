@@ -543,6 +543,81 @@ model SeasonHallOfFame {
 }
 
 // ==========================================
+// TIME CAPSULE: HALL OF FAME (LORONG WAKTU ABADI)
+// ==========================================
+
+model HallOfFame {
+  id                 String   @id @default(cuid())
+  periodName         String   // Contoh: "Kepengurusan 2025/2026 (Gen 20)"
+  generationYear     Int      // 20
+  totalMeetings      Int      @default(0)
+  totalCashFlow      Int      @default(0)
+  closingCashBalance Int      @default(0)
+  archivedAt         DateTime @default(now())
+
+  // --- 1. TOP 3 CHAMPIONS (ANGGOTA BERPRESTASI) ---
+  rank1Name          String
+  rank1Division      String?
+  rank1Points        Int
+  rank1Avatar        String?
+  rank1WorkCount     Int      @default(0)
+
+  rank2Name          String
+  rank2Division      String?
+  rank2Points        Int
+  rank2Avatar        String?
+  rank2WorkCount     Int      @default(0)
+
+  rank3Name          String
+  rank3Division      String?
+  rank3Points        Int
+  rank3Avatar        String?
+  rank3WorkCount     Int      @default(0)
+
+  // --- 2. TOP 3 BEST EVENTS (ACARA & PROKER TERBAIK) ---
+  event1Title        String?
+  event1Description  String?  @db.Text
+  event1Date         String?
+  event1DriveUrl     String?
+
+  event2Title        String?
+  event2Description  String?  @db.Text
+  event2Date         String?
+  event2DriveUrl     String?
+
+  event3Title        String?
+  event3Description  String?  @db.Text
+  event3Date         String?
+  event3DriveUrl     String?
+
+  // --- 3. TOP 3 MASTERPIECES (KARYA & SHOWCASE UNGGULAN) ---
+  work1Title         String?
+  work1Author        String?
+  work1Division      String?
+  work1Url           String?
+  work1Thumbnail     String?
+
+  work2Title         String?
+  work2Author        String?
+  work2Division      String?
+  work2Url           String?
+  work2Thumbnail     String?
+
+  work3Title         String?
+  work3Author        String?
+  work3Division      String?
+  work3Url           String?
+  work3Thumbnail     String?
+
+  // Cadangan snapshot terstruktur JSON (Future-proof)
+  eventsJson         String?  @db.Text
+  worksJson          String?  @db.Text
+
+  @@index([generationYear])
+  @@index([archivedAt])
+}
+
+// ==========================================
 // MODUL SISTEM KAS MODERN (WALLET & LEDGER)
 // ==========================================
 
