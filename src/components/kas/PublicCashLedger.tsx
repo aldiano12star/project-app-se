@@ -9,6 +9,8 @@ import {
   Layers,
 } from "lucide-react";
 import { TransactionType, TransactionCategory } from "@prisma/client";
+import { useCountUp } from "@/hooks/useCountUp";
+import { haptic } from "@/lib/haptic";
 
 export interface PublicLedgerItem {
   id: string;
@@ -37,6 +39,10 @@ export function PublicCashLedger({
   totalIncome,
   totalExpense,
 }: PublicCashLedgerProps) {
+  const animatedBalance = useCountUp(totalBalance, 700);
+  const animatedIncome = useCountUp(totalIncome, 700);
+  const animatedExpense = useCountUp(totalExpense, 700);
+
   const [filterType, setFilterType] = useState<"ALL" | "INCOME" | "EXPENSE">(
     "ALL"
   );
@@ -75,8 +81,11 @@ export function PublicCashLedger({
         <div className="flex items-center gap-1.5 bg-surface-container-low p-1 rounded-xl border border-edge/70 self-start sm:self-auto">
           <button
             type="button"
-            onClick={() => setFilterType("ALL")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            onClick={() => {
+              haptic.tap();
+              setFilterType("ALL");
+            }}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all touch-bounce cursor-pointer ${
               filterType === "ALL"
                 ? "bg-card text-ink shadow-xs border border-edge"
                 : "text-ink-muted hover:text-ink"
@@ -86,8 +95,11 @@ export function PublicCashLedger({
           </button>
           <button
             type="button"
-            onClick={() => setFilterType("INCOME")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            onClick={() => {
+              haptic.tap();
+              setFilterType("INCOME");
+            }}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all touch-bounce cursor-pointer ${
               filterType === "INCOME"
                 ? "bg-card text-emerald-600 dark:text-emerald-400 shadow-xs border border-edge"
                 : "text-ink-muted hover:text-ink"
@@ -97,8 +109,11 @@ export function PublicCashLedger({
           </button>
           <button
             type="button"
-            onClick={() => setFilterType("EXPENSE")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+            onClick={() => {
+              haptic.tap();
+              setFilterType("EXPENSE");
+            }}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all touch-bounce cursor-pointer ${
               filterType === "EXPENSE"
                 ? "bg-card text-rose-600 dark:text-rose-400 shadow-xs border border-edge"
                 : "text-ink-muted hover:text-ink"
@@ -111,31 +126,31 @@ export function PublicCashLedger({
 
       {/* Ringkasan Finansial Singkat (Full-Width Saldo + 2-Column Pemasukan/Pengeluaran) */}
       <div className="space-y-3">
-        <div className="p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+        <div className="card-hover p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
           <span className="text-[11px] text-ink-muted block font-medium">
             Saldo Kas Riil Tersedia
           </span>
-          <span className="text-xl sm:text-2xl font-extrabold text-ink">
-            Rp {totalBalance.toLocaleString("id-ID")}
+          <span className="text-xl sm:text-2xl font-extrabold text-ink tabular-nums">
+            Rp {animatedBalance.toLocaleString("id-ID")}
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
             <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
               Total Dana Masuk
             </span>
-            <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400">
-              + Rp {totalIncome.toLocaleString("id-ID")}
+            <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
+              + Rp {animatedIncome.toLocaleString("id-ID")}
             </span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
             <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
               Total Pengeluaran
             </span>
-            <span className="text-sm sm:text-base font-extrabold text-rose-600 dark:text-rose-400">
-              - Rp {totalExpense.toLocaleString("id-ID")}
+            <span className="text-sm sm:text-base font-extrabold text-rose-600 dark:text-rose-400 tabular-nums">
+              - Rp {animatedExpense.toLocaleString("id-ID")}
             </span>
           </div>
         </div>

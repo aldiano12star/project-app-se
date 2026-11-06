@@ -9,6 +9,7 @@ import {
   Info,
 } from "lucide-react";
 import { TransactionType, TransactionCategory } from "@prisma/client";
+import { useCountUp } from "@/hooks/useCountUp";
 
 export interface PersonalLedgerItem {
   id: string;
@@ -29,11 +30,12 @@ interface DigitalWalletCardProps {
 export function DigitalWalletCard({
   kasBalance = 0,
 }: DigitalWalletCardProps) {
+  const animatedBalance = useCountUp(kasBalance, 600);
   const isPositive = kasBalance > 0;
   const isZero = kasBalance === 0;
 
   return (
-    <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5">
+    <div className="card-solid card-hover bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5 transition-all">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
@@ -43,7 +45,7 @@ export function DigitalWalletCard({
         </div>
 
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
             isPositive
               ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
               : isZero
@@ -61,7 +63,7 @@ export function DigitalWalletCard({
 
       <div className="pt-0.5">
         <h2
-          className={`text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums ${
+          className={`text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums transition-colors ${
             isPositive
               ? "text-emerald-600 dark:text-emerald-400"
               : isZero
@@ -69,8 +71,8 @@ export function DigitalWalletCard({
               : "text-rose-600 dark:text-rose-400"
           }`}
         >
-          {kasBalance < 0 ? `- ` : ""}Rp{" "}
-          {Math.abs(kasBalance).toLocaleString("id-ID")}
+          {animatedBalance < 0 ? `- ` : ""}Rp{" "}
+          {Math.abs(animatedBalance).toLocaleString("id-ID")}
         </h2>
         <p className="text-xs text-ink-muted leading-relaxed mt-1">
           Sisa uang Anda yang dititipkan ke organisasi. Dapat digunakan untuk
