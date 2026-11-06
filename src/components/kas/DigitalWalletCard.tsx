@@ -35,7 +35,7 @@ export function DigitalWalletCard({
   const isZero = kasBalance === 0;
 
   return (
-    <div className="card-solid card-hover bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5 transition-all">
+    <div className="card-solid card-hover bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />

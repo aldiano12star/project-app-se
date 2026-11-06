@@ -126,7 +126,7 @@ export function PublicCashLedger({
 
       {/* Ringkasan Finansial Singkat (Full-Width Saldo + 2-Column Pemasukan/Pengeluaran) */}
       <div className="space-y-3">
-        <div className="card-hover p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
+        <div className="card-hover p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
           <span className="text-[11px] text-ink-muted block font-medium">
             Saldo Kas Riil Tersedia
           </span>
@@ -136,7 +136,7 @@ export function PublicCashLedger({
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
             <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
               Total Dana Masuk
             </span>
@@ -145,7 +145,7 @@ export function PublicCashLedger({
             </span>
           </div>
 
-          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1 transition-all">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
             <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
               Total Pengeluaran
             </span>

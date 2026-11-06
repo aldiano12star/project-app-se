@@ -21,20 +21,22 @@ export function calculateInterpolatedValue(
 ): number {
   if (isNaN(target)) return 0;
   if (isNaN(start)) return target;
+  if (progress >= 1) return target;
   const eased = easeOutQuart(progress);
   return Math.round(start + (target - start) * eased);
 }
 
 /**
  * Hook untuk menganimasikan angka (misal saldo kas/dompet) menghitung naik secara mulus.
+ * Menjamin 100% keselarasan hidrasi SSR dengan menginisialisasi state ke targetValue.
  * @param targetValue Angka akhir yang dituju
  * @param durationMs Durasi animasi dalam milidetik (default: 600ms)
  */
 export function useCountUp(targetValue: number, durationMs: number = 600): number {
-  const [currentValue, setCurrentValue] = useState<number>(() =>
-    typeof window === "undefined" ? targetValue : 0
-  );
-  const prevValueRef = useRef<number>(0);
+  // Inisialisasi identik di server & client untuk mencegah React Hydration Mismatch
+  const [currentValue, setCurrentValue] = useState<number>(targetValue);
+  const isMountedRef = useRef<boolean>(false);
+  const prevValueRef = useRef<number>(targetValue);
 
   useEffect(() => {
     // Abaikan animasi jika preferensi pengguna mematikan gerakan (accessibility)
@@ -42,14 +44,15 @@ export function useCountUp(targetValue: number, durationMs: number = 600): numbe
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      setCurrentValue(targetValue);
       prevValueRef.current = targetValue;
       return;
     }
 
-    const startValue = prevValueRef.current;
+    // Pada mount pertama, animasikan dari 0 ke target; pada update selanjutnya, animasikan dari nilai lama
+    const startValue = !isMountedRef.current ? 0 : prevValueRef.current;
+    isMountedRef.current = true;
+
     if (startValue === targetValue) {
-      setCurrentValue(targetValue);
       return;
     }
 

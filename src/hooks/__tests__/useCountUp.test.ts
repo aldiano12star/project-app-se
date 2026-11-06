@@ -14,11 +14,13 @@ const start = 0;
 const target = 1000000;
 assert.strictEqual(calculateInterpolatedValue(start, target, 0), 0);
 assert.strictEqual(calculateInterpolatedValue(start, target, 1), 1000000);
+assert.strictEqual(calculateInterpolatedValue(start, target, 1.2), 1000000, "Progress >= 1 must always return exact target");
 
 // Test 3: calculateInterpolatedValue with negative target (deficit / tunggakan)
 const negTarget = -50000;
 assert.strictEqual(calculateInterpolatedValue(0, negTarget, 0), 0);
 assert.strictEqual(calculateInterpolatedValue(0, negTarget, 1), -50000);
+assert.strictEqual(calculateInterpolatedValue(0, negTarget, 1.05), -50000, "Progress >= 1 for negative target must return exact target");
 const midVal = calculateInterpolatedValue(0, negTarget, 0.5);
 assert.ok(midVal < 0 && midVal >= -50000, "Interpolated negative value should be negative");
 
