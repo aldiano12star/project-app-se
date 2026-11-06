@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { InvoiceStatus, InvoiceType, Role, Division } from "@prisma/client";
 import { quickSettleInvoice } from "@/actions/invoice";
+import { triggerMicroConfetti } from "@/lib/confetti";
+import { haptic } from "@/lib/haptic";
 
 export interface TrackerInvoiceUser {
   id: string;
@@ -115,6 +117,8 @@ export function InvoiceTrackerSection({
       try {
         const res = await quickSettleInvoice(invoiceId);
         if (res.success) {
+          triggerMicroConfetti();
+          haptic.success();
           setFeedback({ type: "success", message: res.message });
           onSuccess?.(res.message);
         } else {

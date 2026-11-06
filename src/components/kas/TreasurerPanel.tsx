@@ -23,6 +23,8 @@ import {
   TrackerInvoiceItem,
 } from "@/components/kas/InvoiceTrackerSection";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { triggerMicroConfetti } from "@/lib/confetti";
+import { haptic } from "@/lib/haptic";
 
 export interface TreasurerMemberData {
   id: string;
@@ -189,11 +191,14 @@ export function TreasurerPanel({
     startTransition(async () => {
       const res = await recordDeposit(selectedUserId, amountNum, depositDesc);
       if (res.success) {
+        triggerMicroConfetti();
+        haptic.success();
         showNotification("success", res.message);
         setIsDepositModalOpen(false);
         setDepositAmount("");
         setDepositDesc("");
       } else {
+        haptic.warning();
         showNotification("error", res.message);
       }
     });
@@ -242,10 +247,12 @@ export function TreasurerPanel({
         billCategory
       );
       if (res.success) {
+        haptic.success();
         showNotification("success", res.message);
         setIsBulkBillModalOpen(false);
         setBillTitle("");
       } else {
+        haptic.warning();
         showNotification("error", res.message);
       }
     });
@@ -273,11 +280,13 @@ export function TreasurerPanel({
         globalDesc
       );
       if (res.success) {
+        haptic.success();
         showNotification("success", res.message);
         setIsGlobalFinanceModalOpen(false);
         setGlobalAmount("");
         setGlobalDesc("");
       } else {
+        haptic.warning();
         showNotification("error", res.message);
       }
     });

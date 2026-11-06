@@ -5,6 +5,7 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 import { QrCode, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { recordAttendance } from "@/actions/presensi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { haptic } from "@/lib/haptic";
 
 interface AttendanceScannerModalProps {
   isOpen: boolean;
@@ -39,12 +40,14 @@ export function AttendanceScannerModal({
 
       const res = await recordAttendance(meetingId);
       if (res.success) {
+        haptic.success();
         setFeedback({
           text: `Berhasil mencatat kehadiran untuk rapat ${res.data?.meetingTitle || ""}`,
           meetingTitle: res.data?.meetingTitle,
           type: "success",
         });
       } else {
+        haptic.warning();
         setFeedback({
           text: res.message || "Gagal mencatat kehadiran rapat.",
           type: "error",

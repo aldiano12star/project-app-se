@@ -74,10 +74,18 @@ export function InvoiceListCard({
             </p>
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-            <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              Hebat! Tidak ada tagihan tertunda. Pertahankan dedikasimu untuk organisasi!
-            </p>
+          <div className="card-hover p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 transition-all">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 block">
+                Semua Tagihan Lunas ✨
+              </span>
+              <p className="text-[11px] text-emerald-600/90 dark:text-emerald-400/90 leading-relaxed mt-0.5">
+                Hebat! Tidak ada tagihan tertunda. Pertahankan dedikasimu untuk organisasi!
+              </p>
+            </div>
           </div>
         )}
 
