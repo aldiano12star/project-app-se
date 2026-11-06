@@ -75,7 +75,7 @@ export default async function KasPage() {
             : {}),
         },
         orderBy: { date: "desc" },
-        take: 30,
+        take: 5,
         select: {
           id: true,
           type: true,

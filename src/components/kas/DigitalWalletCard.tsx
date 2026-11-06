@@ -88,6 +88,9 @@ interface MutationHistoryProps {
 }
 
 export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
+  // Hard slice: batasi hanya 5 transaksi terakhir agar tinggi kartu selalu terprediksi
+  const displayedTransactions = transactions.slice(0, 5);
+
   return (
     <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
       <div className="flex items-center justify-between">
@@ -98,11 +101,11 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
           </h3>
         </div>
         <span className="text-xs text-ink-muted">
-          {transactions.length} Transaksi Terakhir
+          {displayedTransactions.length} Transaksi Terakhir
         </span>
       </div>
 
-      {transactions.length === 0 ? (
+      {displayedTransactions.length === 0 ? (
         <div className="py-8 text-center space-y-2 bg-surface-container-low rounded-xl border border-edge/60">
           <Info className="h-6 w-6 text-slate-400 mx-auto" />
           <p className="text-xs text-ink-muted">
@@ -111,7 +114,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
         </div>
       ) : (
         <div className="divide-y divide-edge/70">
-          {transactions.map((tx) => {
+          {displayedTransactions.map((tx) => {
             const isIncome = tx.type === TransactionType.INCOME;
             const dateStr = new Date(tx.date).toLocaleDateString("id-ID", {
               day: "numeric",

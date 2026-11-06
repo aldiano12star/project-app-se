@@ -12,8 +12,6 @@ import {
   Search,
   Check,
   Loader2,
-  Filter,
-  Users,
   X,
 } from "lucide-react";
 import { InvoiceStatus, InvoiceType, Role, Division } from "@prisma/client";
@@ -66,6 +64,7 @@ export function InvoiceTrackerSection({
     type: "success" | "error";
     message: string;
   } | null>(null);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   // Group invoices by title + type
   const groupedInvoices = React.useMemo(() => {
@@ -102,6 +101,24 @@ export function InvoiceTrackerSection({
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
   }, [invoices]);
+
+  // Pisahkan agenda tagihan aktif (masih ada tunggakan) dan tagihan yang sudah 100% selesai
+  const { activeGroups, completedGroups } = React.useMemo(() => {
+    const active: typeof groupedInvoices = [];
+    const completed: typeof groupedInvoices = [];
+
+    groupedInvoices.forEach((group) => {
+      const total = group.items.length;
+      const paid = group.items.filter((i) => i.status === InvoiceStatus.PAID).length;
+      if (total > 0 && paid === total) {
+        completed.push(group);
+      } else {
+        active.push(group);
+      }
+    });
+
+    return { activeGroups: active, completedGroups: completed };
+  }, [groupedInvoices]);
 
   const toggleGroup = (key: string) => {
     setExpandedGroups((prev) => ({
@@ -205,12 +222,23 @@ export function InvoiceTrackerSection({
           </p>
         </div>
         <span className="text-xs font-semibold text-ink-muted bg-surface-container-low px-2.5 py-1 rounded-full border border-edge">
-          {groupedInvoices.length} Agenda Penagihan
+          {activeGroups.length} Agenda Aktif
         </span>
       </div>
 
       <div className="space-y-3">
-        {groupedInvoices.map((group) => {
+        {activeGroups.length === 0 ? (
+          <div className="card-solid p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-1">
+            <div className="inline-flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-300 text-sm">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Semua Agenda Penagihan Tuntas 100%!</span>
+            </div>
+            <p className="text-xs text-emerald-600/90 dark:text-emerald-400/90">
+              Tidak ada tunggakan kas atau urunan aktif saat ini.
+            </p>
+          </div>
+        ) : (
+          activeGroups.map((group) => {
           const isExpanded = expandedGroups[group.key] ?? false;
           const query = searchQueries[group.key] || "";
           const filter = statusFilters[group.key] || "ALL";
@@ -513,7 +541,174 @@ export function InvoiceTrackerSection({
               )}
             </div>
           );
-        })}
+        })
+      )}
+
+        {/* Akordeon untuk tagihan 100% selesai agar tidak memadati layar */}
+        {completedGroups.length > 0 && (
+          <div className="pt-2 space-y-3">
+            <button
+              type="button"
+              onClick={() => setShowCompleted((prev) => !prev)}
+              className="w-full py-2.5 px-4 rounded-xl border border-edge bg-surface-container-low hover:bg-surface-container text-xs font-semibold text-ink-muted hover:text-ink flex items-center justify-between transition-all touch-bounce cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <span>
+                  {showCompleted ? "Sembunyikan" : "Tampilkan"} Tagihan Selesai ({completedGroups.length} Agenda Lunas)
+                </span>
+              </div>
+              {showCompleted ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </button>
+
+            {showCompleted && (
+              <div className="space-y-3 opacity-95">
+                {completedGroups.map((group) => {
+                  const isExpanded = expandedGroups[group.key] ?? false;
+                  const query = searchQueries[group.key] || "";
+                  const filter = statusFilters[group.key] || "ALL";
+
+                  const totalTarget = group.items.length;
+                  const paidCount = group.items.filter((i) => i.status === InvoiceStatus.PAID).length;
+                  const percent = totalTarget > 0 ? Math.round((paidCount / totalTarget) * 100) : 0;
+                  const totalTargetAmount = group.amount * totalTarget;
+                  const collectedAmount = group.amount * paidCount;
+
+                  const filteredItems = group.items.filter((item) => {
+                    if (filter === "PAID" && item.status !== InvoiceStatus.PAID) return false;
+                    if (filter === "UNPAID" && item.status !== InvoiceStatus.UNPAID) return false;
+                    if (!query.trim()) return true;
+
+                    const q = query.toLowerCase();
+                    return (
+                      item.user.name.toLowerCase().includes(q) ||
+                      (item.user.classGrade || "").toLowerCase().includes(q) ||
+                      item.user.mainDivision.toLowerCase().includes(q)
+                    );
+                  });
+
+                  return (
+                    <div
+                      key={group.key}
+                      className="card-solid bg-card rounded-2xl border border-edge/60 shadow-xs overflow-hidden transition-all"
+                    >
+                      {/* Group Accordion Header */}
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => toggleGroup(group.key)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            toggleGroup(group.key);
+                          }
+                        }}
+                        className="w-full text-left p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-surface-container-low/40 transition-colors cursor-pointer select-none"
+                      >
+                        <div className="space-y-1.5 flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-bold text-ink truncate">
+                              {group.title}
+                            </span>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                                group.type === InvoiceType.KAS
+                                  ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800"
+                                  : "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                              }`}
+                            >
+                              {group.type === InvoiceType.KAS ? "Kas Rutin" : "Urunan"}
+                            </span>
+                            <span className="text-[11px] text-ink-muted">
+                              • Rp {group.amount.toLocaleString("id-ID")} / org
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-3 max-w-md pt-0.5">
+                            <div className="flex-1 h-2 bg-surface-container-low rounded-full overflow-hidden border border-edge/60">
+                              <div
+                                className="h-full rounded-full bg-emerald-600 dark:bg-emerald-400"
+                                style={{ width: "100%" }}
+                              />
+                            </div>
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 tabular-nums shrink-0">
+                              {paidCount}/{totalTarget} (100%)
+                            </span>
+                          </div>
+
+                          <p className="text-[11px] text-ink-muted">
+                            Terkumpul:{" "}
+                            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                              Rp {collectedAmount.toLocaleString("id-ID")}
+                            </span>{" "}
+                            (Lunas Penuh)
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Lunas Semua
+                          </span>
+
+                          <div className="p-1 rounded-lg hover:bg-surface-container-low transition-colors text-ink-muted">
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Group Details Accordion Body */}
+                      {isExpanded && (
+                        <div className="p-4 sm:p-5 border-t border-edge/60 bg-surface-container-low/20 space-y-4">
+                          <div className="overflow-x-auto rounded-xl border border-edge/80 bg-card">
+                            <table className="w-full text-left text-xs">
+                              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-bold uppercase tracking-wider text-[10px]">
+                                <tr>
+                                  <th className="px-4 py-2.5">Nama Anggota</th>
+                                  <th className="px-4 py-2.5">Kelas / Divisi</th>
+                                  <th className="px-4 py-2.5 text-center">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-edge/60">
+                                {filteredItems.map((item) => (
+                                  <tr
+                                    key={item.id}
+                                    className="hover:bg-surface-container-low/40 transition-colors"
+                                  >
+                                    <td className="px-4 py-2.5 font-semibold text-ink">
+                                      {item.user.name}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-ink-muted">
+                                      {formatGradeGen(item.user)} • {item.user.mainDivision}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-center">
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">
+                                        <Check className="h-3 w-3" />
+                                        Lunas
+                                      </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

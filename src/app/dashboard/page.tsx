@@ -77,10 +77,11 @@ export default async function DashboardPage() {
   const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  // Ambil Top 3 Leaderboard, acara terdekat (belum selesai & sesuai angkatan), presensi hari ini, tugas panitia, dan analitik kesehatan global
+  // Ambil Top 3 Leaderboard, rapat & acara terdekat (prioritas mendesak), presensi hari ini, tugas panitia, dan analitik kesehatan global
   const [
     topContributors,
-    recentEvents,
+    upcomingMeetings,
+    upcomingEvents,
     todayAttendance,
     myAssignedTasks,
     globalHealth,
@@ -100,6 +101,21 @@ export default async function DashboardPage() {
           monthlyPoints: true,
         },
       }),
+      prisma.meeting.findMany({
+        where: {
+          date: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+          },
+          ...audienceFilter,
+        },
+        orderBy: { date: "asc" },
+        take: 3,
+        include: {
+          event: {
+            select: { id: true, title: true },
+          },
+        },
+      }),
       prisma.event.findMany({
         where: {
           endDate: {
@@ -108,7 +124,7 @@ export default async function DashboardPage() {
           ...audienceFilter,
         },
         orderBy: { startDate: "asc" },
-        take: 3,
+        take: 5,
         include: {
           sections: {
             include: {
@@ -253,6 +269,82 @@ export default async function DashboardPage() {
   };
 
   const roleMeta = getRoleBadge(dbUser.role);
+
+  // Format rapat mendatang sebagai agenda singkat mendesak
+  const formattedMeetings = upcomingMeetings.map((m) => {
+    const isToday =
+      getLocalDateString(m.date) === getLocalDateString(new Date());
+    const timeStr = new Date(m.date).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Jakarta",
+    });
+    const dateFormatted = formatEventSchedule(m.date, m.date, { shortMonth: true });
+
+    return {
+      id: `meeting-${m.id}`,
+      title: m.title,
+      startDate: m.date,
+      endDate: m.date,
+      isMeeting: true,
+      isSingleDay: true,
+      timeStatus: isToday ? ("ACTIVE" as const) : ("UPCOMING" as const),
+      categoryLabel: m.event ? `Rapat • ${m.event.title}` : "Sesi Rapat",
+      formattedSchedule: `${dateFormatted} • ${timeStr} WIB`,
+      progressText: m.event ? `Bagian dari Proker ${m.event.title}` : undefined,
+    };
+  });
+
+  // Format events
+  const formattedEvents = upcomingEvents.map((evt) => {
+    const isSingleDay =
+      getLocalDateString(evt.startDate) === getLocalDateString(evt.endDate);
+    const timeStatus = getEventTimeStatus(evt.startDate, evt.endDate);
+    const formattedSchedule = formatEventSchedule(evt.startDate, evt.endDate, {
+      shortMonth: true,
+    });
+    const totalTasks = evt.sections.reduce(
+      (sum, s) => sum + s.tasks.length,
+      0
+    );
+    const completedTasks = evt.sections.reduce(
+      (sum, s) =>
+        sum + s.tasks.filter((t) => t.status === "DONE").length,
+      0
+    );
+
+    return {
+      id: `event-${evt.id}`,
+      title: evt.title,
+      startDate: evt.startDate,
+      endDate: evt.endDate,
+      isMeeting: false,
+      isSingleDay,
+      timeStatus,
+      categoryLabel: isSingleDay ? "Acara Singkat" : "Proker Multi-Hari",
+      formattedSchedule,
+      progressText:
+        totalTasks > 0
+          ? `Progress: ${completedTasks}/${totalTasks} Tugas Selesai (${evt.sections.length} Seksi)`
+          : undefined,
+    };
+  });
+
+  // Prioritas Cerdas: Utamakan Acara Singkat & Rapat Mendatang (urgent-first)
+  const shortAgendas = [
+    ...formattedMeetings,
+    ...formattedEvents.filter((e) => e.isSingleDay),
+  ].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+  const multiDayAgendas = formattedEvents
+    .filter((e) => !e.isSingleDay)
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+  // Gabungkan dengan prioritas: jika acara singkat kurang dari 3, isi dengan proker multi-hari
+  const prioritizedAgendas = [
+    ...shortAgendas,
+    ...multiDayAgendas,
+  ].slice(0, 3);
 
   return (
     <AppShell user={dbUser}>
@@ -476,7 +568,7 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            {recentEvents.length === 0 ? (
+            {prioritizedAgendas.length === 0 ? (
               <div className="p-6 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
                 <p className="text-sm font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
                 <p className="text-xs text-slate-400">
@@ -485,45 +577,22 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {recentEvents.map((evt) => {
-                  const isSingleDay =
-                    getLocalDateString(evt.startDate) ===
-                    getLocalDateString(evt.endDate);
-                  const timeStatus = getEventTimeStatus(
-                    evt.startDate,
-                    evt.endDate
-                  );
-                  const formattedSchedule = formatEventSchedule(
-                    evt.startDate,
-                    evt.endDate,
-                    { shortMonth: true }
-                  );
-
-                  const totalTasks = evt.sections.reduce(
-                    (sum, s) => sum + s.tasks.length,
-                    0
-                  );
-                  const completedTasks = evt.sections.reduce(
-                    (sum, s) =>
-                      sum + s.tasks.filter((t) => t.status === "DONE").length,
-                    0
-                  );
-
+                {prioritizedAgendas.map((agenda) => {
                   return (
                     <Link
-                      key={evt.id}
-                      href={`/acara/${evt.id}`}
-                      className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
+                      key={agenda.id}
+                      href="/acara"
+                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
                     >
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           {/* Status Badge */}
-                          {timeStatus === "ACTIVE" ? (
+                          {agenda.timeStatus === "ACTIVE" ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 shadow-xs">
                               <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
-                              <span>Sedang Berlangsung</span>
+                              <span>{agenda.isMeeting ? "Hari Ini" : "Sedang Berlangsung"}</span>
                             </span>
-                          ) : timeStatus === "UPCOMING" ? (
+                          ) : agenda.timeStatus === "UPCOMING" ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
                               <Clock className="h-3 w-3 text-slate-400" />
                               <span>Mendatang</span>
@@ -538,35 +607,31 @@ export default async function DashboardPage() {
                           {/* Tipe Acara */}
                           <span
                             className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                              isSingleDay
+                              agenda.isSingleDay
                                 ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
                                 : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
                             }`}
                           >
-                            {isSingleDay ? (
+                            {agenda.isSingleDay ? (
                               <MessageSquare className="h-3 w-3" />
                             ) : (
                               <Layers className="h-3 w-3" />
                             )}
-                            <span>
-                              {isSingleDay
-                                ? "Agenda Singkat"
-                                : "Proker / Multi-Hari"}
-                            </span>
+                            <span>{agenda.categoryLabel}</span>
                           </span>
 
                           <span className="text-xs font-mono text-slate-400">
-                            {formattedSchedule}
+                            {agenda.formattedSchedule}
                           </span>
                         </div>
 
                         <h3 className="text-sm sm:text-base font-semibold text-ink truncate group-hover:text-primary transition-colors">
-                          {evt.title}
+                          {agenda.title}
                         </h3>
 
-                        {totalTasks > 0 && (
+                        {agenda.progressText && (
                           <p className="text-xs text-slate-400">
-                            Progress: {completedTasks}/{totalTasks} Tugas Selesai ({evt.sections.length} Seksi)
+                            {agenda.progressText}
                           </p>
                         )}
                       </div>
