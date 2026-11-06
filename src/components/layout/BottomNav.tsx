@@ -10,6 +10,7 @@ import {
   Compass,
   MessageSquareText,
 } from "lucide-react";
+import { haptic } from "@/lib/haptic";
 
 interface NavItem {
   label: string;
@@ -116,10 +117,13 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 prefetch={true}
-                onClick={() => setOptimisticPath(item.href)}
-                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2.5 transition-all shadow-xs min-h-11 shrink-0"
+                onClick={() => {
+                  haptic.tap();
+                  setOptimisticPath(item.href);
+                }}
+                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 shadow-xs min-h-11 shrink-0"
               >
-                <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
+                <Icon className="h-5 w-5 stroke-[2.2] shrink-0 transition-transform duration-200 group-hover:scale-105" />
                 <span className="text-xs font-semibold leading-none tracking-tight">
                   {item.label}
                 </span>
@@ -132,10 +136,13 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               prefetch={true}
-              onClick={() => setOptimisticPath(item.href)}
+              onClick={() => {
+                haptic.tap();
+                setOptimisticPath(item.href);
+              }}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-[#E2E8F0] p-2.5 rounded-full transition-all active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-[#E2E8F0] p-2.5 rounded-full transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90 hover:scale-105 flex items-center justify-center min-h-11 min-w-11 shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>
