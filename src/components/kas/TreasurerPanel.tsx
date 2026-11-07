@@ -36,7 +36,7 @@ export interface TreasurerMemberData {
   generationNumber?: number | null;
   gen?: number | null;
   kelas?: string | null;
-  mainDivision: Division;
+  mainDivision?: Division | null;
   kasBalance: number;
 }
 
@@ -143,7 +143,7 @@ export function TreasurerPanel({
     return (
       m.name.toLowerCase().includes(q) ||
       (m.classGrade || "").toLowerCase().includes(q) ||
-      m.mainDivision.toLowerCase().includes(q)
+      (m.mainDivision || "").toLowerCase().includes(q)
     );
   });
 
@@ -628,7 +628,7 @@ export function TreasurerPanel({
                                   {member.name}
                                 </span>
                                 <span className="text-[10px] text-ink-muted block">
-                                  {formatGradeGen(member)} • {member.mainDivision}
+                                  {formatGradeGen(member)} • {member.mainDivision || "Umum"}
                                 </span>
                               </div>
                               <input

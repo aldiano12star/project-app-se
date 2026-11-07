@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Coins,
 } from "lucide-react";
 
 interface InvoiceListCardProps {
@@ -92,9 +93,18 @@ export function InvoiceListCard({
         {/* List Tagihan Belum Lunas */}
         <div className="space-y-3">
           {unpaidInvoices.length === 0 ? (
-            <div className="py-6 text-center text-xs text-ink-muted flex flex-col items-center justify-center gap-2">
-              <Sparkles className="h-6 w-6 text-emerald-500 stroke-[1.5]" />
-              <p>Hebat! Tidak ada tagihan yang tertunda saat ini.</p>
+            <div className="py-8 px-4 text-center rounded-2xl bg-surface-container-low/40 border border-edge/70 flex flex-col items-center justify-center space-y-2.5">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 shadow-xs">
+                <Coins className="h-7 w-7 stroke-[1.8]" />
+              </div>
+              <div className="space-y-1 max-w-xs mx-auto">
+                <p className="text-sm font-bold text-ink">
+                  Yeay! Belum ada tagihan aktif. Dompetmu aman! 🎉
+                </p>
+                <p className="text-xs text-ink-muted">
+                  Semua urunan dan kas telah tuntas. Selamat menikmati waktu luangmu!
+                </p>
+              </div>
             </div>
           ) : (
             unpaidInvoices.map((inv) => {

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Plus, FolderKanban } from "lucide-react";
+import { useState } from "react";
+import { Plus, Rocket } from "lucide-react";
 import { Role } from "@prisma/client";
 import { ProjectCard, ProjectCardData } from "./ProjectCard";
 
@@ -70,7 +70,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("ALL")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "ALL"
               ? "bg-primary text-white shadow-xs border border-primary"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -82,7 +82,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("PROGRAMMING")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "PROGRAMMING"
               ? "bg-blue-600 text-white shadow-xs border border-blue-600"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -94,7 +94,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("TECHNOPRENEUR")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "TECHNOPRENEUR"
               ? "bg-emerald-600 text-white shadow-xs border border-emerald-600"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -106,7 +106,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("DESAIN")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "DESAIN"
               ? "bg-purple-600 text-white shadow-xs border border-purple-600"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -118,7 +118,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("FOTOGRAFI")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "FOTOGRAFI"
               ? "bg-amber-600 text-white shadow-xs border border-amber-600"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -130,7 +130,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("SINEMATOGRAFI")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "SINEMATOGRAFI"
               ? "bg-rose-600 text-white shadow-xs border border-rose-600"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -142,7 +142,7 @@ export function ShowcaseTab({
         <button
           type="button"
           onClick={() => setSelectedCategory("LAINNYA")}
-          className={`min-h-[40px] px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+          className={`min-h-10 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "LAINNYA"
               ? "bg-slate-700 text-white shadow-xs border border-slate-700"
               : "bg-card text-ink-secondary hover:text-ink border border-edge"
@@ -154,20 +154,31 @@ export function ShowcaseTab({
 
       {/* Projects Grid / List */}
       {filteredProjects.length === 0 ? (
-        <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-          <FolderKanban className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
-          <h3 className="text-sm font-bold text-ink">Belum Ada Karya di Kategori Ini</h3>
-          <p className="text-xs text-ink-muted max-w-xs mx-auto">
-            Jadilah yang pertama memamerkan karya proyek dari divisimu dan raih apresiasi XP tim!
-          </p>
-          <button
-            type="button"
-            onClick={onOpenCreateModal}
-            className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer min-h-[44px]"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Submit Karya Pertama (+50 XP)</span>
-          </button>
+        <div className="card-solid bg-card p-8 sm:p-10 text-center space-y-3.5 rounded-2xl border border-edge/80 flex flex-col items-center justify-center">
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-primary/5 blur-xl scale-150 pointer-events-none" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low border border-edge shadow-xs">
+              <Rocket className="h-8 w-8 text-ink-muted/40 stroke-[1.5]" />
+            </div>
+          </div>
+          <div className="space-y-1.5 max-w-sm mx-auto">
+            <h3 className="text-sm sm:text-base font-bold text-ink tracking-tight">
+              Belum ada mahakarya di sini. Jadilah yang pertama mengukir sejarah!
+            </h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Pamerkan ide cemerlang, prototipe, atau hasil karya divisimu dan raih apresiasi XP tim!
+            </p>
+          </div>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onOpenCreateModal}
+              className="h-11 min-h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl inline-flex items-center gap-2 shadow-sm cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Submit Karya Pertama (+50 XP)</span>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

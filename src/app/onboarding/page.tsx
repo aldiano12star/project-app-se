@@ -34,7 +34,7 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-[#070A11] text-slate-100 flex items-center justify-center p-4">
+    <main className="app-shell flex min-h-screen flex-col items-center justify-center p-4">
       <OnboardingForm
         initialName={dbUser.fullName || dbUser.name || ""}
         userEmail={dbUser.email}

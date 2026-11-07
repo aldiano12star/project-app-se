@@ -13,6 +13,7 @@ export const getCurrentDbUser = cache(async () => {
       name: true,
       email: true,
       image: true,
+      avatarUrl: true,
       role: true,
       classGrade: true,
       mainDivision: true,
@@ -21,6 +22,7 @@ export const getCurrentDbUser = cache(async () => {
       totalPoints: true,
       kasBalance: true,
       isProfileCompleted: true,
+      hasSeenWelcome: true,
     },
   });
 

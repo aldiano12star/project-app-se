@@ -9,7 +9,7 @@ export interface ContributorItem {
   image?: string | null;
   role?: Role;
   classGrade?: string | null;
-  mainDivision?: Division;
+  mainDivision?: Division | null;
   totalPoints: number;
   monthlyPoints?: number;
 }
@@ -31,7 +31,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
   const rank2 = contributors[1] || null;
   const rank3 = contributors[2] || null;
 
-  const getDivisionBadgeColor = (division?: Division) => {
+  const getDivisionBadgeColor = (division?: Division | null) => {
     switch (division) {
       case Division.PROGRAMMING:
         return "text-sky-600 dark:text-sky-400";
@@ -48,7 +48,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
     }
   };
 
-  const getDivisionLabel = (division?: Division) => {
+  const getDivisionLabel = (division?: Division | null) => {
     switch (division) {
       case Division.PROGRAMMING:
         return "Programming";

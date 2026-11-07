@@ -29,8 +29,8 @@ declare module "next-auth" {
 
   interface User {
     role?: Role;
-    classGrade?: string;
-    mainDivision?: Division;
+    classGrade?: string | null;
+    mainDivision?: Division | null;
     status?: MemberStatus;
     isProfileCompleted?: boolean;
   }
@@ -91,16 +91,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         if (!existingUser) {
-          // Buat akun baru otomatis dengan role GUEST atau OPERATOR
+          // Buat akun baru otomatis dengan role GUEST (atau OPERATOR jika sesuai email inisial)
           await prisma.user.create({
             data: {
               email,
-              name: user.name || "Anggota Saba ExploIT",
+              name: user.name || "Pengguna Baru",
               image: user.image,
+              avatarUrl: user.image,
               role: isOperator ? Role.OPERATOR : Role.GUEST,
-              mainDivision: Division.PROGRAMMING,
-              classGrade: "KELAS_10",
+              mainDivision: null,
+              classGrade: null,
               status: MemberStatus.ACTIVE,
+              isProfileCompleted: false,
             },
           });
         } else {
@@ -108,6 +110,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const updates: Record<string, unknown> = {};
           if (user.image && user.image !== existingUser.image) {
             updates.image = user.image;
+            updates.avatarUrl = user.image;
           }
           if (isOperator && existingUser.role !== Role.OPERATOR) {
             updates.role = Role.OPERATOR;
@@ -153,7 +156,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as Role;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).classGrade = token.classGrade ?? null;
-        session.user.mainDivision = token.mainDivision as Division;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).mainDivision = (token.mainDivision as Division | null) ?? null;
         session.user.status = token.status as MemberStatus;
         session.user.isProfileCompleted = Boolean(token.isProfileCompleted);
       }

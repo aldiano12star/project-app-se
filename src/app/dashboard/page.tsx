@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PodiumTop3 } from "@/components/home/PodiumTop3";
 import { DashboardMeetingWidget } from "@/components/home/DashboardMeetingWidget";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
+import { WelcomeOnboardingModal } from "@/components/home/WelcomeOnboardingModal";
 import Link from "next/link";
 import { Role, Division } from "@prisma/client";
 import { buildAudienceFilter } from "@/utils/audience";
@@ -19,6 +20,7 @@ import {
   Layers,
   MessageSquare,
   Activity,
+  Coffee,
 } from "lucide-react";
 import {
   getJakartaDateParts,
@@ -54,6 +56,10 @@ export default async function DashboardPage() {
   if (dbUser.role === Role.GUEST) {
     return (
       <AppShell user={dbUser}>
+        <WelcomeOnboardingModal
+          initialOpen={!dbUser.hasSeenWelcome}
+          userName={dbUser.name}
+        />
         <div className="flex flex-col gap-6 pt-1">
           <section className="space-y-1">
             <h1 className="text-xl font-bold tracking-tight text-ink">
@@ -193,7 +199,7 @@ export default async function DashboardPage() {
     return diffDays <= 1;
   });
 
-  const getDivisionBadge = (division?: Division) => {
+  const getDivisionBadge = (division?: Division | null) => {
     switch (division) {
       case Division.PROGRAMMING:
         return {
@@ -348,6 +354,10 @@ export default async function DashboardPage() {
 
   return (
     <AppShell user={dbUser}>
+      <WelcomeOnboardingModal
+        initialOpen={!dbUser.hasSeenWelcome}
+        userName={dbUser.name}
+      />
       <div className="flex flex-col gap-6">
         {/* ========================================================= */}
         {/* MODUL 1: Sapaan Singkat & Tombol Presensi QR Sesi Rapat   */}
@@ -561,7 +571,7 @@ export default async function DashboardPage() {
               </div>
               <Link
                 href="/acara"
-                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-[44px] px-2"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-11 px-2"
               >
                 <span>Semua Acara</span>
                 <ChevronRight className="h-4 w-4" />
@@ -569,11 +579,18 @@ export default async function DashboardPage() {
             </div>
 
             {prioritizedAgendas.length === 0 ? (
-              <div className="p-6 rounded-2xl bg-surface-container-low/50 border border-edge text-center space-y-2">
-                <p className="text-sm font-semibold text-ink">Tidak ada agenda terdekat saat ini.</p>
-                <p className="text-xs text-slate-400">
-                  Agenda kegiatan ekskul akan dijadwalkan oleh pengurus inti.
-                </p>
+              <div className="p-8 rounded-2xl bg-surface-container-low/40 border border-edge/70 text-center flex flex-col items-center justify-center space-y-3">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 shadow-xs">
+                  <Coffee className="h-7 w-7 stroke-[1.8]" />
+                </div>
+                <div className="space-y-1 max-w-xs mx-auto">
+                  <p className="text-sm font-bold text-ink">
+                    Tidak ada agenda terdekat. Waktunya fokus berkarya atau bersantai!
+                  </p>
+                  <p className="text-xs text-ink-muted">
+                    Semua jadwal rapat &amp; acara saat ini telah selesai. Nikmati proses eksplorasimu!
+                  </p>
+                </div>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
@@ -582,7 +599,7 @@ export default async function DashboardPage() {
                     <Link
                       key={agenda.id}
                       href="/acara"
-                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-[64px]"
+                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-16"
                     >
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2 mb-1">

@@ -26,6 +26,7 @@ import {
   RefreshCcw,
   Trophy,
 } from "lucide-react";
+import { GithubIcon, InstagramIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { UserProfileData } from "./ProfileHeroCard";
 import { updateProfileContact, updatePassword } from "@/actions/profile";
 import { NotificationSettingsCard } from "./NotificationSettingsCard";
@@ -104,9 +105,12 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
   const [showContactForm, setShowContactForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
-  // State Form Kontak
+  // State Form Kontak & Socials
   const [noWhatsapp, setNoWhatsapp] = useState(user.noWhatsapp || "");
   const [portfolioUrl, setPortfolioUrl] = useState(user.portfolioUrl || "");
+  const [githubUrl, setGithubUrl] = useState(user.githubUrl || "");
+  const [instagramUrl, setInstagramUrl] = useState(user.instagramUrl || "");
+  const [linkedinUrl, setLinkedinUrl] = useState(user.linkedinUrl || "");
   const [nisn, setNisn] = useState(user.nisn || "");
   const [contactFeedback, setContactFeedback] = useState<{
     text: string;
@@ -132,6 +136,9 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
       const res = await updateProfileContact({
         noWhatsapp,
         portfolioUrl,
+        githubUrl,
+        instagramUrl,
+        linkedinUrl,
         nisn,
       });
 
@@ -250,7 +257,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                     value={noWhatsapp}
                     onChange={(e) => setNoWhatsapp(e.target.value)}
                     placeholder="Contoh: 081234567890"
-                    className="w-full h-11 min-h-[44px] px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
                   />
                 </div>
 
@@ -258,14 +265,59 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Tautan Portofolio / GitHub / LinkedIn</span>
+                    <span>Tautan Portofolio / Website</span>
                   </label>
                   <input
                     type="url"
                     value={portfolioUrl}
                     onChange={(e) => setPortfolioUrl(e.target.value)}
-                    placeholder="https://github.com/username atau linktr.ee/..."
-                    className="w-full h-11 min-h-[44px] px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                    placeholder="https://mywebsite.com atau linktr.ee/..."
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+
+                {/* Input Tautan GitHub */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                    <GithubIcon className="w-3.5 h-3.5 text-ink" />
+                    <span>Profil GitHub</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    placeholder="https://github.com/username"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+
+                {/* Input Tautan Instagram */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                    <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
+                    <span>Profil Instagram</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={instagramUrl}
+                    onChange={(e) => setInstagramUrl(e.target.value)}
+                    placeholder="https://instagram.com/username"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+
+                {/* Input Tautan LinkedIn */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                    <LinkedinIcon className="w-3.5 h-3.5 text-sky-500" />
+                    <span>Profil LinkedIn</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={linkedinUrl}
+                    onChange={(e) => setLinkedinUrl(e.target.value)}
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
                   />
                 </div>
 
@@ -280,7 +332,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                     value={nisn}
                     onChange={(e) => setNisn(e.target.value)}
                     placeholder="Contoh: 0071234567"
-                    className="w-full h-11 min-h-[44px] px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
                   />
                 </div>
 
@@ -288,7 +340,7 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                 <button
                   type="submit"
                   disabled={isSavingContact}
-                  className="w-full h-11 min-h-[44px] rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full h-11 min-h-11 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
                 >
                   {isSavingContact ? (
                     <>

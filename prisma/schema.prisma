@@ -90,20 +90,26 @@ model User {
   role               Role         @default(GUEST)
   classGrade         String? // "X", "XI", "XII", "ALUMNI"
   generationNumber   Int? // Misal: 20, 21, 22
-  mainDivision       Division
+  mainDivision       Division?
   status             MemberStatus @default(ACTIVE)
   monthlyPoints      Int          @default(0) // Direset tiap awal bulan untuk Podium
   totalPoints        Int          @default(0) // Akumulasi poin tahunan di profil
   noWhatsapp         String?
   portfolioUrl       String?
+  avatarUrl          String?
+  githubUrl          String?
+  instagramUrl       String?
+  linkedinUrl        String?
   password           String?
   nisn               String?      @unique
   mustChangePassword Boolean      @default(true)
   fullName           String?
+  asalTujuan         String? // Keterangan asal/tujuan pendaftaran (misal: Tamu, Calon Anggota)
   kelas              String?
   gen                Int?
   divisi             String?
   isProfileCompleted Boolean      @default(false)
+  hasSeenWelcome     Boolean      @default(false) // Pelacak modal sambutan perdana
   kasBalance         Int          @default(0) // Saldo Kas Dompet Digital Organisasi (Bisa Negatif jika Nunggak)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt

@@ -28,7 +28,7 @@ export interface TrackerInvoiceUser {
   generationNumber?: number | null;
   gen?: number | null;
   kelas?: string | null;
-  mainDivision: Division;
+  mainDivision?: Division | null;
   kasBalance: number;
 }
 
@@ -260,7 +260,7 @@ export function InvoiceTrackerSection({
             return (
               item.user.name.toLowerCase().includes(q) ||
               (item.user.classGrade || "").toLowerCase().includes(q) ||
-              item.user.mainDivision.toLowerCase().includes(q)
+              (item.user.mainDivision || "").toLowerCase().includes(q)
             );
           });
 
@@ -492,7 +492,7 @@ export function InvoiceTrackerSection({
                                   {item.user.name}
                                 </td>
                                 <td className="px-4 py-2.5 text-ink-muted">
-                                  {formatGradeGen(item.user)} • {item.user.mainDivision}
+                                  {formatGradeGen(item.user)} • {item.user.mainDivision || "Umum"}
                                 </td>
                                 <td className="px-4 py-2.5 text-center">
                                   {statusBadge}
@@ -587,7 +587,7 @@ export function InvoiceTrackerSection({
                     return (
                       item.user.name.toLowerCase().includes(q) ||
                       (item.user.classGrade || "").toLowerCase().includes(q) ||
-                      item.user.mainDivision.toLowerCase().includes(q)
+                      (item.user.mainDivision || "").toLowerCase().includes(q)
                     );
                   });
 
@@ -687,7 +687,7 @@ export function InvoiceTrackerSection({
                                       {item.user.name}
                                     </td>
                                     <td className="px-4 py-2.5 text-ink-muted">
-                                      {formatGradeGen(item.user)} • {item.user.mainDivision}
+                                      {formatGradeGen(item.user)} • {item.user.mainDivision || "Umum"}
                                     </td>
                                     <td className="px-4 py-2.5 text-center">
                                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Zap, CheckCircle2, IdCard } from "lucide-react";
+import { Zap, CheckCircle2, Globe, IdCard } from "lucide-react";
+import { GithubIcon, InstagramIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { Role, Division } from "@prisma/client";
 
 export interface UserProfileData {
@@ -9,9 +10,13 @@ export interface UserProfileData {
   name: string;
   email: string;
   image?: string | null;
+  avatarUrl?: string | null;
+  githubUrl?: string | null;
+  instagramUrl?: string | null;
+  linkedinUrl?: string | null;
   role: Role;
   classGrade: string | null;
-  mainDivision: Division;
+  mainDivision?: Division | null;
   totalPoints: number;
   monthlyPoints: number;
   noWhatsapp?: string | null;
@@ -35,7 +40,7 @@ function formatGrade(grade?: string | null) {
 }
 
 function formatDivision(division?: Division | string | null) {
-  if (!division) return "Programming";
+  if (!division) return "Umum";
   switch (division) {
     case Division.PROGRAMMING:
     case "Programming":
@@ -248,6 +253,60 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
             {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
           </p>
+
+          {/* Social Badges */}
+          {(user.githubUrl || user.instagramUrl || user.linkedinUrl || user.portfolioUrl) && (
+            <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+              {user.githubUrl && (
+                <a
+                  href={user.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container-low hover:bg-surface border border-edge text-ink transition-all hover:border-slate-400"
+                  title="GitHub Profil"
+                >
+                  <GithubIcon className="w-3.5 h-3.5" />
+                  <span>GitHub</span>
+                </a>
+              )}
+              {user.instagramUrl && (
+                <a
+                  href={user.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container-low hover:bg-surface border border-edge text-pink-600 dark:text-pink-400 transition-all hover:border-pink-400"
+                  title="Instagram Profil"
+                >
+                  <InstagramIcon className="w-3.5 h-3.5" />
+                  <span>Instagram</span>
+                </a>
+              )}
+              {user.linkedinUrl && (
+                <a
+                  href={user.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container-low hover:bg-surface border border-edge text-sky-600 dark:text-sky-400 transition-all hover:border-sky-400"
+                  title="LinkedIn Profil"
+                >
+                  <LinkedinIcon className="w-3.5 h-3.5" />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+              {user.portfolioUrl && (
+                <a
+                  href={user.portfolioUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container-low hover:bg-surface border border-edge text-primary transition-all hover:border-primary/50"
+                  title="Portofolio / Website Pribadi"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Portofolio</span>
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

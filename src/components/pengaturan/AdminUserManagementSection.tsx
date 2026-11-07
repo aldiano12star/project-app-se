@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import {
   UserCheck,
   Shield,
-  UserPlus,
   Users,
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Sparkles,
-  ChevronDown,
   Clock,
   Ban,
+  Phone,
+  Compass,
+  Settings2,
+  X,
+  Check,
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 import { promoteUserRole } from "@/actions/profile";
@@ -26,6 +28,8 @@ export interface ManagedUser {
   role: Role;
   classGrade?: string | null;
   mainDivision?: Division | null;
+  noWhatsapp?: string | null;
+  asalTujuan?: string | null;
   createdAt: string;
 }
 
@@ -110,10 +114,18 @@ function getDivisionMeta(division?: Division | string | null) {
       };
     default:
       return {
-        label: division || "Programming",
+        label: division || "Tanpa Divisi",
         style: "bg-surface-container text-ink-muted border-edge",
       };
   }
+}
+
+function formatGradeGen(grade?: string | null) {
+  if (!grade) return null;
+  if (grade === "KELAS_10") return "Kelas X (Gen 21)";
+  if (grade === "KELAS_11") return "Kelas XI (Gen 20)";
+  if (grade === "KELAS_12") return "Kelas XII (Gen 19)";
+  return grade;
 }
 
 export function AdminUserManagementSection({
@@ -123,6 +135,9 @@ export function AdminUserManagementSection({
   const [activeTab, setActiveTab] = useState<"GUEST" | "ALL">("GUEST");
   const [searchQuery, setSearchQuery] = useState("");
   const [processingUserId, setProcessingUserId] = useState<string | null>(null);
+  const [assigningUser, setAssigningUser] = useState<ManagedUser | null>(null);
+  const [selectedDivisi, setSelectedDivisi] = useState<string>("NONE");
+  const [selectedGrade, setSelectedGrade] = useState<string>("NONE");
   const [feedback, setFeedback] = useState<{
     text: string;
     type: "success" | "error";
@@ -139,22 +154,70 @@ export function AdminUserManagementSection({
   const displayedUsers = (activeTab === "GUEST" ? guestUsers : users).filter(
     (u) =>
       u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchQuery.toLowerCase())
+      u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (u.asalTujuan && u.asalTujuan.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (u.noWhatsapp && u.noWhatsapp.includes(searchQuery))
   );
 
-  const handlePromote = (targetUserId: string, newRole: Role) => {
+  const handlePromote = (
+    targetUserId: string,
+    newRole: Role,
+    divisionVal?: Division | null,
+    gradeVal?: string | null
+  ) => {
     setProcessingUserId(targetUserId);
     setFeedback(null);
 
+    let genNum: number | null = null;
+    let kelasName: string | null = null;
+    if (gradeVal === "KELAS_10") {
+      genNum = 21;
+      kelasName = "X";
+    } else if (gradeVal === "KELAS_11") {
+      genNum = 20;
+      kelasName = "XI";
+    } else if (gradeVal === "KELAS_12") {
+      genNum = 19;
+      kelasName = "XII";
+    }
+
     startTransition(async () => {
-      const res = await promoteUserRole({ targetUserId, newRole });
+      const res = await promoteUserRole({
+        targetUserId,
+        newRole,
+        mainDivision: divisionVal,
+        classGrade: gradeVal,
+        kelas: kelasName,
+        gen: genNum,
+      });
+
       if (res.success) {
         setFeedback({ text: res.message, type: "success" });
+        setAssigningUser(null);
       } else {
         setFeedback({ text: res.message, type: "error" });
       }
       setProcessingUserId(null);
     });
+  };
+
+  const openAssignModal = (u: ManagedUser) => {
+    setAssigningUser(u);
+    setSelectedDivisi(u.mainDivision || "NONE");
+    setSelectedGrade(u.classGrade || "NONE");
+  };
+
+  const handleSaveAssignment = () => {
+    if (!assigningUser) return;
+    const div =
+      selectedDivisi === "NONE" ? null : (selectedDivisi as Division);
+    const grade = selectedGrade === "NONE" ? null : selectedGrade;
+
+    // Jika sedang GUEST dan diatur divisi/gen, otomatis promote ke MEMBER
+    const nextRole =
+      assigningUser.role === Role.GUEST ? Role.MEMBER : assigningUser.role;
+
+    handlePromote(assigningUser.id, nextRole, div, grade);
   };
 
   return (
@@ -178,7 +241,7 @@ export function AdminUserManagementSection({
             <button
               type="button"
               onClick={() => setActiveTab("GUEST")}
-              className={`px-3.5 py-2 min-h-[40px] rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              className={`px-3.5 py-2 min-h-10 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                 activeTab === "GUEST"
                   ? "bg-card text-ink shadow-xs border border-edge"
                   : "text-slate-400 hover:text-ink"
@@ -190,7 +253,7 @@ export function AdminUserManagementSection({
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`px-3.5 py-2 min-h-[40px] rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              className={`px-3.5 py-2 min-h-10 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                 activeTab === "ALL"
                   ? "bg-card text-ink shadow-xs border border-edge"
                   : "text-slate-400 hover:text-ink"
@@ -203,7 +266,7 @@ export function AdminUserManagementSection({
 
           <input
             type="text"
-            placeholder="Cari nama / email..."
+            placeholder="Cari nama, email, WA, atau asal..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -229,7 +292,7 @@ export function AdminUserManagementSection({
         )}
 
         {/* User List */}
-        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-0.5">
+        <div className="space-y-3 max-h-115 overflow-y-auto pr-0.5">
           {displayedUsers.length === 0 ? (
             <div className="p-8 rounded-2xl bg-surface-container-low/40 border border-edge text-center space-y-2">
               <UserCheck className="w-8 h-8 text-slate-500 mx-auto" />
@@ -254,13 +317,15 @@ export function AdminUserManagementSection({
                 .join("")
                 .toUpperCase();
 
+              const gradeLabel = formatGradeGen(u.classGrade);
+
               return (
                 <div
                   key={u.id}
-                  className="p-4 rounded-2xl bg-surface-container-low/70 border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all"
+                  className="p-4 rounded-2xl bg-surface-container-low/70 border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all hover:border-slate-600/50"
                 >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-11 h-11 rounded-full bg-slate-900 border border-edge overflow-hidden shrink-0 flex items-center justify-center">
+                  <div className="flex items-start gap-3.5 min-w-0">
+                    <div className="w-11 h-11 rounded-full bg-slate-900 border border-edge overflow-hidden shrink-0 flex items-center justify-center mt-0.5">
                       {u.image ? (
                         <Image
                           src={u.image}
@@ -276,7 +341,7 @@ export function AdminUserManagementSection({
                         </span>
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-semibold text-ink truncate">
                           {u.name}
@@ -290,46 +355,88 @@ export function AdminUserManagementSection({
                         </span>
                         {u.mainDivision && (
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
                               getDivisionMeta(u.mainDivision).style
                             }`}
                           >
                             {getDivisionMeta(u.mainDivision).label}
                           </span>
                         )}
+                        {gradeLabel && (
+                          <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container text-ink-muted border border-edge">
+                            {gradeLabel}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-400 truncate mt-1">
+
+                      <p className="text-xs text-slate-400 truncate">
                         {u.email}
                       </p>
+
+                      {/* Info Kontak & Asal / Tujuan */}
+                      <div className="flex items-center gap-3 text-xs text-ink-muted pt-0.5 flex-wrap">
+                        {u.noWhatsapp && (
+                          <a
+                            href={`https://wa.me/${u.noWhatsapp.replace(/\D/g, "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-emerald-500 hover:text-emerald-400 transition-colors font-medium"
+                            title="Buka percakapan WhatsApp"
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                            <span>{u.noWhatsapp}</span>
+                          </a>
+                        )}
+
+                        {u.asalTujuan && (
+                          <span className="inline-flex items-center gap-1 text-sky-400 font-medium">
+                            <Compass className="w-3.5 h-3.5" />
+                            <span>{u.asalTujuan}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Action Buttons for Role Promotion */}
-                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                  {/* Action Buttons for Role Promotion & Assignment */}
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto flex-wrap">
+                    {/* Tombol Atur Gen & Divisi */}
+                    <button
+                      type="button"
+                      disabled={isProcessing}
+                      onClick={() => openAssignModal(u)}
+                      className="h-10 min-h-10 px-3 rounded-xl border border-edge bg-surface hover:bg-surface-container text-ink text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="Atur Divisi & Angkatan Akun"
+                    >
+                      <Settings2 className="w-3.5 h-3.5 text-primary" />
+                      <span>Atur Divisi/Gen</span>
+                    </button>
+
                     {u.role === Role.GUEST ? (
                       <>
                         <button
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handlePromote(u.id, Role.MEMBER)}
-                          className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="h-10 min-h-10 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         >
                           {isProcessing ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           ) : (
                             <UserCheck className="w-3.5 h-3.5" />
                           )}
-                          <span>Setujui sebagai Member</span>
+                          <span>Setujui Member</span>
                         </button>
 
                         <button
                           type="button"
                           disabled={isProcessing}
                           onClick={() => handlePromote(u.id, Role.BLOCKED)}
-                          className="h-11 min-h-11 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="h-10 min-h-10 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          title="Blokir akun dari sistem"
                         >
                           <Ban className="w-3.5 h-3.5" />
-                          <span>Blokir Akses</span>
+                          <span>Blokir</span>
                         </button>
                       </>
                     ) : (
@@ -339,7 +446,7 @@ export function AdminUserManagementSection({
                         onChange={(e) =>
                           handlePromote(u.id, e.target.value as Role)
                         }
-                        className="h-11 min-h-11 px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-hidden focus:ring-2 focus:ring-primary/30 cursor-pointer"
+                        className="h-10 min-h-10 px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-hidden focus:ring-2 focus:ring-primary/30 cursor-pointer"
                       >
                         <option value={Role.MEMBER}>Set: Member</option>
                         <option value={Role.KOLABORATOR}>Set: Kolaborator</option>
@@ -359,6 +466,92 @@ export function AdminUserManagementSection({
           )}
         </div>
       </div>
+
+      {/* Modal: Atur Gen & Divisi Pengguna */}
+      {assigningUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-sm rounded-2xl bg-card border border-edge p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-edge">
+              <div>
+                <h4 className="text-sm font-bold text-ink">
+                  Atur Penugasan Akun
+                </h4>
+                <p className="text-xs text-ink-muted truncate max-w-60">
+                  {assigningUser.name}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAssigningUser(null)}
+                className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {/* Dropdown Divisi */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-ink">
+                  Divisi Organisasi
+                </label>
+                <select
+                  value={selectedDivisi}
+                  onChange={(e) => setSelectedDivisi(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+                >
+                  <option value="NONE">Tanpa Divisi (Kolaborator / Tamu)</option>
+                  <option value={Division.PROGRAMMING}>Programming</option>
+                  <option value={Division.TECHNOPRENEURSHIP}>Technopreneurship</option>
+                  <option value={Division.DESIGN}>Desain</option>
+                  <option value={Division.PHOTOGRAPHY}>Fotografi</option>
+                  <option value={Division.CINEMATOGRAPHY}>Cinematografi</option>
+                </select>
+              </div>
+
+              {/* Dropdown Kelas & Angkatan */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-ink">
+                  Tingkat Kelas &amp; Generasi (Gen)
+                </label>
+                <select
+                  value={selectedGrade}
+                  onChange={(e) => setSelectedGrade(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+                >
+                  <option value="NONE">Tanpa Kelas (Alumni / Luar Sekolah)</option>
+                  <option value="KELAS_10">Kelas X (Gen 21)</option>
+                  <option value="KELAS_11">Kelas XI (Gen 20)</option>
+                  <option value="KELAS_12">Kelas XII (Gen 19)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setAssigningUser(null)}
+                className="flex-1 h-11 min-h-11 rounded-xl border border-edge text-xs font-semibold text-ink hover:bg-surface-container transition-all cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={handleSaveAssignment}
+                className="flex-1 h-11 min-h-11 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Check className="w-4 h-4" />
+                )}
+                <span>Simpan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

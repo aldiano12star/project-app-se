@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { signIn } from "@/auth";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, MessageCircle } from "lucide-react";
 
 interface LoginPageProps {
   searchParams?: Promise<{
@@ -11,6 +11,12 @@ interface LoginPageProps {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const errorType = resolvedSearchParams?.error;
+
+  const adminWa = process.env.NEXT_PUBLIC_ADMIN_WA || "6281234567890";
+  const helpMessage = encodeURIComponent(
+    "Halo Admin SE-Core, saya butuh bantuan terkait akses login ke aplikasi."
+  );
+  const waHelpUrl = `https://wa.me/${adminWa}?text=${helpMessage}`;
 
   return (
     <main className="app-shell flex min-h-screen flex-col justify-center px-6 py-12">
@@ -57,7 +63,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         )}
 
         {/* Login Action via Server Action */}
-        <div className="mt-6">
+        <div className="mt-6 space-y-3">
           <form
             action={async () => {
               "use server";
@@ -91,9 +97,22 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </form>
 
           {/* Helper Text Resmi Single-Sign-On */}
-          <p className="mt-3 text-xs text-ink-muted">
+          <p className="text-xs text-ink-muted">
             Gunakan Akun Google Anda untuk masuk atau mendaftar secara otomatis.
           </p>
+
+          {/* Login Assistance Button (Mitigasi Lupa Akses) */}
+          <div className="pt-2">
+            <a
+              href={waHelpUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-11 min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-edge bg-surface-container-low hover:bg-surface hover:border-emerald-500/40 text-xs font-semibold text-ink transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-500" />
+              <span>Butuh Bantuan Login? Hubungi Admin</span>
+            </a>
+          </div>
         </div>
 
         <p className="mt-5 pt-4 border-t border-edge text-xs text-ink-muted">
