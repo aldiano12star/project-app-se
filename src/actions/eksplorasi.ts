@@ -213,7 +213,18 @@ export async function updateShowcaseProject(
   input: UpdateShowcaseInput
 ): Promise<ActionResponse<{ id: string }>> {
   try {
-    const user = await assertAuthenticated();
+    const sessionUser = await assertAuthenticated();
+    const dbUser = await prisma.user.findUnique({
+      where: { id: sessionUser.id },
+      select: { id: true, role: true },
+    });
+
+    if (!dbUser) {
+      return {
+        success: false,
+        message: "Sesi tidak valid atau pengguna tidak ditemukan.",
+      };
+    }
 
     if (!input.id) {
       return {
@@ -225,7 +236,7 @@ export async function updateShowcaseProject(
     if (!input.title || input.title.trim().length < 3) {
       return {
         success: false,
-        message: "Judul karya proyek minimal 3 karakter.",
+        message: "Judul karya minimal 3 karakter.",
       };
     }
 
@@ -248,8 +259,8 @@ export async function updateShowcaseProject(
       };
     }
 
-    const isAuthor = existingProject.authorId === user.id;
-    const isPrivileged = user.role === Role.ADMIN || user.role === Role.OPERATOR;
+    const isAuthor = existingProject.authorId === dbUser.id;
+    const isPrivileged = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
     if (!isAuthor && !isPrivileged) {
       return {
@@ -279,14 +290,16 @@ export async function updateShowcaseProject(
           title: input.title.trim(),
           description: input.description.trim(),
           category: input.category || "PROGRAMMING",
-          demoUrl: input.demoUrl !== undefined ? input.demoUrl.trim() || null : undefined,
-          githubUrl: input.githubUrl !== undefined ? input.githubUrl.trim() || null : undefined,
-          imageUrl: input.imageUrl !== undefined ? input.imageUrl.trim() || null : undefined,
-          contributors: shouldUpdateContributors
+          demoUrl: input.demoUrl ? input.demoUrl.trim() : null,
+          githubUrl: input.githubUrl ? input.githubUrl.trim() : null,
+          imageUrl: input.imageUrl ? input.imageUrl.trim() : null,
+          ...(shouldUpdateContributors
             ? {
-                set: uniqueContributorIds.map((id) => ({ id })),
+                contributors: {
+                  set: uniqueContributorIds.map((id) => ({ id })),
+                },
               }
-            : undefined,
+            : {}),
         },
       });
 

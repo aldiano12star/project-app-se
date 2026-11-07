@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Trophy,
   Calendar,
@@ -168,6 +169,8 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
     },
   ];
 
+  const cleanPeriodName = entry.periodName.replace(/\s*\(Gen\s*\d+\)/i, "").trim();
+
   return (
     <div
       className="relative rounded-3xl bg-[#18181B] border border-[#27272A] overflow-hidden shadow-2xl transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
@@ -185,265 +188,276 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
         </div>
       </div>
 
-      {/* ── FRAME CONTENT ── */}
-      <div className="p-5 sm:p-8 space-y-6">
-        {/* Frame Title & Period Meta */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27272A] pb-5">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
-                FRAME #{String(entry.generationYear).padStart(2, "0")}
-              </span>
-              <span className="text-xs text-[#71717A] font-mono">
-                Arsip: {new Date(entry.archivedAt).toLocaleDateString("id-ID", { year: "numeric", month: "long" })}
-              </span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F5] tracking-tight">
-              {entry.periodName}
-            </h3>
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono">
-            <div className="px-3 py-1 text-center">
-              <span className="text-[10px] text-[#71717A] block font-sans">Rapat</span>
-              <strong className="text-[#F4F4F5]">{entry.totalMeetings} Sesi</strong>
-            </div>
-            <div className="w-[1px] h-6 bg-[#27272A]" />
-            <div className="px-3 py-1 text-center">
-              <span className="text-[10px] text-[#71717A] block font-sans">Kas Akhir</span>
-              <strong className="text-emerald-400">
-                Rp {entry.closingCashBalance.toLocaleString("id-ID")}
-              </strong>
-            </div>
-          </div>
+      {/* ── 35MM FILMSTRIP BODY WITH LATERAL PERFORATIONS ── */}
+      <div className="flex">
+        {/* Left Sprocket Column */}
+        <div className="hidden sm:flex flex-col justify-around py-6 px-1.5 bg-[#121214] border-r border-[#27272A] select-none opacity-40 shrink-0">
+          {[...Array(14)].map((_, i) => (
+            <div
+              key={i}
+              className="w-2 h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1"
+            />
+          ))}
         </div>
 
-        {/* ── 0. HERO BANNER: KELUARGA BESAR PENGURUS ── */}
-        {currentGroupPhoto ? (
-          <div className="relative w-full aspect-[21/9] sm:aspect-[24/9] rounded-2xl overflow-hidden border border-[#27272A] bg-[#121214] shadow-xl group">
-            <Image
-              src={currentGroupPhoto}
-              alt={`Keluarga Besar ${entry.periodName}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 900px"
-              className="object-cover transition-transform duration-500 group-hover:scale-102"
-              unoptimized={currentGroupPhoto.startsWith("data:")}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-            <div className="absolute bottom-3 sm:bottom-4 left-4 sm:left-6 right-4 sm:right-6 flex items-end justify-between gap-3">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  KELUARGA BESAR ANGKATAN {entry.generationYear}
+        {/* ── FRAME CONTENT ── */}
+        <div className="p-5 sm:p-7 space-y-6 flex-1 min-w-0">
+          {/* Frame Title & Period Meta */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27272A] pb-5">
+            <div className="space-y-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+                  FRAME #{String(entry.generationYear).padStart(2, "0")}
                 </span>
-                <h4 className="text-sm sm:text-base font-extrabold text-white tracking-tight mt-1">
-                  {entry.periodName}
+                <span className="text-xs text-[#71717A] font-mono truncate">
+                  Arsip: {new Date(entry.archivedAt).toLocaleDateString("id-ID", { year: "numeric", month: "long" })}
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F5] tracking-tight truncate">
+                {cleanPeriodName}
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono shrink-0">
+              <div className="px-3 py-1 text-center">
+                <span className="text-[10px] text-[#71717A] block font-sans">Rapat</span>
+                <strong className="text-[#F4F4F5]">{entry.totalMeetings} Sesi</strong>
+              </div>
+              <div className="w-[1px] h-6 bg-[#27272A]" />
+              <div className="px-3 py-1 text-center">
+                <span className="text-[10px] text-[#71717A] block font-sans">Kas Akhir</span>
+                <strong className="text-emerald-400">
+                  Rp {entry.closingCashBalance.toLocaleString("id-ID")}
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          {/* ── 0. HERO BANNER: FOTO KENANGAN PENGURUS ── */}
+          {currentGroupPhoto ? (
+            <div className="relative w-full aspect-[21/9] sm:aspect-[24/9] rounded-2xl overflow-hidden border border-[#27272A] bg-[#121214] shadow-xl group">
+              <Image
+                src={currentGroupPhoto}
+                alt={`Foto Kenangan Pengurus ${cleanPeriodName}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 900px"
+                className="object-cover transition-transform duration-500 group-hover:scale-102"
+                unoptimized={true}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-3 sm:bottom-4 left-4 sm:left-6 right-4 sm:right-6 flex items-end justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                    FOTO KENANGAN PENGURUS
+                  </span>
+                  <h4 className="text-sm sm:text-base font-extrabold text-white tracking-tight mt-1 truncate">
+                    {cleanPeriodName}
+                  </h4>
+                </div>
+
+                {isOperator && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setNewPhotoUrl(currentGroupPhoto || "");
+                      setIsEditingPhoto(true);
+                    }}
+                    className="h-8 px-3 rounded-full bg-black/70 hover:bg-black/90 text-slate-200 hover:text-white border border-white/20 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md shadow-md active:scale-95 shrink-0"
+                  >
+                    <Pencil className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Ganti Foto</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : isOperator ? (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setNewPhotoUrl("");
+                setIsEditingPhoto(true);
+              }}
+              className="border-2 border-dashed border-[#27272A] hover:border-amber-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#121214]/60 hover:bg-[#121214] flex flex-col items-center justify-center gap-2 group"
+            >
+              <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[#F4F4F5]">
+                  Tambahkan Foto Kenangan Pengurus
+                </p>
+                <p className="text-[11px] text-[#71717A] mt-0.5">
+                  Sentuh di sini untuk mengunggah foto dokumentasi kepengurusan periode ini
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {/* ── 1. THE CHAMPIONS (TOP 3 ANGGOTA) ── */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
+                Panggung Kehormatan (Top 3 Champions)
+              </h4>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              {champions.map((champ) => (
+                <div
+                  key={champ.rank}
+                  className={`group relative p-3.5 sm:p-4 rounded-2xl bg-[#121214] border ${champ.borderGlow} transition-all duration-300 ease-out flex flex-col justify-between space-y-3 overflow-hidden min-w-0 w-full`}
+                >
+                  {/* Ambient glow highlight on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                  <div className="flex items-start justify-between gap-2 min-w-0">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className="w-11 h-11 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#F4F4F5] shadow-xs">
+                        {champ.avatar ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={champ.avatar}
+                            alt={champ.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span>{champ.name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
+                          {champ.name}
+                        </h5>
+                        <span className="text-[10px] text-[#A1A1AA] block truncate">
+                          {champ.division || "Anggota"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 whitespace-nowrap ${champ.badgeColor}`}>
+                      {champ.icon}
+                      <span>{champ.label}</span>
+                    </span>
+                  </div>
+
+                  <div className="pt-2 border-t border-[#27272A] flex items-center justify-between text-xs font-mono text-[#A1A1AA]">
+                    <span className="flex items-center gap-1">
+                      <strong className="text-primary font-bold">{champ.points.toLocaleString()}</strong> XP
+                    </span>
+                    <span className="text-[10px] font-sans text-[#71717A] truncate">
+                      {champ.works} Karya Terarsip
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── 2. SEKSI TIM: ACARA TERBAIK & KARYA UNGGULAN ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
+            {/* Top Events */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-sky-400" />
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
+                  3 Acara &amp; Proker Berkesan
                 </h4>
               </div>
 
-              {isOperator && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNewPhotoUrl(currentGroupPhoto || "");
-                    setIsEditingPhoto(true);
-                  }}
-                  className="h-8 px-3 rounded-full bg-black/60 hover:bg-black/90 text-slate-200 hover:text-white border border-white/20 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md shadow-md active:scale-95"
-                >
-                  <Pencil className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Ganti Foto</span>
-                </button>
-              )}
-            </div>
-          </div>
-        ) : isOperator ? (
-          <div
-            onClick={() => {
-              setNewPhotoUrl("");
-              setIsEditingPhoto(true);
-            }}
-            className="border-2 border-dashed border-[#27272A] hover:border-amber-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#121214]/60 hover:bg-[#121214] flex flex-col items-center justify-center gap-2 group"
-          >
-            <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Users className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-[#F4F4F5]">
-                Tambahkan Foto Kenangan Bersama Seluruh Pengurus
-              </p>
-              <p className="text-[11px] text-[#71717A] mt-0.5">
-                Sentuh di sini untuk mengabadikan foto angkatan periode ini (Khusus Operator)
-              </p>
-            </div>
-          </div>
-        ) : null}
+              <div className="space-y-2.5">
+                {events.map((evt, i) => (
+                  <Link
+                    key={i}
+                    href={evt.url || "/acara"}
+                    className="p-3.5 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-primary/50 transition-all flex items-start justify-between gap-3 group cursor-pointer block"
+                  >
+                    <div className="min-w-0 space-y-1 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/40 px-2 py-0.5 rounded-md shrink-0">
+                          #{i + 1}
+                        </span>
+                        <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
+                          {evt.title}
+                        </h5>
+                      </div>
+                      {evt.desc && (
+                        <p className="text-[11px] text-[#A1A1AA] line-clamp-1 leading-relaxed">
+                          {evt.desc}
+                        </p>
+                      )}
+                      {evt.date && (
+                        <span className="text-[10px] text-[#71717A] font-mono block">
+                          📅 {evt.date}
+                        </span>
+                      )}
+                    </div>
 
-        {/* ── 1. THE CHAMPIONS (TOP 3 ANGGOTA) ── */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-amber-400" />
-            <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
-              Panggung Kehormatan (Top 3 Champions)
-            </h4>
-          </div>
+                    <div className="p-2 rounded-xl bg-[#202024] group-hover:bg-primary group-hover:text-white text-[#71717A] border border-[#2C2C30] transition-all shrink-0">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-            {champions.map((champ) => (
-              <div
-                key={champ.rank}
-                className={`group relative p-4 rounded-2xl bg-[#121214] border ${champ.borderGlow} transition-all duration-300 ease-out hover:scale-[1.02] cursor-pointer flex flex-col justify-between space-y-3 overflow-hidden`}
-              >
-                {/* Ambient glow highlight on hover */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            {/* Top Works */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
+                  3 Karya &amp; Showcase Mahakarya
+                </h4>
+              </div>
 
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center font-bold text-lg text-[#F4F4F5] shadow-xs">
-                      {champ.avatar ? (
+              <div className="space-y-2.5">
+                {works.map((wk, i) => (
+                  <Link
+                    key={i}
+                    href={wk.url || `/eksplorasi?q=${encodeURIComponent(wk.title || "")}`}
+                    className="p-3 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-purple-500/50 transition-all flex items-center gap-3 group cursor-pointer block"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center">
+                      {wk.thumb ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={champ.avatar}
-                          alt={champ.name}
+                          src={wk.thumb}
+                          alt={wk.title || "Karya"}
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span>{champ.name.charAt(0)}</span>
+                        <span className="text-base">🎨</span>
                       )}
                     </div>
-                    <div className="min-w-0">
-                      <h5 className="text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
-                        {champ.name}
+
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-purple-400 transition-colors">
+                        {wk.title}
                       </h5>
-                      <span className="text-[11px] text-[#A1A1AA] block truncate">
-                        {champ.division || "Anggota"}
-                      </span>
+                      <p className="text-[11px] text-[#A1A1AA] truncate">
+                        Karya: <strong>{wk.author}</strong> {wk.div ? `• ${wk.div}` : ""}
+                      </p>
                     </div>
-                  </div>
 
-                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border shrink-0 ${champ.badgeColor}`}>
-                    {champ.icon}
-                    <span>{champ.label}</span>
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-[#27272A] flex items-center justify-between text-xs font-mono text-[#A1A1AA]">
-                  <span className="flex items-center gap-1">
-                    <strong className="text-primary font-bold">{champ.points.toLocaleString()}</strong> XP
-                  </span>
-                  <span className="text-[11px] font-sans text-[#71717A]">
-                    {champ.works} Karya Terarsip
-                  </span>
-                </div>
+                    <div className="p-2 rounded-xl bg-[#202024] group-hover:bg-purple-600 group-hover:text-white text-[#71717A] border border-[#2C2C30] transition-all shrink-0">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </div>
+                  </Link>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
-        {/* ── 2. SEKSI TIM: ACARA TERBAIK & KARYA UNGGULAN ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
-          {/* Top Events */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-sky-400" />
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
-                3 Acara &amp; Proker Berkesan
-              </h4>
-            </div>
-
-            <div className="space-y-2.5">
-              {events.map((evt, i) => (
-                <div
-                  key={i}
-                  className="p-3.5 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-[#3F3F46] transition-all flex items-start justify-between gap-3 group"
-                >
-                  <div className="min-w-0 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/40 px-2 py-0.5 rounded-md">
-                        #{i + 1}
-                      </span>
-                      <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate">
-                        {evt.title}
-                      </h5>
-                    </div>
-                    {evt.desc && (
-                      <p className="text-[11px] text-[#A1A1AA] line-clamp-1 leading-relaxed">
-                        {evt.desc}
-                      </p>
-                    )}
-                    {evt.date && (
-                      <span className="text-[10px] text-[#71717A] font-mono block">
-                        📅 {evt.date}
-                      </span>
-                    )}
-                  </div>
-
-                  {evt.url && (
-                    <a
-                      href={evt.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-xl bg-[#202024] hover:bg-primary hover:text-white text-[#71717A] border border-[#2C2C30] transition-all shrink-0 active:scale-95"
-                      title="Buka Folder Drive Acara"
-                    >
-                      <FolderArchive className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Works */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
-                3 Karya &amp; Showcase Mahakarya
-              </h4>
-            </div>
-
-            <div className="space-y-2.5">
-              {works.map((wk, i) => (
-                <div
-                  key={i}
-                  className="p-3 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-[#3F3F46] transition-all flex items-center gap-3 group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center">
-                    {wk.thumb ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={wk.thumb}
-                        alt={wk.title || "Karya"}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-base">🎨</span>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1 space-y-0.5">
-                    <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
-                      {wk.title}
-                    </h5>
-                    <p className="text-[11px] text-[#A1A1AA] truncate">
-                      Karya: <strong>{wk.author}</strong> {wk.div ? `• ${wk.div}` : ""}
-                    </p>
-                  </div>
-
-                  {wk.url && (
-                    <a
-                      href={wk.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-xl bg-[#202024] hover:bg-purple-600 hover:text-white text-[#71717A] border border-[#2C2C30] transition-all shrink-0 active:scale-95"
-                      title="Lihat Karya"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Right Sprocket Column */}
+        <div className="hidden sm:flex flex-col justify-around py-6 px-1.5 bg-[#121214] border-l border-[#27272A] select-none opacity-40 shrink-0">
+          {[...Array(14)].map((_, i) => (
+            <div
+              key={i}
+              className="w-2 h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1"
+            />
+          ))}
         </div>
       </div>
 

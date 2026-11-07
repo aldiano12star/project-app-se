@@ -34,8 +34,8 @@ export default async function HallOfFamePage() {
               <Trophy className="w-3.5 h-3.5" />
               <span>THE TIME CAPSULE</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#121214] text-[#A1A1AA] border border-[#27272A] font-mono">
-              <Film className="w-3.5 h-3.5" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#121214] text-[#A1A1AA] border border-[#27272A] font-mono whitespace-nowrap shrink-0">
+              <Film className="w-3.5 h-3.5 shrink-0" />
               <span>{totalCount} GENERASI</span>
             </span>
           </div>
@@ -55,7 +55,7 @@ export default async function HallOfFamePage() {
         initialEntries={entries as any}
         initialHasMore={hasMore}
         totalCount={totalCount}
-        isOperator={dbUser?.role === "OPERATOR"}
+        isOperator={dbUser?.role === "ADMIN" || dbUser?.role === "OPERATOR"}
       />
     </div>
   );

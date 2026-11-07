@@ -208,9 +208,9 @@ export function CreateProjectModal({
           )}
 
           {/* Judul Proyek */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
-              Judul Karya / Nama Proyek <span className="text-primary">*</span>
+              Judul <span className="text-primary">*</span>
             </label>
             <input
               type="text"
@@ -218,15 +218,15 @@ export function CreateProjectModal({
               placeholder="Contoh: Portal Presensi IoT Saba ExploIT"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
 
           {/* Pilihan Kategori Dropdown (6 Opsi Resmi) */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink flex items-center gap-1">
               <Tag className="h-3.5 w-3.5 text-primary" />
-              <span>Kategori Divisi / Bidang Karya <span className="text-primary">*</span></span>
+              <span>Divisi <span className="text-primary">*</span></span>
             </label>
             <select
               value={formData.category}
@@ -236,7 +236,7 @@ export function CreateProjectModal({
                   category: e.target.value as ShowcaseCategory,
                 })
               }
-              className="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
             >
               <option value="PROGRAMMING">💻 1. Programming &amp; Web</option>
               <option value="TECHNOPRENEUR">💼 2. Technopreneurship</option>
@@ -248,9 +248,9 @@ export function CreateProjectModal({
           </div>
 
           {/* Deskripsi Proyek */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
-              Deskripsi &amp; Teknologi / Alat <span className="text-primary">*</span>
+              Deskripsi <span className="text-primary">*</span>
             </label>
             <textarea
               rows={3}
@@ -372,31 +372,31 @@ export function CreateProjectModal({
 
           {/* Tautan Demo & GitHub */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
                 <ExternalLink className="h-3.5 w-3.5 text-blue-500" />
-                <span>Tautan Demo (Live URL)</span>
+                <span>Demo URL</span>
               </label>
               <input
                 type="url"
                 placeholder="https://..."
                 value={formData.demoUrl}
                 onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
-                className="w-full h-11 min-h-[44px] px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
                 <GitBranch className="h-3.5 w-3.5 text-ink" />
-                <span>Tautan GitHub / Kode</span>
+                <span>Repository</span>
               </label>
               <input
                 type="url"
                 placeholder="https://github.com/..."
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                className="w-full h-11 min-h-[44px] px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
               />
             </div>
           </div>
@@ -405,7 +405,7 @@ export function CreateProjectModal({
           <ImagePickerField
             value={formData.imageUrl}
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-            label="Banner / Thumbnail Karya"
+            label="Banner"
             aspectRatio="video"
             helperText="Unggah foto cover karya dari perangkat (WebP) atau gunakan tautan Google Drive."
           />

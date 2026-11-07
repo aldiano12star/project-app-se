@@ -451,11 +451,13 @@ export function ProjectCard({
         </div>
 
         {/* Modal Edit Karya */}
-        <EditProjectModal
-          isOpen={isEditing}
-          project={project}
-          onClose={() => setIsEditing(false)}
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <EditProjectModal
+            isOpen={isEditing}
+            project={project}
+            onClose={() => setIsEditing(false)}
+          />
+        </div>
       </div>
     </div>
   );

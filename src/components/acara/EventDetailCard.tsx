@@ -21,7 +21,7 @@ import {
   getJakartaDateParts,
   formatEventSchedule,
 } from "@/utils/eventStatus";
-import { TargetAudience } from "@prisma/client";
+import { TargetAudience, AttendanceStatus } from "@prisma/client";
 
 export interface NestedMeetingData {
   id: string;
@@ -33,6 +33,7 @@ export interface NestedMeetingData {
   eventId?: string | null;
   isRead?: boolean;
   isAttended?: boolean;
+  attendanceStatus?: AttendanceStatus | null;
 }
 
 export interface SectionMember {

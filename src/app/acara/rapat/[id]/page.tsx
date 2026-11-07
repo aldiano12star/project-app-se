@@ -8,7 +8,7 @@ import {
 } from "@/components/acara/RapatDetailClientView";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { isUserEligibleForAudience } from "@/utils/audience";
-import { Role, TargetAudience } from "@prisma/client";
+import { Role, TargetAudience, AttendanceStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -194,9 +194,13 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
   );
 
   // Gabungkan seluruh anggota yang berhak dan peserta ad-hoc
+  const isMeetingPast = new Date(dbMeeting.date).getTime() + 2 * 60 * 60 * 1000 < Date.now();
+
   const allTableMembers = [
     ...eligibleUsers.map((user) => {
       const att = attendanceMap.get(user.id);
+      // Auto-Alfa Lazy Evaluation: jika waktu rapat telah selesai dan anggota belum absen, default ke ALPHA
+      const effectiveStatus = att?.status || (isMeetingPast ? AttendanceStatus.ALPHA : null);
       return {
         id: att?.id || `unrecorded-${user.id}`,
         userId: user.id,
@@ -210,7 +214,7 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
           mainDivision: user.mainDivision,
           role: user.role,
         },
-        status: att?.status || null,
+        status: effectiveStatus,
         checkedAt: att?.checkedAt || null,
         isManual: att?.isManual || false,
       };

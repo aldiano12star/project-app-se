@@ -36,14 +36,14 @@ export async function getHallOfFameEntries(page: number = 1, pageSize: number = 
 
 /**
  * Memperbarui Foto Kenangan Bersama Seluruh Pengurus di Hall of Fame
- * Wewenang: Khusus OPERATOR
+ * Wewenang: ADMIN & OPERATOR
  */
 export async function updateHallOfFameGroupPhoto(
   hallOfFameId: string,
   groupPhotoUrl: string
 ) {
   try {
-    await assertRole([Role.OPERATOR]);
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
 
     if (!hallOfFameId) {
       return {

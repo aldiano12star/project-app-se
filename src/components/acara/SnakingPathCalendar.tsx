@@ -20,6 +20,7 @@ import {
   X,
   QrCode,
   Pencil,
+  AlertTriangle,
 } from "lucide-react";
 import {
   getLocalDateString,
@@ -630,10 +631,23 @@ export function SnakingPathCalendar({
                                       {mBadge.label}
                                     </span>
                                   )}
-                                  {meeting.isAttended ? (
+                                  {meeting.attendanceStatus === "HADIR" || (meeting.isAttended && !meeting.attendanceStatus) ? (
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
                                       <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                       <span>Hadir</span>
+                                    </span>
+                                  ) : meeting.attendanceStatus === "ALPHA" ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
+                                      <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" />
+                                      <span>Alfa</span>
+                                    </span>
+                                  ) : meeting.attendanceStatus === "SAKIT" ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                      <span>Sakit</span>
+                                    </span>
+                                  ) : meeting.attendanceStatus === "IZIN" ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900">
+                                      <span>Izin</span>
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-muted border border-edge">

@@ -521,15 +521,17 @@ export function ProjectDetailModal({
         </div>
 
         {/* Modal Edit Karya */}
-        <EditProjectModal
-          isOpen={isEditing}
-          project={project}
-          onClose={() => setIsEditing(false)}
-          onSuccess={() => {
-            setIsEditing(false);
-            onClose();
-          }}
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <EditProjectModal
+            isOpen={isEditing}
+            project={project}
+            onClose={() => setIsEditing(false)}
+            onSuccess={() => {
+              setIsEditing(false);
+              onClose();
+            }}
+          />
+        </div>
       </div>
     </div>
   );

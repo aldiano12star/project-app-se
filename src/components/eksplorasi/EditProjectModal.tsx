@@ -171,27 +171,34 @@ export function EditProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !isLoading) {
+          onClose();
+        }
+      }}
+    >
       <div
-        className="w-full max-w-xl max-h-[90vh] bg-surface-container-high rounded-2xl border border-edge shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="w-full max-w-lg max-h-[90vh] bg-surface-container-high rounded-2xl border border-edge shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Modal */}
-        <div className="px-5 py-4 border-b border-edge flex items-center justify-between shrink-0 bg-surface-container-low">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center">
-              <Pencil className="h-4 w-4" />
+        <div className="px-5 py-3.5 border-b border-edge flex items-center justify-between shrink-0 bg-surface-container-low">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center">
+              <Pencil className="h-3.5 w-3.5" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Edit Karya Showcase</h2>
-              <p className="text-[11px] text-ink-muted">
-                Perbarui detail proyek, tautan kode, banner, dan kontributor tim
-              </p>
+              <h2 className="text-sm font-bold text-ink">Edit Karya</h2>
             </div>
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
             aria-label="Tutup modal"
           >
@@ -200,7 +207,7 @@ export function EditProjectModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
           {errorMessage && (
             <div className="p-3 rounded-xl bg-danger-subtle border border-danger/30 text-xs text-danger font-medium flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
@@ -209,9 +216,9 @@ export function EditProjectModal({
           )}
 
           {/* Judul Proyek */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
-              Judul Karya / Nama Proyek <span className="text-primary">*</span>
+              Judul <span className="text-primary">*</span>
             </label>
             <input
               type="text"
@@ -219,16 +226,16 @@ export function EditProjectModal({
               placeholder="Contoh: Portal Presensi IoT Saba ExploIT"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
           </div>
 
           {/* Kategori Divisi */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink flex items-center gap-1">
               <Tag className="h-3.5 w-3.5 text-primary" />
               <span>
-                Kategori Divisi / Bidang Karya <span className="text-primary">*</span>
+                Divisi <span className="text-primary">*</span>
               </span>
             </label>
             <select
@@ -239,7 +246,7 @@ export function EditProjectModal({
                   category: e.target.value as ShowcaseCategory,
                 })
               }
-              className="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
             >
               <option value="PROGRAMMING">Programming &amp; Web Development</option>
               <option value="TECHNOPRENEUR">Technopreneur &amp; Bisnis Digital</option>
@@ -251,10 +258,9 @@ export function EditProjectModal({
           </div>
 
           {/* Deskripsi Karya */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
-              Deskripsi Proyek &amp; Penjelasan Singkat{" "}
-              <span className="text-primary">*</span>
+              Deskripsi <span className="text-primary">*</span>
             </label>
             <textarea
               required
@@ -273,7 +279,7 @@ export function EditProjectModal({
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
                 <Users className="h-3.5 w-3.5 text-purple-400" />
-                <span>Kontributor Tim ({selectedMembers.length}/10 Anggota)</span>
+                <span>Kontributor Tim ({selectedMembers.length}/10)</span>
               </label>
               <span className="text-[10px] text-purple-400 font-semibold font-mono">
                 +50 XP untuk anggota baru
@@ -319,7 +325,7 @@ export function EditProjectModal({
                       setMemberSearch(e.target.value);
                       setIsDropdownOpen(true);
                     }}
-                    className="w-full h-11 min-h-[44px] pl-9 pr-8 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                    className="w-full h-11 min-h-11 pl-9 pr-8 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
                   />
                   {memberSearch && (
                     <button
@@ -360,24 +366,24 @@ export function EditProjectModal({
 
           {/* Tautan Demo & GitHub */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
                 <ExternalLink className="h-3.5 w-3.5 text-blue-500" />
-                <span>Tautan Demo (Live URL)</span>
+                <span>Demo URL</span>
               </label>
               <input
                 type="url"
                 placeholder="https://..."
                 value={formData.demoUrl}
                 onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
-                className="w-full h-11 min-h-[44px] px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
                 <GitBranch className="h-3.5 w-3.5 text-ink" />
-                <span>Tautan GitHub / Kode</span>
+                <span>Repository</span>
               </label>
               <input
                 type="url"
@@ -386,7 +392,7 @@ export function EditProjectModal({
                 onChange={(e) =>
                   setFormData({ ...formData, githubUrl: e.target.value })
                 }
-                className="w-full h-11 min-h-[44px] px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
               />
             </div>
           </div>
@@ -395,7 +401,7 @@ export function EditProjectModal({
           <ImagePickerField
             value={formData.imageUrl}
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-            label="Banner / Thumbnail Karya"
+            label="Banner"
             aspectRatio="video"
             helperText="Unggah foto cover karya dari perangkat (WebP) atau gunakan tautan Google Drive."
           />
@@ -404,21 +410,24 @@ export function EditProjectModal({
           <div className="pt-2 flex items-center justify-end gap-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
               disabled={isLoading}
-              className="px-4 py-2.5 rounded-xl border border-edge text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50 min-h-[44px]"
+              className="px-4 py-2.5 rounded-xl border border-edge text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50 min-h-11"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-[44px]"
+              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Menyimpan Perubahan...</span>
+                  <span>Menyimpan...</span>
                 </>
               ) : (
                 <>

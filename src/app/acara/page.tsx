@@ -6,7 +6,7 @@ import { AcaraClientView } from "@/components/acara/AcaraClientView";
 import { EventDetailData, NestedMeetingData } from "@/components/acara/EventDetailCard";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { buildAudienceFilter } from "@/utils/audience";
-import { Role } from "@prisma/client";
+import { Role, AttendanceStatus } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -198,17 +198,23 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
     targetUserIds: ev.targetUsers.map((u) => u.id),
     driveUrl: ev.driveUrl,
     notulensiText: ev.notulensiText,
-    meetings: ev.meetings.map((m) => ({
-      id: m.id,
-      title: m.title,
-      date: m.date,
-      targetAudience: m.targetAudience,
-      targetUserIds: m.targetUsers.map((u) => u.id),
-      notes: m.notes,
-      eventId: m.eventId,
-      isRead: m.readLogs.length > 0,
-      isAttended: m.attendances.length > 0,
-    })),
+    meetings: ev.meetings.map((m) => {
+      const userAtt = m.attendances[0];
+      const isPast = new Date(m.date).getTime() + 2 * 60 * 60 * 1000 < Date.now();
+      const status = userAtt ? userAtt.status : isPast ? AttendanceStatus.ALPHA : null;
+      return {
+        id: m.id,
+        title: m.title,
+        date: m.date,
+        targetAudience: m.targetAudience,
+        targetUserIds: m.targetUsers.map((u) => u.id),
+        notes: m.notes,
+        eventId: m.eventId,
+        isRead: m.readLogs.length > 0,
+        isAttended: userAtt?.status === AttendanceStatus.HADIR,
+        attendanceStatus: status,
+      };
+    }),
     sections: ev.sections.map((sec) => ({
       id: sec.id,
       name: sec.name,
@@ -232,17 +238,23 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
   }));
 
   // Format rapat mandiri (Independent Meetings)
-  const independentMeetings: NestedMeetingData[] = dbIndependentMeetings.map((m) => ({
-    id: m.id,
-    title: m.title,
-    date: m.date,
-    targetAudience: m.targetAudience,
-    targetUserIds: m.targetUsers.map((u) => u.id),
-    notes: m.notes,
-    eventId: null,
-    isRead: m.readLogs.length > 0,
-    isAttended: m.attendances.length > 0,
-  }));
+  const independentMeetings: NestedMeetingData[] = dbIndependentMeetings.map((m) => {
+    const userAtt = m.attendances[0];
+    const isPast = new Date(m.date).getTime() + 2 * 60 * 60 * 1000 < Date.now();
+    const status = userAtt ? userAtt.status : isPast ? AttendanceStatus.ALPHA : null;
+    return {
+      id: m.id,
+      title: m.title,
+      date: m.date,
+      targetAudience: m.targetAudience,
+      targetUserIds: m.targetUsers.map((u) => u.id),
+      notes: m.notes,
+      eventId: null,
+      isRead: m.readLogs.length > 0,
+      isAttended: userAtt?.status === AttendanceStatus.HADIR,
+      attendanceStatus: status,
+    };
+  });
 
   const formattedMeeting = latestMeeting
     ? {
