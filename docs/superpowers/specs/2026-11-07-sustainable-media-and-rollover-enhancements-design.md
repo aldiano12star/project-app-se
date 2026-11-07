@@ -1,29 +1,41 @@
-# Arsitektur & Desain Berkelanjutan: Media Storage, Edit Karya, & Hall of Fame Enhancements
+# Arsitektur & Desain Berkelanjutan: Media Storage (Cloudinary 25 GB), Edit Karya, & Hall of Fame Enhancements
 
 **Tanggal:** 7 November 2026  
-**Status:** FINAL DRAFT (Terverifikasi oleh Builder Check & Siap Eksekusi)  
+**Status:** REVISED & APPROVED (Cloudinary 25 GB + Google Drive Smart Converter + Fallback Lokal)  
 **Dokumen Penentu:** Single Source of Truth untuk implementasi keberlanjutan aplikasi Saba ExploIT antar-generasi.
 
 ---
 
 ## 1. Latar Belakang & Prinsip Keberlanjutan ("Turun-Temurun")
 
-Aplikasi **Saba ExploIT Super App** dirancang untuk digunakan secara berkelanjutan lintas periode kepengurusan (turun-temurun). Agar sistem tidak rusak atau berhenti berfungsi ketika estafet kepengurusan berganti:
+Aplikasi **Saba ExploIT Super App** dirancang untuk digunakan secara berkelanjutan lintas periode kepengurusan (turun-temurun) dan saat ini dideploy aktif di **Vercel Serverless**.
 
-1. **Anti Single-Person Lock-in**: Sistem tidak boleh bergantung pada akun kartu kredit pribadi pengurus yang suatu saat akan lulus dari sekolah.
-2. **Efisiensi Database Neon (Limit 0.5 GB)**: Database relasional PostgreSQL hanya menyimpan metadata teks dan file gambar yang sudah dikompresi ultra-ringan. 
-3. **Dual-Channel Media Ingestion (Sangat Berkelanjutan)**:
-   - **Saluran A (Google Drive Smart Converter - Nol Biaya & Awet Selamanya)**: Organisasi sekolah selalu memiliki Google Drive bersama (15 GB gratis). Pengguna cukup menempelkan link file gambar Google Drive (`drive.google.com/file/d/...`), sistem otomatis mengekstrak File ID dan mengubahnya menjadi link CDN Google langsung (`https://lh3.googleusercontent.com/d/...`) yang sudah terdaftar di `next.config.ts`.
-   - **Saluran B (Upload dari Galeri/Penyimpanan Perangkat)**: Dilengkapi kompresor otomatis di sisi klien (Canvas $\to$ WebP kualitas 75%, lebar maks 1080px, ukuran file dipangkas hingga 95% menjadi rata-rata 30–45 KB). Dengan ukuran hanya 30 KB per foto, 100 karya hanya memakan 3–4 MB dari total kuota 500 MB Neon (kurang dari 1% setelah bertahun-tahun dipakai). Ini bekerja 100% di Vercel Serverless tanpa error read-only filesystem dan tanpa perlu kredensial storage berbayar.
-4. **Resiliensi Rollover & Arsip Generasi Abadi**: Memperbaiki sinkronisasi data kurasi karya antara modul Eksplorasi dengan Rollover Wizard, menambahkan foto kenangan angkatan (*Generation Group Photo*), dan memberikan hak penyuntingan karya bagi penciptanya.
+### Prinsip Utama:
+
+1. **Cloud Media Storage Raksasa & Gratis (Cloudinary 25 GB)**:
+   - Berbeda dari Vercel Blob yang hanya memberikan 250 MB gratis, **Cloudinary menyediakan kuota gratis hingga 25 GB / bulan**.
+   - Ini mampu menampung puluhan ribu foto dokumentasi dan karya siswa selama bertahun-tahun tanpa mengeluarkan biaya sepeser pun.
+   - Unggahan dilakukan secara aman melalui Server Route Handler (`/api/upload`) dengan paket `cloudinary`.
+   - Domain `res.cloudinary.com` ditambahkan ke `images.remotePatterns` di `next.config.ts`.
+2. **Resiliensi Tanpa Hambatan (Smart Fallback)**:
+   - Jika kredensial `CLOUDINARY_URL` belum diisi di berkas `.env` lokal, sistem otomatis menggunakan *fallback* Base64 WebP terkompresi (< 35 KB) sehingga pengujian fitur lokal tidak akan pernah macet atau crash.
+3. **Saluran Google Drive Smart Converter (Nol Biaya Cadangan)**:
+   - Konverter instan tautan berbagi Google Drive (`drive.google.com/file/d/...`) menjadi tautan gambar langsung via Google CDN (`lh3.googleusercontent.com/d/...`).
+4. **Efisiensi Klien (Canvas WebP Compression)**:
+   - Semua foto yang dipilih dari galeri HP/laptop otomatis dikompresi di browser (dimensi 1080px, kualitas 0.75, format WebP) sebelum dikirim ke server. Ini membuat waktu unggah sangat cepat (hanya beberapa milidetik) bahkan pada jaringan seluler sekolah yang lambat.
+5. **Resiliensi Rollover & Arsip Generasi Abadi**:
+   - Memperbaiki sinkronisasi data kurasi karya antara modul Eksplorasi (`ShowcaseProject`) dengan Rollover Wizard.
+   - Menambahkan foto kenangan angkatan (*Generation Group Photo*) di Hall of Fame.
+   - Memberikan hak penyuntingan karya bagi penciptanya dan pengurus.
 
 ---
 
-## 2. Penyelesaian Isu & Keputusan Arsitektural
+## 2. Rincian Teknis Implementasi
 
 ### A. Masalah 1: Karya Kosong di Rollover Wizard
+
 - **Penyebab:** Pada `src/actions/rollover.ts`, fungsi kurasi `getRolloverCuratedData()` dan transaksi `executeRolloverWithCuratedData()` memanggil model usang `prisma.showcase.findMany()`, padahal seluruh karya aktif yang dibuat pengguna di modul Eksplorasi (`src/actions/eksplorasi.ts`) tersimpan pada model `prisma.showcaseProject`.
-- **Solusi:** Ganti pemanggilan ke `prisma.showcaseProject` dengan memetakan kolom:
+- **Solusi:** Ganti pemanggilan ke `prisma.showcaseProject` dengan memetakan:
   - `id` $\leftarrow$ `project.id`
   - `title` $\leftarrow$ `project.title`
   - `thumbnailUrl` $\leftarrow$ `project.imageUrl || ""`
@@ -33,6 +45,7 @@ Aplikasi **Saba ExploIT Super App** dirancang untuk digunakan secara berkelanjut
 - Urutkan kurasi otomatis berdasarkan `likesCount` tertinggi dan tanggal pembuatan terbaru.
 
 ### B. Masalah 2: Fitur Edit Karya (Showcase Project)
+
 - **Kebutuhan:** Pengguna yang membuat karya (atau Pengurus berwenang: Admin/Operator) dapat memperbarui judul, deskripsi, tautan repositori GitHub, URL demo, kategori divisi, dan foto banner karya yang telah diunggah.
 - **Solusi & Aturan Poin (XP):**
   - Server Action `updateShowcaseProject(id: string, input: UpdateShowcaseInput)` di `src/actions/eksplorasi.ts`.
@@ -40,13 +53,22 @@ Aplikasi **Saba ExploIT Super App** dirancang untuk digunakan secara berkelanjut
   - **Aturan Poin Anti-Farming**: Edit data deskripsi/link tidak mengubah poin. Jika pengurus menambahkan kontributor baru yang belum pernah menerima XP untuk karya tersebut, barulah kontributor baru tersebut mendapatkan reward partisipasi +50 XP. Anggota tim yang dipertahankan tidak akan mendapatkan poin ganda.
   - UI modal `EditProjectModal` yang responsif, dipicu dari tombol "Edit" pada `ProjectCard` dan `ProjectDetailModal`.
 
-### C. Masalah 3: Komponen Media Picker Berkelanjutan (`ImagePickerField`)
-- Komponen input gambar cerdas yang menyediakan tab:
-  1. **Tab "Pilih dari Galeri/Perangkat"**: Memilih file foto langsung dari galeri HP atau folder laptop, menampilkan pratinjau, lalu mengompresnya di latar belakang dengan WebP Canvas (30–45 KB).
-  2. **Tab "Google Drive / Link Gambar"**: Memungkinkan menempelkan tautan Google Drive atau web image, dengan konversi otomatis instan ke direct CDN `lh3.googleusercontent.com`.
-- Dilengkapi tombol hapus/reset dan indikator status kompresi yang ramah pengguna.
+### C. Masalah 3: Arsitektur Media Storage (Cloudinary + Google Drive + Kompresi Klien)
+
+- **Instalasi:** `cloudinary` (SDK resmi Node.js)
+- **Konfigurasi `next.config.ts`**: Menambahkan domain `res.cloudinary.com` ke daftar `images.remotePatterns`.
+- **Route Handler `/api/upload/route.ts`**:
+  - Menerima `POST` dengan `FormData` (file gambar terkompresi).
+  - Validasi otentikasi sesi (hanya anggota terdaftar yang dapat mengunggah).
+  - Jika `process.env.CLOUDINARY_URL` tersedia: Unggah buffer gambar ke Cloudinary folder `se_app/uploads` dan kembalikan URL HTTPS publik (`secure_url`).
+  - Jika `CLOUDINARY_URL` belum tersedia: Kembalikan Data URL WebP terkompresi (< 35 KB) sebagai *graceful fallback*.
+- **Komponen UI `ImagePickerField`**:
+  - Tab 1: "Pilih dari Galeri/Perangkat" dengan kompresi otomatis Canvas $\to$ WebP (lebar maks 1080px, kualitas 0.75) dan upload ke `/api/upload`.
+  - Tab 2: "Tautan Google Drive / Web" dengan parser otomatis ID Google Drive ke CDN `lh3.googleusercontent.com`.
+  - Pratinjau langsung 16:9, indikator proses unggah, dan tombol hapus/reset.
 
 ### D. Masalah 4: Foto Kenangan Bersama Pengurus di Hall of Fame
+
 - **Skema Database (`prisma/schema.prisma`)**:
   - Tambahkan kolom opsional `groupPhotoUrl String? @db.Text` pada model `HallOfFame`.
 - **Sifat Pengisian**:
@@ -57,31 +79,13 @@ Aplikasi **Saba ExploIT Super App** dirancang untuk digunakan secara berkelanjut
 
 ---
 
-## 3. Rencana Komponen & File yang Terlibat
+## 3. Instruksi Setup Cloudinary untuk Pengurus / Developer
 
-1. `prisma/schema.prisma`:
-   - Tambahkan `groupPhotoUrl String? @db.Text` ke `model HallOfFame`.
-   - Jalankan `npm run db:push` dan `npx prisma generate`.
-2. `src/lib/image-compression.ts`:
-   - Fungsi kompresi gambar berbasis browser Canvas $\to$ WebP (dimensi maksimal 1280px, kualitas 0.75).
-3. `src/lib/drive-parser.ts`:
-   - Fungsi parser link Google Drive $\to$ `https://lh3.googleusercontent.com/d/<ID>`.
-4. `src/components/ui/ImagePickerField.tsx`:
-   - Komponen UI reusable untuk pemilihan foto dari perangkat & link Google Drive.
-5. `src/actions/eksplorasi.ts`:
-   - Tambahkan `updateShowcaseProject` dengan validasi otorisasi dan penyesuaian kontributor.
-6. `src/components/eksplorasi/EditProjectModal.tsx`:
-   - Form modal penyuntingan karya dengan integrasi `ImagePickerField`.
-7. `src/components/eksplorasi/CreateProjectModal.tsx`:
-   - Perbarui form penambahan karya menggunakan `ImagePickerField` menggantikan input teks biasa.
-8. `src/components/eksplorasi/ProjectCard.tsx` & `ProjectDetailModal.tsx`:
-   - Tambahkan tombol "Edit Karya" khusus untuk pemilik atau Admin/Operator.
-9. `src/actions/rollover.ts`:
-   - Perbaiki query kurasi karya dari `prisma.showcase` ke `prisma.showcaseProject`.
-   - Tambahkan penanganan `groupPhotoUrl` pada `executeRolloverWithCuratedData`.
-10. `src/actions/hallOfFame.ts`:
-    - Tambahkan Server Action `updateHallOfFameGroupPhoto` untuk pembaruan foto pengurus pasca-rollover.
-11. `src/components/pengaturan/RolloverWizardModal.tsx`:
-    - Tambahkan input/upload foto bersama pengurus (opsional).
-12. `src/components/hall-of-fame/FilmstripFrame.tsx`:
-    - Render foto bersama pengurus di bagian atas frame dengan gaya sinematik dan tombol edit foto bagi Operator.
+Cukup ikuti langkah singkat ini untuk mengaktifkan Cloudinary 25 GB gratis:
+
+1. Daftar akun gratis di [cloudinary.com](https://cloudinary.com).
+2. Di halaman Dashboard (Programmable Media), salin nilai **API Environment variable**:
+   Format: `CLOUDINARY_URL=cloudinary://<API_KEY>:<API_SECRET>@<CLOUD_NAME>`
+3. Tempelkan baris tersebut ke:
+   - File `.env` lokal untuk pengembangan di komputer.
+   - Dashboard Vercel (Project Settings $\to$ Environment Variables) untuk lingkungan live produksi.
