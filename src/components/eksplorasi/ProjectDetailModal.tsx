@@ -17,11 +17,13 @@ import {
   Palette,
   Camera,
   Film,
+  Pencil,
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import { ProjectCardData } from "./ProjectCard";
 import { toggleLikeProject, deleteShowcaseProject } from "@/actions/eksplorasi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { EditProjectModal } from "./EditProjectModal";
 
 interface ProjectDetailModalProps {
   project: ProjectCardData | null;
@@ -141,6 +143,7 @@ export function ProjectDetailModal({
   const [likesCount, setLikesCount] = useState(project?.likesCount ?? 0);
   const [isLiking, setIsLiking] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, startDeleteTransition] = useTransition();
   const [copied, setCopied] = useState(false);
 
@@ -453,6 +456,19 @@ export function ProjectDetailModal({
               <span>{copied ? "Disalin!" : "Bagikan"}</span>
             </button>
 
+            {/* Tombol Edit Karya */}
+            {canDelete && (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="h-11 min-h-[44px] px-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                title="Edit Informasi Karya"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                <span>Edit</span>
+              </button>
+            )}
+
             {/* Tombol Takedown Hapus */}
             {canDelete && (
               <>
@@ -503,6 +519,17 @@ export function ProjectDetailModal({
             Tutup
           </button>
         </div>
+
+        {/* Modal Edit Karya */}
+        <EditProjectModal
+          isOpen={isEditing}
+          project={project}
+          onClose={() => setIsEditing(false)}
+          onSuccess={() => {
+            setIsEditing(false);
+            onClose();
+          }}
+        />
       </div>
     </div>
   );

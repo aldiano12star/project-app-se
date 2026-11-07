@@ -21,6 +21,7 @@ import {
   MemberOption,
 } from "@/actions/eksplorasi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { ImagePickerField } from "@/components/ui/ImagePickerField";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -400,20 +401,14 @@ export function CreateProjectModal({
             </div>
           </div>
 
-          {/* Tautan Banner / Gambar */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-ink flex items-center gap-1">
-              <ImageIcon className="h-3.5 w-3.5 text-emerald-500" />
-              <span>Tautan Thumbnail Banner (Opsional)</span>
-            </label>
-            <input
-              type="url"
-              placeholder="https://images.unsplash.com/... atau URL gambar"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full h-11 min-h-[44px] px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
-            />
-          </div>
+          {/* Foto Banner / Thumbnail Karya */}
+          <ImagePickerField
+            value={formData.imageUrl}
+            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+            label="Banner / Thumbnail Karya"
+            aspectRatio="video"
+            helperText="Unggah foto cover karya dari perangkat (WebP) atau gunakan tautan Google Drive."
+          />
 
           {/* Action Buttons */}
           <div className="pt-2 flex items-center justify-end gap-2">

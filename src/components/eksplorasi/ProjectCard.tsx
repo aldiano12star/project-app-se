@@ -16,6 +16,7 @@ import {
   Users,
   Trash2,
   Loader2,
+  Pencil,
 } from "lucide-react";
 import { Role } from "@prisma/client";
 import {
@@ -23,6 +24,7 @@ import {
   deleteShowcaseProject,
   ShowcaseCategory,
 } from "@/actions/eksplorasi";
+import { EditProjectModal } from "./EditProjectModal";
 
 export interface ContributorData {
   id: string;
@@ -166,6 +168,7 @@ export function ProjectCard({
   const [likesCount, setLikesCount] = useState(project.likesCount);
   const [isLiking, setIsLiking] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, startDeleteTransition] = useTransition();
 
   const categoryMeta =
@@ -261,12 +264,24 @@ export function ProjectCard({
           </div>
         )}
 
-        {/* Tombol Takedown / Hapus Karya Khusus Author / Admin / Operator */}
+        {/* Tombol Aksi Edit & Hapus Karya Khusus Author / Admin / Operator */}
         {canDelete && (
           <div
-            className="absolute top-2.5 right-2.5 z-10"
+            className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5"
             onClick={(e) => e.stopPropagation()}
           >
+            {!isConfirmingDelete && (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="h-8 px-2.5 rounded-full bg-black/60 hover:bg-amber-950/80 text-slate-300 hover:text-amber-400 border border-slate-700 hover:border-amber-500/40 flex items-center gap-1 text-[11px] font-semibold transition-all cursor-pointer backdrop-blur-xs shadow-md"
+                title="Edit Detail Karya"
+              >
+                <Pencil className="h-3 w-3" />
+                <span>Edit</span>
+              </button>
+            )}
+
             {isConfirmingDelete ? (
               <div className="flex items-center gap-1 bg-black/85 backdrop-blur-md p-1.5 rounded-xl border border-red-500/40 animate-in fade-in">
                 <button
@@ -434,6 +449,13 @@ export function ProjectCard({
             </a>
           )}
         </div>
+
+        {/* Modal Edit Karya */}
+        <EditProjectModal
+          isOpen={isEditing}
+          project={project}
+          onClose={() => setIsEditing(false)}
+        />
       </div>
     </div>
   );

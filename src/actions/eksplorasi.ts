@@ -35,6 +35,17 @@ export interface SubmitShowcaseInput {
   contributorIds?: string[];
 }
 
+export interface UpdateShowcaseInput {
+  id: string;
+  title: string;
+  description: string;
+  category: ShowcaseCategory;
+  demoUrl?: string;
+  githubUrl?: string;
+  imageUrl?: string;
+  contributorIds?: string[];
+}
+
 export interface SubmitWikiInput {
   id?: string;
   title: string;
@@ -186,6 +197,122 @@ export async function submitShowcaseProject(
     };
   } catch (error) {
     console.error("Gagal mempublikasikan karya:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Terjadi kesalahan internal server.",
+    };
+  }
+}
+
+/**
+ * Memperbarui / Mengedit Proyek Karya Showcase yang Ada
+ * Wewenang: Author karya ATAU Pengurus (ADMIN/OPERATOR)
+ */
+export async function updateShowcaseProject(
+  input: UpdateShowcaseInput
+): Promise<ActionResponse<{ id: string }>> {
+  try {
+    const user = await assertAuthenticated();
+
+    if (!input.id) {
+      return {
+        success: false,
+        message: "ID karya tidak valid.",
+      };
+    }
+
+    if (!input.title || input.title.trim().length < 3) {
+      return {
+        success: false,
+        message: "Judul karya proyek minimal 3 karakter.",
+      };
+    }
+
+    if (!input.description || input.description.trim().length < 3) {
+      return {
+        success: false,
+        message: "Deskripsi karya wajib diisi minimal 3 karakter.",
+      };
+    }
+
+    const existingProject = await prisma.showcaseProject.findUnique({
+      where: { id: input.id },
+      include: { contributors: { select: { id: true } } },
+    });
+
+    if (!existingProject) {
+      return {
+        success: false,
+        message: "Karya tidak ditemukan atau telah dihapus.",
+      };
+    }
+
+    const isAuthor = existingProject.authorId === user.id;
+    const isPrivileged = user.role === Role.ADMIN || user.role === Role.OPERATOR;
+
+    if (!isAuthor && !isPrivileged) {
+      return {
+        success: false,
+        message: "Akses ditolak: Anda bukan pembuat karya ini.",
+      };
+    }
+
+    // Filter kontributor tim: maks 10 orang unik & bukan author
+    const rawContributorIds = input.contributorIds || [];
+    const uniqueContributorIds = Array.from(
+      new Set(rawContributorIds.filter((id) => id && id !== existingProject.authorId))
+    ).slice(0, 10);
+
+    // Cek kontributor baru yang belum pernah menerima XP untuk karya ini (Anti-farming)
+    const existingContributorIds = existingProject.contributors.map((c) => c.id);
+    const newlyAddedContributors = uniqueContributorIds.filter(
+      (id) => !existingContributorIds.includes(id)
+    );
+
+    // Update karya
+    await prisma.showcaseProject.update({
+      where: { id: input.id },
+      data: {
+        title: input.title.trim(),
+        description: input.description.trim(),
+        category: input.category || "PROGRAMMING",
+        demoUrl: input.demoUrl?.trim() || null,
+        githubUrl: input.githubUrl?.trim() || null,
+        imageUrl: input.imageUrl?.trim() || null,
+        contributors: {
+          set: uniqueContributorIds.map((id) => ({ id })),
+        },
+      },
+    });
+
+    // Berikan reward partisipasi +50 XP HANYA kepada kontributor baru
+    if (newlyAddedContributors.length > 0) {
+      await prisma.user.updateMany({
+        where: { id: { in: newlyAddedContributors } },
+        data: {
+          monthlyPoints: { increment: 50 },
+          totalPoints: { increment: 50 },
+        },
+      });
+    }
+
+    revalidatePath("/eksplorasi");
+    revalidatePath("/dashboard");
+    revalidatePath("/pengaturan");
+    revalidatePath("/hall-of-fame");
+
+    return {
+      success: true,
+      message: `Karya "${input.title}" berhasil diperbarui!${
+        newlyAddedContributors.length > 0
+          ? ` (+50 XP diberikan untuk ${newlyAddedContributors.length} kontributor baru)`
+          : ""
+      }`,
+      data: { id: input.id },
+    };
+  } catch (error) {
+    console.error("Gagal memperbarui karya proyek:", error);
     return {
       success: false,
       message:
