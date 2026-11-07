@@ -258,7 +258,8 @@ export async function updateShowcaseProject(
       };
     }
 
-    // Filter kontributor tim: maks 10 orang unik & bukan author
+    // Filter kontributor tim jika disertakan: maks 10 orang unik & bukan author
+    const shouldUpdateContributors = input.contributorIds !== undefined;
     const rawContributorIds = input.contributorIds || [];
     const uniqueContributorIds = Array.from(
       new Set(rawContributorIds.filter((id) => id && id !== existingProject.authorId))
@@ -266,36 +267,40 @@ export async function updateShowcaseProject(
 
     // Cek kontributor baru yang belum pernah menerima XP untuk karya ini (Anti-farming)
     const existingContributorIds = existingProject.contributors.map((c) => c.id);
-    const newlyAddedContributors = uniqueContributorIds.filter(
-      (id) => !existingContributorIds.includes(id)
-    );
+    const newlyAddedContributors = shouldUpdateContributors
+      ? uniqueContributorIds.filter((id) => !existingContributorIds.includes(id))
+      : [];
 
-    // Update karya
-    await prisma.showcaseProject.update({
-      where: { id: input.id },
-      data: {
-        title: input.title.trim(),
-        description: input.description.trim(),
-        category: input.category || "PROGRAMMING",
-        demoUrl: input.demoUrl?.trim() || null,
-        githubUrl: input.githubUrl?.trim() || null,
-        imageUrl: input.imageUrl?.trim() || null,
-        contributors: {
-          set: uniqueContributorIds.map((id) => ({ id })),
-        },
-      },
-    });
-
-    // Berikan reward partisipasi +50 XP HANYA kepada kontributor baru
-    if (newlyAddedContributors.length > 0) {
-      await prisma.user.updateMany({
-        where: { id: { in: newlyAddedContributors } },
+    // Eksekusi transaksi atomik pembaruan karya dan reward kontributor baru
+    await prisma.$transaction(async (tx) => {
+      await tx.showcaseProject.update({
+        where: { id: input.id },
         data: {
-          monthlyPoints: { increment: 50 },
-          totalPoints: { increment: 50 },
+          title: input.title.trim(),
+          description: input.description.trim(),
+          category: input.category || "PROGRAMMING",
+          demoUrl: input.demoUrl !== undefined ? input.demoUrl.trim() || null : undefined,
+          githubUrl: input.githubUrl !== undefined ? input.githubUrl.trim() || null : undefined,
+          imageUrl: input.imageUrl !== undefined ? input.imageUrl.trim() || null : undefined,
+          contributors: shouldUpdateContributors
+            ? {
+                set: uniqueContributorIds.map((id) => ({ id })),
+              }
+            : undefined,
         },
       });
-    }
+
+      // Berikan reward partisipasi +50 XP HANYA kepada kontributor baru
+      if (newlyAddedContributors.length > 0) {
+        await tx.user.updateMany({
+          where: { id: { in: newlyAddedContributors } },
+          data: {
+            monthlyPoints: { increment: 50 },
+            totalPoints: { increment: 50 },
+          },
+        });
+      }
+    });
 
     revalidatePath("/eksplorasi");
     revalidatePath("/dashboard");

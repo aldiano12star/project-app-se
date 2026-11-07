@@ -29,6 +29,11 @@ export async function handleUploadBuffer(
     );
   }
 
+  // Batas ukuran total 10 MB
+  if (buffer.length > 10 * 1024 * 1024) {
+    throw new Error("Ukuran berkas melebihi batas maksimal 10 MB.");
+  }
+
   // Jika CLOUDINARY_URL disetel, unggah ke Cloudinary
   if (process.env.CLOUDINARY_URL) {
     try {

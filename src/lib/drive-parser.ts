@@ -15,8 +15,8 @@ export function parseGoogleDriveUrl(url: string): string {
     return trimmed;
   }
 
-  // Pola 1: /file/d/<FILE_ID>/...
-  const fileDMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  // Pola 1: /d/<FILE_ID> (mencakup /file/d/..., /file/u/0/d/..., /d/...)
+  const fileDMatch = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (fileDMatch && fileDMatch[1]) {
     return `https://lh3.googleusercontent.com/d/${fileDMatch[1]}`;
   }

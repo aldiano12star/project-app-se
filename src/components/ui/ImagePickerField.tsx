@@ -56,6 +56,11 @@ export function ImagePickerField({
       return;
     }
 
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorMessage("Ukuran berkas melebihi batas maksimal 10 MB. Harap pilih foto lain.");
+      return;
+    }
+
     try {
       setIsCompressing(true);
       // 1. Kompresi ke format WebP ramah bandwidth (< 40 KB)
@@ -181,7 +186,7 @@ export function ImagePickerField({
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover transition-transform group-hover:scale-102 duration-300"
-            unoptimized={value.startsWith("data:")}
+            unoptimized={true}
           />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
             <button

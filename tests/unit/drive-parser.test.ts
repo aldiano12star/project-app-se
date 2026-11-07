@@ -19,6 +19,20 @@ function runTest() {
     throw new Error(`Test 3 Failed: Expected direct URL, got ${result3}`);
   }
 
+  // Multi-login URL (/file/u/0/d/...)
+  const multiLoginSample = "https://drive.google.com/file/u/0/d/multiAccountFileId123/view";
+  const multiLoginResult = parseGoogleDriveUrl(multiLoginSample);
+  if (multiLoginResult !== "https://lh3.googleusercontent.com/d/multiAccountFileId123") {
+    throw new Error(`Test Multi-Login Failed: Expected direct URL, got ${multiLoginResult}`);
+  }
+
+  // Short /d/{id} URL
+  const shortDSample = "https://drive.google.com/d/shortDriveId999";
+  const shortDResult = parseGoogleDriveUrl(shortDSample);
+  if (shortDResult !== "https://lh3.googleusercontent.com/d/shortDriveId999") {
+    throw new Error(`Test Short /d/ Failed: Expected direct URL, got ${shortDResult}`);
+  }
+
   const normalUrl = "https://images.unsplash.com/photo-12345";
   if (parseGoogleDriveUrl(normalUrl) !== normalUrl) {
     throw new Error("Test 4 Failed: Normal URL should remain unchanged");
