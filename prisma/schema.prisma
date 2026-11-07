@@ -561,6 +561,9 @@ model HallOfFame {
   closingCashBalance Int      @default(0)
   archivedAt         DateTime @default(now())
 
+  // Foto Kenangan Bersama Seluruh Pengurus / Angkatan
+  groupPhotoUrl      String?  @db.Text
+
   // --- 1. TOP 3 CHAMPIONS (ANGGOTA BERPRESTASI) ---
   rank1Name          String
   rank1Division      String?

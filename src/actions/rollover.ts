@@ -50,6 +50,7 @@ export interface RolloverWizardInput {
   confirmationText: string;
   selectedEventIds: string[];
   selectedWorkIds: string[];
+  groupPhotoUrl?: string;
   notes?: string;
 }
 
@@ -106,7 +107,7 @@ export async function getRolloverCuratedData(): Promise<{
             mainDivision: true,
             totalPoints: true,
             image: true,
-            showcaseContributions: {
+            createdShowcaseProjects: {
               select: { id: true },
             },
           },
@@ -123,16 +124,17 @@ export async function getRolloverCuratedData(): Promise<{
             driveUrl: true,
           },
         }),
-        prisma.showcase.findMany({
-          orderBy: { createdAt: "desc" },
+        prisma.showcaseProject.findMany({
+          orderBy: [{ likesCount: "desc" }, { createdAt: "desc" }],
           take: 30,
           select: {
             id: true,
             title: true,
-            thumbnailUrl: true,
-            externalUrl: true,
-            primaryDivision: true,
-            createdBy: {
+            imageUrl: true,
+            demoUrl: true,
+            githubUrl: true,
+            category: true,
+            author: {
               select: { name: true },
             },
           },
@@ -152,7 +154,7 @@ export async function getRolloverCuratedData(): Promise<{
       mainDivision: u.mainDivision,
       totalPoints: u.totalPoints,
       image: u.image,
-      workCount: u.showcaseContributions.length,
+      workCount: u.createdShowcaseProjects.length,
     }));
 
     const formattedEvents: CuratedEvent[] = allEvents.map((e) => ({
@@ -167,10 +169,10 @@ export async function getRolloverCuratedData(): Promise<{
     const formattedWorks: CuratedWork[] = allShowcases.map((w) => ({
       id: w.id,
       title: w.title,
-      thumbnailUrl: w.thumbnailUrl,
-      externalUrl: w.externalUrl,
-      primaryDivision: w.primaryDivision,
-      authorName: w.createdBy.name,
+      thumbnailUrl: w.imageUrl || "",
+      externalUrl: w.demoUrl || w.githubUrl || "",
+      primaryDivision: w.category,
+      authorName: w.author.name,
     }));
 
     return {
@@ -268,7 +270,7 @@ export async function executeRolloverWithCuratedData(
             mainDivision: true,
             totalPoints: true,
             image: true,
-            showcaseContributions: { select: { id: true } },
+            createdShowcaseProjects: { select: { id: true } },
           },
         }),
         prisma.event.findMany({
@@ -282,15 +284,16 @@ export async function executeRolloverWithCuratedData(
             driveUrl: true,
           },
         }),
-        prisma.showcase.findMany({
+        prisma.showcaseProject.findMany({
           where: { id: { in: input.selectedWorkIds } },
           select: {
             id: true,
             title: true,
-            thumbnailUrl: true,
-            externalUrl: true,
-            primaryDivision: true,
-            createdBy: { select: { name: true } },
+            imageUrl: true,
+            demoUrl: true,
+            githubUrl: true,
+            category: true,
+            author: { select: { name: true } },
           },
         }),
       ]);
@@ -324,24 +327,27 @@ export async function executeRolloverWithCuratedData(
           totalCashFlow: currentCashBalance,
           closingCashBalance,
 
+          // Foto Kenangan Bersama Seluruh Pengurus / Angkatan
+          groupPhotoUrl: input.groupPhotoUrl || null,
+
           // Champions
           rank1Name: rank1?.name || "Anggota Berprestasi 1",
           rank1Division: rank1?.mainDivision || "PROGRAMMING",
           rank1Points: rank1?.totalPoints || 0,
           rank1Avatar: rank1?.image || null,
-          rank1WorkCount: rank1?.showcaseContributions.length || 0,
+          rank1WorkCount: rank1?.createdShowcaseProjects.length || 0,
 
           rank2Name: rank2?.name || "Anggota Berprestasi 2",
           rank2Division: rank2?.mainDivision || null,
           rank2Points: rank2?.totalPoints || 0,
           rank2Avatar: rank2?.image || null,
-          rank2WorkCount: rank2?.showcaseContributions.length || 0,
+          rank2WorkCount: rank2?.createdShowcaseProjects.length || 0,
 
           rank3Name: rank3?.name || "Anggota Berprestasi 3",
           rank3Division: rank3?.mainDivision || null,
           rank3Points: rank3?.totalPoints || 0,
           rank3Avatar: rank3?.image || null,
-          rank3WorkCount: rank3?.showcaseContributions.length || 0,
+          rank3WorkCount: rank3?.createdShowcaseProjects.length || 0,
 
           // Events
           event1Title: ev1?.title || null,
@@ -361,22 +367,22 @@ export async function executeRolloverWithCuratedData(
 
           // Works
           work1Title: wk1?.title || null,
-          work1Author: wk1?.createdBy.name || null,
-          work1Division: wk1?.primaryDivision || null,
-          work1Url: wk1?.externalUrl || null,
-          work1Thumbnail: wk1?.thumbnailUrl || null,
+          work1Author: wk1?.author.name || null,
+          work1Division: wk1?.category || null,
+          work1Url: wk1?.demoUrl || wk1?.githubUrl || null,
+          work1Thumbnail: wk1?.imageUrl || null,
 
           work2Title: wk2?.title || null,
-          work2Author: wk2?.createdBy.name || null,
-          work2Division: wk2?.primaryDivision || null,
-          work2Url: wk2?.externalUrl || null,
-          work2Thumbnail: wk2?.thumbnailUrl || null,
+          work2Author: wk2?.author.name || null,
+          work2Division: wk2?.category || null,
+          work2Url: wk2?.demoUrl || wk2?.githubUrl || null,
+          work2Thumbnail: wk2?.imageUrl || null,
 
           work3Title: wk3?.title || null,
-          work3Author: wk3?.createdBy.name || null,
-          work3Division: wk3?.primaryDivision || null,
-          work3Url: wk3?.externalUrl || null,
-          work3Thumbnail: wk3?.thumbnailUrl || null,
+          work3Author: wk3?.author.name || null,
+          work3Division: wk3?.category || null,
+          work3Url: wk3?.demoUrl || wk3?.githubUrl || null,
+          work3Thumbnail: wk3?.imageUrl || null,
 
           eventsJson: JSON.stringify(selectedEvents),
           worksJson: JSON.stringify(selectedWorks),
