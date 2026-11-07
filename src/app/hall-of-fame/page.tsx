@@ -55,6 +55,7 @@ export default async function HallOfFamePage() {
         initialEntries={entries as any}
         initialHasMore={hasMore}
         totalCount={totalCount}
+        isOperator={dbUser?.role === "OPERATOR"}
       />
     </div>
   );

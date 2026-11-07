@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import Image from "next/image";
 import {
   Trophy,
   Calendar,
@@ -10,7 +11,13 @@ import {
   Layers,
   Crown,
   Medal,
+  Pencil,
+  X,
+  Loader2,
+  Users,
 } from "lucide-react";
+import { ImagePickerField } from "@/components/ui/ImagePickerField";
+import { updateHallOfFameGroupPhoto } from "@/actions/hallOfFame";
 
 export interface HallOfFameEntryData {
   id: string;
@@ -20,6 +27,9 @@ export interface HallOfFameEntryData {
   totalCashFlow: number;
   closingCashBalance: number;
   archivedAt: Date | string;
+
+  // Foto Bersama Pengurus / Angkatan
+  groupPhotoUrl?: string | null;
 
   // Champions
   rank1Name: string;
@@ -79,9 +89,34 @@ export interface HallOfFameEntryData {
 interface FilmstripFrameProps {
   entry: HallOfFameEntryData;
   index: number;
+  isOperator?: boolean;
 }
 
-export function FilmstripFrame({ entry, index }: FilmstripFrameProps) {
+export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps) {
+  const [currentGroupPhoto, setCurrentGroupPhoto] = useState(entry.groupPhotoUrl || null);
+  const [isEditingPhoto, setIsEditingPhoto] = useState(false);
+  const [newPhotoUrl, setNewPhotoUrl] = useState(entry.groupPhotoUrl || "");
+  const [isSavingPhoto, setIsSavingPhoto] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+  const handleSavePhoto = async () => {
+    setIsSavingPhoto(true);
+    setSaveMessage(null);
+    try {
+      const res = await updateHallOfFameGroupPhoto(entry.id, newPhotoUrl);
+      if (res.success) {
+        setCurrentGroupPhoto(newPhotoUrl.trim() || null);
+        setIsEditingPhoto(false);
+      } else {
+        setSaveMessage(res.message);
+      }
+    } catch (err: any) {
+      setSaveMessage(err.message || "Gagal menyimpan foto.");
+    } finally {
+      setIsSavingPhoto(false);
+    }
+  };
+
   const events = [
     { title: entry.event1Title, desc: entry.event1Description, date: entry.event1Date, url: entry.event1DriveUrl },
     { title: entry.event2Title, desc: entry.event2Description, date: entry.event2Date, url: entry.event2DriveUrl },
@@ -182,6 +217,65 @@ export function FilmstripFrame({ entry, index }: FilmstripFrameProps) {
             </div>
           </div>
         </div>
+
+        {/* ── 0. HERO BANNER: KELUARGA BESAR PENGURUS ── */}
+        {currentGroupPhoto ? (
+          <div className="relative w-full aspect-[21/9] sm:aspect-[24/9] rounded-2xl overflow-hidden border border-[#27272A] bg-[#121214] shadow-xl group">
+            <Image
+              src={currentGroupPhoto}
+              alt={`Keluarga Besar ${entry.periodName}`}
+              fill
+              sizes="(max-width: 768px) 100vw, 900px"
+              className="object-cover transition-transform duration-500 group-hover:scale-102"
+              unoptimized={currentGroupPhoto.startsWith("data:")}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+            <div className="absolute bottom-3 sm:bottom-4 left-4 sm:left-6 right-4 sm:right-6 flex items-end justify-between gap-3">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                  KELUARGA BESAR ANGKATAN {entry.generationYear}
+                </span>
+                <h4 className="text-sm sm:text-base font-extrabold text-white tracking-tight mt-1">
+                  {entry.periodName}
+                </h4>
+              </div>
+
+              {isOperator && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewPhotoUrl(currentGroupPhoto || "");
+                    setIsEditingPhoto(true);
+                  }}
+                  className="h-8 px-3 rounded-full bg-black/60 hover:bg-black/90 text-slate-200 hover:text-white border border-white/20 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md shadow-md active:scale-95"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Ganti Foto</span>
+                </button>
+              )}
+            </div>
+          </div>
+        ) : isOperator ? (
+          <div
+            onClick={() => {
+              setNewPhotoUrl("");
+              setIsEditingPhoto(true);
+            }}
+            className="border-2 border-dashed border-[#27272A] hover:border-amber-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#121214]/60 hover:bg-[#121214] flex flex-col items-center justify-center gap-2 group"
+          >
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-[#F4F4F5]">
+                Tambahkan Foto Kenangan Bersama Seluruh Pengurus
+              </p>
+              <p className="text-[11px] text-[#71717A] mt-0.5">
+                Sentuh di sini untuk mengabadikan foto angkatan periode ini (Khusus Operator)
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         {/* ── 1. THE CHAMPIONS (TOP 3 ANGGOTA) ── */}
         <div className="space-y-3">
@@ -364,6 +458,80 @@ export function FilmstripFrame({ entry, index }: FilmstripFrameProps) {
           ))}
         </div>
       </div>
+
+      {/* ── MODAL UBAH FOTO BERSAMA PENGURUS ── */}
+      {isEditingPhoto && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in"
+          onClick={() => {
+            if (!isSavingPhoto) setIsEditingPhoto(false);
+          }}
+        >
+          <div
+            className="w-full max-w-lg bg-[#18181B] border border-[#27272A] rounded-2xl shadow-2xl p-5 space-y-4 animate-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-[#F4F4F5]">
+                  Foto Kenangan Bersama Pengurus ({entry.periodName})
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditingPhoto(false)}
+                disabled={isSavingPhoto}
+                className="text-[#71717A] hover:text-[#F4F4F5] p-1 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <ImagePickerField
+                value={newPhotoUrl}
+                onChange={(url) => setNewPhotoUrl(url)}
+                label="Pilih / Tempel Foto Angkatan"
+                aspectRatio="banner"
+                helperText="Mendukung unggah foto dari perangkat atau tautan Google Drive."
+              />
+
+              {saveMessage && (
+                <p className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                  {saveMessage}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#27272A]">
+              <button
+                type="button"
+                onClick={() => setIsEditingPhoto(false)}
+                disabled={isSavingPhoto}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSavePhoto}
+                disabled={isSavingPhoto}
+                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isSavingPhoto ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Menyimpan Foto...</span>
+                  </>
+                ) : (
+                  <span>Simpan Foto</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

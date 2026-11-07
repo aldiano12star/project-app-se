@@ -9,12 +9,14 @@ interface HallOfFameListProps {
   initialEntries: HallOfFameEntryData[];
   initialHasMore: boolean;
   totalCount: number;
+  isOperator?: boolean;
 }
 
 export function HallOfFameList({
   initialEntries,
   initialHasMore,
   totalCount,
+  isOperator,
 }: HallOfFameListProps) {
   const [entries, setEntries] = useState<HallOfFameEntryData[]>(initialEntries);
   const [hasMore, setHasMore] = useState(initialHasMore);
@@ -63,7 +65,12 @@ export function HallOfFameList({
       {/* List of Filmstrip Frames */}
       <div className="space-y-8">
         {entries.map((entry, idx) => (
-          <FilmstripFrame key={entry.id} entry={entry} index={idx} />
+          <FilmstripFrame
+            key={entry.id}
+            entry={entry}
+            index={idx}
+            isOperator={isOperator}
+          />
         ))}
       </div>
 

@@ -26,6 +26,7 @@ import {
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { haptic } from "@/lib/haptic";
 import { triggerMicroConfetti } from "@/lib/confetti";
+import { ImagePickerField } from "@/components/ui/ImagePickerField";
 import Link from "next/link";
 
 interface RolloverWizardModalProps {
@@ -56,6 +57,7 @@ export function RolloverWizardModal({
   // Confirmation
   const [confirmationInput, setConfirmationInput] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
+  const [groupPhotoUrl, setGroupPhotoUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -66,6 +68,7 @@ export function RolloverWizardModal({
       setSelectedWorkIds([]);
       setConfirmationInput("");
       setAdminNotes("");
+      setGroupPhotoUrl("");
       setErrorMessage(null);
       return;
     }
@@ -151,6 +154,7 @@ export function RolloverWizardModal({
         confirmationText: confirmationInput.trim(),
         selectedEventIds,
         selectedWorkIds,
+        groupPhotoUrl: groupPhotoUrl.trim() || undefined,
         notes: adminNotes.trim() || undefined,
       });
 
@@ -531,6 +535,18 @@ export function RolloverWizardModal({
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Foto Kenangan Bersama Pengurus Periode Ini */}
+              <div className="p-3.5 rounded-2xl bg-surface-container-low/60 border border-edge space-y-2">
+                <ImagePickerField
+                  value={groupPhotoUrl}
+                  onChange={(url) => setGroupPhotoUrl(url)}
+                  label="Foto Kenangan Bersama Seluruh Pengurus (Opsional)"
+                  placeholder="Pilih foto bersama angkatan dari perangkat atau masukkan link Google Drive..."
+                  aspectRatio="banner"
+                  helperText="Foto ini akan diabadikan sebagai Centerpiece Hero di Hall of Fame generasi ini."
+                />
               </div>
 
               {/* Confirmation Keyword Input */}
