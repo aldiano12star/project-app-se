@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import {
   X,
   Sparkles,
@@ -12,9 +14,11 @@ import {
   Search,
   Loader2,
   Pencil,
+  Trash2,
 } from "lucide-react";
 import {
   updateShowcaseProject,
+  deleteShowcaseProject,
   getAvailableMembers,
   ShowcaseCategory,
   MemberOption,
@@ -46,7 +50,14 @@ export function EditProjectModal({
   onSuccess,
   availableMembers: initialMembers,
 }: EditProjectModalProps) {
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
   useBodyScrollLock(isOpen);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [formData, setFormData] = useState<{
     title: string;
@@ -72,6 +83,8 @@ export function EditProjectModal({
   const [memberSearch, setMemberSearch] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Sync data ketika modal dibuka atau project berganti
@@ -102,7 +115,7 @@ export function EditProjectModal({
     }
   }, [isOpen, initialMembers]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   // Filter selectable members: bukan author karya dan belum dipilih
   const selectableMembers = membersList.filter(
@@ -144,12 +157,12 @@ export function EditProjectModal({
     try {
       const res = await updateShowcaseProject({
         id: project.id,
-        title: formData.title,
-        description: formData.description,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
         category: formData.category,
-        demoUrl: formData.demoUrl || undefined,
-        githubUrl: formData.githubUrl || undefined,
-        imageUrl: formData.imageUrl || undefined,
+        demoUrl: formData.demoUrl.trim() || undefined,
+        githubUrl: formData.githubUrl.trim() || undefined,
+        imageUrl: formData.imageUrl.trim() || undefined,
         contributorIds: formData.contributorIds,
       });
 
@@ -160,6 +173,7 @@ export function EditProjectModal({
 
       onSuccess?.();
       onClose();
+      router.refresh();
     } catch (err: any) {
       console.error("Gagal mengedit karya:", err);
       setErrorMessage(
@@ -170,9 +184,30 @@ export function EditProjectModal({
     }
   };
 
-  return (
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setErrorMessage(null);
+    try {
+      const res = await deleteShowcaseProject(project.id);
+      if (!res.success) {
+        setErrorMessage(res.message);
+        setIsConfirmingDelete(false);
+      } else {
+        onClose();
+        router.push("/eksplorasi");
+        router.refresh();
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || "Gagal menghapus karya.");
+      setIsConfirmingDelete(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget && !isLoading) {
           onClose();
@@ -180,17 +215,18 @@ export function EditProjectModal({
       }}
     >
       <div
-        className="w-full max-w-lg max-h-[90vh] bg-surface-container-high rounded-2xl border border-edge shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="w-full max-w-lg max-h-[90vh] bg-card rounded-3xl border border-edge shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 text-ink"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Modal */}
-        <div className="px-5 py-3.5 border-b border-edge flex items-center justify-between shrink-0 bg-surface-container-low">
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center">
-              <Pencil className="h-3.5 w-3.5" />
+        {/* Header Modal - Pinned */}
+        <div className="px-5 py-4 border-b border-edge flex items-center justify-between shrink-0 bg-surface-container-low/80">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
+              <Pencil className="h-4 w-4" />
             </div>
             <div>
               <h2 className="text-sm font-bold text-ink">Edit Karya</h2>
+              <p className="text-[11px] text-ink-muted">Perbarui informasi dan kontributor proyek</p>
             </div>
           </div>
           <button
@@ -199,23 +235,28 @@ export function EditProjectModal({
               e.stopPropagation();
               onClose();
             }}
-            className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+            disabled={isLoading}
+            className="h-9 w-9 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
             aria-label="Tutup modal"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
+        {/* Form Body - Scrollable */}
+        <form
+          id="edit-project-form"
+          onSubmit={handleSubmit}
+          className="p-5 space-y-4 overflow-y-auto flex-1 min-h-0"
+        >
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-danger-subtle border border-danger/30 text-xs text-danger font-medium flex items-center gap-2">
+            <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 font-medium flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          {/* Judul Proyek */}
+          {/* Judul */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
               Judul <span className="text-primary">*</span>
@@ -230,7 +271,7 @@ export function EditProjectModal({
             />
           </div>
 
-          {/* Kategori Divisi */}
+          {/* Divisi */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-ink flex items-center gap-1">
               <Tag className="h-3.5 w-3.5 text-primary" />
@@ -248,16 +289,16 @@ export function EditProjectModal({
               }
               className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
             >
-              <option value="PROGRAMMING">Programming &amp; Web Development</option>
-              <option value="TECHNOPRENEUR">Technopreneur &amp; Bisnis Digital</option>
-              <option value="DESAIN">UI/UX &amp; Desain Grafis</option>
-              <option value="FOTOGRAFI">Fotografi &amp; Jurnalistik Visual</option>
-              <option value="SINEMATOGRAFI">Sinematografi &amp; Video Editing</option>
-              <option value="LAINNYA">Lainnya / Eksperimen Bebas</option>
+              <option value="PROGRAMMING">💻 Programming &amp; Web Development</option>
+              <option value="TECHNOPRENEUR">💼 Technopreneur &amp; Bisnis Digital</option>
+              <option value="DESAIN">🎨 UI/UX &amp; Desain Grafis</option>
+              <option value="FOTOGRAFI">📷 Fotografi &amp; Jurnalistik Visual</option>
+              <option value="SINEMATOGRAFI">🎬 Sinematografi &amp; Video Editing</option>
+              <option value="LAINNYA">✨ Lainnya / Eksperimen Bebas</option>
             </select>
           </div>
 
-          {/* Deskripsi Karya */}
+          {/* Deskripsi */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-ink block">
               Deskripsi <span className="text-primary">*</span>
@@ -270,7 +311,7 @@ export function EditProjectModal({
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full p-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+              className="w-full p-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none leading-relaxed"
             />
           </div>
 
@@ -364,7 +405,7 @@ export function EditProjectModal({
             )}
           </div>
 
-          {/* Tautan Demo & GitHub */}
+          {/* Demo URL & Repository */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-bold text-ink flex items-center gap-1">
@@ -397,32 +438,74 @@ export function EditProjectModal({
             </div>
           </div>
 
-          {/* Banner / Foto Karya */}
+          {/* Banner */}
           <ImagePickerField
             value={formData.imageUrl}
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
             label="Banner"
             aspectRatio="video"
-            helperText="Unggah foto cover karya dari perangkat (WebP) atau gunakan tautan Google Drive."
+            helperText="Unggah foto cover karya langsung dari galeri perangkat Anda (WebP otomatis)."
           />
+        </form>
 
-          {/* Tombol Simpan */}
-          <div className="pt-2 flex items-center justify-end gap-2">
+        {/* Footer Modal - Pinned Action Buttons */}
+        <div className="px-5 py-3.5 border-t border-edge flex items-center justify-between gap-2 shrink-0 bg-surface-container-low/90">
+          {/* Tombol Hapus Solid Merah */}
+          <div>
+            {isConfirmingDelete ? (
+              <div className="flex items-center gap-1.5 bg-card p-1 rounded-xl border border-rose-500 shadow-md">
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isDeleting || isLoading}
+                  className="h-9 px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <span>Yakin Hapus!</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingDelete(false)}
+                  disabled={isDeleting || isLoading}
+                  className="h-9 px-2 rounded-lg text-ink-muted hover:text-ink text-xs cursor-pointer"
+                >
+                  Batal
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsConfirmingDelete(true)}
+                disabled={isLoading || isDeleting}
+                className="h-10 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm z-20"
+                title="Hapus Karya Ini"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Hapus Karya</span>
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();
               }}
-              disabled={isLoading}
+              disabled={isLoading || isDeleting}
               className="px-4 py-2.5 rounded-xl border border-edge text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50 min-h-11"
             >
               Batal
             </button>
             <button
               type="submit"
-              disabled={isLoading}
-              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
+              form="edit-project-form"
+              disabled={isLoading || isDeleting}
+              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
             >
               {isLoading ? (
                 <>
@@ -437,8 +520,12 @@ export function EditProjectModal({
               )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
+
+  return typeof document !== "undefined"
+    ? createPortal(modalContent, document.body)
+    : null;
 }

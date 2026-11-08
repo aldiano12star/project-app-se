@@ -473,24 +473,24 @@ export function ProjectDetailModal({
             {canDelete && (
               <>
                 {isConfirmingDelete ? (
-                  <div className="flex items-center gap-1 bg-surface-container p-1 rounded-xl border border-danger/40">
+                  <div className="flex items-center gap-1.5 bg-card p-1 rounded-xl border border-rose-500 shadow-xl z-20">
                     <button
                       type="button"
                       onClick={handleDelete}
                       disabled={isDeleting}
-                      className="px-2.5 py-1.5 rounded-lg bg-danger hover:bg-danger/90 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      className="px-3 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
                     >
                       {isDeleting ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
-                        <span>Hapus Karya</span>
+                        <span>Yakin Hapus!</span>
                       )}
                     </button>
                     <button
                       type="button"
                       onClick={() => setIsConfirmingDelete(false)}
                       disabled={isDeleting}
-                      className="px-2.5 py-1.5 rounded-lg bg-surface text-ink text-[11px] hover:text-ink cursor-pointer border border-edge"
+                      className="px-2.5 py-2 rounded-lg bg-surface text-ink text-xs hover:text-ink cursor-pointer border border-edge"
                     >
                       Batal
                     </button>
@@ -499,11 +499,11 @@ export function ProjectDetailModal({
                   <button
                     type="button"
                     onClick={() => setIsConfirmingDelete(true)}
-                    className="h-11 min-h-[44px] px-3 rounded-xl border border-danger/30 bg-danger-subtle hover:bg-danger-subtle/80 text-danger text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    className="h-11 min-h-[44px] px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-sm"
                     title="Hapus Karya dari Showcase"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                    <span>Hapus</span>
+                    <span>Hapus Karya</span>
                   </button>
                 )}
               </>

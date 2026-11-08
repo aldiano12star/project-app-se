@@ -57,8 +57,14 @@ export default async function KasPage() {
     dbUser.role === Role.BENDAHARA ||
     dbUser.role === Role.OPERATOR;
 
-  // 2. Ambil data transaksi personal, invoices, & buku kas
-  const [personalTransactions, globalTransactions, allMembers, realMoney, userInvoices, allInvoices] =
+  // 1. Ambil periode kepengurusan aktif untuk isolasi buku kas pasca-rollover
+  const activePeriod = await prisma.organizationalPeriod.findFirst({
+    where: { isActive: true },
+  });
+  const periodFilter = activePeriod ? { date: { gte: activePeriod.startDate } } : {};
+
+  // 2. Ambil data transaksi personal, invoices, & buku kas periode aktif
+  const [personalTransactions, rawGlobalTransactions, allMembers, realMoney, userInvoices, allInvoices] =
     await Promise.all([
       prisma.ledgerTransaction.findMany({
         where: {
@@ -89,6 +95,7 @@ export default async function KasPage() {
         ? prisma.ledgerTransaction.findMany({
             where: {
               type: { in: [TransactionType.INCOME, TransactionType.EXPENSE] },
+              ...periodFilter,
             },
             orderBy: { date: "desc" },
             take: 40,
@@ -156,6 +163,24 @@ export default async function KasPage() {
           })
         : Promise.resolve([]),
     ]);
+
+  // Gabungkan entri saldo awal sisa periode sebelumnya sebagai 1 mutasi pembuka tunggal
+  const legacyStartingEntry =
+    activePeriod && activePeriod.startingCashBalance > 0
+      ? [
+          {
+            id: `legacy-rollover-${activePeriod.id}`,
+            type: TransactionType.INCOME,
+            category: TransactionCategory.DANUS_SUKARELA,
+            amount: activePeriod.startingCashBalance,
+            description: "Dana Kas Sisa Periode Sebelumnya",
+            date: activePeriod.startDate,
+            user: null,
+          },
+        ]
+      : [];
+
+  const globalTransactions = [...rawGlobalTransactions, ...legacyStartingEntry];
 
   return (
     <AppShell user={dbUser}>

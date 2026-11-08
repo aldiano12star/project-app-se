@@ -407,7 +407,7 @@ export function CreateProjectModal({
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
             label="Banner"
             aspectRatio="video"
-            helperText="Unggah foto cover karya dari perangkat (WebP) atau gunakan tautan Google Drive."
+            helperText="Unggah foto cover karya langsung dari galeri perangkat Anda (WebP otomatis)."
           />
 
           {/* Action Buttons */}

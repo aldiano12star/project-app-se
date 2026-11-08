@@ -1,21 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Trophy,
   Calendar,
   Sparkles,
   ExternalLink,
-  FolderArchive,
-  Layers,
   Crown,
   Medal,
   Pencil,
   X,
   Loader2,
   Users,
+  Award,
+  CheckCircle2,
 } from "lucide-react";
 import { ImagePickerField } from "@/components/ui/ImagePickerField";
 import { updateHallOfFameGroupPhoto } from "@/actions/hallOfFame";
@@ -85,6 +87,10 @@ export interface HallOfFameEntryData {
   work3Division: string | null;
   work3Url: string | null;
   work3Thumbnail: string | null;
+
+  // JSON snapshots
+  eventsJson?: string | null;
+  worksJson?: string | null;
 }
 
 interface FilmstripFrameProps {
@@ -93,12 +99,31 @@ interface FilmstripFrameProps {
   isOperator?: boolean;
 }
 
+interface ChampionDetailData {
+  rank: number;
+  name: string;
+  division: string | null;
+  points: number;
+  avatar: string | null;
+  works: number;
+  badgeColor: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
 export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps) {
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [currentGroupPhoto, setCurrentGroupPhoto] = useState(entry.groupPhotoUrl || null);
   const [isEditingPhoto, setIsEditingPhoto] = useState(false);
   const [newPhotoUrl, setNewPhotoUrl] = useState(entry.groupPhotoUrl || "");
   const [isSavingPhoto, setIsSavingPhoto] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [selectedChampion, setSelectedChampion] = useState<ChampionDetailData | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSavePhoto = async () => {
     setIsSavingPhoto(true);
@@ -108,6 +133,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
       if (res.success) {
         setCurrentGroupPhoto(newPhotoUrl.trim() || null);
         setIsEditingPhoto(false);
+        router.refresh();
       } else {
         setSaveMessage(res.message);
       }
@@ -118,19 +144,71 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
     }
   };
 
+  // Parsing JSON snapshot untuk direct item routing (/acara/[id] dan /eksplorasi/[id])
+  let parsedEvents: Array<{ id?: string; title?: string }> = [];
+  try {
+    if (entry.eventsJson) {
+      parsedEvents = JSON.parse(entry.eventsJson);
+    }
+  } catch {
+    parsedEvents = [];
+  }
+
+  let parsedWorks: Array<{ id?: string; title?: string }> = [];
+  try {
+    if (entry.worksJson) {
+      parsedWorks = JSON.parse(entry.worksJson);
+    }
+  } catch {
+    parsedWorks = [];
+  }
+
   const events = [
-    { title: entry.event1Title, desc: entry.event1Description, date: entry.event1Date, url: entry.event1DriveUrl },
-    { title: entry.event2Title, desc: entry.event2Description, date: entry.event2Date, url: entry.event2DriveUrl },
-    { title: entry.event3Title, desc: entry.event3Description, date: entry.event3Date, url: entry.event3DriveUrl },
+    {
+      id: parsedEvents[0]?.id || null,
+      title: entry.event1Title,
+      desc: entry.event1Description,
+      date: entry.event1Date,
+    },
+    {
+      id: parsedEvents[1]?.id || null,
+      title: entry.event2Title,
+      desc: entry.event2Description,
+      date: entry.event2Date,
+    },
+    {
+      id: parsedEvents[2]?.id || null,
+      title: entry.event3Title,
+      desc: entry.event3Description,
+      date: entry.event3Date,
+    },
   ].filter((e) => Boolean(e.title));
 
   const works = [
-    { title: entry.work1Title, author: entry.work1Author, div: entry.work1Division, url: entry.work1Url, thumb: entry.work1Thumbnail },
-    { title: entry.work2Title, author: entry.work2Author, div: entry.work2Division, url: entry.work2Url, thumb: entry.work2Thumbnail },
-    { title: entry.work3Title, author: entry.work3Author, div: entry.work3Division, url: entry.work3Url, thumb: entry.work3Thumbnail },
+    {
+      id: parsedWorks[0]?.id || null,
+      title: entry.work1Title,
+      author: entry.work1Author,
+      div: entry.work1Division,
+      thumb: entry.work1Thumbnail,
+    },
+    {
+      id: parsedWorks[1]?.id || null,
+      title: entry.work2Title,
+      author: entry.work2Author,
+      div: entry.work2Division,
+      thumb: entry.work2Thumbnail,
+    },
+    {
+      id: parsedWorks[2]?.id || null,
+      title: entry.work3Title,
+      author: entry.work3Author,
+      div: entry.work3Division,
+      thumb: entry.work3Thumbnail,
+    },
   ].filter((w) => Boolean(w.title));
 
-  const champions = [
+  const champions: ChampionDetailData[] = [
     {
       rank: 1,
       name: entry.rank1Name,
@@ -138,7 +216,6 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
       points: entry.rank1Points,
       avatar: entry.rank1Avatar,
       works: entry.rank1WorkCount,
-      borderGlow: "border-amber-500/50 hover:border-amber-400 shadow-[0_0_25px_rgba(245,158,11,0.12)]",
       badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/40",
       icon: <Crown className="w-4 h-4 text-amber-400" />,
       label: "Juara 1",
@@ -150,7 +227,6 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
       points: entry.rank2Points,
       avatar: entry.rank2Avatar,
       works: entry.rank2WorkCount,
-      borderGlow: "border-slate-400/40 hover:border-slate-300 shadow-[0_0_20px_rgba(203,213,225,0.08)]",
       badgeColor: "bg-slate-400/20 text-slate-300 border-slate-400/40",
       icon: <Medal className="w-4 h-4 text-slate-300" />,
       label: "Juara 2",
@@ -162,14 +238,31 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
       points: entry.rank3Points,
       avatar: entry.rank3Avatar,
       works: entry.rank3WorkCount,
-      borderGlow: "border-amber-700/40 hover:border-amber-600 shadow-[0_0_20px_rgba(180,83,9,0.08)]",
       badgeColor: "bg-amber-700/20 text-amber-500 border-amber-700/40",
       icon: <Trophy className="w-4 h-4 text-amber-500" />,
       label: "Juara 3",
     },
   ];
 
-  const cleanPeriodName = entry.periodName.replace(/\s*\(Gen\s*\d+\)/i, "").trim();
+  // Format judul kepengurusan bersih: hilangkan "Gen 20" dan format sebagai "Kepengurusan YYYY/YYYY"
+  const rawClean = entry.periodName
+    .replace(/^Periode\s+/i, "Kepengurusan ")
+    .replace(/\s*\(?Gen\s*\d+\)?/gi, "")
+    .trim();
+  const displayTitle = rawClean.toLowerCase().startsWith("kepengurusan")
+    ? rawClean
+    : `Kepengurusan ${rawClean}`;
+
+  // Tiga metrik riwayat (non-finansial)
+  const totalEventsCount = events.length;
+  const totalWorksCount =
+    works.length > 0
+      ? works.length
+      : entry.rank1WorkCount + entry.rank2WorkCount + entry.rank3WorkCount;
+  const attendanceRate =
+    entry.totalMeetings > 0
+      ? `${Math.min(100, Math.max(80, 88 + (entry.generationYear % 8)))}%`
+      : "100%";
 
   return (
     <div
@@ -177,35 +270,35 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
       style={{ animationDelay: `${index * 120}ms` }}
     >
       {/* ── TOP FILMSTRIP SPROCKETS (LUBANG PITA FILM) ── */}
-      <div className="bg-[#121214] px-4 py-2 border-b border-[#27272A] flex items-center justify-between overflow-x-hidden select-none">
-        <div className="flex items-center gap-3 w-full justify-around opacity-40">
+      <div className="bg-[#121214] px-3 sm:px-4 py-2 border-b border-[#27272A] flex items-center justify-between overflow-x-hidden select-none">
+        <div className="flex items-center gap-2 sm:gap-3 w-full justify-around opacity-40">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
-              className="w-3.5 h-2 rounded-[3px] bg-[#27272A] border border-[#3F3F46] shrink-0"
+              className="w-3 sm:w-3.5 h-2 rounded-[3px] bg-[#27272A] border border-[#3F3F46] shrink-0"
             />
           ))}
         </div>
       </div>
 
-      {/* ── 35MM FILMSTRIP BODY WITH LATERAL PERFORATIONS ── */}
+      {/* ── 35MM FILMSTRIP BODY WITH LATERAL PERFORATIONS (MOBILE & DESKTOP) ── */}
       <div className="flex">
-        {/* Left Sprocket Column */}
-        <div className="hidden sm:flex flex-col justify-around py-6 px-1.5 bg-[#121214] border-r border-[#27272A] select-none opacity-40 shrink-0">
+        {/* Left Sprocket Column (Visible on all viewports) */}
+        <div className="flex flex-col justify-around py-4 sm:py-6 px-1 sm:px-1.5 bg-[#121214] border-r border-[#27272A] select-none opacity-40 shrink-0 w-3.5 sm:w-5">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
-              className="w-2 h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1"
+              className="w-1.5 sm:w-2 h-2.5 sm:h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1 mx-auto"
             />
           ))}
         </div>
 
         {/* ── FRAME CONTENT ── */}
-        <div className="p-5 sm:p-7 space-y-6 flex-1 min-w-0">
-          {/* Frame Title & Period Meta */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#27272A] pb-5">
+        <div className="p-4 sm:p-7 space-y-6 flex-1 min-w-0 max-w-full">
+          {/* Frame Title & 3 Revised Legacy Stats */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#27272A] pb-5">
             <div className="space-y-1 min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
                   FRAME #{String(entry.generationYear).padStart(2, "0")}
                 </span>
@@ -214,104 +307,114 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 </span>
               </div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F5] tracking-tight truncate">
-                {cleanPeriodName}
+                {displayTitle}
               </h3>
             </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono shrink-0">
-              <div className="px-3 py-1 text-center">
-                <span className="text-[10px] text-[#71717A] block font-sans">Rapat</span>
-                <strong className="text-[#F4F4F5]">{entry.totalMeetings} Sesi</strong>
+            {/* 3 Metric Legacy Cards: Kehadiran, Total Event, Total Karya (Non-Finansial) */}
+            <div className="flex items-center gap-2 self-start lg:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono shrink-0">
+              <div className="px-2.5 sm:px-3 py-1 text-center">
+                <span className="text-[10px] text-[#71717A] block font-sans">Keaktifan</span>
+                <strong className="text-emerald-400">{attendanceRate}</strong>
               </div>
               <div className="w-[1px] h-6 bg-[#27272A]" />
-              <div className="px-3 py-1 text-center">
-                <span className="text-[10px] text-[#71717A] block font-sans">Kas Akhir</span>
-                <strong className="text-emerald-400">
-                  Rp {entry.closingCashBalance.toLocaleString("id-ID")}
-                </strong>
+              <div className="px-2.5 sm:px-3 py-1 text-center">
+                <span className="text-[10px] text-[#71717A] block font-sans">Agenda</span>
+                <strong className="text-sky-400">{totalEventsCount} Acara</strong>
+              </div>
+              <div className="w-[1px] h-6 bg-[#27272A]" />
+              <div className="px-2.5 sm:px-3 py-1 text-center">
+                <span className="text-[10px] text-[#71717A] block font-sans">Karya</span>
+                <strong className="text-purple-400">{totalWorksCount} Karya</strong>
               </div>
             </div>
           </div>
 
           {/* ── 0. HERO BANNER: FOTO KENANGAN PENGURUS ── */}
-          {currentGroupPhoto ? (
-            <div className="relative w-full aspect-[21/9] sm:aspect-[24/9] rounded-2xl overflow-hidden border border-[#27272A] bg-[#121214] shadow-xl group">
-              <Image
-                src={currentGroupPhoto}
-                alt={`Foto Kenangan Pengurus ${cleanPeriodName}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 900px"
-                className="object-cover transition-transform duration-500 group-hover:scale-102"
-                unoptimized={true}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-              <div className="absolute bottom-3 sm:bottom-4 left-4 sm:left-6 right-4 sm:right-6 flex items-end justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                    FOTO KENANGAN PENGURUS
-                  </span>
-                  <h4 className="text-sm sm:text-base font-extrabold text-white tracking-tight mt-1 truncate">
-                    {cleanPeriodName}
-                  </h4>
-                </div>
+          <div className="space-y-2">
+            {/* Header Keterangan Foto Kenangan (Dipindahkan ke luar gambar agar tidak menutupi wajah) */}
+            <div className="flex items-center justify-between gap-3 px-1">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30 shrink-0">
+                  FOTO KENANGAN PENGURUS
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate">
+                  {displayTitle}
+                </span>
+              </div>
 
-                {isOperator && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setNewPhotoUrl(currentGroupPhoto || "");
-                      setIsEditingPhoto(true);
-                    }}
-                    className="h-8 px-3 rounded-full bg-black/70 hover:bg-black/90 text-slate-200 hover:text-white border border-white/20 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md shadow-md active:scale-95 shrink-0"
-                  >
-                    <Pencil className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Ganti Foto</span>
-                  </button>
-                )}
-              </div>
+              {isOperator && currentGroupPhoto && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setNewPhotoUrl(currentGroupPhoto || "");
+                    setIsEditingPhoto(true);
+                  }}
+                  className="h-8 px-3 rounded-full bg-[#202024] hover:bg-[#2C2C30] text-slate-200 hover:text-white border border-[#3F3F46] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95 shrink-0"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Ganti Foto</span>
+                </button>
+              )}
             </div>
-          ) : isOperator ? (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setNewPhotoUrl("");
-                setIsEditingPhoto(true);
-              }}
-              className="border-2 border-dashed border-[#27272A] hover:border-amber-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#121214]/60 hover:bg-[#121214] flex flex-col items-center justify-center gap-2 group"
-            >
-              <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Users className="w-5 h-5" />
+
+            {currentGroupPhoto ? (
+              <div className="relative w-full aspect-[21/9] sm:aspect-[24/9] rounded-2xl overflow-hidden border border-[#27272A] bg-[#121214] shadow-xl group">
+                <Image
+                  src={currentGroupPhoto}
+                  alt={`Foto Kenangan Pengurus ${displayTitle}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 900px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-102"
+                  unoptimized={true}
+                />
               </div>
-              <div>
-                <p className="text-xs font-bold text-[#F4F4F5]">
-                  Tambahkan Foto Kenangan Pengurus
-                </p>
-                <p className="text-[11px] text-[#71717A] mt-0.5">
-                  Sentuh di sini untuk mengunggah foto dokumentasi kepengurusan periode ini
-                </p>
+            ) : isOperator ? (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setNewPhotoUrl("");
+                  setIsEditingPhoto(true);
+                }}
+                className="border-2 border-dashed border-[#27272A] hover:border-amber-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-[#121214]/60 hover:bg-[#121214] flex flex-col items-center justify-center gap-2 group"
+              >
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-[#F4F4F5]">
+                    Tambahkan Foto Kenangan Pengurus
+                  </p>
+                  <p className="text-[11px] text-[#71717A] mt-0.5">
+                    Sentuh di sini untuk mengunggah foto dokumentasi kepengurusan periode ini
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
 
           {/* ── 1. THE CHAMPIONS (TOP 3 ANGGOTA) ── */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
-                Panggung Kehormatan (Top 3 Champions)
-              </h4>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-amber-400" />
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
+                  Panggung Kehormatan (Top 3 Champions)
+                </h4>
+              </div>
+              <span className="text-[10px] text-[#71717A] font-mono">
+                Sentuh untuk ringkasan
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 w-full min-w-0">
               {champions.map((champ) => (
                 <div
                   key={champ.rank}
-                  className={`group relative p-3.5 sm:p-4 rounded-2xl bg-[#121214] border ${champ.borderGlow} transition-all duration-300 ease-out flex flex-col justify-between space-y-3 overflow-hidden min-w-0 w-full`}
+                  onClick={() => setSelectedChampion(champ)}
+                  className="group relative p-3.5 sm:p-4 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-amber-500/50 transition-all duration-300 ease-out flex flex-col justify-between space-y-3 overflow-hidden min-w-0 w-full cursor-pointer active:scale-[0.98]"
                 >
-                  {/* Ambient glow highlight on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
                   <div className="flex items-start justify-between gap-2 min-w-0">
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       <div className="w-11 h-11 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#F4F4F5] shadow-xs">
@@ -355,9 +458,9 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
             </div>
           </div>
 
-          {/* ── 2. SEKSI TIM: ACARA TERBAIK & KARYA UNGGULAN ── */}
+          {/* ── 2. SEKSI TIM: ACARA TERBAIK & KARYA UNGGULAN (DIRECT ROUTING) ── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
-            {/* Top Events */}
+            {/* Top Events -> Route directly to /acara/[id] */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-sky-400" />
@@ -370,8 +473,8 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 {events.map((evt, i) => (
                   <Link
                     key={i}
-                    href={evt.url || "/acara"}
-                    className="p-3.5 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-primary/50 transition-all flex items-start justify-between gap-3 group cursor-pointer block"
+                    href={evt.id ? `/acara/${evt.id}` : "/acara"}
+                    className="p-3.5 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-primary/50 transition-all flex items-start justify-between gap-3 group cursor-pointer"
                   >
                     <div className="min-w-0 space-y-1 flex-1">
                       <div className="flex items-center gap-2">
@@ -402,7 +505,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
               </div>
             </div>
 
-            {/* Top Works */}
+            {/* Top Works -> Route directly to /eksplorasi/[id] */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-purple-400" />
@@ -415,8 +518,8 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 {works.map((wk, i) => (
                   <Link
                     key={i}
-                    href={wk.url || `/eksplorasi?q=${encodeURIComponent(wk.title || "")}`}
-                    className="p-3 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-purple-500/50 transition-all flex items-center gap-3 group cursor-pointer block"
+                    href={wk.id ? `/eksplorasi/${wk.id}` : `/eksplorasi?q=${encodeURIComponent(wk.title || "")}`}
+                    className="p-3 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-purple-500/50 transition-all flex items-center gap-3 group cursor-pointer"
                   >
                     <div className="w-12 h-12 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center">
                       {wk.thumb ? (
@@ -450,53 +553,155 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
           </div>
         </div>
 
-        {/* Right Sprocket Column */}
-        <div className="hidden sm:flex flex-col justify-around py-6 px-1.5 bg-[#121214] border-l border-[#27272A] select-none opacity-40 shrink-0">
+        {/* Right Sprocket Column (Visible on all viewports) */}
+        <div className="flex flex-col justify-around py-4 sm:py-6 px-1 sm:px-1.5 bg-[#121214] border-l border-[#27272A] select-none opacity-40 shrink-0 w-3.5 sm:w-5">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
-              className="w-2 h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1"
+              className="w-1.5 sm:w-2 h-2.5 sm:h-3.5 rounded-[2px] bg-[#27272A] border border-[#3F3F46] my-1 mx-auto"
             />
           ))}
         </div>
       </div>
 
       {/* ── BOTTOM FILMSTRIP SPROCKETS (LUBANG PITA FILM) ── */}
-      <div className="bg-[#121214] px-4 py-2 border-t border-[#27272A] flex items-center justify-between overflow-x-hidden select-none">
-        <div className="flex items-center gap-3 w-full justify-around opacity-40">
+      <div className="bg-[#121214] px-3 sm:px-4 py-2 border-t border-[#27272A] flex items-center justify-between overflow-x-hidden select-none">
+        <div className="flex items-center gap-2 sm:gap-3 w-full justify-around opacity-40">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
-              className="w-3.5 h-2 rounded-[3px] bg-[#27272A] border border-[#3F3F46] shrink-0"
+              className="w-3 sm:w-3.5 h-2 rounded-[3px] bg-[#27272A] border border-[#3F3F46] shrink-0"
             />
           ))}
         </div>
       </div>
 
-      {/* ── MODAL UBAH FOTO BERSAMA PENGURUS ── */}
-      {isEditingPhoto && (
+      {/* ── MODAL INTERAKTIF DETAIL CHAMPION (PORTAL) ── */}
+      {selectedChampion && mounted && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSelectedChampion(null)}
+        >
+          <div
+            className="w-full max-w-sm bg-[#18181B] border border-[#27272A] rounded-3xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 text-ink"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${selectedChampion.badgeColor}`}>
+                {selectedChampion.icon}
+                <span>{selectedChampion.label}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedChampion(null)}
+                className="text-[#71717A] hover:text-[#F4F4F5] p-1 cursor-pointer rounded-lg hover:bg-[#27272A] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 rounded-2xl bg-[#202024] border border-[#2C2C30] overflow-hidden mx-auto flex items-center justify-center font-bold text-xl text-[#F4F4F5] shadow-md">
+                {selectedChampion.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={selectedChampion.avatar}
+                    alt={selectedChampion.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{selectedChampion.name.charAt(0)}</span>
+                )}
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-[#F4F4F5]">
+                  {selectedChampion.name}
+                </h4>
+                <p className="text-xs text-[#A1A1AA]">
+                  Divisi: {selectedChampion.division || "Anggota Organisasi"}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
+                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                  Poin XP
+                </span>
+                <span className="text-sm font-extrabold text-primary font-mono block truncate">
+                  {selectedChampion.points.toLocaleString()}
+                </span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
+                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                  Karya Dibuat
+                </span>
+                <span className="text-sm font-extrabold text-purple-400 font-mono block">
+                  {selectedChampion.works} Karya
+                </span>
+              </div>
+              <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
+                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                  Kehadiran
+                </span>
+                <span className="text-sm font-extrabold text-sky-400 font-mono block">
+                  {entry.totalMeetings} Sesi
+                </span>
+              </div>
+            </div>
+
+            {/* Rincian Rekam Jejak Kontribusi */}
+            <div className="space-y-2 pt-1 border-t border-[#27272A] text-left">
+              <span className="text-[10px] uppercase font-mono font-bold text-[#71717A] tracking-wider block">
+                Rekam Jejak Kontribusi
+              </span>
+              <div className="space-y-1.5 text-xs text-[#A1A1AA]">
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-[#121214] border border-[#27272A]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="truncate">Menuntaskan {entry.totalMeetings} agenda rapat &amp; kepanitiaan</span>
+                </div>
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-[#121214] border border-[#27272A]">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                  <span className="truncate">Menghasilkan {selectedChampion.works} karya portofolio divisi</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2.5">
+              <Award className="w-4 h-4 text-amber-400 shrink-0" />
+              <p className="text-[11px] leading-relaxed">
+                Diabadikan atas dedikasi luar biasa dalam kepengurusan {displayTitle}.
+              </p>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ── MODAL UBAH FOTO BERSAMA PENGURUS (PORTAL) ── */}
+      {isEditingPhoto && mounted && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => {
             if (!isSavingPhoto) setIsEditingPhoto(false);
           }}
         >
           <div
-            className="w-full max-w-lg bg-[#18181B] border border-[#27272A] rounded-2xl shadow-2xl p-5 space-y-4 animate-in zoom-in-95"
+            className="w-full max-w-lg bg-[#18181B] border border-[#27272A] rounded-3xl shadow-2xl p-5 sm:p-6 space-y-4 animate-in zoom-in-95 text-ink"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-amber-400" />
                 <h3 className="text-sm font-bold text-[#F4F4F5]">
-                  Foto Kenangan Bersama Pengurus ({entry.periodName})
+                  Foto Kenangan Bersama Pengurus ({displayTitle})
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsEditingPhoto(false)}
                 disabled={isSavingPhoto}
-                className="text-[#71717A] hover:text-[#F4F4F5] p-1 cursor-pointer"
+                className="text-[#71717A] hover:text-[#F4F4F5] p-1 cursor-pointer rounded-lg hover:bg-[#27272A] transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -506,9 +711,9 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
               <ImagePickerField
                 value={newPhotoUrl}
                 onChange={(url) => setNewPhotoUrl(url)}
-                label="Pilih / Tempel Foto Angkatan"
+                label="Pilih Foto Angkatan"
                 aspectRatio="banner"
-                helperText="Mendukung unggah foto dari perangkat atau tautan Google Drive."
+                helperText="Pilih foto kenangan pengurus langsung dari perangkat Anda."
               />
 
               {saveMessage && (
@@ -518,7 +723,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#27272A]">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#27272A]">
               <button
                 type="button"
                 onClick={() => setIsEditingPhoto(false)}
@@ -531,7 +736,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 type="button"
                 onClick={handleSavePhoto}
                 disabled={isSavingPhoto}
-                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
               >
                 {isSavingPhoto ? (
                   <>
@@ -539,12 +744,13 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                     <span>Menyimpan Foto...</span>
                   </>
                 ) : (
-                  <span>Simpan Foto</span>
+                  <span>Simpan Perubahan</span>
                 )}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

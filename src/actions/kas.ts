@@ -25,18 +25,32 @@ export interface RealMoneySummary {
  */
 export async function calculateRealMoney(): Promise<RealMoneySummary> {
   try {
+    const activePeriod = await prisma.organizationalPeriod.findFirst({
+      where: { isActive: true },
+    });
+
+    const periodFilter = activePeriod ? { date: { gte: activePeriod.startDate } } : {};
+
     const [incomeAggregate, expenseAggregate] = await Promise.all([
       prisma.ledgerTransaction.aggregate({
-        where: { type: TransactionType.INCOME },
+        where: {
+          type: TransactionType.INCOME,
+          ...periodFilter,
+        },
         _sum: { amount: true },
       }),
       prisma.ledgerTransaction.aggregate({
-        where: { type: TransactionType.EXPENSE },
+        where: {
+          type: TransactionType.EXPENSE,
+          ...periodFilter,
+        },
         _sum: { amount: true },
       }),
     ]);
 
-    const totalIncome = incomeAggregate._sum.amount || 0;
+    const startingCash = activePeriod ? activePeriod.startingCashBalance : 0;
+    const currentIncome = incomeAggregate._sum.amount || 0;
+    const totalIncome = startingCash + currentIncome;
     const totalExpense = expenseAggregate._sum.amount || 0;
     const realBalance = totalIncome - totalExpense;
 
