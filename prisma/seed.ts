@@ -48,7 +48,6 @@ async function main() {
       mainDivision: Division.PROGRAMMING,
       classGrade: ClassGrade.KELAS_11,
       status: MemberStatus.ACTIVE,
-      nisn: "0071230001",
       password: defaultPasswordHash,
       mustChangePassword: false,
     },
@@ -73,7 +72,6 @@ async function main() {
       mainDivision: Division.PROGRAMMING,
       classGrade: ClassGrade.KELAS_11,
       status: MemberStatus.ACTIVE,
-      nisn: "0071230002",
       password: defaultPasswordHash,
       mustChangePassword: true,
       noWhatsapp: "081234567890",
@@ -83,10 +81,10 @@ async function main() {
   console.log(`✅ Verified/Created ADMIN: ${admin.email}`);
 
   // ============================================
-  // 3. Seeding Anggota 5 Divisi Berbasis NISN
+  // 3. Seeding Anggota 5 Divisi Berbasis Kode Anggota
   // ============================================
   interface SeedMember {
-    nisn: string;
+    memberCode: string;
     name: string;
     division: Division;
     classGrade: ClassGrade;
@@ -98,7 +96,7 @@ async function main() {
   const sampleMembers: SeedMember[] = [
     // Divisi Programming
     {
-      nisn: "0081010001",
+      memberCode: "0081010001",
       name: "Muhammad Rizky Pratama",
       division: Division.PROGRAMMING,
       classGrade: ClassGrade.KELAS_11, // Gen 20
@@ -107,7 +105,7 @@ async function main() {
       noWhatsapp: "081298765431",
     },
     {
-      nisn: "0091010002",
+      memberCode: "0091010002",
       name: "Ahmad Dani Setiawan",
       division: Division.PROGRAMMING,
       classGrade: ClassGrade.KELAS_10, // Gen 21
@@ -117,7 +115,7 @@ async function main() {
     },
     // Divisi Technopreneurship
     {
-      nisn: "0082020003",
+      memberCode: "0082020003",
       name: "Siti Nurhaliza",
       division: Division.TECHNOPRENEURSHIP,
       classGrade: ClassGrade.KELAS_11, // Gen 20
@@ -126,7 +124,7 @@ async function main() {
       noWhatsapp: "081298765433",
     },
     {
-      nisn: "0092020004",
+      memberCode: "0092020004",
       name: "Bima Arya Kusuma",
       division: Division.TECHNOPRENEURSHIP,
       classGrade: ClassGrade.KELAS_10, // Gen 21
@@ -136,7 +134,7 @@ async function main() {
     },
     // Divisi Desain Grafis & UI/UX
     {
-      nisn: "0083030005",
+      memberCode: "0083030005",
       name: "Anisa Rahmawati",
       division: Division.DESIGN,
       classGrade: ClassGrade.KELAS_11, // Gen 20
@@ -145,7 +143,7 @@ async function main() {
       noWhatsapp: "081298765435",
     },
     {
-      nisn: "0093030006",
+      memberCode: "0093030006",
       name: "Nabila Zahra Putri",
       division: Division.DESIGN,
       classGrade: ClassGrade.KELAS_10, // Gen 21
@@ -155,7 +153,7 @@ async function main() {
     },
     // Divisi Fotografi
     {
-      nisn: "0084040007",
+      memberCode: "0084040007",
       name: "Dimas Aditya Wardhana",
       division: Division.PHOTOGRAPHY,
       classGrade: ClassGrade.KELAS_11, // Gen 20
@@ -164,7 +162,7 @@ async function main() {
       noWhatsapp: "081298765437",
     },
     {
-      nisn: "0094040008",
+      memberCode: "0094040008",
       name: "Kurniawan Dwi Santoso",
       division: Division.PHOTOGRAPHY,
       classGrade: ClassGrade.KELAS_10, // Gen 21
@@ -174,7 +172,7 @@ async function main() {
     },
     // Divisi Sinematografi
     {
-      nisn: "0085050009",
+      memberCode: "0085050009",
       name: "Farhan Maulana Ghifari",
       division: Division.CINEMATOGRAPHY,
       classGrade: ClassGrade.KELAS_11, // Gen 20
@@ -183,7 +181,7 @@ async function main() {
       noWhatsapp: "081298765439",
     },
     {
-      nisn: "0095050010",
+      memberCode: "0095050010",
       name: "Gita Larasati",
       division: Division.CINEMATOGRAPHY,
       classGrade: ClassGrade.KELAS_10, // Gen 21
@@ -196,9 +194,9 @@ async function main() {
   let createdMembersCount = 0;
 
   for (const m of sampleMembers) {
-    const email = `${m.nisn}@saba.internal`;
+    const email = `${m.memberCode}@saba.internal`;
     await prisma.user.upsert({
-      where: { nisn: m.nisn },
+      where: { email },
       update: {
         name: m.name,
         mainDivision: m.division,
@@ -206,7 +204,6 @@ async function main() {
         noWhatsapp: m.noWhatsapp,
       },
       create: {
-        nisn: m.nisn,
         email,
         name: m.name,
         role: Role.MEMBER,

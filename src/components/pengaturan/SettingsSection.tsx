@@ -25,6 +25,7 @@ import {
   Save,
   RefreshCcw,
   Trophy,
+  Camera,
 } from "lucide-react";
 import { GithubIcon, InstagramIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { UserProfileData } from "./ProfileHeroCard";
@@ -52,9 +53,14 @@ const PanduanOrganisasiModal = dynamic(
 interface SettingsSectionProps {
   user: UserProfileData;
   onOpenKTA: () => void;
+  onOpenAvatarModal?: () => void;
 }
 
-export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
+export function SettingsSection({
+  user,
+  onOpenKTA,
+  onOpenAvatarModal,
+}: SettingsSectionProps) {
   // Theme Switching
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -105,13 +111,13 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
   const [showContactForm, setShowContactForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
-  // State Form Kontak & Socials
+  // State Form Kontak & Socials (Termasuk Nama Lengkap & WhatsApp yang dapat diedit)
+  const [fullName, setFullName] = useState(user.name || "");
   const [noWhatsapp, setNoWhatsapp] = useState(user.noWhatsapp || "");
   const [portfolioUrl, setPortfolioUrl] = useState(user.portfolioUrl || "");
   const [githubUrl, setGithubUrl] = useState(user.githubUrl || "");
   const [instagramUrl, setInstagramUrl] = useState(user.instagramUrl || "");
   const [linkedinUrl, setLinkedinUrl] = useState(user.linkedinUrl || "");
-  const [nisn, setNisn] = useState(user.nisn || "");
   const [contactFeedback, setContactFeedback] = useState<{
     text: string;
     type: "success" | "error";
@@ -134,12 +140,12 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
 
     startContactTransition(async () => {
       const res = await updateProfileContact({
-        noWhatsapp,
+        name: fullName.trim(),
+        noWhatsapp: noWhatsapp.trim(),
         portfolioUrl,
         githubUrl,
         instagramUrl,
         linkedinUrl,
-        nisn,
       });
 
       if (res.success) {
@@ -246,7 +252,27 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                   </div>
                 )}
 
-                {/* Input WhatsApp */}
+                {/* Input Nama Lengkap Resmi (Dapat diedit) */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-ink flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-primary" />
+                      <span>Nama Lengkap Asli</span>
+                    </span>
+                    <span className="text-[10px] text-ink-muted">Sesuai KTP / Rapor</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={70}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Nama Lengkap Resmi"
+                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                  />
+                </div>
+
+                {/* Input WhatsApp (Dapat diedit) */}
                 <div className="space-y-1">
                   <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-emerald-500" />
@@ -317,21 +343,6 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                     placeholder="https://linkedin.com/in/username"
-                    className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
-                  />
-                </div>
-
-                {/* Input NISN */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
-                    <IdCard className="w-3.5 h-3.5 text-purple-500" />
-                    <span>Nomor Induk Siswa Nasional (NISN)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={nisn}
-                    onChange={(e) => setNisn(e.target.value)}
-                    placeholder="Contoh: 0071234567"
                     className="w-full h-11 min-h-11 px-3.5 rounded-xl bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
                   />
                 </div>
@@ -474,25 +485,49 @@ export function SettingsSection({ user, onOpenKTA }: SettingsSectionProps) {
             )}
           </div>
 
-          {/* Row 3: Kartu Tanda Anggota Digital (KTA) */}
-          <button
-            type="button"
-            onClick={onOpenKTA}
-            className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
-          >
-            <div className="flex items-center gap-3">
-              <IdCard className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
-              <div className="flex items-center gap-2">
-                <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                  Kartu Tanda Anggota (KTA) Digital
-                </span>
-                <span className="px-1.5 py-0.2 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded">
-                  Aktif
-                </span>
+          {/* Row: Foto Profil & Avatar */}
+          {onOpenAvatarModal && (
+            <button
+              type="button"
+              onClick={onOpenAvatarModal}
+              className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <Camera className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
+                <div>
+                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
+                    Foto Profil &amp; Avatar Pilihan
+                  </span>
+                  <p className="text-[10px] text-ink-muted">
+                    Unggah foto WebP kustom atau pilih karakter avatar
+                  </p>
+                </div>
               </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
-          </button>
+              <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
+            </button>
+          )}
+
+          {/* Row 3: Kartu Tanda Anggota Digital (KTA) - Khusus Anggota Internal */}
+          {user.role !== Role.KOLABORATOR && (
+            <button
+              type="button"
+              onClick={onOpenKTA}
+              className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <IdCard className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
+                    Kartu Tanda Anggota (KTA) Digital
+                  </span>
+                  <span className="px-1.5 py-0.2 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded">
+                    Aktif
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
+            </button>
+          )}
         </div>
       </section>
 

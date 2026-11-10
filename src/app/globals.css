@@ -59,9 +59,9 @@
   --saba-ink-secondary: #A1A1AA;
   --saba-ink-muted: #71717A;
 
-  /* Brand Action — Saba Red Desaturated (~25% softer to prevent glare) */
-  --saba-primary: #E05355;
-  --saba-primary-hover: #F87171;
+  /* Brand Action — Locked Solid Saba Red (Konsisten di Light & Dark Mode, Anti-Pink) */
+  --saba-primary: #E11D2A;
+  --saba-primary-hover: #BE123C;
   --saba-primary-subtle: #450A0A;
   --saba-on-primary: #FFFFFF;
 

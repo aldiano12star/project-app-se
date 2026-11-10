@@ -5,7 +5,7 @@ import Image from "next/image";
 import { X, CheckCircle2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { UserProfileData } from "./ProfileHeroCard";
-import { Division } from "@prisma/client";
+import { Division, Role } from "@prisma/client";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface KTADigitalModalProps {
@@ -69,7 +69,7 @@ export function KTADigitalModal({
 }: KTADigitalModalProps) {
   useBodyScrollLock(isOpen);
 
-  if (!isOpen) return null;
+  if (!isOpen || user.role === Role.KOLABORATOR) return null;
 
   const initials = user.name
     .split(" ")
@@ -85,7 +85,6 @@ export function KTADigitalModal({
     name: user.name,
     role: user.role,
     code: memberIdCode,
-    nisn: user.nisn || null,
     division: user.mainDivision,
     system: "SABA_EXPLOIT_AUTHENTIC_MEMBER",
   });
@@ -175,11 +174,6 @@ export function KTADigitalModal({
                   <span className="text-xs font-mono text-primary font-bold">
                     {memberIdCode}
                   </span>
-                  {user.nisn && (
-                    <span className="text-xs font-mono text-slate-400">
-                      • {user.nisn}
-                    </span>
-                  )}
                 </div>
                 <p className="text-xs text-slate-300 font-normal">
                   {formatGrade(user.classGrade)}

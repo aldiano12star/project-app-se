@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <linearGradient id="skin2" x1="50" y1="30" x2="50" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FED7AA"/>
+      <stop offset="1" stop-color="#FDBA74"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="50" fill="url(#bg2)"/>
+  <!-- Body/T-Shirt -->
+  <path d="M22 95 C 22 74, 35 70, 50 70 C 65 70, 78 74, 78 95 Z" fill="#A855F7"/>
+  <circle cx="50" cy="70" r="10" fill="#7C3AED"/>
+  <!-- Head -->
+  <circle cx="50" cy="46" r="22" fill="url(#skin2)"/>
+  <!-- Curly Hair -->
+  <path d="M30 40 C 26 28, 38 20, 50 20 C 62 20, 74 28, 70 40 C 74 34, 66 26, 50 26 C 34 26, 26 34, 30 40 Z" fill="#451A03"/>
+  <circle cx="34" cy="30" r="6" fill="#451A03"/>
+  <circle cx="48" cy="24" r="6" fill="#451A03"/>
+  <circle cx="64" cy="30" r="6" fill="#451A03"/>
+  <!-- Glasses -->
+  <circle cx="40" cy="46" r="6.5" stroke="#1E1B4B" stroke-width="2.5" fill="none"/>
+  <circle cx="60" cy="46" r="6.5" stroke="#1E1B4B" stroke-width="2.5" fill="none"/>
+  <line x1="46.5" y1="46" x2="53.5" y2="46" stroke="#1E1B4B" stroke-width="2.5"/>
+  <circle cx="40" cy="46" r="2" fill="#1E1B4B"/>
+  <circle cx="60" cy="46" r="2" fill="#1E1B4B"/>
+  <!-- Smile -->
+  <path d="M44 59 Q 50 64 56 59" stroke="#9A3412" stroke-width="2" stroke-linecap="round"/>
+</svg>

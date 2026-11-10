@@ -21,6 +21,7 @@ export const getCurrentDbUser = cache(async () => {
       monthlyPoints: true,
       totalPoints: true,
       kasBalance: true,
+      instansi: true,
       isProfileCompleted: true,
       hasSeenWelcome: true,
     },

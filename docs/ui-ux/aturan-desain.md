@@ -16,7 +16,7 @@ Dokumen ini merupakan panduan tegas dan sumber kebenaran utama (*Single Source o
   - Card Background: `#1C1C1F` (Charcoal Elevated).
   - Border: `#27272A`.
   - Main Text: `#E4E4E7` (Soft Light Zinc, dilarang keras `#FFFFFF` untuk mencegah OLED halation dan silau mata).
-  - Brand Accent Saba Red: Diredam ~25% saturasi ke `#E05355` (hover `#F87171`) agar ramah di retina malam hari.
+  - Brand Accent Saba Red: Terkunci solid di `#E11D2A` (hover `#BE123C`) baik di Light Mode maupun Dark Mode untuk mencegah pergeseran warna ke nuansa merah muda/pink.
   - Semantic Colors (Wajib Pastel di Dark Mode): Rose (`#FB7185`), Emerald (`#34D399`), Amber (`#FBBF24`), Danger (`#F87171`).
 - **Naked Icons (Zero Decorative Wrappers)**:
   - Dilarang membungkus setiap ikon dalam kotak hiasan berwarna (`bg-blue-50 text-blue-600 rounded-xl p-2`).

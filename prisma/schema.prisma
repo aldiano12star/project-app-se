@@ -101,10 +101,10 @@ model User {
   instagramUrl       String?
   linkedinUrl        String?
   password           String?
-  nisn               String?      @unique
   mustChangePassword Boolean      @default(true)
   fullName           String?
   asalTujuan         String? // Keterangan asal/tujuan pendaftaran (misal: Tamu, Calon Anggota)
+  instansi           String? // Keterangan organisasi/instansi untuk role KOLABORATOR
   kelas              String?
   gen                Int?
   divisi             String?

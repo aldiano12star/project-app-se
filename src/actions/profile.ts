@@ -13,9 +13,9 @@ export interface ProfileActionResponse<T = unknown> {
 }
 
 export interface UpdateContactPayload {
+  name?: string;
   noWhatsapp?: string;
   portfolioUrl?: string;
-  nisn?: string;
   githubUrl?: string;
   instagramUrl?: string;
   linkedinUrl?: string;
@@ -40,7 +40,8 @@ function sanitizeUrl(raw?: string): string | null {
 }
 
 /**
- * Memperbarui data kontak & media sosial (WhatsApp, Portofolio, GitHub, Instagram, LinkedIn, NISN).
+ * Memperbarui data profil kontak & media sosial (Nama, WhatsApp, Portofolio, GitHub, Instagram, LinkedIn).
+ * Catatan: Asal / Tujuan Kunjungan (Intent) TIDAK DAPAT diubah melalui formulir ini.
  */
 export async function updateProfileContact(
   payload: UpdateContactPayload
@@ -48,23 +49,47 @@ export async function updateProfileContact(
   try {
     const sessionUser = await assertAuthenticated();
 
-    const noWhatsapp = payload.noWhatsapp?.trim() || null;
-    const portfolioUrl = sanitizeUrl(payload.portfolioUrl);
-    const githubUrl = sanitizeUrl(payload.githubUrl);
-    const instagramUrl = sanitizeUrl(payload.instagramUrl);
-    const linkedinUrl = sanitizeUrl(payload.linkedinUrl);
-    const nisn = payload.nisn?.trim() || null;
+    const updateData: Record<string, unknown> = {};
+
+    // 1. Validasi & Update Nama Lengkap jika dikirimkan
+    if (payload.name !== undefined) {
+      const trimmedName = payload.name.trim();
+      if (trimmedName.length < 3) {
+        return {
+          success: false,
+          message: "Nama lengkap resmi wajib diisi minimal 3 karakter.",
+        };
+      }
+      if (trimmedName.length > 70) {
+        return {
+          success: false,
+          message: "Nama lengkap resmi maksimal 70 karakter.",
+        };
+      }
+      updateData.name = trimmedName;
+      updateData.fullName = trimmedName;
+    }
+
+    // 2. Data Kontak WhatsApp & Social Links
+    if (payload.noWhatsapp !== undefined) {
+      updateData.noWhatsapp = payload.noWhatsapp.trim() || null;
+    }
+    if (payload.portfolioUrl !== undefined) {
+      updateData.portfolioUrl = sanitizeUrl(payload.portfolioUrl);
+    }
+    if (payload.githubUrl !== undefined) {
+      updateData.githubUrl = sanitizeUrl(payload.githubUrl);
+    }
+    if (payload.instagramUrl !== undefined) {
+      updateData.instagramUrl = sanitizeUrl(payload.instagramUrl);
+    }
+    if (payload.linkedinUrl !== undefined) {
+      updateData.linkedinUrl = sanitizeUrl(payload.linkedinUrl);
+    }
 
     await prisma.user.update({
       where: { id: sessionUser.id },
-      data: {
-        noWhatsapp,
-        portfolioUrl,
-        githubUrl,
-        instagramUrl,
-        linkedinUrl,
-        nisn,
-      },
+      data: updateData,
     });
 
     revalidatePath("/pengaturan");
@@ -82,6 +107,51 @@ export async function updateProfileContact(
         error instanceof Error
           ? error.message
           : "Gagal memperbarui data kontak.",
+    };
+  }
+}
+
+/**
+ * Memperbarui Foto Profil atau Avatar Pengguna
+ */
+export async function updateUserAvatar(
+  avatarUrl: string
+): Promise<ProfileActionResponse> {
+  try {
+    const sessionUser = await assertAuthenticated();
+
+    const cleanUrl = avatarUrl?.trim();
+    if (!cleanUrl) {
+      return {
+        success: false,
+        message: "URL foto profil atau avatar tidak valid.",
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: sessionUser.id },
+      data: {
+        avatarUrl: cleanUrl,
+        image: cleanUrl,
+      },
+    });
+
+    revalidatePath("/pengaturan");
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+
+    return {
+      success: true,
+      message: "Foto profil & avatar berhasil diperbarui!",
+    };
+  } catch (error) {
+    console.error("[Profile Action] updateUserAvatar error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui avatar pengguna.",
     };
   }
 }

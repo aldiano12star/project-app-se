@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Zap, CheckCircle2, Globe, IdCard } from "lucide-react";
+import { Zap, CheckCircle2, Globe, IdCard, Camera } from "lucide-react";
 import { GithubIcon, InstagramIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { Role, Division } from "@prisma/client";
 
@@ -21,7 +21,7 @@ export interface UserProfileData {
   monthlyPoints: number;
   noWhatsapp?: string | null;
   portfolioUrl?: string | null;
-  nisn?: string | null;
+  instansi?: string | null;
   mustChangePassword?: boolean;
   createdAt: string;
 }
@@ -29,6 +29,7 @@ export interface UserProfileData {
 interface ProfileHeroCardProps {
   user: UserProfileData;
   onOpenKTA?: () => void;
+  onOpenAvatarModal?: () => void;
 }
 
 function formatGrade(grade?: string | null) {
@@ -121,7 +122,11 @@ function getLevelInfo(totalXp: number) {
   }
 }
 
-export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
+export function ProfileHeroCard({
+  user,
+  onOpenKTA,
+  onOpenAvatarModal,
+}: ProfileHeroCardProps) {
   const levelInfo = getLevelInfo(user.totalPoints);
   const initials = user.name
     .split(" ")
@@ -211,6 +216,17 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
             </div>
           </div>
 
+          {onOpenAvatarModal && (
+            <button
+              type="button"
+              onClick={onOpenAvatarModal}
+              className="absolute top-0 right-0 p-1.5 rounded-full bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary/50 shadow-md transition-all active:scale-90 cursor-pointer"
+              title="Ubah Foto Profil atau Avatar"
+            >
+              <Camera className="w-3.5 h-3.5" />
+            </button>
+          )}
+
           <span
             className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card ${
               user.role === Role.OPERATOR
@@ -250,9 +266,15 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
           </div>
 
           {/* Details Grade & Division */}
-          <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
-            {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
-          </p>
+          {user.role === Role.KOLABORATOR ? (
+            <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
+              Kolaborator {user.instansi ? `• ${user.instansi}` : "Mitra Eksternal"}
+            </p>
+          ) : (
+            <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
+              {formatGrade(user.classGrade)} • Divisi {formatDivision(user.mainDivision)}
+            </p>
+          )}
 
           {/* Social Badges */}
           {(user.githubUrl || user.instagramUrl || user.linkedinUrl || user.portfolioUrl) && (
@@ -349,8 +371,8 @@ export function ProfileHeroCard({ user, onOpenKTA }: ProfileHeroCardProps) {
         </div>
       </div>
 
-      {/* Tombol Aksi Utama: Buka KTA Digital */}
-      {onOpenKTA && (
+      {/* Tombol Aksi Utama: Buka KTA Digital (Khusus Anggota Internal, Bukan Kolaborator) */}
+      {onOpenKTA && user.role !== Role.KOLABORATOR && (
         <div>
           <button
             type="button"

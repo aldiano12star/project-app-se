@@ -26,7 +26,6 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [nisn, setNisn] = useState("");
   const [kelas, setKelas] = useState<"X" | "XI" | "XII">("X");
   const [divisi, setDivisi] = useState("Programming");
   const [password, setPassword] = useState("");
@@ -68,7 +67,6 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
         email: email.trim(),
         password,
         confirmPassword,
-        nisn: nisn.trim() || undefined,
         kelas,
         divisi,
       });

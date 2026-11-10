@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="bg6" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#312E81"/>
+    </linearGradient>
+    <linearGradient id="visor" x1="30" y1="40" x2="70" y2="55" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="0.5" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="50" fill="url(#bg6)"/>
+  <!-- Space Suit Body -->
+  <path d="M18 95 C 18 70, 32 66, 50 66 C 68 66, 82 70, 82 95 Z" fill="#E2E8F0"/>
+  <rect x="42" y="66" width="16" height="12" rx="4" fill="#64748B"/>
+  <circle cx="50" cy="72" r="3" fill="#E11D2A"/>
+  <!-- Space Helmet -->
+  <circle cx="50" cy="45" r="25" fill="#F8FAFC"/>
+  <circle cx="50" cy="45" r="23" fill="#CBD5E1"/>
+  <!-- Reflective Visor -->
+  <rect x="31" y="38" width="38" height="16" rx="8" fill="url(#visor)"/>
+  <ellipse cx="40" cy="42" rx="5" ry="2" fill="#FFFFFF" opacity="0.6"/>
+</svg>

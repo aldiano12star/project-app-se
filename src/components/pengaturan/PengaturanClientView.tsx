@@ -22,6 +22,11 @@ const KTADigitalModal = dynamic(
   { ssr: false }
 );
 
+const AvatarSelectorModal = dynamic(
+  () => import("./AvatarSelectorModal").then((mod) => mod.AvatarSelectorModal),
+  { ssr: false }
+);
+
 interface PengaturanClientViewProps {
   user: UserProfileData;
   attendanceSummary: AttendanceSummaryData;
@@ -42,6 +47,7 @@ export function PengaturanClientView({
   managedUsers = [],
 }: PengaturanClientViewProps) {
   const [isKTAOpen, setIsKTAOpen] = useState(false);
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -72,7 +78,11 @@ export function PengaturanClientView({
       {/* Main Content Sections */}
       <div className="space-y-4 pt-1">
         {/* 1. Profile Hero Card with Gamification & Level XP */}
-        <ProfileHeroCard user={user} onOpenKTA={() => setIsKTAOpen(true)} />
+        <ProfileHeroCard
+          user={user}
+          onOpenKTA={() => setIsKTAOpen(true)}
+          onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
+        />
 
         {/* 2. Personal Summary Section (Presensi Mandiri Privat) */}
         <PersonalSummarySection
@@ -92,6 +102,7 @@ export function PengaturanClientView({
         <SettingsSection
           user={user}
           onOpenKTA={() => setIsKTAOpen(true)}
+          onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
         />
 
         {/* 6. Official Danger Logout Action */}
@@ -103,6 +114,14 @@ export function PengaturanClientView({
         isOpen={isKTAOpen}
         onClose={() => setIsKTAOpen(false)}
         user={user}
+      />
+
+      {/* Modal Dialog Avatar Selector */}
+      <AvatarSelectorModal
+        isOpen={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        currentAvatarUrl={user.avatarUrl || user.image}
+        currentName={user.name}
       />
     </div>
   );

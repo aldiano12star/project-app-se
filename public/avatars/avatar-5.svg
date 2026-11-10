@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#022C22"/>
+    </linearGradient>
+    <linearGradient id="skin5" x1="50" y1="30" x2="50" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#FCD34D"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="50" fill="url(#bg5)"/>
+  <!-- Body -->
+  <path d="M20 95 C 20 72, 35 68, 50 68 C 65 68, 80 72, 80 95 Z" fill="#10B981"/>
+  <!-- Head -->
+  <circle cx="50" cy="46" r="22" fill="url(#skin5)"/>
+  <!-- Ponytail / Sleek Hair -->
+  <path d="M27 44 C 27 25, 40 20, 50 20 C 60 20, 73 25, 73 44 C 71 34, 62 30, 50 30 C 38 30, 29 34, 27 44 Z" fill="#312E81"/>
+  <path d="M68 32 C 78 30, 84 40, 80 50 C 76 56, 72 48, 70 42 Z" fill="#312E81"/>
+  <!-- Headphone -->
+  <rect x="25" y="40" width="6" height="12" rx="3" fill="#F43F5E"/>
+  <rect x="69" y="40" width="6" height="12" rx="3" fill="#F43F5E"/>
+  <path d="M28 40 C 28 22, 72 22, 72 40" stroke="#F43F5E" stroke-width="3" fill="none"/>
+  <!-- Eyes -->
+  <circle cx="41" cy="47" r="2.5" fill="#18181B"/>
+  <circle cx="59" cy="47" r="2.5" fill="#18181B"/>
+  <!-- Smile -->
+  <path d="M45 58 Q 50 62 55 58" stroke="#78350F" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -10,7 +10,6 @@ export interface RegisterInput {
   email: string;
   password: string;
   confirmPassword: string;
-  nisn?: string;
   kelas?: "X" | "XI" | "XII";
   divisi?: string;
 }
@@ -71,19 +70,6 @@ export async function registerUser(
       };
     }
 
-    // Cek NISN jika diisi
-    if (input.nisn?.trim()) {
-      const existingNisn = await prisma.user.findUnique({
-        where: { nisn: input.nisn.trim() },
-      });
-      if (existingNisn) {
-        return {
-          success: false,
-          message: "NISN ini sudah terdaftar oleh pengguna lain.",
-        };
-      }
-    }
-
     // Enkripsi (hash) kata sandi pengguna dengan salt 10 rounds sebelum disimpan ke database
     const hashedPassword = await bcrypt.hash(input.password, 10);
 
@@ -114,7 +100,6 @@ export async function registerUser(
         password: hashedPassword,
         // Karena pengguna membuat kata sandinya sendiri sejak awal, mustChangePassword disetel ke false
         mustChangePassword: false,
-        nisn: input.nisn?.trim() || null,
         kelas: input.kelas || "X",
         gen,
         classGrade,

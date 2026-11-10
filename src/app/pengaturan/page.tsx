@@ -39,7 +39,7 @@ export default async function PengaturanPage() {
       githubUrl: true,
       instagramUrl: true,
       linkedinUrl: true,
-      nisn: true,
+      instansi: true,
       kasBalance: true,
       isProfileCompleted: true,
       createdAt: true,
@@ -107,7 +107,7 @@ export default async function PengaturanPage() {
     githubUrl: dbUser.githubUrl || "",
     instagramUrl: dbUser.instagramUrl || "",
     linkedinUrl: dbUser.linkedinUrl || "",
-    nisn: dbUser.nisn || "",
+    instansi: dbUser.instansi || "",
     createdAt: dbUser.createdAt.toISOString(),
   };
 

@@ -12,6 +12,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Sparkles,
+  ChevronDown,
 } from "lucide-react";
 import { saveOnboardingData } from "@/actions/onboarding";
 
@@ -21,12 +22,12 @@ interface OnboardingFormProps {
   userImage?: string | null;
 }
 
-const SUGGESTION_CHIPS = [
+const ROLE_INTENT_OPTIONS = [
   "Calon Anggota",
   "Tamu / Kolaborator",
-  "Alumni SMAN 1 Bantul",
+  "Alumni",
   "Eksplorasi Proyek",
-];
+] as const;
 
 export function OnboardingForm({
   initialName = "",
@@ -49,7 +50,8 @@ export function OnboardingForm({
   const rawDigits = noWhatsapp.replace(/\D/g, "");
   const isWaValid = rawDigits.length >= 10 && rawDigits.length <= 15;
 
-  const canSubmit = isNameValid && isWaValid && !isPending;
+  const isIntentValid = Boolean(asalTujuan.trim());
+  const canSubmit = isNameValid && isWaValid && isIntentValid && !isPending;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,11 +67,16 @@ export function OnboardingForm({
       return;
     }
 
+    if (!isIntentValid) {
+      setErrorMessage("Silakan pilih Asal / Tujuan Kunjungan Anda.");
+      return;
+    }
+
     startTransition(async () => {
       const res = await saveOnboardingData({
         fullName: fullName.trim(),
         noWhatsapp: noWhatsapp.trim(),
-        asalTujuan: asalTujuan.trim() || undefined,
+        asalTujuan: asalTujuan.trim(),
       });
 
       if (res.success) {
@@ -209,41 +216,40 @@ export function OnboardingForm({
           </div>
         </div>
 
-        {/* Input 3: Asal / Tujuan (Opsional) */}
-        <div className="space-y-2">
+        {/* Input 3: Asal / Tujuan Kunjungan (Wajib Dipilih) */}
+        <div className="space-y-1.5">
           <label className="text-xs font-semibold text-ink flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <Compass className="w-4 h-4 text-sky-500" />
-              <span>Asal / Tujuan Kunjungan</span>
+              <span>
+                Asal / Tujuan Kunjungan <span className="text-primary">*</span>
+              </span>
             </span>
-            <span className="text-[11px] text-ink-muted">Opsional</span>
+            <span className="text-[11px] text-ink-muted">Wajib dipilih</span>
           </label>
-          <input
-            type="text"
-            maxLength={100}
-            placeholder="Misal: Calon Anggota Gen 22, Tamu Workshop, Kolaborator..."
-            value={asalTujuan}
-            onChange={(e) => setAsalTujuan(e.target.value)}
-            className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-medium"
-          />
-
-          {/* Quick Suggestion Chips */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {SUGGESTION_CHIPS.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => setAsalTujuan(chip)}
-                className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${
-                  asalTujuan === chip
-                    ? "bg-primary/10 border-primary/40 text-primary font-semibold"
-                    : "bg-surface-container-low border-edge text-ink-muted hover:text-ink hover:border-slate-400"
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
+          <div className="relative">
+            <select
+              required
+              value={asalTujuan}
+              onChange={(e) => setAsalTujuan(e.target.value)}
+              className="w-full h-12 px-4 pr-10 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-medium appearance-none cursor-pointer"
+            >
+              <option value="" disabled className="text-ink-muted">
+                -- Pilih Asal / Tujuan Kunjungan --
+              </option>
+              {ROLE_INTENT_OPTIONS.map((opt) => (
+                <option key={opt} value={opt} className="text-ink bg-card">
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-ink-muted">
+              <ChevronDown className="w-4 h-4" />
+            </div>
           </div>
+          <p className="text-[11px] text-ink-muted px-0.5">
+            Membantu pengurus memvalidasi orientasi dan tingkat verifikasi akun Anda.
+          </p>
         </div>
 
         {/* Note info regarding Role GUEST */}

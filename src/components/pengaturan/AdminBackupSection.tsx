@@ -122,7 +122,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
                   1. Unduh Rekap Data Anggota (.CSV)
                 </span>
                 <span className="text-[10px] text-ink-muted">
-                  NISN, Nama, Divisi, Angkatan, Role, No WA, Total XP
+                  Nama, Divisi, Angkatan, Role, No WA, Total XP
                 </span>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
                   2. Unduh Arsip Kehadiran Rapat (.CSV)
                 </span>
                 <span className="text-[10px] text-ink-muted">
-                  Judul Rapat, Tanggal, Anggota, NISN, Status Presensi
+                  Judul Rapat, Tanggal, Anggota, Status Presensi
                 </span>
               </div>
             </div>

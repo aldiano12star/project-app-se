@@ -16,9 +16,11 @@ import {
   Settings2,
   X,
   Check,
+  Handshake,
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 import { promoteUserRole } from "@/actions/profile";
+import { calculateGenFromGrade } from "@/lib/academic-year";
 
 export interface ManagedUser {
   id: string;
@@ -170,15 +172,10 @@ export function AdminUserManagementSection({
 
     let genNum: number | null = null;
     let kelasName: string | null = null;
-    if (gradeVal === "KELAS_10") {
-      genNum = 21;
-      kelasName = "X";
-    } else if (gradeVal === "KELAS_11") {
-      genNum = 20;
-      kelasName = "XI";
-    } else if (gradeVal === "KELAS_12") {
-      genNum = 19;
-      kelasName = "XII";
+    if (gradeVal && gradeVal !== "NONE") {
+      const genResult = calculateGenFromGrade(gradeVal);
+      genNum = genResult.gen;
+      kelasName = genResult.kelasLabel;
     }
 
     startTransition(async () => {
@@ -426,6 +423,20 @@ export function AdminUserManagementSection({
                             <UserCheck className="w-3.5 h-3.5" />
                           )}
                           <span>Setujui Member</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={isProcessing}
+                          onClick={() => handlePromote(u.id, Role.KOLABORATOR)}
+                          className="h-10 min-h-10 px-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        >
+                          {isProcessing ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Handshake className="w-3.5 h-3.5" />
+                          )}
+                          <span>Setujui Kolaborator</span>
                         </button>
 
                         <button

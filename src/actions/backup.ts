@@ -36,7 +36,6 @@ export async function exportMembersCSV(): Promise<BackupResponse> {
     const users = await prisma.user.findMany({
       orderBy: [{ classGrade: "desc" }, { name: "asc" }],
       select: {
-        nisn: true,
         name: true,
         email: true,
         classGrade: true,
@@ -50,7 +49,6 @@ export async function exportMembersCSV(): Promise<BackupResponse> {
     });
 
     const headers = [
-      "NISN",
       "Nama Lengkap",
       "Email",
       "Kelas / Angkatan",
@@ -63,7 +61,6 @@ export async function exportMembersCSV(): Promise<BackupResponse> {
     ];
 
     const rows = users.map((u) => [
-      escapeCSV(u.nisn || "-"),
       escapeCSV(u.name),
       escapeCSV(u.email),
       escapeCSV(formatGrade(u.classGrade)),
@@ -116,7 +113,6 @@ export async function exportAttendanceCSV(): Promise<BackupResponse> {
         user: {
           select: {
             name: true,
-            nisn: true,
             classGrade: true,
             mainDivision: true,
           },
@@ -128,7 +124,6 @@ export async function exportAttendanceCSV(): Promise<BackupResponse> {
       "Judul Rapat / Kegiatan",
       "Tanggal Acara",
       "Nama Anggota",
-      "NISN",
       "Kelas / Angkatan",
       "Divisi",
       "Status Kehadiran",
@@ -140,7 +135,6 @@ export async function exportAttendanceCSV(): Promise<BackupResponse> {
       escapeCSV(a.meeting.title),
       escapeCSV(new Date(a.meeting.date).toISOString().split("T")[0]),
       escapeCSV(a.user.name),
-      escapeCSV(a.user.nisn || "-"),
       escapeCSV(formatGrade(a.user.classGrade)),
       escapeCSV(a.user.mainDivision),
       escapeCSV(a.status),

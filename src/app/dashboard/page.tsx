@@ -6,6 +6,7 @@ import { PodiumTop3 } from "@/components/home/PodiumTop3";
 import { DashboardMeetingWidget } from "@/components/home/DashboardMeetingWidget";
 import { GuestLockedView } from "@/components/ui/GuestLockedView";
 import { WelcomeOnboardingModal } from "@/components/home/WelcomeOnboardingModal";
+import { CompleteProfileModal } from "@/components/onboarding/CompleteProfileModal";
 import Link from "next/link";
 import { Role, Division } from "@prisma/client";
 import { buildAudienceFilter } from "@/utils/audience";
@@ -357,6 +358,16 @@ export default async function DashboardPage() {
       <WelcomeOnboardingModal
         initialOpen={!dbUser.hasSeenWelcome}
         userName={dbUser.name}
+      />
+      <CompleteProfileModal
+        user={{
+          id: dbUser.id,
+          name: dbUser.name,
+          role: dbUser.role,
+          mainDivision: dbUser.mainDivision,
+          classGrade: dbUser.classGrade,
+          instansi: dbUser.instansi,
+        }}
       />
       <div className="flex flex-col gap-6">
         {/* ========================================================= */}
