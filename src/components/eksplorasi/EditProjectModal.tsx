@@ -449,16 +449,16 @@ export function EditProjectModal({
         </form>
 
         {/* Footer Modal - Pinned Action Buttons */}
-        <div className="px-5 py-3.5 border-t border-edge flex items-center justify-between gap-2 shrink-0 bg-surface-container-low/90">
+        <div className="px-5 py-3.5 border-t border-edge flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0 bg-surface-container-low/90">
           {/* Tombol Hapus Solid Merah */}
-          <div>
+          <div className="flex items-center">
             {isConfirmingDelete ? (
-              <div className="flex items-center gap-1.5 bg-card p-1 rounded-xl border border-rose-500 shadow-md">
+              <div className="flex items-center gap-1.5 bg-card p-1 rounded-xl border border-rose-500 shadow-md w-full sm:w-auto justify-between sm:justify-start">
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={isDeleting || isLoading}
-                  className="h-9 px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  className="h-10 px-3.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 flex-1 sm:flex-initial"
                 >
                   {isDeleting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -470,7 +470,7 @@ export function EditProjectModal({
                   type="button"
                   onClick={() => setIsConfirmingDelete(false)}
                   disabled={isDeleting || isLoading}
-                  className="h-9 px-2 rounded-lg text-ink-muted hover:text-ink text-xs cursor-pointer"
+                  className="h-10 px-3 rounded-lg text-ink-muted hover:text-ink text-xs font-medium cursor-pointer"
                 >
                   Batal
                 </button>
@@ -480,7 +480,7 @@ export function EditProjectModal({
                 type="button"
                 onClick={() => setIsConfirmingDelete(true)}
                 disabled={isLoading || isDeleting}
-                className="h-10 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm z-20"
+                className="h-11 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm w-full sm:w-auto"
                 title="Hapus Karya Ini"
               >
                 <Trash2 className="h-4 w-4" />
@@ -489,7 +489,7 @@ export function EditProjectModal({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={(e) => {
@@ -497,7 +497,7 @@ export function EditProjectModal({
                 onClose();
               }}
               disabled={isLoading || isDeleting}
-              className="px-4 py-2.5 rounded-xl border border-edge text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50 min-h-11"
+              className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-edge text-xs font-semibold text-ink-muted hover:text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50 min-h-11 flex items-center justify-center"
             >
               Batal
             </button>
@@ -505,7 +505,7 @@ export function EditProjectModal({
               type="submit"
               form="edit-project-form"
               disabled={isLoading || isDeleting}
-              className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
+              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 min-h-11"
             >
               {isLoading ? (
                 <>

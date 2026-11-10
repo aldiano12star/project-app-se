@@ -108,8 +108,8 @@ export function ImagePickerField({
     }
   };
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleClear = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     onChange("");
     setErrorMessage(null);
     if (fileInputRef.current) {
@@ -150,6 +150,19 @@ export function ImagePickerField({
             className="object-cover transition-transform group-hover:scale-102 duration-300"
             unoptimized={true}
           />
+
+          {/* Tombol X (Clear) Terpampang Jelas di Pojok Kanan Atas */}
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute top-2.5 right-2.5 z-20 h-8 w-8 min-h-[32px] min-w-[32px] rounded-full bg-black/75 hover:bg-rose-600 text-white flex items-center justify-center transition-all shadow-md active:scale-90 cursor-pointer border border-white/20"
+            title="Hapus gambar saat ini"
+            aria-label="Hapus gambar saat ini"
+          >
+            <X className="w-4 h-4" />
+          </button>
+
+          {/* Overlay Hover di Desktop */}
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-4">
             <button
               type="button"

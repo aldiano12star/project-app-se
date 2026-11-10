@@ -15,6 +15,9 @@ import {
   Loader2,
   AlertCircle,
   GraduationCap,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Division, Role } from "@prisma/client";
 import { calculateGenFromGrade } from "@/lib/academic-year";
@@ -115,8 +118,16 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
   // Form State untuk Kolaborator
   const [instansi, setInstansi] = useState(user.instansi || "");
 
+  // Form State Kata Sandi Sekunder (Wajib)
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Validasi Kata Sandi
+  const isPasswordValid = password.length >= 6 && password === confirmPassword;
 
   // Kalkulasi Auto-Gen Dinamis secara real-time saat pengguna memilih Kelas
   const autoGenInfo = useMemo(() => {
@@ -140,10 +151,21 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
       return;
     }
 
+    if (password.length < 6) {
+      setErrorMessage("Kata sandi akun minimal harus 6 karakter.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Konfirmasi kata sandi tidak cocok.");
+      return;
+    }
+
     startTransition(async () => {
       const res = await completePhase2Profile({
         division: selectedDivision,
         grade: selectedGrade,
+        password: password.trim(),
       });
 
       if (res.success) {
@@ -166,9 +188,20 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
       return;
     }
 
+    if (password.length < 6) {
+      setErrorMessage("Kata sandi akun minimal harus 6 karakter.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Konfirmasi kata sandi tidak cocok.");
+      return;
+    }
+
     startTransition(async () => {
       const res = await completePhase2Kolaborator({
         instansi: instansi.trim(),
+        password: password.trim(),
       });
 
       if (res.success) {
@@ -308,6 +341,58 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                   })}
                 </div>
               </div>
+
+              {/* Langkah 3: Buat Kata Sandi Akun */}
+              <div className="space-y-3 pt-2 border-t border-edge/60">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-ink flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Lock className="w-4 h-4 text-emerald-500" />
+                      <span>3. Buat Kata Sandi Akun *</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showPassword ? "Sembunyikan" : "Lihat"}</span>
+                    </button>
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    placeholder="Minimal 6 karakter"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-ink flex items-center justify-between">
+                    <span>Konfirmasi Kata Sandi *</span>
+                    {confirmPassword && (
+                      <span className={`text-[11px] ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
+                        {password === confirmPassword ? "Cocok ✓" : "Belum Cocok"}
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    placeholder="Ulangi kata sandi di atas"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
+                  />
+                  <p className="text-[11px] text-ink-muted px-0.5">
+                    Digunakan untuk autentikasi sekunder &amp; keamanan akun Anda di perangkat bersama.
+                  </p>
+                </div>
+              </div>
             </form>
           )}
 
@@ -341,6 +426,55 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                   Akun kolaborator berkolaborasi pada proyek karya tanpa kewajiban iuran kas, kuis, maupun KTA digital.
                 </p>
               </div>
+
+              {/* Kata Sandi untuk Kolaborator */}
+              <div className="space-y-3 pt-2 border-t border-edge/60">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-ink flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Lock className="w-4 h-4 text-emerald-500" />
+                      <span>Buat Kata Sandi Akun *</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>{showPassword ? "Sembunyikan" : "Lihat"}</span>
+                    </button>
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    placeholder="Minimal 6 karakter"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-ink flex items-center justify-between">
+                    <span>Konfirmasi Kata Sandi *</span>
+                    {confirmPassword && (
+                      <span className={`text-[11px] ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
+                        {password === confirmPassword ? "Cocok ✓" : "Belum Cocok"}
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    placeholder="Ulangi kata sandi di atas"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
+                  />
+                </div>
+              </div>
             </form>
           )}
         </div>
@@ -352,6 +486,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
             form={needsMemberSetup ? "member-phase2-form" : "kolaborator-phase2-form"}
             disabled={
               isPending ||
+              !isPasswordValid ||
               (needsMemberSetup && (!selectedDivision || !selectedGrade)) ||
               (needsKolaboratorSetup && !instansi.trim())
             }

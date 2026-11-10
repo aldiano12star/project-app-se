@@ -198,16 +198,19 @@ body {
 
 /* ── Smooth Page Transition Animations ───────────────────────────── */
 @keyframes pageEnter {
-  from {
-    opacity: 0.92;
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
   }
-  to {
+  100% {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .animate-page-enter {
-  animation: pageEnter 150ms ease-out forwards;
+  animation: pageEnter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
 }
 
 html.splash-done #se-splash-screen {

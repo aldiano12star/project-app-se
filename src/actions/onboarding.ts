@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { normalizeWhatsAppNumber } from "@/utils/phone";
 import { Division, Role } from "@prisma/client";
 import { calculateGenFromGrade } from "@/lib/academic-year";
+import bcrypt from "bcryptjs";
 
 export const VALID_ROLE_INTENTS = [
   "Calon Anggota",
@@ -28,10 +29,12 @@ export interface OnboardingResponse {
 export interface CompletePhase2MemberInput {
   division: Division;
   grade: "KELAS_10" | "KELAS_11" | "KELAS_12" | "10" | "11" | "12";
+  password?: string;
 }
 
 export interface CompletePhase2KolaboratorInput {
   instansi: string;
+  password?: string;
 }
 
 /**
@@ -166,10 +169,20 @@ export async function completePhase2Profile(
       };
     }
 
-    // 2. Kalkulasi Dinamis Nomor Angkatan (Auto-Gen Algorithm)
+    // 2. Validasi Kata Sandi Sekunder (Wajib)
+    const rawPassword = input.password?.trim();
+    if (!rawPassword || rawPassword.length < 6) {
+      return {
+        success: false,
+        message: "Kata sandi keamanan akun wajib diisi minimal 6 karakter.",
+      };
+    }
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+    // 3. Kalkulasi Dinamis Nomor Angkatan (Auto-Gen Algorithm)
     const genResult = calculateGenFromGrade(input.grade);
 
-    // 3. Simpan data divisi, kelas, dan angkatan ke database
+    // 4. Simpan data divisi, kelas, kata sandi, dan angkatan ke database
     await prisma.user.update({
       where: { id: sessionUser.id },
       data: {
@@ -179,6 +192,8 @@ export async function completePhase2Profile(
         kelas: genResult.kelasLabel,
         gen: genResult.gen,
         generationNumber: genResult.gen,
+        password: hashedPassword,
+        mustChangePassword: false,
       },
     });
 
@@ -247,17 +262,30 @@ export async function completePhase2Kolaborator(
     }
 
     // Simpan instansi, pastikan divisi & gen tetap kosong untuk kolaborator
+    const updateData: Record<string, unknown> = {
+      instansi,
+      mainDivision: null,
+      divisi: null,
+      classGrade: null,
+      kelas: null,
+      gen: null,
+      generationNumber: null,
+    };
+
+    if (input.password?.trim()) {
+      if (input.password.trim().length < 6) {
+        return {
+          success: false,
+          message: "Kata sandi keamanan akun minimal 6 karakter.",
+        };
+      }
+      updateData.password = await bcrypt.hash(input.password.trim(), 10);
+      updateData.mustChangePassword = false;
+    }
+
     await prisma.user.update({
       where: { id: sessionUser.id },
-      data: {
-        instansi,
-        mainDivision: null,
-        divisi: null,
-        classGrade: null,
-        kelas: null,
-        gen: null,
-        generationNumber: null,
-      },
+      data: updateData,
     });
 
     revalidatePath("/");

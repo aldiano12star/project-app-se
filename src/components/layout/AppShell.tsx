@@ -2,6 +2,7 @@ import React from "react";
 import { TopHeader } from "./TopHeader";
 import { BottomNav } from "./BottomNav";
 import { Sidebar } from "./Sidebar";
+import { PageTransition } from "./PageTransition";
 import { Role } from "@prisma/client";
 
 export interface AppShellUser {
@@ -56,13 +57,15 @@ export function AppShell({
           </div>
         )}
 
-        {/* Slot Konten Utama */}
+        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus */}
         <main
           className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto pb-12 ${
             showNav ? "md:pb-12" : "pb-8"
           }`}
         >
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
 
         {/* Footer Hak Cipta & Powered by (Clearance di atas Bottom Nav Mobile) */}

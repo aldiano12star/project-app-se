@@ -372,4 +372,101 @@ export async function promoteUserRole(
   }
 }
 
+export interface ResetPasswordByOperatorPayload {
+  targetUserId: string;
+  customPassword?: string;
+}
+
+export interface ResetPasswordByOperatorResponse {
+  success: boolean;
+  message: string;
+  temporaryPassword?: string;
+  targetWhatsapp?: string | null;
+  targetName?: string;
+}
+
+/**
+ * Mekanisme Operator Password Override:
+ * Memungkinkan Operator/Admin me-reset kata sandi pengguna tanpa email routing
+ * (Mitigasi Lupa Kata Sandi via WhatsApp Handoff).
+ */
+export async function resetUserPasswordByOperator(
+  payload: ResetPasswordByOperatorPayload
+): Promise<ResetPasswordByOperatorResponse> {
+  try {
+    const sessionUser = await assertAuthenticated();
+
+    if (
+      sessionUser.role !== Role.ADMIN &&
+      sessionUser.role !== Role.OPERATOR
+    ) {
+      return {
+        success: false,
+        message: "FORBIDDEN: Hanya Admin atau Operator yang dapat me-reset kata sandi akun.",
+      };
+    }
+
+    const target = await prisma.user.findUnique({
+      where: { id: payload.targetUserId },
+      select: { id: true, name: true, role: true, noWhatsapp: true },
+    });
+
+    if (!target) {
+      return {
+        success: false,
+        message: "Pengguna tidak ditemukan dalam sistem.",
+      };
+    }
+
+    // Hanya Operator yang dapat me-reset akun sesama Operator
+    if (target.role === Role.OPERATOR && sessionUser.role !== Role.OPERATOR) {
+      return {
+        success: false,
+        message: "FORBIDDEN: Hanya Operator yang dapat me-reset akun sesama Operator.",
+      };
+    }
+
+    // Tentukan kata sandi sementara (kustom atau generate acak 8 karakter)
+    const tempPassword =
+      payload.customPassword?.trim() ||
+      `Saba-${Math.random().toString(36).substring(2, 6).toUpperCase()}!`;
+
+    if (tempPassword.length < 6) {
+      return {
+        success: false,
+        message: "Kata sandi sementara minimal harus 6 karakter.",
+      };
+    }
+
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+    await prisma.user.update({
+      where: { id: target.id },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: true, // Wajibkan ganti sandi saat login berikutnya
+      },
+    });
+
+    revalidatePath("/pengaturan");
+
+    return {
+      success: true,
+      message: `Kata sandi akun ${target.name} berhasil di-reset ke sandi sementara.`,
+      temporaryPassword: tempPassword,
+      targetWhatsapp: target.noWhatsapp,
+      targetName: target.name,
+    };
+  } catch (error) {
+    console.error("[Profile Action] resetUserPasswordByOperator error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Gagal me-reset kata sandi pengguna.",
+    };
+  }
+}
+
 export const changePassword = updatePassword;

@@ -17,9 +17,12 @@ import {
   X,
   Check,
   Handshake,
+  KeyRound,
+  Copy,
+  MessageCircle,
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
-import { promoteUserRole } from "@/actions/profile";
+import { promoteUserRole, resetUserPasswordByOperator } from "@/actions/profile";
 import { calculateGenFromGrade } from "@/lib/academic-year";
 
 export interface ManagedUser {
@@ -146,6 +149,16 @@ export function AdminUserManagementSection({
   } | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Password Reset Override States
+  const [resettingUser, setResettingUser] = useState<ManagedUser | null>(null);
+  const [customPasswordInput, setCustomPasswordInput] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [resetResult, setResetResult] = useState<{
+    temporaryPassword: string;
+    targetWhatsapp?: string | null;
+    targetName?: string;
+  } | null>(null);
+
   const isOfficer =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
 
@@ -215,6 +228,42 @@ export function AdminUserManagementSection({
       assigningUser.role === Role.GUEST ? Role.MEMBER : assigningUser.role;
 
     handlePromote(assigningUser.id, nextRole, div, grade);
+  };
+
+  const openResetPasswordModal = (u: ManagedUser) => {
+    setResettingUser(u);
+    setCustomPasswordInput("");
+    setResetResult(null);
+    setCopied(false);
+  };
+
+  const handleExecuteResetPassword = () => {
+    if (!resettingUser) return;
+    setFeedback(null);
+
+    startTransition(async () => {
+      const res = await resetUserPasswordByOperator({
+        targetUserId: resettingUser.id,
+        customPassword: customPasswordInput.trim() || undefined,
+      });
+
+      if (res.success && res.temporaryPassword) {
+        setResetResult({
+          temporaryPassword: res.temporaryPassword,
+          targetWhatsapp: res.targetWhatsapp,
+          targetName: res.targetName || resettingUser.name,
+        });
+      } else {
+        setFeedback({ text: res.message, type: "error" });
+      }
+    });
+  };
+
+  const handleCopyPassword = () => {
+    if (!resetResult?.temporaryPassword) return;
+    navigator.clipboard.writeText(resetResult.temporaryPassword);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -409,6 +458,18 @@ export function AdminUserManagementSection({
                       <span>Atur Divisi/Gen</span>
                     </button>
 
+                    {/* Tombol Operator Reset Password */}
+                    <button
+                      type="button"
+                      disabled={isProcessing}
+                      onClick={() => openResetPasswordModal(u)}
+                      className="h-10 min-h-10 px-3 rounded-xl border border-edge bg-surface hover:bg-surface-container text-ink text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="Reset Kata Sandi Akun"
+                    >
+                      <KeyRound className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Reset Sandi</span>
+                    </button>
+
                     {u.role === Role.GUEST ? (
                       <>
                         <button
@@ -560,6 +621,146 @@ export function AdminUserManagementSection({
                 <span>Simpan</span>
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dialog Operator Reset Password */}
+      {resettingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-2xl bg-card border border-edge p-5 shadow-2xl space-y-4 text-ink animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-edge">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-ink">Reset Kata Sandi Akun</h4>
+                  <p className="text-[11px] text-ink-muted truncate max-w-48">
+                    {resettingUser.name}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setResettingUser(null)}
+                className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {resetResult ? (
+              /* Tampilan Sukses Reset & WhatsApp Handoff */
+              <div className="space-y-3.5 py-1">
+                <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>Kata Sandi Berhasil Di-reset!</span>
+                  </div>
+                  <p className="text-[11px] text-ink-muted leading-relaxed">
+                    Kata sandi sementara akun telah aktif. Pengguna akan diwajibkan menggantinya saat login berikutnya.
+                  </p>
+                </div>
+
+                {/* Box Sandi Sementara + Tombol Copy */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-ink-muted block">
+                    Kata Sandi Sementara:
+                  </label>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-edge font-mono text-sm font-bold text-ink">
+                    <span>{resetResult.temporaryPassword}</span>
+                    <button
+                      type="button"
+                      onClick={handleCopyPassword}
+                      className="px-2.5 py-1 rounded-lg bg-surface border border-edge text-xs font-medium hover:border-primary/50 text-ink flex items-center gap-1 transition-all cursor-pointer active:scale-95"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                          <span className="text-emerald-500">Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Salin</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tombol Kirim Langsung via WhatsApp jika No WA tersedia */}
+                {resetResult.targetWhatsapp && (
+                  <a
+                    href={`https://wa.me/${resetResult.targetWhatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
+                      `Halo ${resetResult.targetName},\n\nKata sandi sementara akun SE-Core kamu telah di-reset oleh pengurus menjadi:\n\n*${resetResult.temporaryPassword}*\n\nSilakan segera masuk ke aplikasi dan ganti dengan kata sandi pribadimu.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-11 min-h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Kirim Sandi via WhatsApp</span>
+                  </a>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setResettingUser(null)}
+                  className="w-full h-10 rounded-xl border border-edge text-xs font-semibold text-ink hover:bg-surface-container transition-all cursor-pointer"
+                >
+                  Selesai
+                </button>
+              </div>
+            ) : (
+              /* Formulir Konfirmasi Reset */
+              <div className="space-y-3">
+                <p className="text-xs text-ink-muted leading-relaxed">
+                  Tindakan ini akan mengganti kata sandi akun <strong>{resettingUser.name}</strong> dengan kata sandi sementara baru.
+                </p>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-ink">
+                    Kata Sandi Sementara Khusus (Opsional):
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Kosongkan untuk otomatis generate"
+                    value={customPasswordInput}
+                    onChange={(e) => setCustomPasswordInput(e.target.value)}
+                    className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                  <span className="text-[10px] text-ink-muted block">
+                    Bila dikosongkan, sistem membuat sandi acak (contoh: Saba-A8X9!).
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setResettingUser(null)}
+                    disabled={isPending}
+                    className="flex-1 h-11 min-h-11 rounded-xl border border-edge text-xs font-semibold text-ink hover:bg-surface-container transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={handleExecuteResetPassword}
+                    className="flex-1 h-11 min-h-11 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    {isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <KeyRound className="w-4 h-4" />
+                    )}
+                    <span>Reset Sekarang</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

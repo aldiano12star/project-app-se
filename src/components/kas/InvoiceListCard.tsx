@@ -21,6 +21,7 @@ export function InvoiceListCard({
 }: InvoiceListCardProps) {
   const unpaidInvoices = invoices.filter((i) => i.status === InvoiceStatus.UNPAID);
   const paidInvoices = invoices.filter((i) => i.status === InvoiceStatus.PAID);
+  const recentPaidInvoices = paidInvoices.slice(0, 5);
 
   const totalUnpaidAmount = unpaidInvoices.reduce((acc, curr) => acc + curr.amount, 0);
 
@@ -164,14 +165,20 @@ export function InvoiceListCard({
           )}
         </div>
 
-        {/* Riwayat Tagihan Lunas (Collapsible or Clean List) */}
-        {paidInvoices.length > 0 && (
+        {/* Riwayat Tagihan Lunas (Dibatasi Maksimal 5 Terakhir) */}
+        {recentPaidInvoices.length > 0 && (
           <div className="pt-3 border-t border-edge/60 space-y-2">
-            <span className="text-xs font-semibold text-ink-muted block">
-              Riwayat Tagihan Lunas ({paidInvoices.length})
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-ink-muted">
+                Riwayat Tagihan Lunas
+              </span>
+              <span className="text-[11px] font-medium text-ink-muted">
+                {recentPaidInvoices.length} Terakhir
+                {paidInvoices.length > 5 ? ` (dari ${paidInvoices.length})` : ""}
+              </span>
+            </div>
             <div className="space-y-2">
-              {paidInvoices.slice(0, 5).map((inv) => (
+              {recentPaidInvoices.map((inv) => (
                 <div
                   key={inv.id}
                   className="p-3 rounded-xl bg-surface-container-low/50 border border-edge/40 flex items-center justify-between text-xs"
