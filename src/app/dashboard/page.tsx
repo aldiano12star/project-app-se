@@ -371,30 +371,37 @@ export default async function DashboardPage() {
       />
       <div className="flex flex-col gap-6">
         {/* ========================================================= */}
-        {/* MODUL 1: Sapaan Singkat & Tombol Presensi QR Sesi Rapat   */}
+        {/* MODUL 1: Saba Hero Command Center & Presensi QR Rapat     */}
         {/* ========================================================= */}
-        <section className="flex flex-col gap-4 pt-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+        <section className="specular-card relative overflow-hidden p-5 sm:p-7 border border-edge/80 space-y-5">
+          {/* Ambient Corner Glow */}
+          <div className="absolute -top-20 -right-20 w-56 h-56 bg-primary/10 dark:bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+            <div className="space-y-1">
+              <span className="text-[11px] font-mono font-bold tracking-widest text-primary uppercase inline-flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
+                COMMAND CENTER // SE-CORE
+              </span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-ink font-display">
                 Halo, {dbUser.name.split(" ")[0]}! 👋
               </h1>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
                 Pusat Aktivitas &amp; Operasional Digital Saba ExploIT
               </p>
             </div>
 
             {todayAttendance && (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-950/60 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/40 shrink-0">
+              <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/40 shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
                 <CheckCircle2 className="h-4 w-4" />
-                <span>Presensi Hadir</span>
-              </span>
+                <span>Presensi Hari Ini Tercatat</span>
+              </div>
             )}
           </div>
 
           {/* Role, Grade & Division Badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-surface-container-low px-3 py-1 text-xs font-semibold text-slate-300 border border-edge">
+          <div className="flex flex-wrap items-center gap-2 relative z-10 pt-1">
+            <span className="inline-flex items-center rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-secondary border border-edge font-mono">
               {formatGrade(dbUser.classGrade)}
             </span>
             <span
@@ -415,13 +422,13 @@ export default async function DashboardPage() {
           </div>
 
           {/* Tombol Presensi QR Rapat / Scanner Cepat */}
-          <div>
+          <div className="relative z-10 pt-1">
             <DashboardMeetingWidget userRole={dbUser.role} />
           </div>
 
           {/* Pengingat Tugas Panitia H-1 / Mendesak */}
           {urgentTasks.length > 0 && (
-            <div className="flex flex-col gap-3 mt-2">
+            <div className="flex flex-col gap-3 pt-2 relative z-10">
               {urgentTasks.map((task) => {
                 const dueParts = getJakartaDateParts(task.dueDate!);
                 const dueDayStart = new Date(
@@ -496,14 +503,14 @@ export default async function DashboardPage() {
         {/* MODUL ANALITIK: KESEHATAN ORGANISASI ATAU PRESENSI SAYA  */}
         {/* ========================================================= */}
         {isOfficer && globalHealth ? (
-          <section className="card-solid p-5 sm:p-6 rounded-2xl bg-card border border-edge shadow-xs space-y-3.5">
+          <section className="specular-card p-5 sm:p-6 bg-card border border-edge/80 space-y-3.5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 p-2.5 shadow-xs bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
                   <Activity className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                  <h2 className="text-sm font-bold text-ink uppercase tracking-wider font-display">
                     Keaktifan Global
                   </h2>
                   <p className="text-xs text-ink-muted mt-0.5">
@@ -565,14 +572,14 @@ export default async function DashboardPage() {
           <PodiumTop3 contributors={topContributors} />
 
           {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
-          <section className="card-solid p-6 shadow-sm flex flex-col gap-4">
+          <section className="specular-card p-5 sm:p-6 flex flex-col gap-4 border border-edge/80">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                  <h2 className="text-sm font-bold text-ink uppercase tracking-wider font-display">
                     Agenda Acara Terdekat
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">

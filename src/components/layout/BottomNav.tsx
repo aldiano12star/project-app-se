@@ -87,7 +87,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[410px] rounded-full bg-card/85 backdrop-blur-xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.65)] border border-edge/90 dark:border-white/12 md:hidden p-1.5 transition-all duration-300 ${
         isModalActive ? "hidden" : ""
       }`}
     >
@@ -121,10 +121,10 @@ export function BottomNav() {
                   haptic.tap();
                   setOptimisticPath(item.href);
                 }}
-                className="bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2.5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 shadow-xs min-h-11 shrink-0"
+                className="bg-linear-to-r from-primary to-rose-600 text-white border border-rose-400/30 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 shadow-[0_0_18px_rgba(225,29,42,0.35)] min-h-11 shrink-0"
               >
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
-                <span className="text-xs font-semibold leading-none tracking-tight">
+                <span className="text-xs font-semibold leading-none tracking-tight font-display">
                   {item.label}
                 </span>
               </Link>
@@ -142,7 +142,7 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-ink p-2.5 rounded-full transition-all duration-150 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2.5 rounded-full transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90 hover:bg-surface-container-low/60 flex items-center justify-center min-h-11 min-w-11 shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

@@ -132,7 +132,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
       {/* Header Seksi */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-ink flex items-center gap-2">
+          <h2 className="text-sm font-bold text-ink flex items-center gap-2 font-display uppercase tracking-wider">
             <span>Podium Apresiasi Kontributor</span>
             <Sparkles className="h-4 w-4 text-amber-500 fill-amber-500" />
           </h2>
@@ -140,16 +140,16 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
             Panggung apresiasi kontribusi aktif, presensi &amp; karya teratas
           </p>
         </div>
-        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
+        <div className="flex flex-row items-center gap-1.5 whitespace-nowrap text-xs font-bold font-mono text-amber-600 dark:text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
           <Trophy className="h-4 w-4" />
           <span>Top 3</span>
         </div>
       </div>
 
       {/* Kartu Utama Podium Panggung Turnamen */}
-      <div className="card-solid relative overflow-hidden p-6 shadow-md flex flex-col bg-card text-ink border-edge rounded-2xl">
+      <div className="specular-card relative overflow-hidden p-6 flex flex-col bg-card text-ink border border-edge/80 rounded-2xl shadow-xs">
         {/* Ambient Glow Emas di belakang Juara 1 */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/15 blur-3xl rounded-full pointer-events-none" />
 
         {/* Banner Motivasi Kontribusi Komunitas */}
         <div className="mb-6 p-4 rounded-2xl bg-surface-container-low dark:bg-[#101622] border border-[#E2E8F0] dark:border-[#27344A] text-sm flex items-start gap-3 relative z-10">

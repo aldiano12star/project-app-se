@@ -16,12 +16,20 @@ Setiap kali pengguna memberikan perintah, periksa daftar di bawah ini. Jika tuga
 
 ### 1. UI/UX dan Desain Frontend
 
-Jika tugas berkaitan dengan membuat tampilan antarmuka, mengevaluasi desain, atau mendesain elemen web:
+Untuk **SEMUA** pekerjaan antarmuka/frontend/UI, wajib memanggil dan mematuhi skill **`/awwwards`** yang memuat kerangka kerja arahan kreatif (*creative direction*) lengkap, keputusan desain, dan standar Site of the Day (skor 8.0+):
 
-- **`frontend-design`**: Baca ini untuk standar pembuatan kode frontend.
-- **`ui-design` & `ui-ux-pro-max`**: Baca ini untuk panduan tingkat lanjut terkait UX/UI.
-- **`anti-ui-slop` & `ui-slop-score`**: Baca ini jika diminta mengevaluasi, mengkritik, atau memperbaiki desain UI yang buruk/standar.
-- **`ui-radar`**: Baca ini untuk analisis tren desain atau pemindaian UI.
+- **Art Direction Terlebih Dahulu**: Wajib menentukan arah emosi, arketipe visual, dan konteks industri SEBELUM menulis kode.
+- **Tipografi Adalah 90% Desain**: Gunakan skala `clamp()` fluida, maksimal 2 keluarga font, *tracking* ketat pada font display.
+- **Anti Pure Black/White**: Dilarang menggunakan latar hitam pekat (#000) atau putih pekat (#fff); gunakan `oklch()` atau nilai *near-black/near-white*.
+- **Motion Must Tell a Story**: Setiap animasi harus menjawab *"apa yang terjadi?"* atau *"ke mana pengguna harus melihat?"*.
+- **Ritme Variatif**: Variasikan ritme bagian halaman (selang-seling antara *contained* dan *full-bleed*, variasi *spacing* vertikal) agar tidak tampak seperti template.
+- **Performa Adalah Desain**: Target waktu muat <3s, 60fps konstan, animasikan hanya `transform` dan `opacity`.
+- **Anti-Generic UI**: Tampilan generik/template adalah kegagalan. Pengguna harus merasakan produk unik (*one-of-a-kind*) sejak detik pertama.
+
+Skill pendukung:
+- **`frontend-design`**: Panduan desain intentional dari Anthropic untuk menghasilkan UI yang khas dan anti-template.
+- **`ui-ux-pro-max`**: Kamus dan database aturan desain (palet warna, panduan UX, tipografi, dan best practices Next.js/Tailwind).
+- **`web-animation-skills`**: Suite pustaka animasi 60 FPS (`gsap-web`, `glassmorphism`, `micro-interaction`, `page-transition-animation`).
 
 ### 2. Standar Pengembangan dan Kode
 
@@ -29,23 +37,22 @@ Jika tugas berkaitan dengan penulisan kode sumber, pengujian, atau versioning:
 
 - **`tdd` (Test-Driven Development)**: Baca ini jika tugas melibatkan pembuatan struktur tes atau penulisan kode berbasis TDD.
 - **`git-commit`**: SELALU baca instruksi di folder ini sebelum membuat pesan commit Git untuk memastikan format dan standarnya sesuai.
-- **`setup-matt-pocock-skills`**: Baca ini jika mengatur environment TypeScript atau mengikuti standar Matt Pocock.
+- **`mattpocock-skills`**: Gunakan suite skill Matt Pocock bawaan (`diagnosing-bugs`, `code-review`, `domain-modeling`, dll.) untuk standar rekayasa perangkat lunak tingkat lanjut.
 
-### 3. Riset dan Agen Eksternal
+### 3. Riset dan Interaksi Browser
 
-Jika tugas membutuhkan pencarian informasi, web scraping, atau riset mendalam:
+Jika tugas membutuhkan otomasi browser atau inspeksi tampilan web langsung:
 
-- **`ai-research-explore`**: Baca ini saat diminta melakukan riset topik baru atau eksplorasi AI.
-- **`agent-browser`**: Baca ini jika tugas memerlukan interaksi dengan browser atau ekstraksi data web.
+- **`agent-browser`**: Baca ini jika tugas memerlukan interaksi dengan browser nyata, pengujian interaktif, atau ekstraksi data web.
 
 ### 4. Manajemen Skill dan Sistem Claude
 
 Jika tugas berkaitan dengan memodifikasi cara kerja Claude itu sendiri atau membuat skill baru:
 
-- **`skill-creator`**: Baca ini jika pengguna meminta untuk membuat "skill" atau instruksi baru.
-- **`find-skills`**: Gunakan ini untuk mencari skill lain yang mungkin relevan namun tidak tertulis di sini.
+- **`ponytail`**: Terapkan ini saat diminta solusi paling sederhana, minimalis, efisien, dan bebas over-engineering (YAGNI).
+- **`skill-creator`**: Baca ini jika pengguna meminta untuk membuat atau mengoptimasi "skill" baru.
+- **`find-skills`**: Gunakan ini untuk mencari skill lain yang mungkin relevan di ekosistem terbuka.
 - **`everything-claude-code`**: Rujukan utama untuk memahami batasan, aturan, dan cara kerja Claude Code di sistem ini.
-- **`ponytail`**: Baca instruksi spesifik persona atau tugas khusus dari folder ini jika kata kunci "ponytail" disebutkan.
 
 ---
 
@@ -77,5 +84,5 @@ Jika tugas berkaitan dengan memodifikasi cara kerja Claude itu sendiri atau memb
 ## ⚡ Aturan Eksekusi (PENTING)
 
 1. **Jangan berasumsi.** Jika kamu mengenali konteks tugas dari daftar di atas, gunakan perintah `cat` atau baca file (`read_file`) di dalam folder skill tersebut untuk mempelajari instruksinya.
-2. Patuhi standar yang ada di dalam _skill_ tersebut 100%. Jangan gunakan standar umum jika ada aturan khusus di dalam folder _skill_.
-3. Setelah membaca _skill_, beritahu pengguna secara singkat bahwa kamu telah membaca panduan tersebut sebelum mulai mengerjakan tugas.
+2. Patuhi standar yang ada di dalam *skill* tersebut 100%. Jangan gunakan standar umum jika ada aturan khusus di dalam folder *skill*.
+3. Setelah membaca *skill*, beritahu pengguna secara singkat bahwa kamu telah membaca panduan tersebut sebelum mulai mengerjakan tugas.

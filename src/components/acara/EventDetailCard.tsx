@@ -142,7 +142,7 @@ export function EventDetailCard({
   return (
     <div className="space-y-4" id="workspace-detail">
       {/* Kartu Utama Workspace Kegiatan */}
-      <section className="card-solid bg-card p-6 shadow-sm space-y-5 rounded-2xl border border-edge">
+      <section className="specular-card bg-card p-6 space-y-5 rounded-2xl border border-edge/80 shadow-xs">
         {/* Tag & ID Kegiatan */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -188,7 +188,7 @@ export function EventDetailCard({
             </div>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-semibold text-ink leading-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-ink leading-tight font-display tracking-tight">
             {event.title}
           </h1>
 

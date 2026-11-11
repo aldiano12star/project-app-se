@@ -174,7 +174,7 @@ export function ProfileHeroCard({
   };
 
   return (
-    <section className="bg-card border border-edge rounded-2xl p-6 relative overflow-hidden shadow-sm space-y-6">
+    <section className="specular-card bg-card border border-edge/80 rounded-2xl p-6 relative overflow-hidden shadow-xs space-y-6">
       {/* Accent Header Ribbon */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-rose-500 via-primary to-amber-500" />
 
@@ -264,7 +264,7 @@ export function ProfileHeroCard({
         {/* User Identity Details */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight truncate">
+            <h2 className="text-xl sm:text-2xl font-bold text-ink tracking-tight truncate font-display">
               {user.name}
             </h2>
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />

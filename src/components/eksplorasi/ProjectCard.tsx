@@ -222,7 +222,7 @@ export function ProjectCard({
   return (
     <div
       onClick={() => router.push(`/eksplorasi/${project.id}`)}
-      className="bg-card border border-edge rounded-2xl overflow-hidden shadow-sm hover:border-primary/60 transition-all space-y-3 relative cursor-pointer group active:scale-[0.99]"
+      className="specular-card bg-card border border-edge/80 rounded-2xl overflow-hidden shadow-xs hover:border-primary/50 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.6)] transition-all duration-300 space-y-3 relative cursor-pointer group active:scale-[0.99]"
     >
       {/* 16:9 Thumbnail Header */}
       <div className="relative w-full aspect-video bg-surface-container-low overflow-hidden border-b border-edge flex items-center justify-center">

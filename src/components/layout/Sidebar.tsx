@@ -96,7 +96,7 @@ export function Sidebar({ user }: SidebarProps) {
             )}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold tracking-tight text-ink leading-tight truncate">
+            <span className="text-sm font-bold tracking-tight text-ink leading-tight truncate font-display">
               SE-Core
             </span>
             <span className="text-[11px] text-ink-muted leading-tight mt-0.5 truncate">
@@ -138,10 +138,11 @@ export function Sidebar({ user }: SidebarProps) {
                 href={item.href}
                 prefetch={true}
                 onClick={() => setOptimisticPath(item.href)}
-                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-rose-100 text-rose-800 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/50 font-semibold shadow-xs transition-all min-h-11"
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-linear-to-r from-primary/15 via-rose-500/10 to-transparent text-primary dark:text-rose-400 border border-primary/25 font-bold shadow-xs transition-all min-h-11 relative overflow-hidden"
               >
+                <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-primary rounded-r-full shadow-[0_0_8px_rgba(225,29,42,0.8)]" />
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
-                <span className="text-xs leading-none tracking-tight">
+                <span className="text-xs leading-none tracking-tight font-display">
                   {item.label}
                 </span>
               </Link>

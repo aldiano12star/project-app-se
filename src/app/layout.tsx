@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
@@ -8,10 +8,17 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { NavigationProgressBar } from "@/components/layout/NavigationProgressBar";
 import { SplashScreen } from "@/components/layout/SplashScreen";
 
-/* Inter — font default Saba ExploIT (DESIGN.md).
-   next/font self-hosting: nol request ke Google saat runtime, tanpa layout shift. */
+/* Inter — font default teks bacaan Saba ExploIT (DESIGN.md). */
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+});
+
+/* Space Grotesk — font display futuristik berkarakter untuk judul, metrik & lencana. */
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   display: "swap",
   preload: true,
@@ -62,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${inter.variable} h-full antialiased bg-white dark:bg-surface`}
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased bg-white dark:bg-surface`}
       suppressHydrationWarning
     >
       <head>

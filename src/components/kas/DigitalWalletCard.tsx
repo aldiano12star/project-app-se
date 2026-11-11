@@ -35,17 +35,20 @@ export function DigitalWalletCard({
   const isZero = kasBalance === 0;
 
   return (
-    <div className="card-solid card-hover bg-card p-5 sm:p-6 rounded-2xl border border-edge shadow-xs space-y-2.5">
-      <div className="flex items-center justify-between">
+    <div className="specular-card bg-card p-5 sm:p-6 rounded-2xl border border-edge/80 shadow-xs space-y-3 relative overflow-hidden">
+      {/* Ambient Gradient Corner Glow */}
+      <div className="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <span className="text-xs font-bold uppercase tracking-wider text-ink-muted">
-            Dompet Saya
+          <span className="text-xs font-bold uppercase tracking-wider text-ink-muted font-display">
+            Dompet Kas Saya
           </span>
         </div>
 
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors font-mono ${
             isPositive
               ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
               : isZero
@@ -61,9 +64,9 @@ export function DigitalWalletCard({
         </span>
       </div>
 
-      <div className="pt-0.5">
+      <div className="pt-0.5 relative z-10">
         <h2
-          className={`text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums transition-colors ${
+          className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums font-display transition-colors ${
             isPositive
               ? "text-emerald-600 dark:text-emerald-400"
               : isZero
