@@ -282,7 +282,11 @@ export function ProfileHeroCard({
           </div>
 
           {/* Details Grade & Division */}
-          {user.role === Role.KOLABORATOR ? (
+          {user.role === Role.OPERATOR ? (
+            <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
+              Operator Sistem • Akses Penuh Lintas Periode
+            </p>
+          ) : user.role === Role.KOLABORATOR ? (
             <p className="text-sm text-ink-muted mt-2 leading-relaxed font-normal">
               Kolaborator {user.instansi ? `• ${user.instansi}` : "Mitra Eksternal"}
             </p>

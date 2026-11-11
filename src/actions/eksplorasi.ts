@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { assertAuthenticated, assertActiveMember, assertRole } from "@/lib/rbac";
+import { assertAuthenticated, assertActiveMember } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
 
@@ -260,13 +260,31 @@ export async function updateShowcaseProject(
     }
 
     const isAuthor = existingProject.authorId === dbUser.id;
-    const isPrivileged = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
+    const isOperator = dbUser.role === Role.OPERATOR;
+    const isPrivileged = dbUser.role === Role.ADMIN || isOperator;
 
     if (!isAuthor && !isPrivileged) {
       return {
         success: false,
         message: "Akses ditolak: Anda bukan pembuat karya ini.",
       };
+    }
+
+    // Rollover Boundary Check:
+    // Akun OPERATOR memiliki hak bypass tanpa syarat (unconditional bypass).
+    // Regular author atau admin dilarang mengubah karya dari periode yang telah diarsipkan pasca-rollover.
+    if (!isOperator) {
+      const activePeriod = await prisma.organizationalPeriod.findFirst({
+        where: { isActive: true },
+      });
+
+      if (activePeriod && existingProject.createdAt < activePeriod.startDate) {
+        return {
+          success: false,
+          message:
+            "Akses ditolak: Karya ini diunggah pada periode kepengurusan sebelumnya dan telah diarsipkan. Hanya akun Operator yang memiliki hak modifikasi arsip.",
+        };
+      }
     }
 
     // Filter kontributor tim jika disertakan: maks 10 orang unik & bukan author
@@ -351,7 +369,7 @@ export async function deleteShowcaseProject(
 
     const project = await prisma.showcaseProject.findUnique({
       where: { id: projectId },
-      select: { id: true, authorId: true, title: true },
+      select: { id: true, authorId: true, title: true, createdAt: true },
     });
 
     if (!project) {
@@ -362,13 +380,30 @@ export async function deleteShowcaseProject(
     }
 
     const isAuthor = project.authorId === user.id;
-    const isPrivileged = user.role === Role.ADMIN || user.role === Role.OPERATOR;
+    const isOperator = user.role === Role.OPERATOR;
+    const isPrivileged = user.role === Role.ADMIN || isOperator;
 
     if (!isAuthor && !isPrivileged) {
       return {
         success: false,
         message: "FORBIDDEN: Anda tidak memiliki izin untuk menghapus karya ini.",
       };
+    }
+
+    // Rollover Boundary Check:
+    // Operator memiliki hak bypass tanpa syarat. Regular user/admin dilarang menghapus karya yang telah diarsipkan.
+    if (!isOperator) {
+      const activePeriod = await prisma.organizationalPeriod.findFirst({
+        where: { isActive: true },
+      });
+
+      if (activePeriod && project.createdAt < activePeriod.startDate) {
+        return {
+          success: false,
+          message:
+            "Akses ditolak: Karya ini berasal dari periode kepengurusan sebelumnya dan telah diarsipkan. Hanya akun Operator yang dapat menghapus arsip.",
+        };
+      }
     }
 
     // Hapus relasi likes terlebih dahulu untuk menjaga integritas relasional

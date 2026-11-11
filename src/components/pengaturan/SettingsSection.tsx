@@ -8,7 +8,6 @@ import {
   Key,
   IdCard,
   Bell,
-  Wallet,
   Moon,
   Sun,
   BookOpen,
@@ -53,13 +52,11 @@ const PanduanOrganisasiModal = dynamic(
 interface SettingsSectionProps {
   user: UserProfileData;
   onOpenKTA: () => void;
-  onOpenAvatarModal?: () => void;
 }
 
 export function SettingsSection({
   user,
   onOpenKTA,
-  onOpenAvatarModal,
 }: SettingsSectionProps) {
   // Theme Switching
   const { resolvedTheme, setTheme } = useTheme();
@@ -216,7 +213,7 @@ export function SettingsSection({
                 <User className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                    Data Kontak &amp; Tautan Portofolio
+                    Kontak &amp; Portofolio
                   </span>
                   <p className="text-[10px] text-ink-muted truncate max-w-[200px] sm:max-w-xs">
                     {user.noWhatsapp || "WhatsApp belum diatur"} • {user.portfolioUrl || "Portofolio"}
@@ -380,7 +377,7 @@ export function SettingsSection({
                 <Key className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                    Ganti Kata Sandi &amp; Keamanan Akun
+                    Keamanan &amp; Sandi
                   </span>
                   <p className="text-[10px] text-ink-muted">
                     Atur atau ubah kata sandi autentikasi mandiri
@@ -496,7 +493,7 @@ export function SettingsSection({
                 <IdCard className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
                 <div className="flex items-center gap-2">
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                    Kartu Tanda Anggota (KTA) Digital
+                    KTA Digital
                   </span>
                   <span className="px-1.5 py-0.2 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded">
                     Aktif
@@ -527,7 +524,7 @@ export function SettingsSection({
               <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
               <div className="space-y-0.5 min-w-0">
                 <span className="text-xs sm:text-sm font-semibold text-ink block leading-snug">
-                  Notifikasi Rapat &amp; Acara
+                  Notifikasi Agenda
                 </span>
                 <p className="text-[11px] text-ink-muted leading-relaxed">
                   Pemberitahuan agenda rapat dan pengingat jadwal kegiatan organisasi
@@ -557,7 +554,7 @@ export function SettingsSection({
               )}
               <div>
                 <span className="text-xs sm:text-sm font-semibold text-ink">
-                  Tema Antarmuka
+                  Tema Tampilan
                 </span>
                 <p className="text-[10px] text-ink-muted">
                   {resolvedTheme === "dark"
@@ -607,7 +604,7 @@ export function SettingsSection({
               <Trophy className="w-5 h-5 text-amber-500 shrink-0" />
               <div>
                 <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                  Hall of Fame (Lorong Waktu)
+                  Hall of Fame
                 </span>
                 <p className="text-[11px] text-ink-muted">
                   Galeri sejarah abadi: arsip juara, acara, &amp; karya lintas generasi
@@ -663,7 +660,7 @@ export function SettingsSection({
                   <RefreshCcw className="w-5 h-5 text-rose-500 shrink-0" />
                   <div>
                     <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
-                      Ganti Periode &amp; Kurasi Hall of Fame
+                      Rollover Kepengurusan
                     </span>
                     <p className="text-[10px] text-ink-muted leading-relaxed">
                       End-of-Year Wizard: abadikan juara, acara, &amp; karya ke lorong waktu
@@ -699,7 +696,7 @@ export function SettingsSection({
             <div className="flex items-center gap-3">
               <BookOpen className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                Perpustakaan &amp; Panduan Organisasi
+                Panduan Organisasi
               </span>
             </div>
             <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
@@ -713,7 +710,7 @@ export function SettingsSection({
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
               <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                Laporkan Kendala / Bug Sistem
+                Laporkan Kendala
               </span>
             </div>
             <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />

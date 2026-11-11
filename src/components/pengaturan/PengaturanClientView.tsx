@@ -63,9 +63,15 @@ export function PengaturanClientView({
 
         {/* Right Indicator Badge */}
         <div className="min-h-[44px] flex items-center justify-end">
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary-subtle border border-primary/20 text-primary font-mono">
-            {formatGrade(user.classGrade)}
-          </span>
+          {user.role === "OPERATOR" ? (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 font-mono">
+              OPERATOR
+            </span>
+          ) : (
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary-subtle border border-primary/20 text-primary font-mono">
+              {formatGrade(user.classGrade)}
+            </span>
+          )}
         </div>
       </header>
 
@@ -90,7 +96,6 @@ export function PengaturanClientView({
         <SettingsSection
           user={user}
           onOpenKTA={() => setIsKTAOpen(true)}
-          onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
         />
 
         {/* 5. Official Danger Logout Action */}

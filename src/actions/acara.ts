@@ -272,10 +272,11 @@ export async function updateEvent(
   input: UpdateEventInput
 ): Promise<ActionResponse> {
   try {
-    await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const sessionUser = await assertRole([Role.ADMIN, Role.OPERATOR]);
 
     const existingEvent = await prisma.event.findUnique({
       where: { id: eventId },
+      include: { academicYear: true },
     });
 
     if (!existingEvent) {
@@ -283,6 +284,27 @@ export async function updateEvent(
         success: false,
         message: "Kegiatan tidak ditemukan.",
       };
+    }
+
+    // Rollover Boundary Check:
+    // Akun OPERATOR memiliki hak bypass tanpa syarat untuk mengedit arsip masa lalu.
+    // Regular Admin terikat batasan periode aktif dan dilarang mengedit kegiatan yang telah diarsipkan.
+    if (sessionUser.role !== Role.OPERATOR) {
+      const activePeriod = await prisma.organizationalPeriod.findFirst({
+        where: { isActive: true },
+      });
+
+      const isArchived =
+        (existingEvent.academicYear && !existingEvent.academicYear.isCurrent) ||
+        (activePeriod && existingEvent.createdAt < activePeriod.startDate);
+
+      if (isArchived) {
+        return {
+          success: false,
+          message:
+            "Akses ditolak: Kegiatan ini berasal dari periode kepengurusan sebelumnya dan telah diarsipkan. Hanya akun Operator yang memiliki wewenang modifikasi arsip.",
+        };
+      }
     }
 
     const updateData: {
@@ -1180,11 +1202,12 @@ export async function deleteBudgetItem(
  */
 export async function deleteEvent(eventId: string): Promise<ActionResponse> {
   try {
-    await assertRole([Role.ADMIN, Role.OPERATOR]);
+    const sessionUser = await assertRole([Role.ADMIN, Role.OPERATOR]);
 
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
+        academicYear: true,
         sections: {
           include: {
             tasks: true,
@@ -1199,6 +1222,27 @@ export async function deleteEvent(eventId: string): Promise<ActionResponse> {
         success: false,
         message: "Kegiatan tidak ditemukan.",
       };
+    }
+
+    // Rollover Boundary Check:
+    // Akun OPERATOR memiliki hak bypass tanpa syarat untuk menghapus arsip masa lalu.
+    // Regular Admin terikat batasan periode aktif.
+    if (sessionUser.role !== Role.OPERATOR) {
+      const activePeriod = await prisma.organizationalPeriod.findFirst({
+        where: { isActive: true },
+      });
+
+      const isArchived =
+        (event.academicYear && !event.academicYear.isCurrent) ||
+        (activePeriod && event.createdAt < activePeriod.startDate);
+
+      if (isArchived) {
+        return {
+          success: false,
+          message:
+            "Akses ditolak: Kegiatan ini berasal dari periode kepengurusan sebelumnya dan telah diarsipkan. Hanya akun Operator yang dapat menghapus arsip.",
+        };
+      }
     }
 
     // Jalankan transaksi kaskade eksplisit untuk keandalan maksimal

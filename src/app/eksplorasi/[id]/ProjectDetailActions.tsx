@@ -77,12 +77,12 @@ export function ProjectDetailActions({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-end gap-1.5 sm:gap-2 flex-wrap">
       {/* Tombol Share */}
       <button
         type="button"
         onClick={handleShare}
-        className="h-10 px-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary hover:text-ink border border-edge text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+        className="h-10 px-2.5 sm:px-3 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary hover:text-ink border border-edge text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
         title="Salin tautan karya"
       >
         {isCopied ? (
@@ -103,7 +103,7 @@ export function ProjectDetailActions({
         type="button"
         onClick={handleLike}
         disabled={isLiking}
-        className={`h-10 px-3.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+        className={`h-10 px-2.5 sm:px-3.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shrink-0 ${
           isLiked
             ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900"
             : "bg-surface-container-low text-ink-muted hover:text-rose-500 border-edge"
@@ -122,19 +122,19 @@ export function ProjectDetailActions({
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="h-10 px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="h-10 px-3 sm:px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
           >
             <Pencil className="h-3.5 w-3.5" />
             <span>Edit</span>
           </button>
 
           {isConfirmingDelete ? (
-            <div className="flex items-center gap-1 bg-surface-container-high p-1 rounded-xl border border-red-500/30 animate-in fade-in">
+            <div className="flex items-center gap-1 bg-surface-container-high p-1 rounded-xl border border-red-500/30 animate-in fade-in shrink-0">
               <button
                 type="button"
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="h-8 px-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                className="h-8 px-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
               >
                 {isDeleting ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -146,7 +146,7 @@ export function ProjectDetailActions({
                 type="button"
                 onClick={() => setIsConfirmingDelete(false)}
                 disabled={isDeleting}
-                className="h-8 px-2 rounded-lg text-ink-muted hover:text-ink text-xs cursor-pointer"
+                className="h-8 px-2 rounded-lg text-ink-muted hover:text-ink text-xs cursor-pointer shrink-0"
               >
                 Batal
               </button>
@@ -155,7 +155,7 @@ export function ProjectDetailActions({
             <button
               type="button"
               onClick={() => setIsConfirmingDelete(true)}
-              className="h-10 px-3 rounded-xl bg-surface-container-low hover:bg-red-50 dark:hover:bg-red-950/40 text-ink-muted hover:text-red-600 border border-edge hover:border-red-300 dark:hover:border-red-900 transition-colors cursor-pointer"
+              className="h-10 w-10 sm:w-auto sm:px-3 rounded-xl bg-surface-container-low hover:bg-red-50 dark:hover:bg-red-950/40 text-ink-muted hover:text-red-600 border border-edge hover:border-red-300 dark:hover:border-red-900 transition-colors cursor-pointer flex items-center justify-center shrink-0"
               title="Hapus karya"
             >
               <Trash2 className="h-4 w-4" />

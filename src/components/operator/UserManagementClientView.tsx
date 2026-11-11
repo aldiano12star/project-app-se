@@ -24,6 +24,7 @@ import {
   GraduationCap,
   Sparkles,
   Search,
+  ChevronDown,
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 import { promoteUserRole, resetUserPasswordByOperator } from "@/actions/profile";
@@ -202,6 +203,7 @@ export function UserManagementClientView({
 
   // Tab State: "GUEST" | `GEN_${number}` | "ALUMNI" | "KOLABORATOR" | "ALL"
   const [activeTab, setActiveTab] = useState<string>("GUEST");
+  const [isMoreFiltersOpen, setIsMoreFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [processingUserId, setProcessingUserId] = useState<string | null>(null);
   const [assigningUser, setAssigningUser] = useState<ManagedUser | null>(null);
@@ -255,6 +257,31 @@ export function UserManagementClientView({
       totalCount: users.length,
     };
   }, [users, dynamicGens]);
+
+  // Progressive disclosure helper
+  const isSecondaryActive = activeTab !== "ALL" && activeTab !== "GUEST";
+  const activeSecondaryInfo = useMemo(() => {
+    if (activeTab.startsWith("GEN_")) {
+      const g = parseInt(activeTab.replace("GEN_", ""), 10);
+      return {
+        label: `Gen ${g}`,
+        count: counts.genCounts[g] || 0,
+      };
+    }
+    if (activeTab === "ALUMNI") {
+      return {
+        label: "Alumni",
+        count: counts.alumniCount,
+      };
+    }
+    if (activeTab === "KOLABORATOR") {
+      return {
+        label: "Kolaborator",
+        count: counts.kolaboratorCount,
+      };
+    }
+    return null;
+  }, [activeTab, counts]);
 
   // Saring pengguna berdasarkan Tab Aktif
   const filteredUsers = useMemo(() => {
@@ -452,95 +479,14 @@ export function UserManagementClientView({
         </div>
       )}
 
-      {/* Dynamic Filter Tabs (Rollover-Proof) */}
+      {/* Dynamic Filter Tabs (Progressive Disclosure) */}
       <div className="space-y-3">
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container-low border border-edge overflow-x-auto no-scrollbar shadow-xs">
-          {/* Tab 1: Menunggu Verifikasi (GUEST) */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("GUEST")}
-            className={`px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 whitespace-nowrap active:scale-95 ${
-              activeTab === "GUEST"
-                ? "bg-card text-ink shadow-xs border border-edge font-bold"
-                : "text-ink-muted hover:text-ink"
-            }`}
-          >
-            <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-            <span>Menunggu Verifikasi</span>
-            {counts.guestCount > 0 ? (
-              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/40 font-mono animate-pulse">
-                {counts.guestCount}
-              </span>
-            ) : (
-              <span className="text-[10px] text-ink-muted font-mono">(0)</span>
-            )}
-          </button>
-
-          {/* Tab Dinamis: Filter per Gen */}
-          {dynamicGens.map((genNumber) => {
-            const tabKey = `GEN_${genNumber}`;
-            const isTabActive = activeTab === tabKey;
-            const count = counts.genCounts[genNumber] || 0;
-
-            return (
-              <button
-                key={genNumber}
-                type="button"
-                onClick={() => setActiveTab(tabKey)}
-                className={`px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 whitespace-nowrap active:scale-95 ${
-                  isTabActive
-                    ? "bg-card text-ink shadow-xs border border-edge font-bold"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span>Gen {genNumber}</span>
-                <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary border border-edge font-mono">
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-
-          {/* Tab: Alumni */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("ALUMNI")}
-            className={`px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 whitespace-nowrap active:scale-95 ${
-              activeTab === "ALUMNI"
-                ? "bg-card text-ink shadow-xs border border-edge font-bold"
-                : "text-ink-muted hover:text-ink"
-            }`}
-          >
-            <GraduationCap className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
-            <span>Alumni</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary border border-edge font-mono">
-              {counts.alumniCount}
-            </span>
-          </button>
-
-          {/* Tab: Kolaborator */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("KOLABORATOR")}
-            className={`px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 whitespace-nowrap active:scale-95 ${
-              activeTab === "KOLABORATOR"
-                ? "bg-card text-ink shadow-xs border border-edge font-bold"
-                : "text-ink-muted hover:text-ink"
-            }`}
-          >
-            <Handshake className="w-4 h-4 text-teal-500 shrink-0" />
-            <span>Kolaborator</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary border border-edge font-mono">
-              {counts.kolaboratorCount}
-            </span>
-          </button>
-
-          {/* Tab: Semua */}
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-surface-container-low border border-edge shadow-xs">
+          {/* Tab 1: Semua */}
           <button
             type="button"
             onClick={() => setActiveTab("ALL")}
-            className={`px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 whitespace-nowrap active:scale-95 ${
+            className={`flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
               activeTab === "ALL"
                 ? "bg-card text-ink shadow-xs border border-edge font-bold"
                 : "text-ink-muted hover:text-ink"
@@ -551,6 +497,48 @@ export function UserManagementClientView({
             <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary border border-edge font-mono">
               {counts.totalCount}
             </span>
+          </button>
+
+          {/* Tab 2: Menunggu Verifikasi (GUEST) */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("GUEST")}
+            className={`flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+              activeTab === "GUEST"
+                ? "bg-card text-ink shadow-xs border border-edge font-bold"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+            <span>Menunggu</span>
+            {counts.guestCount > 0 ? (
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/40 font-mono animate-pulse">
+                {counts.guestCount}
+              </span>
+            ) : (
+              <span className="text-[10px] text-ink-muted font-mono">(0)</span>
+            )}
+          </button>
+
+          {/* Tab 3: Progressive Disclosure "Lainnya..." */}
+          <button
+            type="button"
+            onClick={() => setIsMoreFiltersOpen(true)}
+            className={`flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+              isSecondaryActive
+                ? "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300 dark:border-purple-500/50 shadow-xs font-bold"
+                : "text-ink-muted hover:text-ink bg-surface-container/60 hover:bg-surface-container border border-edge/60"
+            }`}
+            title="Buka pilihan filter angkatan & kategori"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${isSecondaryActive ? "text-purple-600 dark:text-purple-400" : "text-primary"}`} />
+            <span>{isSecondaryActive ? activeSecondaryInfo?.label : "Lainnya"}</span>
+            {isSecondaryActive && activeSecondaryInfo && (
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-[10px] font-bold font-mono">
+                {activeSecondaryInfo.count}
+              </span>
+            )}
+            <ChevronDown className="w-3.5 h-3.5 text-ink-muted shrink-0" />
           </button>
         </div>
 
@@ -996,6 +984,178 @@ export function UserManagementClientView({
                   <span>Eksekusi Reset</span>
                 </button>
               </div>
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* Modal Dialog: Progressive Disclosure "Lainnya" (Filter Angkatan & Kategori) */}
+      <Modal
+        isOpen={isMoreFiltersOpen}
+        onClose={() => setIsMoreFiltersOpen(false)}
+        className="max-w-md"
+      >
+        <div className="w-full rounded-2xl bg-card border border-edge p-5 shadow-2xl space-y-4 text-ink">
+          <div className="flex items-center justify-between pb-3 border-b border-edge">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-ink">
+                  Filter Angkatan &amp; Kategori
+                </h4>
+                <p className="text-[11px] text-ink-muted">
+                  Pilih angkatan aktif atau kategori khusus pengguna
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMoreFiltersOpen(false)}
+              className="p-1 rounded-lg text-ink-muted hover:text-ink transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Section 1: Generasi / Angkatan Dinamis */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono block">
+              Generasi / Angkatan (Dinamis)
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {dynamicGens.map((genNumber) => {
+                const tabKey = `GEN_${genNumber}`;
+                const isSelected = activeTab === tabKey;
+                const count = counts.genCounts[genNumber] || 0;
+
+                return (
+                  <button
+                    key={genNumber}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(tabKey);
+                      setIsMoreFiltersOpen(false);
+                    }}
+                    className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                      isSelected
+                        ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
+                        : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sparkles
+                        className={`w-3.5 h-3.5 ${
+                          isSelected ? "text-primary" : "text-ink-muted"
+                        }`}
+                      />
+                      <span className="text-xs font-semibold">
+                        Gen {genNumber}
+                      </span>
+                    </div>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                        isSelected
+                          ? "bg-primary text-white font-bold"
+                          : "bg-surface-container text-ink-muted border border-edge"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 2: Kategori Khusus (Alumni & Kolaborator) */}
+          <div className="space-y-2 pt-1">
+            <label className="text-xs font-bold uppercase tracking-wider text-ink-muted font-mono block">
+              Status Khusus
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {/* Alumni */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("ALUMNI");
+                  setIsMoreFiltersOpen(false);
+                }}
+                className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                  activeTab === "ALUMNI"
+                    ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
+                    : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <GraduationCap
+                    className={`w-4 h-4 ${
+                      activeTab === "ALUMNI" ? "text-primary" : "text-ink-muted"
+                    }`}
+                  />
+                  <span className="text-xs font-semibold">Alumni</span>
+                </div>
+                <span
+                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                    activeTab === "ALUMNI"
+                      ? "bg-primary text-white font-bold"
+                      : "bg-surface-container text-ink-muted border border-edge"
+                  }`}
+                >
+                  {counts.alumniCount}
+                </span>
+              </button>
+
+              {/* Kolaborator */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("KOLABORATOR");
+                  setIsMoreFiltersOpen(false);
+                }}
+                className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                  activeTab === "KOLABORATOR"
+                    ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
+                    : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Handshake
+                    className={`w-4 h-4 ${
+                      activeTab === "KOLABORATOR"
+                        ? "text-primary"
+                        : "text-ink-muted"
+                    }`}
+                  />
+                  <span className="text-xs font-semibold">Kolaborator</span>
+                </div>
+                <span
+                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                    activeTab === "KOLABORATOR"
+                      ? "bg-primary text-white font-bold"
+                      : "bg-surface-container text-ink-muted border border-edge"
+                  }`}
+                >
+                  {counts.kolaboratorCount}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Reset Action (Hanya jika sedang memfilter sekunder) */}
+          {isSecondaryActive && (
+            <div className="pt-2 border-t border-edge">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("ALL");
+                  setIsMoreFiltersOpen(false);
+                }}
+                className="w-full h-11 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer border border-edge"
+              >
+                <span>Hapus Filter (Tampilkan Semua)</span>
+              </button>
             </div>
           )}
         </div>

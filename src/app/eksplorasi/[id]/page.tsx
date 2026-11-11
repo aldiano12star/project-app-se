@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   ExternalLink,
   GitBranch,
-  Heart,
   User,
   Users,
   Sparkles,
@@ -169,9 +168,19 @@ export default async function ShowcaseDetailPage({
   const likesCount = project._count.likes;
 
   const isAuthor = dbUser.id === project.authorId;
-  const isPrivileged =
-    dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
-  const canEditOrDelete = isAuthor || isPrivileged;
+  const isOperator = dbUser.role === Role.OPERATOR;
+
+  // Cek apakah karya berada di periode aktif atau sudah diarsipkan
+  const activePeriod = await prisma.organizationalPeriod.findFirst({
+    where: { isActive: true },
+  });
+  const isArchivedPeriod = activePeriod
+    ? project.createdAt < activePeriod.startDate
+    : false;
+
+  // OPERATOR memiliki bypass tanpa syarat. Regular user/admin dilarang mengubah karya dari arsip periode lama.
+  const canEditOrDelete =
+    isOperator || ((isAuthor || dbUser.role === Role.ADMIN) && !isArchivedPeriod);
 
   const formattedDate = new Date(project.createdAt).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -198,7 +207,7 @@ export default async function ShowcaseDetailPage({
     <AppShell user={dbUser}>
       <div className="space-y-5 max-w-4xl mx-auto pb-12">
         {/* Navigasi Kembali */}
-        <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center justify-between gap-3 pt-1 flex-wrap">
           <Link
             href="/eksplorasi"
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors min-h-[44px]"
