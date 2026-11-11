@@ -25,7 +25,7 @@ import {
   Save,
   RefreshCcw,
   Trophy,
-  Camera,
+  Users,
 } from "lucide-react";
 import { GithubIcon, InstagramIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { UserProfileData } from "./ProfileHeroCard";
@@ -485,28 +485,6 @@ export function SettingsSection({
             )}
           </div>
 
-          {/* Row: Foto Profil & Avatar */}
-          {onOpenAvatarModal && (
-            <button
-              type="button"
-              onClick={onOpenAvatarModal}
-              className="w-full min-h-[48px] px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center gap-3">
-                <Camera className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
-                <div>
-                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                    Foto Profil &amp; Avatar Pilihan
-                  </span>
-                  <p className="text-[10px] text-ink-muted">
-                    Unggah foto WebP kustom atau pilih karakter avatar
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
-            </button>
-          )}
-
           {/* Row 3: Kartu Tanda Anggota Digital (KTA) - Khusus Anggota Internal */}
           {user.role !== Role.KOLABORATOR && (
             <button
@@ -644,36 +622,62 @@ export function SettingsSection({
       {/* ========================================================= */}
       {/* GRUP OPERATOR: MANAJEMEN SISTEM KEPENGURUSAN             */}
       {/* ========================================================= */}
-      {user.role === Role.OPERATOR && (
+      {(user.role === Role.OPERATOR || user.role === Role.ADMIN) && (
         <section className="space-y-1.5">
           <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
             ⚙️ Manajemen Sistem Operator
           </h3>
           <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
-            {/* Row: Ganti Periode Kepengurusan (Rollover Wizard) */}
-            <button
-              type="button"
-              onClick={() => setIsRolloverModalOpen(true)}
-              className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between text-left hover:bg-danger-subtle active:bg-danger-subtle/60 transition-colors cursor-pointer group"
+            {/* Row: Manajemen Akun & Role */}
+            <Link
+              href="/operator/manajemen-akun"
+              className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low active:bg-surface-container transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-3">
-                <RefreshCcw className="w-5 h-5 text-rose-500 shrink-0" />
+                <Users className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0" />
                 <div>
-                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
-                    Ganti Periode &amp; Kurasi Hall of Fame
+                  <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
+                    Manajemen Akun &amp; Role
                   </span>
                   <p className="text-[10px] text-ink-muted leading-relaxed">
-                    End-of-Year Wizard: abadikan juara, acara, &amp; karya ke lorong waktu
+                    Aktivasi akun tamu, filter angkatan dinamis, &amp; kelola role divisi
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
-                  Operator
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono uppercase">
+                  Kelola
                 </span>
-                <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
+                <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
               </div>
-            </button>
+            </Link>
+
+            {/* Row: Ganti Periode Kepengurusan (Rollover Wizard - Khusus Operator) */}
+            {user.role === Role.OPERATOR && (
+              <button
+                type="button"
+                onClick={() => setIsRolloverModalOpen(true)}
+                className="w-full min-h-12 px-4 py-3.5 flex items-center justify-between text-left hover:bg-danger-subtle active:bg-danger-subtle/60 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <RefreshCcw className="w-5 h-5 text-rose-500 shrink-0" />
+                  <div>
+                    <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
+                      Ganti Periode &amp; Kurasi Hall of Fame
+                    </span>
+                    <p className="text-[10px] text-ink-muted leading-relaxed">
+                      End-of-Year Wizard: abadikan juara, acara, &amp; karya ke lorong waktu
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
+                    Operator
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
+                </div>
+              </button>
+            )}
           </div>
         </section>
       )}

@@ -255,7 +255,7 @@ export function RapatDetailClientView({
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Kembali ke Timeline Acara</span>
+          <span>Kembali</span>
         </Link>
 
         {meeting.event && (

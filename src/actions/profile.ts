@@ -357,6 +357,7 @@ export async function promoteUserRole(
     revalidatePath("/kas");
     revalidatePath("/dashboard");
     revalidatePath("/acara");
+    revalidatePath("/operator/manajemen-akun");
 
     return {
       success: true,
@@ -449,6 +450,7 @@ export async function resetUserPasswordByOperator(
     });
 
     revalidatePath("/pengaturan");
+    revalidatePath("/operator/manajemen-akun");
 
     return {
       success: true,

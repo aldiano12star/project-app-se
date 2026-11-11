@@ -22,6 +22,7 @@ import {
 } from "@/actions/acara";
 import { TargetAudience } from "@prisma/client";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { Modal } from "@/components/ui/Modal";
 
 export interface AdminEventInitialData {
   id: string;
@@ -465,8 +466,8 @@ export function AdminEventModal({
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <Modal isOpen={isOpen} onClose={handleResetAndClose} className="max-w-lg">
+      <div className="relative w-full rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/40">
           <div className="flex items-center gap-2.5">
@@ -1127,6 +1128,6 @@ export function AdminEventModal({
           </div>
         )}
       </div>
-    </div>
+    </Modal>
   );
 }

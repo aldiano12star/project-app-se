@@ -427,6 +427,7 @@ export function AspirasiClientView({
         isOpen={isCreateFeedbackOpen}
         onClose={() => setIsCreateFeedbackOpen(false)}
         defaultType={feedbackDefaultType}
+        lockType={feedbackDefaultType}
       />
 
       {/* Modal Dialog Form Buat Polling */}

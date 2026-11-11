@@ -79,7 +79,7 @@ export function BottomNav() {
     return () => observer.disconnect();
   }, []);
 
-  if (pathname.startsWith("/pengaturan")) {
+  if (pathname.startsWith("/pengaturan") || pathname.startsWith("/operator")) {
     return null;
   }
 
@@ -87,11 +87,11 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[90%] max-w-[400px] rounded-full bg-background/90 dark:bg-card/90 backdrop-blur-md shadow-2xl border border-edge md:hidden px-3 py-1.5 transition-all ${
+      className={`fixed bottom-0 left-0 right-0 z-50 w-full bg-background/95 dark:bg-card/95 backdrop-blur-md shadow-2xl border-t border-edge md:hidden px-4 py-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-all ${
         isModalActive ? "hidden" : ""
       }`}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full max-w-md mx-auto">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive =

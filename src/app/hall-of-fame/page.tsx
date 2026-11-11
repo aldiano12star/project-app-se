@@ -73,7 +73,7 @@ export default async function HallOfFamePage() {
           className="inline-flex items-center gap-2 text-xs font-semibold text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Kembali ke Beranda</span>
+          <span>Kembali</span>
         </Link>
         <Link
           href="/login"

@@ -54,34 +54,12 @@ export default async function PengaturanPage() {
     redirect("/onboarding");
   }
 
-  const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
-
-  // 2. Ambil analitik presensi mandiri dan daftar user untuk admin secara paralel
-  const [individualStats, allUsersForAdmin] = await Promise.all([
-    getIndividualAttendanceStats(session.user.id, dbUser.classGrade, dbUser.role),
-    isOfficer
-      ? prisma.user.findMany({
-          orderBy: [{ role: "asc" }, { name: "asc" }],
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            role: true,
-            classGrade: true,
-            mainDivision: true,
-            noWhatsapp: true,
-            asalTujuan: true,
-            createdAt: true,
-          },
-        })
-      : Promise.resolve([]),
-  ]);
-
-  const formattedManagedUsers = allUsersForAdmin.map((u) => ({
-    ...u,
-    createdAt: u.createdAt.toISOString(),
-  }));
+  // 2. Ambil analitik presensi mandiri pengguna
+  const individualStats = await getIndividualAttendanceStats(
+    session.user.id,
+    dbUser.classGrade,
+    dbUser.role
+  );
 
   // Rekapitulasi Presensi Mandiri berbasis Analytics Engine
   const attendanceSummary: AttendanceSummaryData = {
@@ -116,7 +94,6 @@ export default async function PengaturanPage() {
       <PengaturanClientView
         user={serializedUser}
         attendanceSummary={attendanceSummary}
-        managedUsers={formattedManagedUsers}
       />
     </AppShell>
   );

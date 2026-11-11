@@ -22,6 +22,7 @@ import {
 } from "@/actions/eksplorasi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { ImagePickerField } from "@/components/ui/ImagePickerField";
+import { Modal } from "@/components/ui/Modal";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -173,8 +174,8 @@ export function CreateProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
+      <div className="relative w-full rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/60">
           <div className="flex items-center gap-2.5">
@@ -440,6 +441,6 @@ export function CreateProjectModal({
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

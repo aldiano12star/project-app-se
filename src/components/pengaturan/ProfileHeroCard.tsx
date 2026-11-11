@@ -195,10 +195,21 @@ export function ProfileHeroCard({
 
       {/* User Header Info: Large Avatar w-20 h-20 & Details */}
       <div className="flex items-start gap-4 pt-1">
-        {/* Large Avatar */}
+        {/* Large Avatar Clickable */}
         <div className="relative shrink-0">
-          <div className="w-20 h-20 rounded-full p-[2.5px] bg-linear-to-tr from-primary via-rose-500 to-amber-500 shadow-md">
-            <div className="w-full h-full rounded-full overflow-hidden bg-surface flex items-center justify-center">
+          <button
+            type="button"
+            onClick={onOpenAvatarModal}
+            disabled={!onOpenAvatarModal}
+            className={`w-20 h-20 rounded-full p-[2.5px] bg-linear-to-tr from-primary via-rose-500 to-amber-500 shadow-md relative group transition-transform ${
+              onOpenAvatarModal
+                ? "cursor-pointer active:scale-95 hover:ring-2 hover:ring-primary/40 focus:outline-none"
+                : ""
+            }`}
+            title="Klik untuk ubah foto profil atau avatar"
+            aria-label="Ubah foto profil atau avatar"
+          >
+            <div className="w-full h-full rounded-full overflow-hidden bg-surface flex items-center justify-center relative">
               {user.image ? (
                 <Image
                   src={user.image}
@@ -206,29 +217,34 @@ export function ProfileHeroCard({
                   width={80}
                   height={80}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 group-hover:brightness-90 transition-all duration-200"
                 />
               ) : (
                 <span className="text-xl font-bold text-white tracking-wider">
                   {initials}
                 </span>
               )}
+
+              {/* Hover Overlay Visual Cue */}
+              {onOpenAvatarModal && (
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                  <Camera className="w-4 h-4 text-white drop-shadow-sm" />
+                  <span className="text-[8px] font-bold tracking-tight mt-0.5">Ubah</span>
+                </div>
+              )}
             </div>
-          </div>
 
-          {onOpenAvatarModal && (
-            <button
-              type="button"
-              onClick={onOpenAvatarModal}
-              className="absolute top-0 right-0 p-1.5 rounded-full bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary/50 shadow-md transition-all active:scale-90 cursor-pointer"
-              title="Ubah Foto Profil atau Avatar"
-            >
-              <Camera className="w-3.5 h-3.5" />
-            </button>
-          )}
+            {/* Camera Badge Cue */}
+            {onOpenAvatarModal && (
+              <span className="absolute -top-1 -right-1 p-1 rounded-full bg-primary text-white border-2 border-card shadow-sm transition-transform group-hover:scale-110">
+                <Camera className="w-3 h-3 stroke-[2.5]" />
+              </span>
+            )}
+          </button>
 
+          {/* Role Status Dot */}
           <span
-            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card ${
+            className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-card pointer-events-none ${
               user.role === Role.OPERATOR
                 ? "bg-purple-500"
                 : user.role === Role.ADMIN

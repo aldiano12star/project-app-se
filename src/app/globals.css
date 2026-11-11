@@ -204,13 +204,13 @@ body {
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
 .animate-page-enter {
-  animation: pageEnter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
+  animation: pageEnter 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
 }
 
 html.splash-done #se-splash-screen {

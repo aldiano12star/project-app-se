@@ -269,14 +269,14 @@ export function ProjectCard({
         {/* Tombol Aksi Edit & Hapus Karya Khusus Author / Admin / Operator */}
         {canDelete && (
           <div
-            className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5"
+            className="absolute top-2.5 right-2.5 z-20 flex items-center justify-end gap-1.5 max-w-[calc(100%-1.25rem)]"
             onClick={(e) => e.stopPropagation()}
           >
             {!isConfirmingDelete && (
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="h-8 px-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-100 hover:text-amber-400 border border-slate-700 flex items-center gap-1 text-[11px] font-semibold transition-all cursor-pointer shadow-md"
+                className="h-8 px-2.5 rounded-full bg-slate-900/90 backdrop-blur-xs hover:bg-slate-800 text-slate-100 hover:text-amber-400 border border-slate-700 flex items-center gap-1 text-[11px] font-semibold transition-all cursor-pointer shadow-md shrink-0"
                 title="Edit Detail Karya"
               >
                 <Pencil className="h-3 w-3 text-amber-400" />
@@ -285,12 +285,12 @@ export function ProjectCard({
             )}
 
             {isConfirmingDelete ? (
-              <div className="flex items-center gap-1 bg-slate-900 p-1.5 rounded-xl border border-rose-500 shadow-xl animate-in fade-in z-30">
+              <div className="flex items-center gap-1 bg-slate-900/95 backdrop-blur-xs p-1 rounded-xl border border-rose-500 shadow-xl animate-in fade-in z-30 shrink-0">
                 <button
                   type="button"
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {isDeleting ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -302,7 +302,7 @@ export function ProjectCard({
                   type="button"
                   onClick={() => setIsConfirmingDelete(false)}
                   disabled={isDeleting}
-                  className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[10px] hover:text-white cursor-pointer"
+                  className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[10px] hover:text-white cursor-pointer shrink-0"
                 >
                   Batal
                 </button>
@@ -311,7 +311,7 @@ export function ProjectCard({
               <button
                 type="button"
                 onClick={() => setIsConfirmingDelete(true)}
-                className="h-8 w-8 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-500 flex items-center justify-center transition-all cursor-pointer shadow-md"
+                className="h-8 w-8 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-500 flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0"
                 title="Hapus / Takedown Karya"
               >
                 <Trash2 className="h-3.5 w-3.5" />

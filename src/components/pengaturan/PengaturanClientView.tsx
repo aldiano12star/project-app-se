@@ -11,10 +11,6 @@ import {
 } from "./PersonalSummarySection";
 import { SettingsSection } from "./SettingsSection";
 import { AdminBackupSection } from "./AdminBackupSection";
-import {
-  AdminUserManagementSection,
-  ManagedUser,
-} from "./AdminUserManagementSection";
 import { LogoutButton } from "./LogoutButton";
 
 const KTADigitalModal = dynamic(
@@ -30,7 +26,6 @@ const AvatarSelectorModal = dynamic(
 interface PengaturanClientViewProps {
   user: UserProfileData;
   attendanceSummary: AttendanceSummaryData;
-  managedUsers?: ManagedUser[];
 }
 
 function formatGrade(grade?: string | null) {
@@ -44,7 +39,6 @@ function formatGrade(grade?: string | null) {
 export function PengaturanClientView({
   user,
   attendanceSummary,
-  managedUsers = [],
 }: PengaturanClientViewProps) {
   const [isKTAOpen, setIsKTAOpen] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -59,7 +53,7 @@ export function PengaturanClientView({
           className="inline-flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-2.5 rounded-xl text-ink-secondary hover:text-ink hover:bg-surface-container-low transition-all active:scale-95 text-xs font-semibold cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-primary" />
-          <span>Kembali ke Beranda</span>
+          <span>Kembali</span>
         </Link>
 
         {/* Screen Title */}
@@ -89,23 +83,17 @@ export function PengaturanClientView({
           attendanceSummary={attendanceSummary}
         />
 
-        {/* 3. Panel Aktivasi Akun GUEST & Manajemen Role (Khusus Admin & Operator) */}
-        <AdminUserManagementSection
-          currentUserRole={user.role}
-          users={managedUsers}
-        />
-
-        {/* 4. Panel Cadangan Data Khusus Role ADMIN & OPERATOR */}
+        {/* 3. Panel Cadangan Data Khusus Role ADMIN & OPERATOR */}
         <AdminBackupSection currentUserRole={user.role} />
 
-        {/* 5. Structured Settings Sections (Kontak, Password, Preferensi, Bantuan) */}
+        {/* 4. Structured Settings Sections (Kontak, Password, Preferensi, Bantuan) */}
         <SettingsSection
           user={user}
           onOpenKTA={() => setIsKTAOpen(true)}
           onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
         />
 
-        {/* 6. Official Danger Logout Action */}
+        {/* 5. Official Danger Logout Action */}
         <LogoutButton />
       </div>
 
