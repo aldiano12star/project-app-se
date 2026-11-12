@@ -51,12 +51,12 @@ export function TopHeader({ user }: TopHeaderProps) {
     : "SE";
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-edge/80 bg-card/85 backdrop-blur-md pt-safe shadow-xs dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]">
+    <header className="sticky top-0 z-30 w-full border-b border-edge/80 dark:border-white/10 bg-card/85 backdrop-blur-md pt-safe shadow-xs dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]">
       <div className="flex h-16 items-center justify-between px-4 md:px-8 w-full max-w-7xl mx-auto">
         {/* Logo & Brand Identity (Mobile) / Workspace Context (Desktop) */}
         <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="flex md:hidden items-center gap-3 cursor-pointer group min-h-11">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
+          <Link href="/dashboard" className="flex md:hidden items-center gap-3 cursor-pointer group min-h-11 active:scale-95 transition-transform duration-150 ease-out">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
               {!logoError ? (
                 <Image
                   src="/logo.png"
@@ -93,11 +93,11 @@ export function TopHeader({ user }: TopHeaderProps) {
         <div className="flex items-center gap-2">
           {/* XP Pill: Khusus anggota reguler/pengurus, disembunyikan untuk KOLABORATOR */}
           {role !== "KOLABORATOR" && (
-            <div className="flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/40 px-3 py-1.5 min-h-9 shadow-[0_0_12px_-2px_rgba(245,158,11,0.2)]">
+            <div className="flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 min-h-9 shadow-[0_0_12px_-2px_rgba(245,158,11,0.2)]">
               <Zap className="h-3.5 w-3.5 fill-amber-500 text-amber-500 animate-pulse" />
               <span className="text-xs font-bold font-mono text-amber-700 dark:text-amber-300 tabular-nums">
                 {points.toLocaleString("id-ID")}{" "}
-                <span className="text-[10px] font-semibold text-amber-600/70 dark:text-amber-400/70 font-sans">XP</span>
+                <span className="text-[10px] font-bold text-amber-600/80 dark:text-amber-400/80 font-mono uppercase tracking-widest">XP</span>
               </span>
             </div>
           )}
@@ -106,7 +106,7 @@ export function TopHeader({ user }: TopHeaderProps) {
           <Link
             href="/kotak-masuk"
             aria-label="Kotak Masuk Notifikasi"
-            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full text-slate-500 hover:text-ink hover:bg-surface-container-low transition-colors active:scale-95 cursor-pointer"
+            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center rounded-full text-slate-500 hover:text-ink hover:bg-surface-container-low dark:hover:bg-white/5 transition-all active:scale-95 duration-150 ease-out cursor-pointer"
             title="Kotak Masuk"
           >
             <Bell className="h-5 w-5 stroke-[1.8]" />
@@ -121,7 +121,7 @@ export function TopHeader({ user }: TopHeaderProps) {
           {/* Avatar Profil dengan Role Ring (Pintu Navigasi Langsung ke /pengaturan) */}
           <Link
             href="/pengaturan"
-            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center cursor-pointer active:scale-95 transition-transform"
+            className="relative flex h-11 w-11 min-h-11 min-w-11 items-center justify-center cursor-pointer active:scale-95 transition-transform duration-150 ease-out"
             title="Akun & Pengaturan Profil"
           >
             {user?.image ? (
@@ -131,10 +131,10 @@ export function TopHeader({ user }: TopHeaderProps) {
                 width={36}
                 height={36}
                 referrerPolicy="no-referrer"
-                className="h-9 w-9 rounded-full border border-edge object-cover ring-2 ring-primary/20"
+                className="h-9 w-9 rounded-full border border-edge/80 dark:border-white/10 object-cover ring-2 ring-primary/20"
               />
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-edge bg-surface text-xs font-semibold text-ink ring-2 ring-primary/20">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-edge/80 dark:border-white/10 bg-surface text-xs font-semibold text-ink ring-2 ring-primary/20">
                 {initials}
               </div>
             )}

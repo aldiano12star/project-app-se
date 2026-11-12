@@ -35,25 +35,25 @@ export function DigitalWalletCard({
   const isZero = kasBalance === 0;
 
   return (
-    <div className="specular-card bg-card p-5 sm:p-6 rounded-2xl border border-edge/80 shadow-xs space-y-3 relative overflow-hidden">
+    <div className="specular-card bg-card p-5 sm:p-6 rounded-2xl border border-edge/80 dark:border-white/10 shadow-xs space-y-3 relative overflow-hidden">
       {/* Ambient Gradient Corner Glow */}
       <div className="absolute -top-16 -right-16 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <span className="text-xs font-bold uppercase tracking-wider text-ink-muted font-display">
+          <span className="text-xs font-bold uppercase tracking-widest text-ink-muted font-display">
             Dompet Kas Saya
           </span>
         </div>
 
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors font-mono ${
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors font-mono tracking-wider ${
             isPositive
-              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
               : isZero
-              ? "bg-surface-container-low text-ink-muted border-edge"
-              : "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
+              ? "bg-surface-container-low text-ink-muted border-edge/80 dark:border-white/10"
+              : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
           }`}
         >
           {isPositive
@@ -66,7 +66,7 @@ export function DigitalWalletCard({
 
       <div className="pt-0.5 relative z-10">
         <h2
-          className={`text-2xl sm:text-3xl font-black tracking-tight tabular-nums font-display transition-colors ${
+          className={`text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight tabular-nums font-display transition-colors ${
             isPositive
               ? "text-emerald-600 dark:text-emerald-400"
               : isZero
@@ -95,28 +95,28 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
   const displayedTransactions = transactions.slice(0, 5);
 
   return (
-    <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge space-y-4">
+    <div className="card-solid bg-card p-5 sm:p-6 rounded-2xl border border-edge/80 dark:border-white/10 space-y-4 shadow-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <History className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-          <h3 className="text-sm font-bold text-ink">
+          <h3 className="text-sm font-bold text-ink font-display">
             Riwayat Mutasi Saldo Kas
           </h3>
         </div>
-        <span className="text-xs text-ink-muted">
+        <span className="text-xs text-ink-muted font-mono">
           {displayedTransactions.length} Transaksi Terakhir
         </span>
       </div>
 
       {displayedTransactions.length === 0 ? (
-        <div className="py-8 text-center space-y-2 bg-surface-container-low rounded-xl border border-edge/60">
+        <div className="py-8 text-center space-y-2 bg-surface-container-low/40 dark:bg-white/5 rounded-xl border border-edge/60 dark:border-white/10">
           <Info className="h-6 w-6 text-slate-400 mx-auto" />
           <p className="text-xs text-ink-muted">
             Belum ada riwayat mutasi kas personal tercatat untuk akun Anda.
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-edge/70">
+        <div className="divide-y divide-edge/70 dark:divide-white/10">
           {displayedTransactions.map((tx) => {
             const isIncome = tx.type === TransactionType.INCOME;
             const dateStr = new Date(tx.date).toLocaleDateString("id-ID", {
@@ -134,8 +134,8 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
                   <div
                     className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border ${
                       isIncome
-                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
-                        : "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800"
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                        : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
                     }`}
                   >
                     {isIncome ? (
@@ -161,7 +161,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
 
                 <div className="text-right shrink-0">
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-xs font-bold font-mono tabular-nums ${
                       isIncome
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-rose-600 dark:text-rose-400"

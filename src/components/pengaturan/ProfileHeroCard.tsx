@@ -174,19 +174,19 @@ export function ProfileHeroCard({
   };
 
   return (
-    <section className="specular-card bg-card border border-edge/80 rounded-2xl p-6 relative overflow-hidden shadow-xs space-y-6">
+    <section className="specular-card bg-card border border-edge/80 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden shadow-xs space-y-6">
       {/* Accent Header Ribbon */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-rose-500 via-primary to-amber-500" />
 
       {/* Banner Peringatan Wajib Ganti Kata Sandi Default */}
       {user.mustChangePassword && (
-        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-500/30 text-sm flex items-start gap-3 animate-in fade-in">
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/25 text-sm flex items-start gap-3 animate-in fade-in">
           <span className="text-xl shrink-0">⚠️</span>
           <div className="space-y-1 min-w-0 flex-1">
-            <span className="font-semibold block text-amber-800 dark:text-amber-200 text-sm">
+            <span className="font-bold block text-amber-700 dark:text-amber-300 text-sm">
               Ganti Kata Sandi Bawaan Akun
             </span>
-            <p className="text-xs text-amber-700 dark:text-amber-300/80 leading-relaxed">
+            <p className="text-xs text-amber-600/90 dark:text-amber-400/90 leading-relaxed">
               Demi keamanan akunmu, segera ganti kata sandi bawaan (default) dengan kata sandi pribadimu pada formulir di bawah.
             </p>
           </div>
@@ -353,21 +353,21 @@ export function ProfileHeroCard({
       </div>
 
       {/* Gamification Summary Box (Total XP, Tier & Progress Bar) */}
-      <div className="pt-4 border-t border-edge bg-surface-container-low/60 rounded-2xl p-4 border space-y-3">
+      <div className="pt-4 border-t border-edge/80 dark:border-white/10 bg-surface-container-low/60 dark:bg-white/5 rounded-xl p-4 border border-edge/80 dark:border-white/10 space-y-3">
         <div className="flex items-center justify-between text-sm">
           {/* Total Points */}
-          <div className="flex items-center gap-2 font-semibold text-amber-400">
-            <span className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xs">
-              <Zap className="h-3.5 w-3.5 fill-amber-400" />
+          <div className="flex items-center gap-2 font-semibold text-amber-500">
+            <span className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 text-xs">
+              <Zap className="h-3.5 w-3.5 fill-amber-500" />
             </span>
             <span className="text-base font-bold text-ink font-mono tracking-tight">
               {user.totalPoints} XP
             </span>
-            <span className="text-ink-muted font-normal text-xs">Total</span>
+            <span className="text-ink-muted font-normal text-xs uppercase tracking-widest font-mono">Total</span>
           </div>
 
           {/* Level Tier */}
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-ink">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-ink font-display">
             <span>{levelInfo.icon}</span>
             <span>
               Lv. {levelInfo.level} {levelInfo.title}{" "}
@@ -377,7 +377,7 @@ export function ProfileHeroCard({
 
         {/* Progress Bar to Next Level */}
         <div className="space-y-1.5">
-          <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/60">
+          <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/60 dark:border-white/10">
             <div className="h-full bg-linear-to-r from-primary to-amber-500 rounded-full transition-all duration-500"
               style={{ width: `${levelInfo.progress}%` }}
             />
@@ -397,7 +397,7 @@ export function ProfileHeroCard({
           <button
             type="button"
             onClick={onOpenKTA}
-            className="w-full min-h-12 px-5 py-3 rounded-xl border border-edge bg-surface-container hover:bg-surface-container-high active:scale-[0.99] text-ink font-semibold text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+            className="w-full min-h-12 px-5 py-3 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container hover:bg-surface-container-high active:scale-95 text-ink font-semibold text-sm flex items-center justify-center gap-2 shadow-xs transition-all duration-150 ease-out cursor-pointer"
           >
             <IdCard className="w-5 h-5 text-primary" />
             <span>🪪 Buka KTA Digital</span>

@@ -6,7 +6,6 @@ import {
   Sparkles,
   ExternalLink,
   GitBranch,
-  Image as ImageIcon,
   Tag,
   AlertCircle,
   Users,
@@ -75,9 +74,8 @@ export function CreateProjectModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (initialMembers && initialMembers.length > 0) {
-      setMembersList(initialMembers);
-    } else if (isOpen) {
+    if (!isOpen) return;
+    if (!initialMembers || initialMembers.length === 0) {
       getAvailableMembers().then((res) => {
         if (res.success && res.data) {
           setMembersList(res.data);
@@ -175,15 +173,15 @@ export function CreateProjectModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
-      <div className="relative w-full rounded-2xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div className="relative w-full rounded-2xl bg-card border border-edge/80 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         {/* Header Modal */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/60">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-edge/80 dark:border-white/10 bg-surface-container-low/60 dark:bg-white/5">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Submit Karya ke Showcase</h2>
+              <h2 className="text-sm font-bold text-ink font-display">Submit Karya ke Showcase</h2>
               <p className="text-[11px] text-ink-muted">
                 +50 XP untuk Anda &amp; +50 XP per anggota tim (hingga 10 orang)
               </p>
@@ -192,7 +190,7 @@ export function CreateProjectModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container transition-colors cursor-pointer"
+            className="h-8 w-8 rounded-full flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-container dark:hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Tutup modal"
           >
             <X className="h-4 w-4" />
@@ -219,7 +217,7 @@ export function CreateProjectModal({
               placeholder="Contoh: Portal Presensi IoT Saba ExploIT"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-ink-muted/50"
             />
           </div>
 
@@ -237,7 +235,7 @@ export function CreateProjectModal({
                   category: e.target.value as ShowcaseCategory,
                 })
               }
-              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
+              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
             >
               <option value="PROGRAMMING">💻 1. Programming &amp; Web</option>
               <option value="TECHNOPRENEUR">💼 2. Technopreneurship</option>
@@ -259,7 +257,7 @@ export function CreateProjectModal({
               placeholder="Jelaskan fitur karya, proses pembuatan, dan tools/teknologi yang digunakan..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full p-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none leading-relaxed"
+              className="w-full p-3.5 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none leading-relaxed placeholder:text-ink-muted/50"
             />
           </div>
 
@@ -316,7 +314,7 @@ export function CreateProjectModal({
                       setMemberSearch(e.target.value);
                       setIsDropdownOpen(true);
                     }}
-                    className="w-full h-11 min-h-[44px] pl-9 pr-8 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                    className="w-full h-11 min-h-[44px] pl-9 pr-8 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all placeholder:text-ink-muted/50"
                   />
                   {memberSearch && (
                     <button
@@ -383,7 +381,7 @@ export function CreateProjectModal({
                 placeholder="https://..."
                 value={formData.demoUrl}
                 onChange={(e) => setFormData({ ...formData, demoUrl: e.target.value })}
-                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono placeholder:text-ink-muted/50"
               />
             </div>
 
@@ -397,7 +395,7 @@ export function CreateProjectModal({
                 placeholder="https://github.com/..."
                 value={formData.githubUrl}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono placeholder:text-ink-muted/50"
               />
             </div>
           </div>
@@ -417,14 +415,14 @@ export function CreateProjectModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="h-11 min-h-[44px] px-4 rounded-xl border border-edge/80 dark:border-white/10 text-xs font-semibold text-ink-secondary hover:bg-surface-container-low dark:hover:bg-white/5 active:scale-95 transition-all duration-150 ease-out cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="h-11 min-h-[44px] px-5 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="h-11 min-h-[44px] px-5 rounded-xl bg-primary hover:bg-primary-hover active:scale-95 text-white text-xs font-bold shadow-[0_0_16px_rgba(225,29,42,0.25)] transition-all duration-150 ease-out flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               {isLoading ? (
                 <>

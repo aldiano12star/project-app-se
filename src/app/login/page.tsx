@@ -20,9 +20,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <main className="app-shell flex min-h-screen flex-col justify-center px-6 py-12">
-      <div className="card-solid p-8 text-center shadow-none rounded-3xl border border-edge">
+      <div className="specular-card bg-card p-8 sm:p-10 text-center rounded-3xl border border-edge/80 dark:border-white/10 shadow-xs relative overflow-hidden">
+        {/* Ambient Top Glow */}
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
         {/* Brand Header with Squircle Logo */}
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low border border-edge ring-4 ring-primary/10 shadow-xs p-2.5">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 ring-4 ring-primary/10 shadow-xs p-2.5 relative z-10">
           <Image
             src="/logo.png"
             alt="SE-Core Logo"
@@ -33,24 +36,24 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           />
         </div>
 
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-display relative z-10">
           SE-Core
         </h1>
 
         {/* Pill Badge */}
-        <div className="mt-2 flex justify-center">
-          <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-3 py-0.5 text-xs font-semibold text-primary">
+        <div className="mt-2 flex justify-center relative z-10">
+          <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-3 py-0.5 text-[10px] font-bold text-primary font-mono tracking-widest uppercase">
             SMAN 1 Bantul • Musim 2026/2027
           </span>
         </div>
 
-        <p className="mt-2.5 text-xs sm:text-sm text-ink-muted leading-relaxed">
+        <p className="mt-2.5 text-xs sm:text-sm text-ink-muted leading-relaxed relative z-10">
           Portal Kegiatan, Presensi &amp; Kolaborasi Anggota
         </p>
 
         {/* Alert Error Konfigurasi / Login */}
         {errorType && (
-          <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-500 flex items-center gap-2 text-left">
+          <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-500 flex items-center gap-2 text-left relative z-10">
             <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
             <span>
               {errorType === "Configuration"
@@ -63,7 +66,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         )}
 
         {/* Login Action via Server Action */}
-        <div className="mt-6 space-y-3">
+        <div className="mt-6 space-y-3 relative z-10">
           <form
             action={async () => {
               "use server";
@@ -72,7 +75,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           >
             <button
               type="submit"
-              className="flex h-11 min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-edge bg-white px-4 text-neutral-900 font-semibold transition-all hover:bg-neutral-50 active:scale-[0.99] cursor-pointer shadow-xs"
+              className="flex h-11 min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-edge/80 bg-white px-4 text-neutral-900 font-semibold transition-all duration-150 ease-out hover:bg-neutral-50 active:scale-95 cursor-pointer shadow-xs"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path

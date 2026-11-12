@@ -373,7 +373,7 @@ export default async function DashboardPage() {
         {/* ========================================================= */}
         {/* MODUL 1: Saba Hero Command Center & Presensi QR Rapat     */}
         {/* ========================================================= */}
-        <section className="specular-card relative overflow-hidden p-5 sm:p-7 border border-edge/80 space-y-5">
+        <section className="specular-card relative overflow-hidden p-5 sm:p-7 border border-edge/80 dark:border-white/10 rounded-2xl space-y-5">
           {/* Ambient Corner Glow */}
           <div className="absolute -top-20 -right-20 w-56 h-56 bg-primary/10 dark:bg-primary/15 rounded-full blur-3xl pointer-events-none" />
 
@@ -392,7 +392,7 @@ export default async function DashboardPage() {
             </div>
 
             {todayAttendance && (
-              <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-300 dark:border-emerald-500/40 shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+              <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/20 shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Presensi Hari Ini Tercatat</span>
               </div>
@@ -572,24 +572,24 @@ export default async function DashboardPage() {
           <PodiumTop3 contributors={topContributors} />
 
           {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
-          <section className="specular-card p-5 sm:p-6 flex flex-col gap-4 border border-edge/80">
+          <section className="specular-card p-5 sm:p-6 flex flex-col gap-4 border border-edge/80 dark:border-white/10 rounded-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/50 shadow-xs p-2.5 shrink-0">
+                <div className="flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 shadow-xs p-2.5 shrink-0">
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-ink uppercase tracking-wider font-display">
+                  <h2 className="text-xs sm:text-sm font-bold text-ink uppercase tracking-widest font-display">
                     Agenda Acara Terdekat
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-ink-muted mt-0.5">
                     Workspace &amp; kepanitiaan acara organisasi
                   </p>
                 </div>
               </div>
               <Link
                 href="/acara"
-                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-11 px-2"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-11 px-2 active:scale-95 transition-transform"
               >
                 <span>Semua Acara</span>
                 <ChevronRight className="h-4 w-4" />
@@ -597,7 +597,7 @@ export default async function DashboardPage() {
             </div>
 
             {prioritizedAgendas.length === 0 ? (
-              <div className="p-8 rounded-2xl bg-surface-container-low/40 border border-edge/70 text-center flex flex-col items-center justify-center space-y-3">
+              <div className="p-8 rounded-2xl bg-surface-container-low/40 dark:bg-white/5 border border-edge/70 dark:border-white/10 text-center flex flex-col items-center justify-center space-y-3">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 shadow-xs">
                   <Coffee className="h-7 w-7 stroke-[1.8]" />
                 </div>
@@ -617,24 +617,24 @@ export default async function DashboardPage() {
                     <Link
                       key={agenda.id}
                       href="/acara"
-                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container border border-edge transition-all flex items-center justify-between gap-4 group active:scale-[0.99] min-h-16"
+                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 dark:bg-white/5 hover:bg-surface-container dark:hover:bg-white/10 border border-edge/80 dark:border-white/10 transition-all flex items-center justify-between gap-4 group active:scale-95 duration-150 ease-out min-h-16"
                     >
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           {/* Status Badge */}
                           {agenda.timeStatus === "ACTIVE" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-950/60 text-cyan-400 border border-cyan-500/40 shadow-xs">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 border border-cyan-500/25 shadow-xs">
                               <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
                               <span>{agenda.isMeeting ? "Hari Ini" : "Sedang Berlangsung"}</span>
                             </span>
                           ) : agenda.timeStatus === "UPCOMING" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                              <Clock className="h-3 w-3 text-slate-400" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-ink-muted border border-edge dark:border-white/10">
+                              <Clock className="h-3 w-3 text-ink-muted" />
                               <span>Mendatang</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                               <span>✓ Selesai</span>
                             </span>
                           )}
@@ -643,8 +643,8 @@ export default async function DashboardPage() {
                           <span
                             className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                               agenda.isSingleDay
-                                ? "bg-amber-950/60 text-amber-400 border border-amber-500/30"
-                                : "bg-indigo-950/60 text-indigo-400 border border-indigo-500/30"
+                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                                : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
                             }`}
                           >
                             {agenda.isSingleDay ? (
@@ -655,22 +655,22 @@ export default async function DashboardPage() {
                             <span>{agenda.categoryLabel}</span>
                           </span>
 
-                          <span className="text-xs font-mono text-slate-400">
+                          <span className="text-xs font-mono text-ink-muted">
                             {agenda.formattedSchedule}
                           </span>
                         </div>
 
-                        <h3 className="text-sm sm:text-base font-semibold text-ink truncate group-hover:text-primary transition-colors">
+                        <h3 className="text-sm sm:text-base font-bold text-ink truncate group-hover:text-primary transition-colors">
                           {agenda.title}
                         </h3>
 
                         {agenda.progressText && (
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-ink-muted">
                             {agenda.progressText}
                           </p>
                         )}
                       </div>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge text-slate-400 group-hover:text-primary shrink-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge/80 dark:border-white/10 text-ink-muted group-hover:text-primary shrink-0 transition-colors">
                         <ChevronRight className="h-5 w-5" />
                       </div>
                     </Link>

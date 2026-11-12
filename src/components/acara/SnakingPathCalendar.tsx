@@ -405,10 +405,10 @@ export function SnakingPathCalendar({
             const cardStyleClass = isFinished
               ? "border border-emerald-500/25 bg-card"
               : isParentMegaCard
-              ? "border-2 border-slate-300 dark:border-[#27344A] bg-card shadow-sm"
+              ? "border border-edge/80 dark:border-white/10 bg-card shadow-sm"
               : isMultiDay
-              ? "border border-indigo-500/40 bg-card shadow-sm"
-              : "border border-edge bg-card shadow-xs";
+              ? "border border-indigo-500/30 bg-card shadow-sm"
+              : "border border-edge/80 dark:border-white/10 bg-card shadow-xs";
 
             const todayAccentClass = isTodayEvent ? "ring-2 ring-primary/30" : "";
 
@@ -614,7 +614,7 @@ export function SnakingPathCalendar({
                           return (
                             <div
                               key={meeting.id}
-                              className="bg-surface-container-low border border-edge/70 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                              className="bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                             >
                               <div className="space-y-1 min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
@@ -632,21 +632,21 @@ export function SnakingPathCalendar({
                                     </span>
                                   )}
                                   {meeting.attendanceStatus === "HADIR" || (meeting.isAttended && !meeting.attendanceStatus) ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                                       <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                       <span>Hadir</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "ALPHA" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                                       <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" />
                                       <span>Alfa</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "SAKIT" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                                       <span>Sakit</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "IZIN" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                                       <span>Izin</span>
                                     </span>
                                   ) : (
@@ -661,7 +661,7 @@ export function SnakingPathCalendar({
                                 </p>
                                 {meeting.notes && (
                                   <p className="text-[11px] text-ink-secondary line-clamp-1 italic">
-                                    "{meeting.notes}"
+                                    &ldquo;{meeting.notes}&rdquo;
                                   </p>
                                 )}
                               </div>

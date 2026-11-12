@@ -219,6 +219,13 @@ body {
   }
 }
 
+@utility spring-click {
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 @utility card-hover {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   @media (hover: hover) {
@@ -235,6 +242,19 @@ body {
     outline: none;
     box-shadow: 0 0 0 3px rgba(225, 29, 42, 0.15);
     border-color: var(--saba-primary);
+  }
+}
+
+@utility input-clean {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--saba-edge);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  &:focus {
+    outline: none;
+    border-color: var(--saba-primary);
+    box-shadow: 0 0 0 3px rgba(225, 29, 42, 0.15);
+    background-color: rgba(255, 255, 255, 0.07);
   }
 }
 

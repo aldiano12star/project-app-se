@@ -28,12 +28,12 @@ export function InvoiceListCard({
   return (
     <div className="space-y-4">
       {/* Header Tagihan & Total Tunggakan */}
-      <div className="card-solid p-6 space-y-5">
+      <div className="card-solid bg-card p-5 sm:p-6 space-y-5 rounded-2xl border border-edge/80 dark:border-white/10 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Receipt className="h-5 w-5 text-primary stroke-2" />
             <div>
-              <h2 className="text-sm font-bold text-ink">
+              <h2 className="text-sm font-bold text-ink font-display">
                 Tagihan Saya (Invoices)
               </h2>
               <p className="text-xs text-ink-muted">
@@ -43,11 +43,11 @@ export function InvoiceListCard({
           </div>
 
           {unpaidInvoices.length > 0 ? (
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono">
               {unpaidInvoices.length} Belum Lunas
             </span>
           ) : (
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1 font-mono">
               <CheckCircle2 className="h-3.5 w-3.5" />
               <span>Semua Lunas</span>
             </span>
@@ -56,18 +56,18 @@ export function InvoiceListCard({
 
         {/* Ringkasan Tunggakan & Teks Motivasi Dinamis */}
         {unpaidInvoices.length > 0 ? (
-          <div className="p-4 rounded-2xl bg-surface-container-low border border-edge space-y-2">
+          <div className="p-4 rounded-xl bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-medium text-ink-muted">
                 Total Tagihan Tertunda
               </span>
-              <p className="text-base font-extrabold text-ink tabular-nums">
+              <p className="text-base font-extrabold text-ink tabular-nums font-mono">
                 Rp {totalUnpaidAmount.toLocaleString("id-ID")}
               </p>
             </div>
-            <div className="flex items-center justify-between pt-1 border-t border-edge/60 text-xs">
+            <div className="flex items-center justify-between pt-1 border-t border-edge/60 dark:border-white/10 text-xs">
               <span className="text-ink-muted">Saldo Dompet Saya:</span>
-              <span className="font-bold text-ink tabular-nums">
+              <span className="font-bold text-ink tabular-nums font-mono">
                 Rp {userKasBalance.toLocaleString("id-ID")}
               </span>
             </div>
@@ -76,7 +76,7 @@ export function InvoiceListCard({
             </p>
           </div>
         ) : (
-          <div className="card-hover p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
+          <div className="card-hover p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5" />
             </div>
@@ -94,7 +94,7 @@ export function InvoiceListCard({
         {/* List Tagihan Belum Lunas */}
         <div className="space-y-3">
           {unpaidInvoices.length === 0 ? (
-            <div className="py-8 px-4 text-center rounded-2xl bg-surface-container-low/40 border border-edge/70 flex flex-col items-center justify-center space-y-2.5">
+            <div className="py-8 px-4 text-center rounded-xl bg-surface-container-low/40 dark:bg-white/5 border border-edge/70 dark:border-white/10 flex flex-col items-center justify-center space-y-2.5">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 shadow-xs">
                 <Coins className="h-7 w-7 stroke-[1.8]" />
               </div>
@@ -114,7 +114,7 @@ export function InvoiceListCard({
               return (
                 <div
                   key={inv.id}
-                  className="p-4 rounded-2xl border border-edge bg-surface flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-edge/80 transition-all"
+                  className="p-4 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-edge transition-all"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -122,7 +122,7 @@ export function InvoiceListCard({
                         {inv.title}
                       </span>
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
+                        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border font-mono ${
                           inv.type === InvoiceType.KAS
                             ? "bg-sky-500/10 text-sky-500 border-sky-500/20"
                             : "bg-purple-500/10 text-purple-500 border-purple-500/20"
@@ -133,7 +133,7 @@ export function InvoiceListCard({
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-ink-muted">
-                      <span className="font-semibold text-ink tabular-nums">
+                      <span className="font-semibold text-ink tabular-nums font-mono">
                         Rp {inv.amount.toLocaleString("id-ID")}
                       </span>
                       {inv.dueDate && (
@@ -156,7 +156,7 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl self-start sm:self-center">
+                  <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg self-start sm:self-center font-mono">
                     Belum Lunas
                   </span>
                 </div>
@@ -167,12 +167,12 @@ export function InvoiceListCard({
 
         {/* Riwayat Tagihan Lunas (Dibatasi Maksimal 5 Terakhir) */}
         {recentPaidInvoices.length > 0 && (
-          <div className="pt-3 border-t border-edge/60 space-y-2">
+          <div className="pt-3 border-t border-edge/60 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-ink-muted">
                 Riwayat Tagihan Lunas
               </span>
-              <span className="text-[11px] font-medium text-ink-muted">
+              <span className="text-[11px] font-medium text-ink-muted font-mono">
                 {recentPaidInvoices.length} Terakhir
                 {paidInvoices.length > 5 ? ` (dari ${paidInvoices.length})` : ""}
               </span>
@@ -181,13 +181,13 @@ export function InvoiceListCard({
               {recentPaidInvoices.map((inv) => (
                 <div
                   key={inv.id}
-                  className="p-3 rounded-xl bg-surface-container-low/50 border border-edge/40 flex items-center justify-between text-xs"
+                  className="p-3 rounded-xl bg-surface-container-low/50 dark:bg-white/5 border border-edge/40 dark:border-white/10 flex items-center justify-between text-xs"
                 >
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span className="text-ink font-medium">{inv.title}</span>
                   </div>
-                  <span className="text-ink-muted tabular-nums font-medium">
+                  <span className="text-ink-muted tabular-nums font-medium font-mono">
                     Rp {inv.amount.toLocaleString("id-ID")}
                   </span>
                 </div>

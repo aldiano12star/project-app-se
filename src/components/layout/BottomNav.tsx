@@ -142,7 +142,7 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2.5 rounded-full transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-90 hover:bg-surface-container-low/60 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2.5 rounded-full transition-all duration-150 ease-out active:scale-95 hover:bg-surface-container-low/60 dark:hover:bg-white/5 flex items-center justify-center min-h-11 min-w-11 shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

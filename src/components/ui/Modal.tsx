@@ -45,7 +45,7 @@ export function Modal({
     <div
       role="dialog"
       aria-modal="true"
-      className={`fixed inset-0 ${zIndex} flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-200 ${backdropClassName}`}
+      className={`fixed inset-0 ${zIndex} flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200 ${backdropClassName}`}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -53,7 +53,7 @@ export function Modal({
       }}
     >
       <div
-        className={`relative w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.75)] ${className}`}
+        className={`relative w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.75)] ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

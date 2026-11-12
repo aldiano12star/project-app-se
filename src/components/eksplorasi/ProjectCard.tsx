@@ -222,10 +222,10 @@ export function ProjectCard({
   return (
     <div
       onClick={() => router.push(`/eksplorasi/${project.id}`)}
-      className="specular-card bg-card border border-edge/80 rounded-2xl overflow-hidden shadow-xs hover:border-primary/50 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.6)] transition-all duration-300 space-y-3 relative cursor-pointer group active:scale-[0.99]"
+      className="specular-card bg-card border border-edge/80 dark:border-white/10 rounded-2xl overflow-hidden shadow-xs hover:border-primary/50 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.6)] transition-all duration-150 ease-out space-y-3 relative cursor-pointer group active:scale-95"
     >
       {/* 16:9 Thumbnail Header */}
-      <div className="relative w-full aspect-video bg-surface-container-low overflow-hidden border-b border-edge flex items-center justify-center">
+      <div className="relative w-full aspect-video bg-surface-container-low/60 dark:bg-white/5 overflow-hidden border-b border-edge/80 dark:border-white/10 flex items-center justify-center">
         {project.imageUrl ? (
           <Image
             src={project.imageUrl}
@@ -337,10 +337,10 @@ export function ProjectCard({
             type="button"
             onClick={handleLike}
             disabled={isLiking}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer active:scale-90 border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all duration-150 ease-out cursor-pointer active:scale-95 border ${
               isLiked
-                ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900"
-                : "bg-surface-container-low text-ink-muted hover:text-rose-500 border-edge"
+                ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/25"
+                : "bg-surface-container-low/60 dark:bg-white/5 text-ink-muted hover:text-rose-500 border-edge/80 dark:border-white/10"
             }`}
             title="Sukai karya ini"
           >
@@ -356,13 +356,13 @@ export function ProjectCard({
           <h3 className="text-sm font-bold text-ink leading-snug group-hover:text-primary transition-colors">
             {project.title}
           </h3>
-          <p className="text-xs text-ink-secondary line-clamp-2 leading-relaxed">
+          <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
             {project.description}
           </p>
         </div>
 
         {/* Author & Contributors Section */}
-        <div className="space-y-2 pt-1 border-t border-edge/60 text-[11px]">
+        <div className="space-y-2 pt-1 border-t border-edge/60 dark:border-white/10 text-[11px]">
           {/* Author Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">

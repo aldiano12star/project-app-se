@@ -142,7 +142,7 @@ export function EventDetailCard({
   return (
     <div className="space-y-4" id="workspace-detail">
       {/* Kartu Utama Workspace Kegiatan */}
-      <section className="specular-card bg-card p-6 space-y-5 rounded-2xl border border-edge/80 shadow-xs">
+      <section className="specular-card bg-card p-6 space-y-5 rounded-2xl border border-edge/80 dark:border-white/10 shadow-xs">
         {/* Tag & ID Kegiatan */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -150,8 +150,8 @@ export function EventDetailCard({
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
                   isSingleDay
-                    ? "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60"
-                    : "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60"
+                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                    : "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20"
                 }`}
               >
                 {isSingleDay ? (
@@ -170,17 +170,17 @@ export function EventDetailCard({
             <div className="flex items-center gap-2">
               {/* Badge Status Waktu Dinamis */}
               {timeStatus === "ACTIVE" ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/60 text-xs font-semibold shadow-xs animate-pulse">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 text-xs font-semibold shadow-xs animate-pulse">
                   <Radio className="h-3.5 w-3.5" />
                   <span>Berlangsung</span>
                 </span>
               ) : timeStatus === "UPCOMING" ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-ink-secondary border border-edge text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-low text-ink-muted border border-edge/80 dark:border-white/10 text-xs font-semibold">
                   <Clock className="h-3.5 w-3.5" />
                   <span>Mendatang</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 text-xs font-semibold">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   <span>Selesai</span>
                 </span>
@@ -198,7 +198,7 @@ export function EventDetailCard({
               <span className="font-semibold">{dateRangeString}</span>
             </p>
             {event.description && (
-              <p className="text-base text-ink-secondary leading-relaxed bg-surface-container-low/60 p-4 rounded-xl border border-edge/60 mt-2">
+              <p className="text-base text-ink-secondary leading-relaxed bg-surface-container-low/60 dark:bg-white/5 p-4 rounded-xl border border-edge/60 dark:border-white/10 mt-2">
                 {event.description}
               </p>
             )}
@@ -211,7 +211,7 @@ export function EventDetailCard({
           <button
             type="button"
             onClick={handleShareWA}
-            className="w-full sm:flex-1 h-11 min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all shadow-sm cursor-pointer"
+            className="w-full sm:flex-1 h-11 min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all duration-150 ease-out shadow-sm cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             <span>📱 Bagikan ke Grup WA</span>
@@ -223,7 +223,7 @@ export function EventDetailCard({
               href={event.driveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-colors border border-emerald-200 dark:border-emerald-500/30 shadow-sm"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all duration-150 ease-out active:scale-95 border border-emerald-500/20 shadow-sm"
             >
               <Folder className="h-4 w-4 text-amber-400 fill-amber-400" />
               <span>Drive Acara</span>
@@ -233,7 +233,7 @@ export function EventDetailCard({
             <button
               type="button"
               onClick={onOpenDriveModal}
-              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink-muted rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-colors border border-edge shadow-sm cursor-pointer"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low/60 dark:bg-white/5 hover:bg-surface-container text-ink-muted rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-all duration-150 ease-out active:scale-95 border border-edge/80 dark:border-white/10 shadow-sm cursor-pointer"
             >
               <Folder className="h-4 w-4 text-amber-500" />
               <span>Drive Belum Diatur</span>
