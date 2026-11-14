@@ -120,6 +120,61 @@ flowchart LR
 ## 🎯 4. Log Perubahan Terkini & Status Finalisasi Proyek
 
 ### 📝 Log Perubahan Fase 5 (Selesai):
+- **[src/components/hall-of-fame/FilmstripFrame.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/hall-of-fame/FilmstripFrame.tsx)**: Avatar 2-huruf via `getTwoLetterInitials`, perbaikan proporsi filmstrip mobile (lebar sprocket 2.5px sm:5px), un-truncate judul kepengurusan.
+- **[src/components/aspirasi/AspirasiClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/aspirasi/AspirasiClientView.tsx)**: Edge-to-edge status chips scroll, spacing segmented tab.
+- **[src/components/pengaturan/AdminBackupSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/AdminBackupSection.tsx)**: Kartu aksi backup multi-baris tanpa teks terpotong, touch target >= 44px.
+- **[src/components/operator/UserManagementClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/operator/UserManagementClientView.tsx)**: Progressive disclosure modal kaca dan perbaikan styling filter role/status.
+- **Pembersihan Dead Code**: Berkas usang `src/components/pengaturan/AdminUserManagementSection.tsx` dihapus permanen.
+
+---
+
+## ⚡ 3. Log Re-Arsitektur Struktural UI/UX (Zero Cosmetic-Only Tweaks)
+
+### 🔹 A. Navigasi Mulus & Global Bottom Safe-Area Clearance
+- **[src/components/layout/AppShell.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/AppShell.tsx)**:
+  * Menghapus footer copyright global yang sebelumnya dirender di setiap halaman dan menyebabkan scroll clearance membengkak.
+  * Mengunci scroll clearance utama `<main>` pada `pb-40 pb-safe md:pb-16` di seluruh 23 rute, memastikan tidak ada tombol aksi atau kartu yang tertutup oleh `BottomNav` mengambang.
+- **[src/components/pengaturan/PengaturanClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/PengaturanClientView.tsx)**:
+  * Memindahkan catatan hak cipta resmi organisasi secara eksklusif ke bagian paling bawah halaman Pengaturan.
+- **[src/components/layout/BottomNav.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/BottomNav.tsx)**:
+  * Menambahkan **Sliding Active Pill Indicator** berbasis CSS spring murni 60fps (`transform: translateX(${activeIndex * 100}%)`) tanpa overhead framer-motion.
+  * Menambahkan micro-scale touch feedback (`active:scale-85`) pada setiap tab sentuh.
+  * Mengaktifkan `<Link prefetch={true}>` di seluruh tab untuk pemuatan instan antar modul.
+- **[src/app/globals.css](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/globals.css)** & **[src/app/template.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/template.tsx)**:
+  * Mengoptimasi animasi transisi masuk halaman `.animate-page-enter` menjadi zero-jank 180ms dengan micro-offset `translateY(6px)` dan cubic-bezier Apple.
+- **[src/hooks/useClientCache.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/hooks/useClientCache.ts)**:
+  * Hook SWR-style caching ringan berbasis `sessionStorage` + in-memory store fallback untuk mencegah reset tab/filter saat pengguna berpindah navigasi bolak-balik.
+
+### 🔹 B. Overhaul Struktural Editorial Dashboard & 3D Podium
+- **[src/app/dashboard/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/dashboard/page.tsx)**:
+  * Merombak total layout dari container bertumpuk kaku menjadi **Mobile-First Editorial Dashboard**:
+    - **Editorial Greeting Header**: Baris tanggal format Indonesia (`Sabtu, 14 November 2026`) dengan dot status berdenyut, badge role/divisi/angkatan tanpa visual noise, judul asimetris tebal `font-display text-3xl sm:text-4xl lg:text-5xl`, dan subteks operasional.
+    - **Floating Alert Banner**: Pengingat tugas panitia mendesak ditampilkan dalam format alert glass ramping dengan tombol aksi langsung "Buka Tugas".
+    - **2-Column Bento Summary Strip**:
+      * *Card 1 (Poin XP Kontribusi)*: Angka XP tabular masif (`font-mono-num font-black text-3xl sm:text-4xl`), lencana peringkat personal (`Peringkat #{myRank}` dihitung dinamis via indexed query `prisma.user.count`), pill perolehan XP bulanan, dan tautan langsung ke Hall of Fame.
+      * *Card 2 (Presensi & Aktivitas Rapat)*: Terintegrasi langsung dengan `DashboardMeetingWidget` tanpa kartu bersarang (*nested card slop*).
+- **[src/components/home/DashboardMeetingWidget.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/home/DashboardMeetingWidget.tsx)**:
+  * Didesain ulang menjadi komponen Bento Card mandiri dengan status presensi dinamis (Hadir / Sesi Siap) dan tombol pemicu langsung pembuka kamera scanner `AttendanceScannerModal`.
+- **[src/components/home/PodiumTop3.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/home/PodiumTop3.tsx)**:
+  * Merekonstruksi panggung juara menjadi **3D Tiered Tournament Pedestal**:
+    - *Juara 2 (Perak - Kiri)*: Ketinggian berjejang ~75% (`h-28 sm:h-34`), material gradien titanium/silver, angka langkah #2 tebal, badge perak, dan skor XP tabular.
+    - *Juara 1 (Emas - Tengah)*: Ketinggian berjejang 100% (`h-40 sm:h-46`), mahkota mengambang `👑`, ambient warm gold glow, bibir atas bercahaya emas, angka langkah #1 masif, badge emas, dan skor XP tabular.
+    - *Juara 3 (Perunggu - Kanan)*: Ketinggian berjejang ~60% (`h-24 sm:h-28`), material gradien warm bronze, angka langkah #3 tebal, badge perunggu, dan skor XP tabular.
+    - Inisial avatar 2-huruf presisi via `getTwoLetterInitials` untuk kontributor tanpa foto profil.
+
+### 🔹 C. Interactive Apple Wallet Stack & Minimal Apple Card Feed (Kas)
+- **[src/components/kas/DigitalWalletCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/DigitalWalletCard.tsx)**:
+  * Mengubah hero modul Kas menjadi **Interactive Apple Wallet Card Stack**:
+    - *Segmented Apple Toggle*: Pemilih kartu interaktif `[ 🏛️ Kas Organisasi ]` vs `[ 💳 Dompet Saya ]` dengan micro-haptic feedback.
+    - *Card A (Kas Utama Organisasi)*: Matte Titanium Obsidian Apple Card dengan aksen emas, simulated EMV Gold Chip, gelombang contactless NFC, saldo total organisasi masif beranimasi *count-up*, bento strip pemasukan/pengeluaran periode, dan pemegang buku kas resmi Bendahara Umum.
+    - *Card B (Dompet Personal Anggota)*: Emerald Glass Apple Card dengan simulated EMV Silver Chip, saldo personal yang otomatis mencerminkan surplus/defisit, status pelunasan tagihan, dan nama anggota terverifikasi.
+  * Merombak `MutationHistory` menjadi baris transaksi minimalis ala Apple Card dengan tipografi tabular, pemisahan kategori rapi, dan indikator semantik halus.
+- **[src/app/kas/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/kas/page.tsx)**:
+  * Mengalirkan data saldo kas organisasi (`realMoney.realBalance`, `totalIncome`, `totalExpense`) dan profil anggota ke dalam `DigitalWalletCard`.
+
+### 🔹 D. Luma Connected Circuit Event Feed
+- **[src/components/acara/SnakingPathCalendar.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/SnakingPathCalendar.tsx)**:
+  * Membuka visibilitas Luma Date Chip agar tampil selalu di layar seluler maupun desktop (`flex h-11 w-10 sm:h-12 sm:w-11`), menampilkan singkatan nama hari ("SAB", "SEN") dan tanggal besar tebal ("14", "20") di setiap kartu agenda.
 - **[src/components/hall-of-fame/FilmstripFrame.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/hall-of-fame/FilmstripFrame.tsx)**:
   * Mengganti pemotongan nama mentah dengan helper `getTwoLetterInitials` untuk avatar juara Top 3 (menghasilkan inisial bersih 2 huruf kapital seperti `"FA"`, `"AP"` saat tidak ada foto profil).
   * Memperbaiki pemotongan judul kepengurusan pada layar sempit dengan mengganti `truncate` menjadi `line-clamp-2 leading-snug break-words font-display`.
@@ -223,9 +278,14 @@ Seluruh target perombakan antarmuka (Fase 1 sampai Fase 5) dari dokumen inisiasi
 - **[src/app/globals.css](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/globals.css)**, **[src/app/layout.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/layout.tsx)**, **[src/components/layout/SplashScreen.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/SplashScreen.tsx)**, **[src/app/login/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/login/page.tsx)**.
 
 ### 🚦 Instruksi Pasca-Overhaul (Pemeliharaan & Rilis):
-1. **Menjalankan Server Pengembangan Lokal**:
+1. **Status Reset Database (Kepengurusan 2025/2026)**:
+   - Cadangan data tersimpan aman di [backups/pre-reset-2025-2026.json](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/backups/pre-reset-2025-2026.json).
+   - Periode aktif: `Kepengurusan 2025/2026 (Gen 20)` & Tahun Ajaran `2025/2026`.
+   - Seluruh 8 akun pengguna tetap utuh dengan tingkat kelas dikembalikan ke `KELAS_10` / `X`.
+   - Data `HallOfFame` (0) dan `ShowcaseProject` (0) telah dibersihkan siap untuk pengujian.
+2. **Menjalankan Server Pengembangan Lokal**:
    - `npm run dev -- -H 0.0.0.0` (dapat diakses langsung oleh pengembang dan penguji via HP melalui IP Wi-Fi lokal).
-2. **Kesiapan Deployment**:
+3. **Kesiapan Deployment**:
    - `npm run build` telah diverifikasi 100% lulus (exit code 0). Aplikasi siap dideploy langsung ke Vercel Production.
-3. **Penyimpanan Memori & Aturan**:
+4. **Penyimpanan Memori & Aturan**:
    - Seluruh aturan proyek tersimpan persisten di [GEMINI.md](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/GEMINI.md), folder [docs/](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/docs/), dan dokumen handoff ini.

@@ -200,12 +200,16 @@ export default async function KasPage() {
           <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
         </section>
 
-        {/* ── 1. DIGITAL WALLET CARD (Dompet Saya) ──────────────────────── */}
+        {/* ── 1. DIGITAL WALLET CARD (Apple Wallet Stack: Kas Organisasi & Dompet Saya) ── */}
         <DigitalWalletCard
           userName={dbUser.name}
           userRole={dbUser.role}
           classGrade={dbUser.classGrade}
           kasBalance={dbUser.kasBalance}
+          orgBalance={realMoney.realBalance}
+          totalIncome={realMoney.totalIncome}
+          totalExpense={realMoney.totalExpense}
+          isKolaborator={isKolaborator}
         />
 
         {/* ── 2. INVOICE LIST CARD (Tagihan Saya) ───────────────────────── */}

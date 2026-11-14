@@ -54,3 +54,6 @@ next-env.d.ts
 # UI Reference Screenshots (local inspection only)
 ui-refs/
 mock-up/
+
+# Database Backups & Temporary Snapshots
+backups/

@@ -66,55 +66,48 @@ export function BottomNav() {
     return null;
   }
 
+  // Tentukan indeks tab aktif (0..4)
+  const getActiveIndex = () => {
+    if (activePath === "/dashboard" || activePath === "/") return 0;
+    if (activePath.startsWith("/kas")) return 1;
+    if (activePath.startsWith("/acara")) return 2;
+    if (
+      activePath.startsWith("/eksplorasi") ||
+      activePath.startsWith("/showcase") ||
+      activePath.startsWith("/arsip")
+    )
+      return 3;
+    if (activePath.startsWith("/aspirasi") || activePath.startsWith("/suara"))
+      return 4;
+    return 0;
+  };
+
+  const activeIndex = getActiveIndex();
+
   return (
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[410px] rounded-full bg-card/85 backdrop-blur-xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.65)] border hairline-border md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-[420px] rounded-full bg-surface/85 backdrop-blur-2xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.22)] dark:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.75)] border hairline-border md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
         isModalActive
           ? "translate-y-28 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100 pointer-events-auto"
       }`}
     >
-      <div className="flex items-center justify-between w-full">
-        {NAV_ITEMS.map((item) => {
-          const Icon = item.icon;
-          const isActive =
-            activePath === item.href ||
-            (item.href === "/eksplorasi" &&
-              (activePath === "/eksplorasi" ||
-                activePath.startsWith("/eksplorasi") ||
-                activePath === "/showcase" ||
-                activePath === "/arsip")) ||
-            (item.href === "/aspirasi" &&
-              (activePath === "/aspirasi" ||
-                activePath.startsWith("/aspirasi") ||
-                activePath === "/suara" ||
-                activePath.startsWith("/suara"))) ||
-            (item.href !== "/dashboard" &&
-              item.href !== "/aspirasi" &&
-              item.href !== "/eksplorasi" &&
-              activePath.startsWith(item.href));
+      <div className="relative flex items-center justify-between w-full">
+        {/* ── SMOOTH SLIDING ACTIVE PILL INDICATOR (60fps Spring Translation) ── */}
+        <div
+          className="absolute top-0 bottom-0 rounded-full bg-linear-to-r from-primary to-rose-600 shadow-[0_4px_18px_rgba(225,29,42,0.4)] pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{
+            width: "20%",
+            transform: `translateX(${activeIndex * 100}%)`,
+          }}
+        />
 
-          if (isActive) {
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={true}
-                onClick={() => {
-                  haptic.tap();
-                  setOptimisticPath(item.href);
-                }}
-                className="bg-linear-to-r from-primary to-rose-600 text-white border border-rose-400/30 font-semibold rounded-full px-3.5 py-1.5 flex items-center gap-2 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-95 shadow-[0_0_18px_rgba(225,29,42,0.35)] min-h-11 shrink-0"
-              >
-                <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
-                <span className="text-xs font-semibold leading-none tracking-tight font-display">
-                  {item.label}
-                </span>
-              </Link>
-            );
-          }
+        {/* ── 5 NAVIGATION ITEMS DENGAN TOUCH SCALE & INSTANT PREFETCH ── */}
+        {NAV_ITEMS.map((item, index) => {
+          const Icon = item.icon;
+          const isActive = activeIndex === index;
 
           return (
             <Link
@@ -127,9 +120,26 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className="text-ink-muted hover:text-ink hover:bg-surface-container-high/60 p-2.5 rounded-full transition-all duration-150 ease-out active:scale-95 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className={`relative z-10 flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full min-h-[46px] transition-transform duration-150 active:scale-85 ${
+                isActive ? "text-white" : "text-ink-muted hover:text-ink"
+              }`}
             >
-              <Icon className="h-5 w-5 stroke-[1.8]" />
+              <Icon
+                className={`h-5 w-5 transition-all duration-200 ${
+                  isActive
+                    ? "stroke-[2.4] scale-105 text-white"
+                    : "stroke-[1.8] scale-100 opacity-70 hover:opacity-100"
+                }`}
+              />
+              <span
+                className={`text-[10px] mt-0.5 tracking-tight font-display transition-all duration-200 ${
+                  isActive
+                    ? "font-bold text-white opacity-100"
+                    : "font-medium opacity-65"
+                }`}
+              >
+                {item.label}
+              </span>
             </Link>
           );
         })}

@@ -44,7 +44,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="mt-2.5 flex justify-center relative z-10">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-[11px] font-semibold text-primary font-mono tracking-wider uppercase">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            SMAN 1 Bantul • Musim 2026/2027
+            SMAN 1 Bantul • Musim 2025/2026
           </span>
         </div>
 

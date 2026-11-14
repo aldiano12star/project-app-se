@@ -455,8 +455,8 @@ export function SnakingPathCalendar({
                   {/* Header Tag & Tanggal */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                      {/* Luma Date Chip */}
-                      <div className="hidden sm:flex flex-col items-center justify-center h-12 w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center font-mono font-mono-num shadow-2xs">
+                      {/* Luma Date Chip (Always Visible on Mobile & Desktop) */}
+                      <div className="flex flex-col items-center justify-center h-11 w-10 sm:h-12 sm:w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center font-mono font-mono-num shadow-2xs">
                         <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{dayName.slice(0, 3)}</span>
                         <span className="text-base font-extrabold text-ink leading-none">{dayNum}</span>
                       </div>

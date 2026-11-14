@@ -57,21 +57,16 @@ export function AppShell({
           </div>
         )}
 
-        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus & Safe Clearance */}
+        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus & Generous Bottom Clearance */}
         <main
           className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
-            showNav ? "pb-36 pb-safe md:pb-12" : "pb-8"
+            showNav ? "pb-40 pb-safe md:pb-16" : "pb-12"
           }`}
         >
           <PageTransition>
             {children}
           </PageTransition>
         </main>
-
-        {/* Footer Hak Cipta & Powered by (Clearance di atas Bottom Nav Mobile) */}
-        <footer className="pt-4 pb-36 pb-safe md:pb-8 px-4 text-center text-xs text-ink-muted/70 select-none">
-          <p>&copy; 2026 Saba ExploIT • Powered by SE-Core</p>
-        </footer>
       </div>
 
       {/* Navigasi Bawah (Hanya Mobile via md:hidden) - Diekstrak ke root level AppShell */}

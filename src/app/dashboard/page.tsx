@@ -22,6 +22,9 @@ import {
   MessageSquare,
   Activity,
   Coffee,
+  Sparkles,
+  Trophy,
+  ArrowUpRight,
 } from "lucide-react";
 import {
   getJakartaDateParts,
@@ -63,7 +66,7 @@ export default async function DashboardPage() {
         />
         <div className="flex flex-col gap-6 pt-1">
           <section className="space-y-1">
-            <h1 className="text-xl font-bold tracking-tight text-ink">
+            <h1 className="text-2xl font-extrabold tracking-tight text-ink font-display">
               Halo, {dbUser.name} 👋
             </h1>
             <p className="text-xs text-ink-muted">
@@ -84,102 +87,109 @@ export default async function DashboardPage() {
   const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  // Ambil Top 3 Leaderboard, rapat & acara terdekat (prioritas mendesak), presensi hari ini, tugas panitia, dan analitik kesehatan global
+  // Ambil Top 3 Leaderboard, rapat & acara terdekat, presensi hari ini, tugas panitia, peringkat pribadi, dan analitik kesehatan global
   const [
     topContributors,
     upcomingMeetings,
     upcomingEvents,
     todayAttendance,
     myAssignedTasks,
+    higherPointsCount,
     globalHealth,
   ] = await Promise.all([
-      prisma.user.findMany({
-        where: { status: "ACTIVE" },
-        orderBy: { totalPoints: "desc" },
-        take: 3,
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          role: true,
-          classGrade: true,
-          mainDivision: true,
-          totalPoints: true,
-          monthlyPoints: true,
+    prisma.user.findMany({
+      where: { status: "ACTIVE" },
+      orderBy: { totalPoints: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        role: true,
+        classGrade: true,
+        mainDivision: true,
+        totalPoints: true,
+        monthlyPoints: true,
+      },
+    }),
+    prisma.meeting.findMany({
+      where: {
+        date: {
+          gte: new Date(new Date().setHours(0, 0, 0, 0)),
         },
-      }),
-      prisma.meeting.findMany({
-        where: {
-          date: {
-            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        ...audienceFilter,
+      },
+      orderBy: { date: "asc" },
+      take: 3,
+      include: {
+        event: {
+          select: { id: true, title: true },
+        },
+      },
+    }),
+    prisma.event.findMany({
+      where: {
+        endDate: {
+          gte: new Date(),
+        },
+        ...audienceFilter,
+      },
+      orderBy: { startDate: "asc" },
+      take: 5,
+      include: {
+        sections: {
+          include: {
+            tasks: {
+              select: { id: true, status: true },
+            },
           },
-          ...audienceFilter,
         },
-        orderBy: { date: "asc" },
-        take: 3,
-        include: {
-          event: {
-            select: { id: true, title: true },
+      },
+    }),
+    prisma.attendance.findFirst({
+      where: {
+        userId: session.user.id,
+      },
+      orderBy: { checkedAt: "desc" },
+      include: {
+        meeting: {
+          select: {
+            title: true,
+            date: true,
           },
         },
-      }),
-      prisma.event.findMany({
-        where: {
-          endDate: {
-            gte: new Date(),
-          },
-          ...audienceFilter,
-        },
-        orderBy: { startDate: "asc" },
-        take: 5,
-        include: {
-          sections: {
-            include: {
-              tasks: {
-                select: { id: true, status: true },
+      },
+    }),
+    prisma.eventTask.findMany({
+      where: {
+        assigneeId: session.user.id,
+        status: { not: "DONE" },
+        dueDate: { not: null },
+      },
+      include: {
+        section: {
+          include: {
+            event: {
+              select: {
+                id: true,
+                title: true,
               },
             },
           },
         },
-      }),
-      prisma.attendance.findFirst({
-        where: {
-          userId: session.user.id,
-        },
-        orderBy: { checkedAt: "desc" },
-        include: {
-          meeting: {
-            select: {
-              title: true,
-              date: true,
-            },
-          },
-        },
-      }),
-      prisma.eventTask.findMany({
-        where: {
-          assigneeId: session.user.id,
-          status: { not: "DONE" },
-          dueDate: { not: null },
-        },
-        include: {
-          section: {
-            include: {
-              event: {
-                select: {
-                  id: true,
-                  title: true,
-                },
-              },
-            },
-          },
-        },
-        orderBy: { dueDate: "asc" },
-      }),
-      isOfficer
-        ? getGlobalOrganizationalHealth()
-        : Promise.resolve(null),
-    ]);
+      },
+      orderBy: { dueDate: "asc" },
+    }),
+    prisma.user.count({
+      where: {
+        status: "ACTIVE",
+        totalPoints: { gt: dbUser.totalPoints },
+      },
+    }),
+    isOfficer ? getGlobalOrganizationalHealth() : Promise.resolve(null),
+  ]);
+
+  const myRank = higherPointsCount + 1;
 
   const nowParts = getJakartaDateParts(new Date());
   const nowDayStart = new Date(
@@ -196,7 +206,6 @@ export default async function DashboardPage() {
     const diffDays = Math.round(
       (dueDayStart - nowDayStart) / (1000 * 60 * 60 * 24)
     );
-    // Tampilkan pengingat jika H-1 (besok), H-0 (hari ini), atau terlambat
     return diffDays <= 1;
   });
 
@@ -205,27 +214,27 @@ export default async function DashboardPage() {
       case Division.PROGRAMMING:
         return {
           label: "Programming",
-          style: "bg-cyan-950/60 text-cyan-400 border border-cyan-500/40",
+          style: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25",
         };
       case Division.TECHNOPRENEURSHIP:
         return {
           label: "Technopreneurship",
-          style: "bg-amber-950/60 text-amber-400 border border-amber-500/40",
+          style: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25",
         };
       case Division.DESIGN:
         return {
           label: "Desain",
-          style: "bg-purple-950/60 text-purple-400 border border-purple-500/40",
+          style: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25",
         };
       case Division.PHOTOGRAPHY:
         return {
           label: "Fotografi",
-          style: "bg-emerald-950/60 text-emerald-400 border border-emerald-500/40",
+          style: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25",
         };
       case Division.CINEMATOGRAPHY:
         return {
           label: "Cinematografi",
-          style: "bg-rose-950/60 text-rose-400 border border-rose-500/40",
+          style: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/25",
         };
       default:
         return {
@@ -240,32 +249,32 @@ export default async function DashboardPage() {
       case Role.OPERATOR:
         return {
           label: "Operator",
-          style: "bg-purple-950/60 text-purple-300 border-purple-500/50 shadow-xs",
+          style: "bg-purple-500/10 text-purple-600 dark:text-purple-300 border-purple-500/30",
         };
       case Role.ADMIN:
         return {
           label: "Admin",
-          style: "bg-red-950/60 text-red-400 border-red-500/50",
+          style: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30",
         };
       case Role.BENDAHARA:
         return {
           label: "Bendahara",
-          style: "bg-emerald-950/60 text-emerald-400 border-emerald-500/50",
+          style: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
         };
       case Role.MEMBER:
         return {
           label: "Member",
-          style: "bg-blue-950/60 text-blue-400 border-blue-500/50",
+          style: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
         };
       case Role.KOLABORATOR:
         return {
           label: "Kolaborator",
-          style: "bg-teal-950/60 text-teal-400 border-teal-500/50",
+          style: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30",
         };
       case Role.GUEST:
         return {
           label: "Menunggu Verifikasi",
-          style: "bg-slate-800 text-slate-400 border-slate-700",
+          style: "bg-slate-500/10 text-slate-500 border-slate-500/30",
         };
       default:
         return {
@@ -337,7 +346,6 @@ export default async function DashboardPage() {
     };
   });
 
-  // Prioritas Cerdas: Utamakan Acara Singkat & Rapat Mendatang (urgent-first)
   const shortAgendas = [
     ...formattedMeetings,
     ...formattedEvents.filter((e) => e.isSingleDay),
@@ -347,11 +355,18 @@ export default async function DashboardPage() {
     .filter((e) => !e.isSingleDay)
     .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
-  // Gabungkan dengan prioritas: jika acara singkat kurang dari 3, isi dengan proker multi-hari
   const prioritizedAgendas = [
     ...shortAgendas,
     ...multiDayAgendas,
   ].slice(0, 3);
+
+  const todayFormattedText = new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Jakarta",
+  });
 
   return (
     <AppShell user={dbUser}>
@@ -369,150 +384,182 @@ export default async function DashboardPage() {
           instansi: dbUser.instansi,
         }}
       />
+      
       <div className="flex flex-col gap-6">
         {/* ========================================================= */}
-        {/* MODUL 1: Saba Hero Command Center & Presensi QR Rapat     */}
+        {/* EDITORIAL GREETING & STATUS HEADER                        */}
         {/* ========================================================= */}
-        <section className="specular-card relative overflow-hidden p-5 sm:p-7 border border-edge/80 dark:border-white/10 rounded-2xl space-y-5">
-          {/* Ambient Corner Glow */}
-          <div className="absolute -top-20 -right-20 w-56 h-56 bg-primary/10 dark:bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div className="space-y-1">
-              <span className="text-[11px] font-mono font-bold tracking-widest text-primary uppercase inline-flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                COMMAND CENTER // SE-CORE
-              </span>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-ink font-display">
-                Halo, {dbUser.name.split(" ")[0]}! 👋
-              </h1>
-              <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-                Pusat Aktivitas &amp; Operasional Digital Saba ExploIT
-              </p>
-            </div>
-
-            {todayAttendance && (
-              <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-emerald-500/20 shrink-0 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>Presensi Hari Ini Tercatat</span>
-              </div>
-            )}
-          </div>
-
-          {/* Role, Grade & Division Badges */}
-          <div className="flex flex-wrap items-center gap-2 relative z-10 pt-1">
-            {(() => {
-              const gradeLabel = formatGrade(dbUser.classGrade);
-              if (!gradeLabel || !gradeLabel.trim()) return null;
-              return (
-                <span className="inline-flex items-center rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-secondary border hairline-border font-mono">
-                  {gradeLabel}
-                </span>
-              );
-            })()}
-            <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${roleMeta.style}`}
-            >
-              {roleMeta.label}
+        <section className="space-y-3 pt-1">
+          {/* Top Line: Date & Status Badges */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            <span className="text-[11px] font-mono font-bold tracking-widest text-ink-muted uppercase inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              {todayFormattedText}
             </span>
-            {(() => {
-              const divMeta = getDivisionBadge(dbUser.mainDivision);
-              return (
-                <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${divMeta.style}`}
-                >
-                  Divisi {divMeta.label}
-                </span>
-              );
-            })()}
-          </div>
 
-          {/* Tombol Presensi QR Rapat / Scanner Cepat */}
-          <div className="relative z-10 pt-1">
-            <DashboardMeetingWidget userRole={dbUser.role} />
-          </div>
-
-          {/* Pengingat Tugas Panitia H-1 / Mendesak */}
-          {urgentTasks.length > 0 && (
-            <div className="flex flex-col gap-3 pt-2 relative z-10">
-              {urgentTasks.map((task) => {
-                const dueParts = getJakartaDateParts(task.dueDate!);
-                const dueDayStart = new Date(
-                  `${dueParts.dateString}T00:00:00+07:00`
-                ).getTime();
-                const diffDays = Math.round(
-                  (dueDayStart - nowDayStart) / (1000 * 60 * 60 * 24)
-                );
-
-                const isTomorrow = diffDays === 1;
-                const isToday = diffDays === 0;
-                const isOverdue = diffDays < 0;
-
-                const reminderPrefix = isOverdue
-                  ? "🚨 Pengingat Tugas:"
-                  : isToday
-                  ? "⏰ Pengingat Tugas:"
-                  : "⚠️ Pengingat Tugas:";
-
-                const reminderSuffix = isTomorrow
-                  ? "jatuh tempo besok!"
-                  : isToday
-                  ? "jatuh tempo hari ini!"
-                  : "telah melewati batas waktu!";
-
+            <div className="flex flex-wrap items-center gap-1.5">
+              {(() => {
+                const gradeLabel = formatGrade(dbUser.classGrade);
+                if (!gradeLabel || !gradeLabel.trim()) return null;
                 return (
-                  <div
-                    key={task.id}
-                    className={`p-4 rounded-2xl border text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${
-                      isOverdue
-                        ? "bg-red-950/30 border-red-500/40 text-red-300"
-                        : "bg-amber-950/30 border-amber-500/40 text-amber-200"
-                    }`}
-                  >
-                    <div className="flex items-start sm:items-center gap-3 min-w-0">
-                      <span className="h-9 w-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
-                        <AlertTriangle className="h-5 w-5 animate-bounce" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-ink leading-relaxed">
-                          {reminderPrefix}{" "}
-                          <span className="text-amber-400 font-bold">
-                            {task.title}
-                          </span>{" "}
-                          pada seksi{" "}
-                          <span className="font-semibold text-ink">
-                            {task.section.name}
-                          </span>{" "}
-                          {reminderSuffix}
-                        </p>
-                        <p className="text-xs text-slate-400 truncate mt-1">
-                          Acara: {task.section.event.title}
-                        </p>
-                      </div>
-                    </div>
-
-                    <Link
-                      href={`/acara/${task.section.event.id}`}
-                      className="h-11 min-h-11 px-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-colors shadow-sm self-end sm:self-auto cursor-pointer"
-                    >
-                      <span>Buka Tugas</span>
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </div>
+                  <span className="inline-flex items-center rounded-full bg-surface-container px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border hairline-border font-mono">
+                    {gradeLabel}
+                  </span>
                 );
-              })}
+              })()}
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${roleMeta.style}`}
+              >
+                {roleMeta.label}
+              </span>
+              {(() => {
+                const divMeta = getDivisionBadge(dbUser.mainDivision);
+                return (
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${divMeta.style}`}
+                  >
+                    {divMeta.label}
+                  </span>
+                );
+              })()}
             </div>
-          )}
+          </div>
+
+          {/* Main Asymmetric Editorial Title */}
+          <div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ink font-display">
+              Halo, {dbUser.name.split(" ")[0]} 👋
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed mt-1">
+              Pusat kendali aktivitas, presensi rapat, dan kepanitiaan organisasi Saba ExploIT.
+            </p>
+          </div>
         </section>
 
         {/* ========================================================= */}
-        {/* MODUL ANALITIK: KESEHATAN ORGANISASI ATAU PRESENSI SAYA  */}
+        {/* FLOATING ALERT: PENGINGAT TUGAS MENDESAK (JIKA ADA)       */}
+        {/* ========================================================= */}
+        {urgentTasks.length > 0 && (
+          <section className="space-y-2.5">
+            {urgentTasks.map((task) => {
+              const dueParts = getJakartaDateParts(task.dueDate!);
+              const dueDayStart = new Date(
+                `${dueParts.dateString}T00:00:00+07:00`
+              ).getTime();
+              const diffDays = Math.round(
+                (dueDayStart - nowDayStart) / (1000 * 60 * 60 * 24)
+              );
+
+              const isTomorrow = diffDays === 1;
+              const isToday = diffDays === 0;
+              const isOverdue = diffDays < 0;
+
+              return (
+                <div
+                  key={task.id}
+                  className={`p-4 rounded-2xl border text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
+                    isOverdue
+                      ? "bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-300"
+                      : "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="h-8 w-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                      <AlertTriangle className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-bold text-ink">
+                        {isOverdue
+                          ? "🚨 Batas Waktu Terlewat: "
+                          : isToday
+                          ? "⏰ Jatuh Tempo Hari Ini: "
+                          : "⚠️ Jatuh Tempo Besok: "}
+                        <span className="font-extrabold">{task.title}</span>
+                      </p>
+                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
+                        Seksi {task.section.name} • {task.section.event.title}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/acara/${task.section.event.id}`}
+                    className="h-9 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-all self-end sm:self-auto cursor-pointer"
+                  >
+                    <span>Buka Tugas</span>
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              );
+            })}
+          </section>
+        )}
+
+        {/* ========================================================= */}
+        {/* 2-COLUMN BENTO SUMMARY STRIP (XP & PRESENSI)              */}
+        {/* ========================================================= */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Card 1: Poin XP Kontribusi & Peringkat Leaderboard */}
+          <div className="specular-card bg-card border border-edge/80 dark:border-white/10 p-5 rounded-2xl flex flex-col justify-between gap-4 shadow-xs relative overflow-hidden group">
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="space-y-2 relative z-10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/25">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink-muted font-display">
+                    Poin Kontribusi
+                  </span>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 font-mono">
+                  <Trophy className="h-3 w-3 text-amber-500" />
+                  <span>Peringkat #{myRank}</span>
+                </span>
+              </div>
+
+              <div className="pt-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-black text-ink font-mono-num font-mono">
+                    {dbUser.totalPoints.toLocaleString("id-ID")}
+                  </span>
+                  <span className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono">XP</span>
+                </div>
+                <p className="text-xs text-ink-muted mt-1">
+                  +{dbUser.monthlyPoints} XP diperoleh pada periode bulan ini
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t hairline-border flex items-center justify-between relative z-10 text-xs">
+              <span className="text-ink-muted font-medium">Klasemen Hall of Fame</span>
+              <Link
+                href="/hall-of-fame"
+                className="inline-flex items-center gap-1 font-bold text-primary hover:text-primary-hover active:scale-95 transition-all cursor-pointer"
+              >
+                <span>Lihat Leaderboard</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Presensi & Keaktifan Rapat (Meeting Widget) */}
+          <DashboardMeetingWidget
+            userRole={dbUser.role}
+            hasAttendedToday={Boolean(todayAttendance)}
+          />
+        </section>
+
+        {/* ========================================================= */}
+        {/* MODUL ANALITIK: KESEHATAN ORGANISASI (KHUSUS OFFICER)     */}
         {/* ========================================================= */}
         {isOfficer && globalHealth ? (
-          <section className="specular-card p-5 sm:p-6 bg-card border border-edge/80 space-y-3.5">
+          <section className="specular-card p-5 sm:p-6 bg-card border border-edge/80 space-y-3.5 rounded-2xl shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="rounded-xl flex items-center justify-center shrink-0 border border-emerald-200 dark:border-emerald-800 p-2.5 shadow-xs bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+                <div className="rounded-xl flex items-center justify-center shrink-0 border border-emerald-500/20 p-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <Activity className="w-5 h-5" />
                 </div>
                 <div>
@@ -520,7 +567,7 @@ export default async function DashboardPage() {
                     Keaktifan Global
                   </h2>
                   <p className="text-xs text-ink-muted mt-0.5">
-                    Rasio kehadiran seluruh anggota aktif pada agenda rapat
+                    Rasio kehadiran seluruh anggota aktif pada agenda rapat organisasi
                   </p>
                 </div>
               </div>
@@ -528,8 +575,8 @@ export default async function DashboardPage() {
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border shrink-0 ${
                   globalHealth.globalPercentage >= 75
-                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30"
-                    : "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800/60"
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25"
+                    : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25"
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -541,7 +588,7 @@ export default async function DashboardPage() {
               </span>
             </div>
 
-            <div className="bg-surface-container-low/70 rounded-2xl p-4 border hairline-border space-y-3">
+            <div className="bg-surface-container-low/70 rounded-xl p-4 border hairline-border space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-semibold text-ink">Total Kehadiran Kolektif</span>
@@ -574,17 +621,17 @@ export default async function DashboardPage() {
         ) : null}
 
         {/* ========================================================= */}
-        {/* MODUL 2 & 3: Grid Adaptif Layar Lebar (Podium & Acara)    */}
+        {/* 2-COLUMN SECTION: PODIUM JUARA & AGENDA ACARA             */}
         {/* ========================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* MODUL 2: Podium Juara Top 3 (Panggung Apresiasi Komunitas) */}
+          {/* PODIUM TOP 3 (Panggung Apresiasi Komunitas) */}
           <PodiumTop3 contributors={topContributors} />
 
-          {/* MODUL 3: Pratinjau Acara & Agenda Organisasi Terdekat     */}
-          <section className="specular-card p-5 sm:p-6 flex flex-col gap-4 border border-edge/80 dark:border-white/10 rounded-2xl">
+          {/* PRATINJAU AGENDA ACARA TERDEKAT */}
+          <section className="specular-card p-5 sm:p-6 flex flex-col gap-4 border border-edge/80 dark:border-white/10 rounded-2xl bg-card shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 shadow-xs p-2.5 shrink-0">
+                <div className="flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 p-2.5 shrink-0">
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
@@ -607,12 +654,12 @@ export default async function DashboardPage() {
 
             {prioritizedAgendas.length === 0 ? (
               <div className="p-8 rounded-2xl bg-surface-container-low/40 dark:bg-white/5 border border-edge/70 dark:border-white/10 text-center flex flex-col items-center justify-center space-y-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 shadow-xs">
-                  <Coffee className="h-7 w-7 stroke-[1.8]" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 shadow-xs">
+                  <Coffee className="h-6 w-6 stroke-[1.8]" />
                 </div>
                 <div className="space-y-1 max-w-xs mx-auto">
                   <p className="text-sm font-bold text-ink">
-                    Tidak ada agenda terdekat. Waktunya fokus berkarya atau bersantai!
+                    Tidak ada agenda terdekat. Waktunya fokus berkarya!
                   </p>
                   <p className="text-xs text-ink-muted">
                     Semua jadwal rapat &amp; acara saat ini telah selesai. Nikmati proses eksplorasimu!
@@ -626,18 +673,17 @@ export default async function DashboardPage() {
                     <Link
                       key={agenda.id}
                       href="/acara"
-                      className="card-hover p-4 sm:p-5 rounded-2xl bg-surface-container-low/70 dark:bg-white/5 hover:bg-surface-container dark:hover:bg-white/10 border border-edge/80 dark:border-white/10 transition-all flex items-center justify-between gap-4 group active:scale-95 duration-150 ease-out min-h-16"
+                      className="card-hover p-4 rounded-xl bg-surface-container-low/70 dark:bg-white/5 hover:bg-surface-container dark:hover:bg-white/10 border border-edge/80 dark:border-white/10 transition-all flex items-center justify-between gap-4 group active:scale-95 duration-150 ease-out min-h-16"
                     >
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
-                          {/* Status Badge */}
                           {agenda.timeStatus === "ACTIVE" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 border border-cyan-500/25 shadow-xs">
-                              <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25">
+                              <Radio className="h-3 w-3 text-cyan-500 animate-pulse" />
                               <span>{agenda.isMeeting ? "Hari Ini" : "Sedang Berlangsung"}</span>
                             </span>
                           ) : agenda.timeStatus === "UPCOMING" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container-low text-ink-muted border border-edge dark:border-white/10">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-ink-muted border border-edge">
                               <Clock className="h-3 w-3 text-ink-muted" />
                               <span>Mendatang</span>
                             </span>
@@ -648,7 +694,6 @@ export default async function DashboardPage() {
                             </span>
                           )}
 
-                          {/* Tipe Acara */}
                           <span
                             className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                               agenda.isSingleDay
@@ -669,18 +714,18 @@ export default async function DashboardPage() {
                           </span>
                         </div>
 
-                        <h3 className="text-sm sm:text-base font-bold text-ink truncate group-hover:text-primary transition-colors">
+                        <h3 className="text-sm font-bold text-ink truncate group-hover:text-primary transition-colors">
                           {agenda.title}
                         </h3>
 
                         {agenda.progressText && (
-                          <p className="text-xs text-ink-muted">
+                          <p className="text-xs text-ink-muted truncate">
                             {agenda.progressText}
                           </p>
                         )}
                       </div>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-card border border-edge/80 dark:border-white/10 text-ink-muted group-hover:text-primary shrink-0 transition-colors">
-                        <ChevronRight className="h-5 w-5" />
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-card border border-edge text-ink-muted group-hover:text-primary shrink-0 transition-colors">
+                        <ChevronRight className="h-4 w-4" />
                       </div>
                     </Link>
                   );
