@@ -142,13 +142,13 @@ export function KTADigitalModal({
                   <span className="text-xs font-bold tracking-widest text-white block leading-none font-mono">
                     SABA EXPLOIT
                   </span>
-                  <span className="text-[9px] font-mono text-slate-400 leading-tight">
+                  <span className="text-xs font-mono text-slate-400 leading-tight">
                     ORGANIZATIONAL DIGITAL PASS
                   </span>
                 </div>
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-2.5 h-2.5" />
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
                 <span>ACTIVE</span>
               </span>
             </div>
@@ -208,13 +208,13 @@ export function KTADigitalModal({
             {/* Bottom Section: QR Code & Auth Verification Badge */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-800 bg-slate-950/70 -mx-5 -mb-5 p-4 rounded-b-2xl relative z-10">
               <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-400">
                   OTORITAS &amp; ROLE
                 </span>
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wide font-mono">
                   {user.role}
                 </span>
-                <span className="text-[9px] font-mono text-slate-500 mt-0.5">
+                <span className="text-xs font-mono text-slate-500 mt-0.5">
                   ORGANIZATIONAL PASS
                 </span>
               </div>
@@ -229,14 +229,14 @@ export function KTADigitalModal({
                     marginSize={0}
                   />
                 </div>
-                <span className="text-[8px] font-mono font-bold text-slate-400 tracking-tight text-center">
+                <span className="text-xs font-mono font-bold text-slate-400 tracking-tight text-center">
                   AUTHENTIC MEMBER
                 </span>
               </div>
             </div>
           </div>
 
-          <p className="text-xs text-ink-muted text-center leading-relaxed">
+          <p className="text-sm text-ink-muted text-center leading-relaxed">
             KTA digital ini diterbitkan secara otomatis dan dapat diverifikasi melalui pemindaian resmi sistem Saba ExploIT.
           </p>
 

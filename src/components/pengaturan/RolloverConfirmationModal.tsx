@@ -112,7 +112,7 @@ export function RolloverConfirmationModal({
                   <h2 className="text-sm font-bold text-ink">
                     Ganti Periode Kepengurusan
                   </h2>
-                  <p className="text-[11px] text-ink-muted">Rollover Tahunan Organisasi</p>
+                  <p className="text-xs text-ink-muted">Rollover Tahunan Organisasi</p>
                 </div>
               </div>
               <button
@@ -194,7 +194,7 @@ export function RolloverConfirmationModal({
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-ink">Konfirmasi Rollover</h2>
-                  <p className="text-[11px] text-ink-muted">Ketik frasa untuk melanjutkan</p>
+                  <p className="text-xs text-ink-muted">Ketik frasa untuk melanjutkan</p>
                 </div>
               </div>
               {!isPending && (
@@ -218,7 +218,7 @@ export function RolloverConfirmationModal({
 
             {/* Field: Catatan opsional */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-ink-muted block">
+              <label className="text-xs font-semibold text-ink-muted block">
                 Catatan Penutup Periode <span className="text-ink-subtle">(opsional)</span>
               </label>
               <textarea
@@ -233,7 +233,7 @@ export function RolloverConfirmationModal({
 
             {/* Field: Teks konfirmasi wajib */}
             <div className="space-y-1.5">
-              <label className="text-[11px] font-semibold text-ink block">
+              <label className="text-xs font-semibold text-ink block">
                 Ketik frasa konfirmasi persis seperti ini:
               </label>
               <div className="px-3 py-2 rounded-lg bg-surface-container border border-edge font-mono text-xs text-amber-400 tracking-widest select-all">
@@ -258,7 +258,7 @@ export function RolloverConfirmationModal({
                 }`}
               />
               {confirmText.length > 0 && !isKeywordValid && (
-                <p className="text-[10px] text-danger/80">
+                <p className="text-xs text-danger/80">
                   Frasa tidak cocok. Periksa huruf kapital dan spasi.
                 </p>
               )}
@@ -320,7 +320,7 @@ export function RolloverConfirmationModal({
                 "✅ Kelas anggota aktif berhasil dinaikkan",
                 "✅ Semua poin anggota direset ke 0",
               ].map((item, i) => (
-                <li key={i} className="text-[11px] text-ink-muted font-medium">
+                <li key={i} className="text-xs text-ink-muted font-medium">
                   {item}
                 </li>
               ))}

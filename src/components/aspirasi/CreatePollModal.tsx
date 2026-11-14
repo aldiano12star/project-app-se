@@ -105,8 +105,8 @@ export function CreatePollModal({
               <Vote className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Buat Polling Organisasi</h2>
-              <p className="text-[11px] text-ink-muted">Suara &amp; Musyawarah Anggota</p>
+              <h2 className="text-base font-bold text-ink">Buat Polling Organisasi</h2>
+              <p className="text-xs sm:text-sm text-ink-muted">Suara &amp; Musyawarah Anggota</p>
             </div>
           </div>
           <button
@@ -138,7 +138,7 @@ export function CreatePollModal({
               placeholder="Contoh: Topik apa yang ingin dibahas pada Workshop berikutnya?"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
             />
           </div>
 
@@ -152,7 +152,7 @@ export function CreatePollModal({
               placeholder="Jelaskan konteks atau tujuan diadakannya pemungutan suara ini..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all resize-none"
+              className="w-full p-3 rounded-lg border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all resize-none"
             />
           </div>
 
@@ -162,7 +162,7 @@ export function CreatePollModal({
               <label className="text-xs font-bold text-ink block">
                 Pilihan Opsi Jawaban <span className="text-primary">*</span>
               </label>
-              <span className="text-[11px] text-ink-muted">
+              <span className="text-xs font-mono text-ink-muted">
                 {options.length}/6 Opsi
               </span>
             </div>

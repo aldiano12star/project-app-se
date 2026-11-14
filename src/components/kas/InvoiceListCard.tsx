@@ -58,20 +58,20 @@ export function InvoiceListCard({
         {unpaidInvoices.length > 0 ? (
           <div className="p-4 rounded-xl bg-surface-container-low/60 dark:bg-white/5 border hairline-border space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-ink-muted">
+              <span className="text-xs sm:text-sm font-medium text-ink-muted">
                 Total Tagihan Tertunda
               </span>
-              <p className="text-base font-extrabold text-ink font-mono-num font-mono">
+              <p className="text-base sm:text-lg font-extrabold text-ink font-mono-num font-mono">
                 Rp {totalUnpaidAmount.toLocaleString("id-ID")}
               </p>
             </div>
-            <div className="flex items-center justify-between pt-1 border-t hairline-border text-xs">
+            <div className="flex items-center justify-between pt-1 border-t hairline-border text-xs sm:text-sm">
               <span className="text-ink-muted">Saldo Dompet Saya:</span>
               <span className="font-bold text-ink font-mono-num font-mono">
                 Rp {userKasBalance.toLocaleString("id-ID")}
               </span>
             </div>
-            <p className="text-xs font-medium text-amber-700 dark:text-amber-300 pt-0.5">
+            <p className="text-xs sm:text-sm font-medium text-amber-700 dark:text-amber-300 pt-0.5 leading-relaxed">
               Mohon segera temui Bendahara untuk konfirmasi pelunasan tagihan aktif kamu.
             </p>
           </div>
@@ -81,10 +81,10 @@ export function InvoiceListCard({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 block">
+              <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300 block">
                 Semua Tagihan Lunas ✨
               </span>
-              <p className="text-[11px] text-emerald-600/90 dark:text-emerald-400/90 leading-relaxed mt-0.5">
+              <p className="text-xs sm:text-sm text-emerald-600/90 dark:text-emerald-400/90 leading-relaxed mt-0.5">
                 Hebat! Tidak ada tagihan tertunda. Pertahankan dedikasimu untuk organisasi!
               </p>
             </div>
@@ -99,10 +99,10 @@ export function InvoiceListCard({
                 <Coins className="h-7 w-7 stroke-[1.8]" />
               </div>
               <div className="space-y-1 max-w-xs mx-auto">
-                <p className="text-sm font-bold text-ink">
+                <p className="text-sm sm:text-base font-bold text-ink">
                   Yeay! Belum ada tagihan aktif. Dompetmu aman! 🎉
                 </p>
-                <p className="text-xs text-ink-muted">
+                <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
                   Semua urunan dan kas telah tuntas. Selamat menikmati waktu luangmu!
                 </p>
               </div>
@@ -118,11 +118,11 @@ export function InvoiceListCard({
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold text-ink">
+                      <span className="text-sm font-bold text-ink">
                         {inv.title}
                       </span>
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold border font-mono ${
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border font-mono ${
                           inv.type === InvoiceType.KAS
                             ? "bg-sky-500/10 text-sky-500 border-sky-500/20"
                             : "bg-purple-500/10 text-purple-500 border-purple-500/20"
@@ -132,17 +132,17 @@ export function InvoiceListCard({
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-ink-muted">
+                    <div className="flex items-center gap-3 text-xs sm:text-sm text-ink-muted">
                       <span className="font-semibold text-ink tabular-nums font-mono">
                         Rp {inv.amount.toLocaleString("id-ID")}
                       </span>
                       {inv.dueDate && (
                         <span
-                          className={`flex items-center gap-1 text-[11px] ${
+                          className={`flex items-center gap-1 text-xs ${
                             isDuePassed ? "text-rose-500 font-semibold" : ""
                           }`}
                         >
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-3.5 w-3.5" />
                           <span>
                             Jatuh tempo:{" "}
                             {new Date(inv.dueDate).toLocaleDateString("id-ID", {
@@ -156,7 +156,7 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/25 px-3 py-1.5 rounded-lg self-start sm:self-center font-mono">
+                  <span className="text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/25 px-3 py-1.5 rounded-lg self-start sm:self-center font-mono">
                     Belum Lunas
                   </span>
                 </div>
@@ -169,10 +169,10 @@ export function InvoiceListCard({
         {recentPaidInvoices.length > 0 && (
           <div className="pt-3 border-t border-edge/60 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-ink-muted">
+              <span className="text-xs sm:text-sm font-semibold text-ink-muted">
                 Riwayat Tagihan Lunas
               </span>
-              <span className="text-[11px] font-medium text-ink-muted font-mono">
+              <span className="text-xs font-medium text-ink-muted font-mono">
                 {recentPaidInvoices.length} Terakhir
                 {paidInvoices.length > 5 ? ` (dari ${paidInvoices.length})` : ""}
               </span>

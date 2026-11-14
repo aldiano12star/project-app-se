@@ -96,13 +96,13 @@ export function WikiTab({
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-ink truncate">Format Surat &amp; LPJ</h4>
-              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+              <h4 className="text-sm font-bold text-ink truncate">Format Surat &amp; LPJ</h4>
+              <p className="text-xs text-ink-muted leading-tight mt-0.5 line-clamp-1">
                 Template proposal, surat &amp; laporan
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs font-semibold text-ink-secondary shrink-0 font-mono-num">
+          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs sm:text-sm font-semibold text-ink-secondary shrink-0 font-mono-num">
             {categoryCounts.SURAT_LPJ}
           </div>
         </button>
@@ -122,13 +122,13 @@ export function WikiTab({
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <Trophy className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-ink truncate">Tips &amp; Info Lomba</h4>
-              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+              <h4 className="text-sm font-bold text-ink truncate">Tips &amp; Info Lomba</h4>
+              <p className="text-xs text-ink-muted leading-tight mt-0.5 line-clamp-1">
                 Arsip kompetisi &amp; panduan juara
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs font-semibold text-ink-secondary shrink-0 font-mono-num">
+          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs sm:text-sm font-semibold text-ink-secondary shrink-0 font-mono-num">
             {categoryCounts.INFO_LOMBA}
           </div>
         </button>
@@ -148,13 +148,13 @@ export function WikiTab({
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <GraduationCap className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-ink truncate">Modul Pelatihan</h4>
-              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+              <h4 className="text-sm font-bold text-ink truncate">Modul Pelatihan</h4>
+              <p className="text-xs text-ink-muted leading-tight mt-0.5 line-clamp-1">
                 Materi belajar internal 5 divisi
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs font-semibold text-ink-secondary shrink-0 font-mono-num">
+          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs sm:text-sm font-semibold text-ink-secondary shrink-0 font-mono-num">
             {categoryCounts.MODUL_PELATIHAN}
           </div>
         </button>
@@ -174,13 +174,13 @@ export function WikiTab({
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <Wrench className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold text-ink truncate">Panduan Teknis &amp; Alat</h4>
-              <p className="text-[10px] text-ink-muted leading-tight mt-0.5 line-clamp-1">
+              <h4 className="text-sm font-bold text-ink truncate">Panduan Teknis &amp; Alat</h4>
+              <p className="text-xs text-ink-muted leading-tight mt-0.5 line-clamp-1">
                 Petunjuk lab, proyektor &amp; alat kerja
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs font-semibold text-ink-secondary shrink-0 font-mono-num">
+          <div className="flex items-center justify-center min-w-[28px] h-7 px-2 rounded-full bg-surface-container-high hairline-border text-xs sm:text-sm font-semibold text-ink-secondary shrink-0 font-mono-num">
             {categoryCounts.PANDUAN_TEKNIS}
           </div>
         </button>

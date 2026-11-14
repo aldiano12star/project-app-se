@@ -108,7 +108,7 @@ export function EventDetailClientView({
       <div className="flex items-center justify-between pt-1">
         <Link
           href="/acara"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors min-h-[44px]"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold border border-edge transition-colors min-h-[44px]"
         >
           <ArrowLeft className="h-4 w-4 text-primary" />
           <span>Kembali</span>
@@ -118,7 +118,7 @@ export function EventDetailClientView({
           <button
             type="button"
             onClick={() => setIsAddSectionModalOpen(true)}
-            className="h-11 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
+            className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-sm font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
           >
             <Plus className="h-4 w-4" />
             <span>Seksi Baru</span>
@@ -141,13 +141,13 @@ export function EventDetailClientView({
               haptic.tap();
               setActiveWorkspaceTab("PANITIA");
             }}
-            className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
               activeWorkspaceTab === "PANITIA"
                 ? "bg-card text-ink shadow-xs border hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
             }`}
           >
-            <Layers className="h-3.5 w-3.5 text-primary" />
+            <Layers className="h-4 w-4 text-primary" />
             <span>Kepanitiaan &amp; Tugas</span>
           </button>
         )}
@@ -158,13 +158,13 @@ export function EventDetailClientView({
             haptic.tap();
             setActiveWorkspaceTab("NOTULENSI");
           }}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
             activeWorkspaceTab === "NOTULENSI"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
-          <MessageSquare className="h-3.5 w-3.5 text-amber-500" />
+          <MessageSquare className="h-4 w-4 text-amber-500" />
           <span>Notulensi Rapat</span>
         </button>
 
@@ -174,13 +174,13 @@ export function EventDetailClientView({
             haptic.tap();
             setActiveWorkspaceTab("RAB");
           }}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
             activeWorkspaceTab === "RAB"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
-          <Folder className="h-3.5 w-3.5 text-emerald-500" />
+          <Folder className="h-4 w-4 text-emerald-500" />
           <span>RAB Anggaran</span>
         </button>
       </div>
@@ -191,11 +191,11 @@ export function EventDetailClientView({
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-1.5">
               <Layers className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-bold text-ink font-display">
+              <h3 className="text-base font-bold text-ink font-display">
                 Seksi Kepanitiaan &amp; SOP
               </h3>
             </div>
-            <span className="text-[11px] font-semibold text-ink-muted">
+            <span className="text-xs sm:text-sm font-semibold text-ink-muted">
               {event.sections.length} Seksi Terdaftar
             </span>
           </div>
@@ -243,11 +243,11 @@ export function EventDetailClientView({
         <div className="pt-4 border-t border-edge">
           <div className="p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-ink flex items-center gap-1.5">
+              <h4 className="text-sm font-bold text-ink flex items-center gap-1.5">
                 <Trash2 className="h-4 w-4 text-red-500" />
                 <span>Pengaturan Kegiatan &amp; Zona Bahaya</span>
               </h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed">
+              <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
                 Hapus seluruh kepanitiaan, data rincian anggaran, notulensi, dan tugas acara ini secara permanen.
               </p>
             </div>
@@ -255,7 +255,7 @@ export function EventDetailClientView({
             <button
               type="button"
               onClick={() => setIsDeleteModalOpen(true)}
-              className="h-10 min-h-[40px] px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+              className="h-10 min-h-[40px] px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-sm font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
             >
               <Trash2 className="h-4 w-4" />
               <span>Hapus Acara Ini</span>
@@ -287,14 +287,14 @@ export function EventDetailClientView({
       >
         <div className="bg-card rounded-2xl p-5 w-full border border-edge shadow-xl space-y-3 text-center">
           <Folder className="h-8 w-8 text-amber-500 mx-auto" />
-          <h3 className="text-sm font-bold text-ink">Folder Drive Belum Diatur</h3>
-          <p className="text-xs text-ink-muted leading-relaxed">
+          <h3 className="text-base font-bold text-ink">Folder Drive Belum Diatur</h3>
+          <p className="text-sm text-ink-muted leading-relaxed">
             Pengurus belum menautkan tautan Google Drive untuk kegiatan ini. Silakan hubungi Sekretaris atau Koordinator Acara.
           </p>
           <button
             type="button"
             onClick={() => setIsDriveAlertOpen(false)}
-            className="w-full h-11 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl border border-edge transition-colors min-h-[44px] cursor-pointer"
+            className="w-full h-11 bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold rounded-xl border border-edge transition-colors min-h-[44px] cursor-pointer"
           >
             Mengerti
           </button>
@@ -321,16 +321,16 @@ export function EventDetailClientView({
           </div>
 
           <div className="space-y-1.5">
-            <h3 className="text-sm font-bold text-ink">
+            <h3 className="text-base font-bold text-ink">
               Hapus Acara Ini?
             </h3>
-            <p className="text-xs text-ink-secondary leading-relaxed">
+            <p className="text-sm text-ink-secondary leading-relaxed">
               Apakah kamu yakin ingin menghapus acara ini? Data presensi dan agenda terkait akan ikut terhapus.
             </p>
           </div>
 
           {deleteErrorMessage && (
-            <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-xs text-primary font-medium">
+            <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-sm text-primary font-medium">
               {deleteErrorMessage}
             </div>
           )}
@@ -340,7 +340,7 @@ export function EventDetailClientView({
               type="button"
               onClick={() => setIsDeleteModalOpen(false)}
               disabled={isDeleting}
-              className="h-9 px-3.5 rounded-lg border border-edge text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="h-10 px-4 rounded-xl border border-edge text-sm font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
             >
               Batal
             </button>
@@ -348,9 +348,9 @@ export function EventDetailClientView({
               type="button"
               onClick={handleDeleteEvent}
               disabled={isDeleting}
-              className="h-9 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="h-10 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
               <span>{isDeleting ? "Menghapus..." : "Hapus Acara"}</span>
             </button>
           </div>

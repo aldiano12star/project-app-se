@@ -431,7 +431,7 @@ export function TreasurerPanel({
                   required
                   className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
-                <p className="text-[11px] text-ink-muted mt-1">
+                <p className="text-xs sm:text-sm text-ink-muted mt-1">
                   Input harus bilangan positif. Saldo anggota akan bertambah otomatis.
                 </p>
               </div>
@@ -555,11 +555,11 @@ export function TreasurerPanel({
                         <span className="text-xs font-bold text-ink block">
                           Pilih Anggota Sasaran <span className="text-primary">*</span>
                         </span>
-                        <span className="text-[10px] text-ink-muted">
+                        <span className="text-xs text-ink-muted">
                           {customSelectedUserIds.length} dari {allMembers.length} anggota terpilih
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px]">
+                      <div className="flex items-center gap-1.5 text-xs">
                         <button
                           type="button"
                           onClick={handleSelectAllCustom}
@@ -579,13 +579,13 @@ export function TreasurerPanel({
 
                     {/* Filter Cepat per Divisi */}
                     <div className="flex flex-wrap items-center gap-1">
-                      <span className="text-[10px] font-bold text-ink-muted mr-1">Divisi:</span>
+                      <span className="text-xs font-bold text-ink-muted mr-1">Divisi:</span>
                       {DIVISIONS.map((div) => (
                         <button
                           key={div}
                           type="button"
                           onClick={() => handleSelectDivisionCustom(div)}
-                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
+                          className="px-2 py-0.5 rounded-full text-xs font-semibold bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
                         >
                           +{div.slice(0, 4)}
                         </button>
@@ -607,7 +607,7 @@ export function TreasurerPanel({
                     {/* Daftar Checklist Anggota */}
                     <div className="max-h-44 overflow-y-auto space-y-1 p-1 bg-card rounded-lg border border-edge">
                       {filteredCustomMembers.length === 0 ? (
-                        <p className="text-[11px] text-ink-muted text-center py-3">
+                        <p className="text-xs sm:text-sm text-ink-muted text-center py-3">
                           Tidak ada anggota yang cocok dengan pencarian.
                         </p>
                       ) : (
@@ -624,10 +624,10 @@ export function TreasurerPanel({
                               }`}
                             >
                               <div className="space-y-0.5 min-w-0 pr-2">
-                                <span className="text-xs font-semibold text-ink block truncate">
+                                <span className="text-xs sm:text-sm font-semibold text-ink block truncate">
                                   {member.name}
                                 </span>
-                                <span className="text-[10px] text-ink-muted block">
+                                <span className="text-xs text-ink-muted block">
                                   {formatGradeGen(member)} • {member.mainDivision || "Umum"}
                                 </span>
                               </div>
@@ -696,7 +696,7 @@ export function TreasurerPanel({
                   required
                   className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
-                <p className="text-[11px] text-ink-muted mt-1">
+                <p className="text-xs sm:text-sm text-ink-muted mt-1">
                   Saldo dompet anggota terpilih akan langsung terpotong secara serentak.
                 </p>
               </div>
@@ -833,7 +833,7 @@ export function TreasurerPanel({
                   required
                   className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
-                <p className="text-[11px] text-ink-muted mt-1">
+                <p className="text-xs sm:text-sm text-ink-muted mt-1">
                   Transaksi ini mempengaruhi kas riil tanpa mengubah saldo dompet personal anggota.
                 </p>
               </div>

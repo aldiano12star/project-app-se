@@ -198,7 +198,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
                 Kata Sandi <span className="text-primary">*</span>
               </span>
             </span>
-            <span className="text-[11px] text-ink-muted">Min. 8 karakter</span>
+            <span className="text-xs text-ink-muted">Min. 8 karakter</span>
           </label>
           <div className="relative">
             <input
@@ -224,7 +224,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             </button>
           </div>
           {password.length > 0 && (
-            <div className="flex items-center gap-1.5 text-[11px]">
+            <div className="flex items-center gap-1.5 text-xs">
               {isPasswordLengthValid ? (
                 <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" />
@@ -276,7 +276,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             </button>
           </div>
           {confirmPassword.length > 0 && (
-            <div className="flex items-center gap-1.5 text-[11px]">
+            <div className="flex items-center gap-1.5 text-xs">
               {isPasswordMatch ? (
                 <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" />

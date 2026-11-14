@@ -159,16 +159,16 @@ export function EksplorasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("SHOWCASE")}
-          className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`flex-1 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "SHOWCASE"
               ? "bg-primary text-white shadow-sm"
               : "text-ink-muted hover:text-ink hover:bg-surface-container-high"
           }`}
         >
-          <Sparkles className="h-3.5 w-3.5 shrink-0" />
+          <Sparkles className="h-4 w-4 shrink-0" />
           <span>Showcase Karya</span>
           <span
-            className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold tabular-nums ${
+            className={`ml-0.5 px-2 py-0.5 rounded-full text-xs font-extrabold tabular-nums ${
               activeTab === "SHOWCASE"
                 ? "bg-white/20 text-white"
                 : "bg-surface-container-high text-ink-secondary"
@@ -181,16 +181,16 @@ export function EksplorasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("WIKI")}
-          className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`flex-1 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "WIKI"
               ? "bg-emerald-600 text-white shadow-sm"
               : "text-ink-muted hover:text-ink hover:bg-surface-container-high"
           }`}
         >
-          <BookOpen className="h-3.5 w-3.5 shrink-0" />
+          <BookOpen className="h-4 w-4 shrink-0" />
           <span>Perpustakaan Digital</span>
           <span
-            className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold tabular-nums ${
+            className={`ml-0.5 px-2 py-0.5 rounded-full text-xs font-extrabold tabular-nums ${
               activeTab === "WIKI"
                 ? "bg-white/20 text-white"
                 : "bg-surface-container-high text-ink-secondary"

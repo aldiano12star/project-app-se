@@ -148,12 +148,12 @@ export function CreateFeedbackModal({
               {isPrivat ? <Lock className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">
+              <h2 className="text-base font-bold text-ink">
                 {isPrivat
                   ? "Tulis Aspirasi Rahasia (Operator)"
                   : "Laporkan Isu / Ide Fitur Baru"}
               </h2>
-              <p className="text-[11px] text-ink-muted">
+              <p className="text-xs sm:text-sm text-ink-muted">
                 {isPrivat
                   ? "Kerahasiaan terjamin, hanya dibaca langsung oleh Operator Organisasi"
                   : "Dapatkan +10 XP kontribusi aktif komunitas"}
@@ -182,7 +182,7 @@ export function CreateFeedbackModal({
           {lockType && isPrivat && (
             <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-700 dark:text-purple-300 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 shrink-0 text-purple-600 dark:text-purple-400" />
-              <span className="text-[11px] leading-tight">
+              <span className="text-xs leading-relaxed">
                 Saluran Privat Aktif: Pesan ini terenkripsi dan tidak dipublikasikan ke papan umum.
               </span>
             </div>
@@ -223,7 +223,7 @@ export function CreateFeedbackModal({
                       Isu / Ide Publik
                     </span>
                   </div>
-                  <p className="text-[11px] text-ink-muted leading-tight">
+                  <p className="text-xs sm:text-sm text-ink-muted leading-tight">
                     Tampil di Papan Isu terbuka &amp; dapat di-upvote anggota.
                   </p>
                 </button>
@@ -256,7 +256,7 @@ export function CreateFeedbackModal({
                       Aspirasi Privat
                     </span>
                   </div>
-                  <p className="text-[11px] text-ink-muted leading-tight">
+                  <p className="text-xs sm:text-sm text-ink-muted leading-tight">
                     Kerahasiaan terjamin, hanya dibaca langsung oleh Operator.
                   </p>
                 </button>

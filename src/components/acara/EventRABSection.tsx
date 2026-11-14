@@ -205,37 +205,37 @@ export function EventRABSection({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Nama Barang */}
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-[11px] font-semibold text-ink">Nama Kebutuhan / Barang</label>
+              <label className="text-sm font-semibold text-ink">Nama Kebutuhan / Barang</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Contoh: Konsumsi Pemateri & Plakat"
-                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
 
             {/* Quantity */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-ink">Jumlah (Qty)</label>
+              <label className="text-sm font-semibold text-ink">Jumlah (Qty)</label>
               <input
                 type="number"
                 min="1"
                 required
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-mono"
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-mono"
               />
             </div>
 
             {/* Unit / Satuan */}
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-ink">Satuan (Unit)</label>
+              <label className="text-sm font-semibold text-ink">Satuan (Unit)</label>
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer font-mono"
+                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer font-mono"
               >
                 <option value="pcs">pcs</option>
                 <option value="paket">paket</option>
@@ -248,7 +248,7 @@ export function EventRABSection({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-ink">Harga Estimasi Satuan (Rp)</label>
+            <label className="text-sm font-semibold text-ink">Harga Estimasi Satuan (Rp)</label>
             <input
               type="number"
               min="0"
@@ -295,7 +295,7 @@ export function EventRABSection({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-container-low border-b border-edge text-[11px] font-mono text-ink-muted uppercase">
+                <tr className="bg-surface-container-low border-b border-edge text-xs font-mono text-ink-muted uppercase">
                   <th className="px-4 py-3 font-semibold">No</th>
                   <th className="px-4 py-3 font-semibold">Nama Kebutuhan</th>
                   <th className="px-4 py-3 font-semibold text-center">Qty</th>
@@ -304,7 +304,7 @@ export function EventRABSection({
                   {isOfficer && <th className="px-4 py-3 font-semibold text-center">Aksi</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-edge text-xs">
+              <tbody className="divide-y divide-edge text-sm">
                 {budgetItems.map((item, idx) => (
                   <tr key={item.id} className="hover:bg-surface-container-low/50 transition-colors">
                     <td className="px-4 py-3 font-mono text-ink-muted">{idx + 1}</td>

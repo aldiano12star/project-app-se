@@ -128,7 +128,7 @@ export function AvatarSelectorModal({
             <h3 className="text-sm sm:text-base font-bold text-ink">
               Ubah Foto Profil &amp; Avatar
             </h3>
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-sm text-ink-muted leading-relaxed">
               Pilih karakter ilustrasi bawaan atau unggah foto pribadimu
             </p>
           </div>
@@ -239,7 +239,7 @@ export function AvatarSelectorModal({
                         <span className="text-xs font-bold text-ink block truncate">
                           {tmpl.name}
                         </span>
-                        <span className="text-[10px] text-ink-muted block">
+                        <span className="text-xs text-ink-muted block font-medium">
                           {tmpl.badge}
                         </span>
                       </div>

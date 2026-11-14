@@ -225,8 +225,8 @@ export function EditProjectModal({
               <Pencil className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Edit Karya</h2>
-              <p className="text-[11px] text-ink-muted">Perbarui informasi dan kontributor proyek</p>
+              <h2 className="text-base font-bold text-ink">Edit Karya</h2>
+              <p className="text-xs sm:text-sm text-ink-muted">Perbarui informasi dan kontributor proyek</p>
             </div>
           </div>
           <button
@@ -322,7 +322,7 @@ export function EditProjectModal({
                 <Users className="h-3.5 w-3.5 text-purple-400" />
                 <span>Kontributor Tim ({selectedMembers.length}/10)</span>
               </label>
-              <span className="text-[10px] text-purple-400 font-semibold font-mono">
+              <span className="text-xs text-purple-400 font-semibold font-mono">
                 +50 XP untuk anggota baru
               </span>
             </div>
@@ -335,7 +335,7 @@ export function EditProjectModal({
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-medium"
                   >
                     <span>{member.name}</span>
-                    <span className="text-[10px] opacity-75 font-mono">
+                    <span className="text-xs opacity-75 font-mono">
                       ({formatGrade(member.classGrade)})
                     </span>
                     <button
@@ -391,10 +391,10 @@ export function EditProjectModal({
                         onClick={() => handleAddContributor(m.id)}
                         className="w-full px-3 py-2 text-left rounded-lg hover:bg-surface-container flex items-center justify-between text-xs transition-colors cursor-pointer group"
                       >
-                        <span className="font-medium text-ink group-hover:text-primary transition-colors">
+                        <span className="font-medium text-ink group-hover:text-primary transition-colors text-xs sm:text-sm">
                           {m.name}
                         </span>
-                        <span className="text-[10px] text-ink-muted font-mono">
+                        <span className="text-xs text-ink-muted font-mono">
                           {formatGrade(m.classGrade)}
                         </span>
                       </button>

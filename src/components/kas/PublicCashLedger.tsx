@@ -68,10 +68,10 @@ export function PublicCashLedger({
         <div className="flex items-center gap-2.5">
           <Receipt className="h-5 w-5 text-slate-500 dark:text-slate-400 shrink-0" />
           <div>
-            <h3 className="text-sm font-bold text-ink">
+            <h3 className="text-base font-bold text-ink">
               Buku Kas Publik Terpadu
             </h3>
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-xs sm:text-sm text-ink-muted">
               Transparansi aliran dana kas riil organisasi Saba ExploIT
             </p>
           </div>
@@ -127,7 +127,7 @@ export function PublicCashLedger({
       {/* Ringkasan Finansial Singkat (Full-Width Saldo + 2-Column Pemasukan/Pengeluaran) */}
       <div className="space-y-3">
         <div className="card-hover p-4 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
-          <span className="text-[11px] text-ink-muted block font-medium">
+          <span className="text-xs sm:text-sm text-ink-muted block font-medium">
             Saldo Kas Riil Tersedia
           </span>
           <span className="text-xl sm:text-2xl font-extrabold text-ink font-mono-num font-mono">
@@ -137,7 +137,7 @@ export function PublicCashLedger({
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <div className="card-hover p-3.5 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
-            <span className="text-[11px] text-emerald-700 dark:text-emerald-400 block font-medium">
+            <span className="text-xs text-emerald-700 dark:text-emerald-400 block font-medium">
               Total Dana Masuk
             </span>
             <span className="text-sm sm:text-base font-extrabold text-emerald-700 dark:text-emerald-400 font-mono-num font-mono">
@@ -146,7 +146,7 @@ export function PublicCashLedger({
           </div>
 
           <div className="card-hover p-3.5 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
-            <span className="text-[11px] text-rose-700 dark:text-rose-400 block font-medium">
+            <span className="text-xs text-rose-700 dark:text-rose-400 block font-medium">
               Total Pengeluaran
             </span>
             <span className="text-sm sm:text-base font-extrabold text-rose-700 dark:text-rose-400 font-mono-num font-mono">
@@ -195,10 +195,10 @@ export function PublicCashLedger({
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-ink line-clamp-1">
+                    <p className="text-sm font-semibold text-ink line-clamp-1">
                       {t.description}
                     </p>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-muted mt-0.5">
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm text-ink-muted mt-0.5">
                       <span>{dateStr}</span>
                       <span>•</span>
                       <span className="px-1.5 py-0.2 rounded bg-surface-container text-ink-secondary font-medium">
@@ -218,7 +218,7 @@ export function PublicCashLedger({
 
                 <div className="text-left sm:text-right shrink-0 pl-12 sm:pl-0">
                   <span
-                    className={`text-xs font-bold ${
+                    className={`text-sm font-bold ${
                       isIncome
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-rose-600 dark:text-rose-400"
@@ -226,7 +226,7 @@ export function PublicCashLedger({
                   >
                     {isIncome ? "+" : "-"} Rp {t.amount.toLocaleString("id-ID")}
                   </span>
-                  <span className="block text-[10px] text-ink-muted mt-0.5">
+                  <span className="block text-xs text-ink-muted mt-0.5">
                     {isIncome ? "Kas Masuk" : "Kas Keluar"}
                   </span>
                 </div>

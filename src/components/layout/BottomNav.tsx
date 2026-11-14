@@ -138,10 +138,10 @@ export function BottomNav() {
               />
               <div className="flex items-center gap-1 mt-0.5">
                 <span
-                  className={`text-[10px] tracking-tight font-display transition-all duration-200 ${
+                  className={`text-xs tracking-tight font-display transition-all duration-200 ${
                     isActive
                       ? "font-bold text-zinc-950 dark:text-zinc-50"
-                      : "font-medium opacity-75"
+                      : "font-medium opacity-80"
                   }`}
                 >
                   {item.label}

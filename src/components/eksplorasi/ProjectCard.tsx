@@ -241,11 +241,11 @@ export function ProjectCard({
                 <span className="w-2 h-2 rounded-full bg-rose-500/80" />
                 <span className="w-2 h-2 rounded-full bg-amber-500/80" />
                 <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
-                <span className="ml-1.5 text-[9px] font-mono text-slate-400">
+                <span className="ml-1.5 text-xs font-mono text-slate-400">
                   saba-exploit.app/showcase
                 </span>
               </div>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
+              <span className="px-2 py-0.5 rounded text-xs font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
                 Karya Terverifikasi
               </span>
             </div>
@@ -254,12 +254,12 @@ export function ProjectCard({
               <div className="h-10 w-10 rounded-xl bg-primary/20 border border-primary/40 text-primary flex items-center justify-center mb-1.5">
                 <CategoryIcon className="h-5 w-5" />
               </div>
-              <span className="text-xs font-bold text-white tracking-wide font-display line-clamp-1 px-4">
+              <span className="text-sm font-bold text-white tracking-wide font-display line-clamp-1 px-4">
                 {project.title}
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-[9px] font-mono text-slate-400 border-t border-white/10 pt-1.5">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-t border-white/10 pt-1.5">
               <span>SABA EXPLOIT SHOWCASE</span>
               <span className="text-emerald-400">AUTHENTIC REPO</span>
             </div>
@@ -276,7 +276,7 @@ export function ProjectCard({
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="h-8 px-2.5 rounded-full bg-slate-900/90 backdrop-blur-xs hover:bg-slate-800 text-slate-100 hover:text-amber-400 border border-slate-700 flex items-center gap-1 text-[11px] font-semibold transition-all cursor-pointer shadow-md shrink-0"
+                className="h-8 px-2.5 rounded-full bg-slate-900/90 backdrop-blur-xs hover:bg-slate-800 text-slate-100 hover:text-amber-400 border border-slate-700 flex items-center gap-1 text-xs font-semibold transition-all cursor-pointer shadow-md shrink-0"
                 title="Edit Detail Karya"
               >
                 <Pencil className="h-3 w-3 text-amber-400" />
@@ -290,7 +290,7 @@ export function ProjectCard({
                   type="button"
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
+                  className="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {isDeleting ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -302,7 +302,7 @@ export function ProjectCard({
                   type="button"
                   onClick={() => setIsConfirmingDelete(false)}
                   disabled={isDeleting}
-                  className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[10px] hover:text-white cursor-pointer shrink-0"
+                  className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs hover:text-white cursor-pointer shrink-0"
                 >
                   Batal
                 </button>
@@ -326,7 +326,7 @@ export function ProjectCard({
         {/* Category Badge & Like Button */}
         <div className="flex items-center justify-between gap-2">
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
           >
             <CategoryIcon className="h-3 w-3" />
             <span>{categoryMeta.label}</span>
@@ -353,37 +353,37 @@ export function ProjectCard({
 
         {/* Title & Description */}
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-ink leading-snug group-hover:text-primary transition-colors font-display">
+          <h3 className="text-base font-bold text-ink leading-snug group-hover:text-primary transition-colors font-display">
             {project.title}
           </h3>
-          <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
+          <p className="text-sm text-ink-muted line-clamp-2 leading-relaxed">
             {project.description}
           </p>
         </div>
 
         {/* Author & Contributors Section */}
-        <div className="space-y-2 pt-1 border-t hairline-border text-[11px]">
+        <div className="space-y-2 pt-1 border-t hairline-border text-xs sm:text-sm">
           {/* Author Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <User className="h-3.5 w-3.5" />
+              <div className="h-7 w-7 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <User className="h-4 w-4" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-ink truncate">
+                  <span className="font-semibold text-ink truncate text-xs sm:text-sm">
                     {project.author.name}
                   </span>
                   {project.author.classGrade && (
-                    <span className="text-[10px] text-ink-muted shrink-0 font-mono-num">
+                    <span className="text-xs text-ink-muted shrink-0 font-mono-num">
                       ({formatGrade(project.author.classGrade)})
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] text-ink-muted block">Ketua Tim</span>
+                <span className="text-xs text-ink-muted block">Ketua Tim</span>
               </div>
             </div>
-            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono-num border border-amber-500/20">
+            <span className="text-xs font-semibold text-amber-600 dark:text-amber-400 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono-num border border-amber-500/20">
               +50 XP
             </span>
           </div>
@@ -392,20 +392,20 @@ export function ProjectCard({
           {hasContributors && (
             <div className="flex items-start justify-between bg-surface-container-low/40 p-2.5 rounded-xl hairline-border">
               <div className="flex items-start gap-1.5 min-w-0 flex-1">
-                <Users className="h-3.5 w-3.5 text-purple-500 shrink-0 mt-0.5" />
+                <Users className="h-4 w-4 text-purple-500 shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <span className="text-[10px] font-bold text-ink-secondary block">
+                  <span className="text-xs font-bold text-ink-secondary block">
                     Kontributor Tim ({project.contributors?.length}):
                   </span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {project.contributors?.map((c) => (
                       <span
                         key={c.id}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card hairline-border text-[10px] text-ink font-medium"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card hairline-border text-xs text-ink font-medium"
                       >
                         <span>{c.name}</span>
                         {c.classGrade && (
-                          <span className="text-[9px] text-ink-muted font-mono-num">
+                          <span className="text-xs text-ink-muted font-mono-num">
                             ({formatGrade(c.classGrade)})
                           </span>
                         )}
@@ -414,7 +414,7 @@ export function ProjectCard({
                   </div>
                 </div>
               </div>
-              <span className="text-[9px] font-semibold text-purple-400 px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 shrink-0 ml-1 font-mono-num">
+              <span className="text-xs font-semibold text-purple-400 px-2 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 shrink-0 ml-1 font-mono-num">
                 +50 XP/org
               </span>
             </div>

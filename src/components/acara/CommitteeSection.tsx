@@ -461,10 +461,10 @@ export function CommitteeSection({
                     <FolderPlus className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h2 className="text-sm font-bold text-ink line-clamp-2 leading-snug break-words font-display">
+                    <h2 className="text-base font-bold text-ink line-clamp-2 leading-snug break-words font-display">
                       {section.name}
                     </h2>
-                    <p className="text-[11px] text-ink-muted">
+                    <p className="text-xs sm:text-sm text-ink-muted">
                       {totalCount} item pekerjaan • {sectionMembers.length} anggota
                     </p>
                   </div>
@@ -472,7 +472,7 @@ export function CommitteeSection({
 
                 <div className="flex items-center gap-2 shrink-0">
                   <span
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
                       totalCount > 0 && completedCount === totalCount
                         ? "bg-success-subtle text-success border border-success/30"
                         : "bg-surface-container-high/60 text-ink-secondary border border-edge"
@@ -500,10 +500,10 @@ export function CommitteeSection({
                           <Crown className="h-3.5 w-3.5" />
                         </div>
                         <div className="min-w-0">
-                          <span className="text-[10px] text-ink-muted block leading-none font-mono">
+                          <span className="text-xs text-ink-muted block leading-none font-mono">
                             Penanggung Jawab (PJ)
                           </span>
-                          <span className="text-xs font-bold text-ink truncate block mt-0.5">
+                          <span className="text-sm font-bold text-ink truncate block mt-0.5">
                             {section.pj ? (
                               <span>
                                 {section.pj.name}
@@ -526,7 +526,7 @@ export function CommitteeSection({
                             setActivePJModalSectionId(section.id);
                             setSelectedPJUserId(section.pjId || "");
                           }}
-                          className="h-8 min-h-8 px-3 rounded-lg bg-surface hover:bg-card border border-edge text-[11px] font-bold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
+                          className="h-8 min-h-8 px-3 rounded-lg bg-surface hover:bg-card border border-edge text-xs font-bold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
                         >
                           {section.pj ? "Ganti PJ" : "+ Tunjuk PJ"}
                         </button>
@@ -536,8 +536,8 @@ export function CommitteeSection({
                     {/* Daftar Anggota Seksi */}
                     <div className="pt-2 border-t border-edge/60 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-semibold text-ink-muted flex items-center gap-1">
-                          <Users className="h-3 w-3" />
+                        <span className="text-xs font-semibold text-ink-muted flex items-center gap-1">
+                          <Users className="h-3.5 w-3.5" />
                           <span>Anggota Seksi ({sectionMembers.length})</span>
                         </span>
 
@@ -548,7 +548,7 @@ export function CommitteeSection({
                               setActiveAddMemberSectionId(section.id);
                               setSelectedNewMemberUserId("");
                             }}
-                            className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                            className="text-xs font-bold text-primary hover:underline cursor-pointer"
                           >
                             + Tambah Anggota
                           </button>
@@ -560,14 +560,14 @@ export function CommitteeSection({
                           sectionMembers.map((member) => (
                             <span
                               key={member.id}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-[10px] ${
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs ${
                                 member.id === section.pjId
                                   ? "bg-amber-500/15 border-amber-500/30 text-amber-400 font-bold"
                                   : "bg-surface border-edge text-ink"
                               }`}
                             >
                               {member.id === section.pjId && (
-                                <Crown className="h-2.5 w-2.5 text-amber-400 shrink-0" />
+                                <Crown className="h-3 w-3 text-amber-400 shrink-0" />
                               )}
                               <span>{member.name}</span>
                               {canManageMembers && member.id !== section.pjId && (
@@ -577,13 +577,13 @@ export function CommitteeSection({
                                   className="text-ink-muted hover:text-primary transition-colors cursor-pointer ml-0.5"
                                   title="Hapus dari seksi"
                                 >
-                                  <X className="h-2.5 w-2.5" />
+                                  <X className="h-3 w-3" />
                                 </button>
                               )}
                             </span>
                           ))
                         ) : (
-                          <span className="text-[10px] text-ink-muted italic">
+                          <span className="text-xs text-ink-muted italic">
                             Belum ada anggota yang bergabung di seksi ini.
                           </span>
                         )}
@@ -598,18 +598,18 @@ export function CommitteeSection({
                         Tunjuk Penanggung Jawab (PJ) Seksi &quot;{section.name}&quot;
                       </span>
                       {sectionMembers.length === 0 ? (
-                        <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300">
+                        <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs sm:text-sm text-amber-800 dark:text-amber-300">
                           Belum ada anggota di seksi ini. Tambahkan anggota terlebih dahulu sebelum menunjuk PJ.
                         </div>
                       ) : (
                         <>
-                          <p className="text-[11px] text-ink-muted">
+                          <p className="text-xs sm:text-sm text-ink-muted">
                             PJ wajib dipilih dari anggota yang sudah terdaftar di seksi ini:
                           </p>
                           <select
                             value={selectedPJUserId}
                             onChange={(e) => setSelectedPJUserId(e.target.value)}
-                            className="w-full h-10 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium"
+                            className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium"
                           >
                             <option value="">-- Pilih Anggota Seksi --</option>
                             {sectionMembers.map((m) => (
@@ -742,7 +742,7 @@ export function CommitteeSection({
                               {/* Deskripsi & Judul Tugas */}
                               <div className="flex-1 min-w-0 space-y-1">
                                 <p
-                                  className={`text-xs font-bold leading-snug ${
+                                  className={`text-sm font-bold leading-snug ${
                                     isVerified
                                       ? "text-slate-200"
                                       : isTaskDone
@@ -754,7 +754,7 @@ export function CommitteeSection({
                                 </p>
 
                                 {task.description && (
-                                  <p className="text-[11px] text-ink-muted leading-relaxed">
+                                  <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
                                     {task.description}
                                   </p>
                                 )}
@@ -763,7 +763,7 @@ export function CommitteeSection({
                                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                                   {/* Lencana SOP Otomatis */}
                                   {task.isSOP && (
-                                    <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-400 text-[10px] font-semibold border border-purple-500/30 font-mono">
+                                    <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-400 text-xs font-semibold border border-purple-500/30 font-mono">
                                       SOP
                                     </span>
                                   )}
@@ -771,38 +771,38 @@ export function CommitteeSection({
                                   {/* Lencana Batas Waktu / Deadline */}
                                   {dueStatus && (
                                     <span
-                                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] border font-mono ${dueStatus.badgeClass}`}
+                                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border font-mono ${dueStatus.badgeClass}`}
                                     >
-                                      <Clock className="h-2.5 w-2.5 shrink-0" />
+                                      <Clock className="h-3 w-3 shrink-0" />
                                       <span>{dueStatus.label}</span>
                                     </span>
                                   )}
 
                                   {/* Lencana Status Utama */}
                                   {isVerified ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-bold border border-emerald-500/30 font-mono">
-                                      <CheckCheck className="h-3 w-3" />
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/30 font-mono">
+                                      <CheckCheck className="h-3.5 w-3.5" />
                                       <span>
                                         ✅ Terverifikasi Selesai{" "}
                                         {task.verifiedBy ? `oleh ${task.verifiedBy.name}` : "(+20 XP)"}
                                       </span>
                                     </span>
                                   ) : isTaskDone ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-[10px] font-bold border border-amber-500/40 animate-pulse font-mono">
-                                      <Clock className="h-3 w-3" />
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-xs font-bold border border-amber-500/40 animate-pulse font-mono">
+                                      <Clock className="h-3.5 w-3.5" />
                                       <span>⏳ Menunggu Verifikasi PJ</span>
                                     </span>
                                   ) : task.assignee ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-[10px] font-semibold border border-blue-500/30 font-mono">
-                                      <User className="h-3 w-3" />
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-xs font-semibold border border-blue-500/30 font-mono">
+                                      <User className="h-3.5 w-3.5" />
                                       <span>
                                         Sedang Dikerjakan oleh {task.assignee.name}
                                         {isAssignedToMe ? " (Saya)" : ""}
                                       </span>
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-[10px] font-semibold border border-amber-500/30 font-mono">
-                                      <AlertCircle className="h-3 w-3" />
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-xs font-semibold border border-amber-500/30 font-mono">
+                                      <AlertCircle className="h-3.5 w-3.5" />
                                       <span>Mencari Relawan</span>
                                     </span>
                                   )}
@@ -818,7 +818,7 @@ export function CommitteeSection({
                                         type="button"
                                         disabled={isTaskLoading}
                                         onClick={() => handleDeleteTask(task.id)}
-                                        className="px-2 py-1 bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold rounded-lg shadow-xs cursor-pointer flex items-center gap-1"
+                                        className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-xs cursor-pointer flex items-center gap-1"
                                       >
                                         {isTaskLoading ? (
                                           <Loader2 className="h-3 w-3 animate-spin" />
@@ -831,7 +831,7 @@ export function CommitteeSection({
                                         type="button"
                                         disabled={isTaskLoading}
                                         onClick={() => setConfirmDeleteTaskId(null)}
-                                        className="px-1.5 py-1 text-[10px] text-ink-muted hover:text-ink cursor-pointer"
+                                        className="px-2 py-1 text-xs text-ink-muted hover:text-ink cursor-pointer"
                                       >
                                         Batal
                                       </button>
@@ -859,7 +859,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleClaimTask(task.id)}
-                                  className="h-10 min-h-11 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+                                  className="h-10 min-h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
                                 >
                                   {isTaskLoading ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -876,7 +876,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleSubmitDone(task.id)}
-                                  className="h-10 min-h-11 px-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+                                  className="h-10 min-h-11 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
                                 >
                                   {isTaskLoading ? (
                                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -893,7 +893,7 @@ export function CommitteeSection({
                                   type="button"
                                   disabled={isTaskLoading}
                                   onClick={() => handleVerifyTask(task.id)}
-                                  className="h-11 min-h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50 border border-emerald-500/30"
+                                  className="h-11 min-h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-sm rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50 border border-emerald-500/30"
                                   title="Verifikasi pekerjaan & berikan +20 XP"
                                 >
                                   {isTaskLoading ? (
@@ -923,7 +923,7 @@ export function CommitteeSection({
           <button
             type="button"
             onClick={onOpenAddSectionModal}
-            className="min-h-11 h-11 px-3.5 bg-card hover:bg-surface-container-low text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all border border-edge shadow-xs cursor-pointer"
+            className="min-h-11 h-11 px-4 bg-card hover:bg-surface-container-low text-ink text-sm font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all border border-edge shadow-xs cursor-pointer"
           >
             <FolderPlus className="h-4 w-4 text-ink-secondary" />
             <span>Seksi Baru</span>
@@ -933,7 +933,7 @@ export function CommitteeSection({
         <button
           type="button"
           onClick={() => onOpenAddTaskModal?.()}
-          className={`min-h-11 h-11 px-3.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-xs cursor-pointer ${
+          className={`min-h-11 h-11 px-4 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-xs cursor-pointer ${
             !isOfficer ? "col-span-2" : ""
           }`}
         >

@@ -83,10 +83,10 @@ export function WikiDetailModal({
               <BookOpen className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-sm font-bold text-ink truncate">
+              <h2 className="text-base font-bold text-ink truncate">
                 {article.title}
               </h2>
-              <p className="text-[11px] text-ink-muted">
+              <p className="text-xs sm:text-sm text-ink-muted">
                 Perpustakaan Digital Saba ExploIT
               </p>
             </div>
@@ -104,7 +104,7 @@ export function WikiDetailModal({
         {/* Content Body */}
         <div className="p-5 space-y-4 overflow-y-auto flex-1">
           {/* Metadata Row */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted pb-3 border-b border-edge/60">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm text-ink-muted pb-3 border-b border-edge/60">
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
                 <User className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function WikiDetailModal({
           </div>
 
           {/* Main Markdown Text Readability */}
-          <div className="text-xs text-ink leading-relaxed space-y-3 whitespace-pre-line bg-surface-container-low/40 p-4 rounded-xl border border-edge/60 font-sans">
+          <div className="text-sm sm:text-base text-ink leading-relaxed space-y-3 whitespace-pre-line bg-surface-container-low/40 p-4 rounded-xl border border-edge/60 font-sans">
             {article.content}
           </div>
         </div>
@@ -148,10 +148,10 @@ export function WikiDetailModal({
                       type="button"
                       onClick={handleDelete}
                       disabled={isDeleting}
-                      className="px-2 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      className="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
                     >
                       {isDeleting ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <span>Hapus!</span>
                       )}
@@ -160,7 +160,7 @@ export function WikiDetailModal({
                       type="button"
                       onClick={() => setIsConfirmingDelete(false)}
                       disabled={isDeleting}
-                      className="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[10px] hover:text-white cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs hover:text-white cursor-pointer"
                     >
                       Batal
                     </button>

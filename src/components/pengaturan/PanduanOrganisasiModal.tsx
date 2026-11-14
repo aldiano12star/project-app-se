@@ -88,7 +88,7 @@ export function PanduanOrganisasiModal({
               <li>Status kehadiran otomatis tercatat sebagai <span className="font-semibold text-emerald-600 dark:text-emerald-400">HADIR</span> dan XP bertambah.</li>
             </ol>
           </div>
-          <p className="text-[11px] italic">
+          <p className="text-xs italic text-ink-muted">
             💡 Solusi Darurat: Jika kamera HP bermasalah atau gagal scan, segera hubungi Seksi Kesekretariatan atau Operator untuk presensi manual.
           </p>
         </div>
@@ -99,7 +99,7 @@ export function PanduanOrganisasiModal({
       title: "💰 Iuran Kas Organisasi & Tagihan Periode",
       icon: <Wallet className="w-4 h-4 text-amber-500" />,
       content: (
-        <div className="space-y-2 text-xs text-ink-muted leading-relaxed">
+        <div className="space-y-2 text-sm text-ink-secondary leading-relaxed">
           <p>
             Iuran kas mingguan/periodik digunakan untuk mendukung operasional kegiatan, konsumsi acara, dan pemeliharaan infrastruktur organisasi.
           </p>
@@ -119,7 +119,7 @@ export function PanduanOrganisasiModal({
       title: "⚡ Sistem Poin XP & Panggung Podium",
       icon: <Zap className="w-4 h-4 text-purple-500" />,
       content: (
-        <div className="space-y-2 text-xs text-ink-muted leading-relaxed">
+        <div className="space-y-2 text-sm text-ink-secondary leading-relaxed">
           <p>
             Keaktifan anggota dihargai melalui sistem poin XP (Monthly Points & Total Annual Points) yang mereset setiap awal pergantian tahun kepengurusan.
           </p>
@@ -131,7 +131,7 @@ export function PanduanOrganisasiModal({
               <li>Mengunggah karya, proyek kolaborasi, atau artikel Wiki ke Hub Eksplorasi.</li>
             </ul>
           </div>
-          <p className="text-[11px]">
+          <p className="text-xs text-ink-muted">
             🏆 Anggota dengan akumulasi XP tertinggi di akhir periode akan diabadikan di <span className="font-semibold text-ink">Hall of Fame</span> kepengurusan.
           </p>
         </div>
@@ -164,13 +164,13 @@ export function PanduanOrganisasiModal({
       icon: <RefreshCcw className="w-4 h-4 text-rose-500" />,
       categoryBadge: "Kritis",
       content: (
-        <div className="space-y-2.5 text-xs text-ink-muted leading-relaxed">
+        <div className="space-y-2.5 text-sm text-ink-secondary leading-relaxed">
           <p className="text-rose-600 dark:text-rose-400 font-medium">
             ⚠️ Aksi ini hanya dijalankan sekali setahun saat estafet kepengurusan baru dilantik.
           </p>
           <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 space-y-2">
             <p className="font-semibold text-ink">Langkah Eksekusi Rollover:</p>
-            <ol className="list-decimal list-inside space-y-1 pl-1 font-mono text-[11px]">
+            <ol className="list-decimal list-inside space-y-1 pl-1 font-mono text-xs">
               <li>Buka <span className="font-bold">Pengaturan &rarr; Manajemen Sistem Operator</span>.</li>
               <li>Klik tombol <span className="font-bold text-rose-500">Ganti Periode Kepengurusan</span>.</li>
               <li>Baca peringatan konsekuensi secara teliti.</li>
@@ -178,7 +178,7 @@ export function PanduanOrganisasiModal({
               <li>Klik eksekusi untuk menjalankan transaksi atomik database.</li>
             </ol>
           </div>
-          <p className="text-[11px]">
+          <p className="text-xs text-ink-muted">
             Sistem secara otomatis akan: Menyimpan snapshot Top 3 Hall of Fame, menutup buku kas lama, membuka periode baru dengan saldo awal meneruskan sisa kas, menaikkan tingkat kelas seluruh anggota aktif (X&rarr;XI, XI&rarr;XII, XII&rarr;Alumni/Demisioner), dan mereset poin XP ke 0.
           </p>
         </div>
@@ -235,13 +235,13 @@ export function PanduanOrganisasiModal({
           </p>
           <div className="p-3 rounded-xl bg-surface-container-low border border-edge/60 space-y-2">
             <p className="font-semibold text-ink">Aset Digital Wajib Serah Terima:</p>
-            <ul className="list-disc list-inside space-y-1 pl-1 font-mono text-[11px]">
+            <ul className="list-disc list-inside space-y-1 pl-1 font-mono text-xs">
               <li><span className="font-bold text-ink">Email Organisasi Utama</span> (Google Workspace / Gmail Resmi)</li>
               <li><span className="font-bold text-ink">GitHub Organization / Repository</span> (Saba ExploIT Source Code)</li>
               <li><span className="font-bold text-ink">Vercel Deployment Dashboard</span> (Hosting & Environment Variables)</li>
               <li><span className="font-bold text-ink">Neon PostgreSQL Database</span> (Primary Production DB)</li>
             </ul>
-            <p className="text-[11px] italic text-amber-600 dark:text-amber-400 font-sans mt-1">
+            <p className="text-xs italic text-amber-600 dark:text-amber-400 font-sans mt-1">
               🔒 Selalu ubah kredensial sandi master dan simpan di password manager organisasi sebelum menyerahkan kepada Ketua / Operator terpilih berikutnya.
             </p>
           </div>
@@ -257,7 +257,7 @@ export function PanduanOrganisasiModal({
           <p>
             Aplikasi Saba ExploIT dikembangkan dengan arsitektur modern Next.js dan dirawat menggunakan bantuan AI Agent (seperti Claude Code).
           </p>
-          <div className="p-3 rounded-xl bg-surface-container-low border border-edge/60 space-y-2 font-mono text-[11px]">
+          <div className="p-3 rounded-xl bg-surface-container-low border border-edge/60 space-y-2 font-mono text-xs">
             <p className="font-semibold text-ink font-sans">Mantra Wajib Maintenance:</p>
             <div className="p-2 rounded bg-card border border-edge text-primary">
               1. npx prisma db push<br />
@@ -267,7 +267,7 @@ export function PanduanOrganisasiModal({
               ❌ DILARANG KERAS menjalankan `npm run build` langsung di server produksi tanpa verifikasi dev build lokal.
             </p>
           </div>
-          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-[11px] space-y-1">
+          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-xs space-y-1">
             <p className="font-semibold text-ink">Slot Kontak Darurat Perintis:</p>
             <p className="text-ink-muted">
               Jika mengalami kendala sistem tingkat lanjut (database crash, token expired, migrasi server), hubungi Tim Developer Alumni / Pembina IT Ekstrakurikuler melalui kanal resmi organisasi.
@@ -298,7 +298,7 @@ export function PanduanOrganisasiModal({
               <h2 className="text-sm sm:text-base font-bold text-ink">
                 Perpustakaan & Panduan Organisasi
               </h2>
-              <p className="text-[11px] text-ink-muted">
+              <p className="text-xs text-ink-muted">
                 Saba ExploIT Knowledge Base & Standard Operating Procedure
               </p>
             </div>
@@ -339,7 +339,7 @@ export function PanduanOrganisasiModal({
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Buku Saku Operator</span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-white/20 text-white uppercase font-mono">
+              <span className="px-2 py-0.5 rounded text-xs font-bold bg-white/20 text-white uppercase font-mono">
                 Operator
               </span>
             </button>
@@ -378,7 +378,7 @@ export function PanduanOrganisasiModal({
                         {item.title}
                       </span>
                       {item.categoryBadge && (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] font-bold font-mono uppercase bg-rose-500/10 border border-rose-500/30 text-rose-500">
+                        <span className="px-2 py-0.5 rounded text-xs font-bold font-mono uppercase bg-rose-500/10 border border-rose-500/30 text-rose-500">
                           {item.categoryBadge}
                         </span>
                       )}
@@ -404,7 +404,7 @@ export function PanduanOrganisasiModal({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-t border-edge bg-surface-container-low/60 shrink-0 text-[11px] text-ink-muted">
+        <div className="flex items-center justify-between px-6 py-3.5 border-t border-edge bg-surface-container-low/60 shrink-0 text-xs text-ink-muted">
           <span>Saba ExploIT Knowledge Base v1.3.0</span>
           <button
             type="button"

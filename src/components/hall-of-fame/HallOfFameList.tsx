@@ -51,8 +51,8 @@ export function HallOfFameList({
         </div>
 
         <div className="pt-2">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
-            <Sparkles className="w-3.5 h-3.5" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
+            <Sparkles className="w-4 h-4" />
             <span>Siap Mengabadikan Generasi 20 &amp; Seterusnya</span>
           </span>
         </div>

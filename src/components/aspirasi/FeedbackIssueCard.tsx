@@ -189,27 +189,27 @@ export function FeedbackIssueCard({
     const cat = category || "Umum";
     if (cat.toLowerCase().includes("bug") || cat.toLowerCase().includes("kendala")) {
       return (
-        <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
+        <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
           🐞 {cat}
         </span>
       );
     }
     if (cat.toLowerCase().includes("fitur") || cat.toLowerCase().includes("usulan")) {
       return (
-        <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-900/60">
+        <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 border border-sky-200 dark:border-sky-900/60">
           💡 {cat}
         </span>
       );
     }
     if (cat.toLowerCase().includes("rahasia") || cat.toLowerCase().includes("privat")) {
       return (
-        <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-900/60">
+        <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-900/60">
           🔒 {cat}
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-surface-container text-ink-secondary border border-edge">
+      <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-surface-container text-ink-secondary border border-edge">
         💬 {cat}
       </span>
     );
@@ -222,7 +222,7 @@ export function FeedbackIssueCard({
         <div className="flex items-center gap-2 flex-wrap">
           {getCategoryBadge(issue.category)}
           {!isPublic && (
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40">
+            <span className="px-2.5 py-0.5 rounded-md text-xs font-extrabold uppercase tracking-wider bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40">
               Saluran Khusus Operator
             </span>
           )}
@@ -281,13 +281,13 @@ export function FeedbackIssueCard({
 
           {/* Select Status */}
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-ink block">
+            <label className="text-xs font-bold text-ink block">
               Status Penanganan Isu
             </label>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as IssueStatus)}
-              className="w-full h-10 px-3 rounded-lg bg-card border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
+              className="w-full h-11 px-3 rounded-lg bg-card border border-edge text-ink text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
             >
               <option value={IssueStatus.PENDING}>⏳ Ditinjau (Pending)</option>
               <option value={IssueStatus.IN_PROGRESS}>
@@ -302,7 +302,7 @@ export function FeedbackIssueCard({
 
           {/* Textarea Operator Notes */}
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-ink block">
+            <label className="text-xs font-bold text-ink block">
               Catatan / Balasan Resmi Operator
             </label>
             <textarea
@@ -310,7 +310,7 @@ export function FeedbackIssueCard({
               value={operatorNotes}
               onChange={(e) => setOperatorNotes(e.target.value)}
               placeholder="Tuliskan catatan perbaikan atau konfirmasi tindakan tim pengembang..."
-              className="w-full p-3 rounded-lg bg-card border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
+              className="w-full p-3 rounded-lg bg-card border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
             />
           </div>
 
@@ -347,15 +347,15 @@ export function FeedbackIssueCard({
       {/* Footer: Pelapor, Tanggal & Tombol Aksi Upvote / Operator */}
       <div className="pt-3 border-t border-edge/60 flex flex-wrap items-center justify-between gap-3">
         {/* Info Pengirim */}
-        <div className="flex items-center gap-2 text-xs text-ink-muted">
-          <User className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-ink-muted">
+          <User className="w-4 h-4" />
           <span>
             {issue.isAnonymous
               ? "Anggota Saba ExploIT (Anonim)"
               : issue.user?.name || "Anggota Organisasi"}
           </span>
           {!issue.isAnonymous && issue.user?.classGrade && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-surface-container font-mono text-ink-secondary">
+            <span className="text-xs px-2 py-0.5 rounded bg-surface-container font-mono text-ink-secondary">
               {formatGrade(issue.user.classGrade)}
             </span>
           )}

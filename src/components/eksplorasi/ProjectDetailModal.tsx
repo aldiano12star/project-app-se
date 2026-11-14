@@ -225,12 +225,12 @@ export function ProjectDetailModal({
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-edge bg-surface-container-low/60">
           <div className="flex items-center gap-2.5 min-w-0 pr-2">
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
             >
-              <CategoryIcon className="h-3 w-3" />
+              <CategoryIcon className="h-3.5 w-3.5" />
               <span>{categoryMeta.label}</span>
             </span>
-            <span className="text-[10px] font-mono text-ink-muted">
+            <span className="text-xs font-mono text-ink-muted">
               {formattedDate}
             </span>
           </div>
@@ -271,11 +271,11 @@ export function ProjectDetailModal({
                     <span className="w-2 h-2 rounded-full bg-rose-500" />
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span className="ml-1.5 text-[9px] font-mono text-ink-muted">
+                    <span className="ml-1.5 text-xs font-mono text-ink-muted">
                       saba-exploit.app/showcase/{project.id.slice(-6)}
                     </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary/20 text-primary border border-primary/30 uppercase font-mono">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-primary/20 text-primary border border-primary/30 uppercase font-mono">
                     Showcase Karya
                   </span>
                 </div>
@@ -289,7 +289,7 @@ export function ProjectDetailModal({
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-[9px] font-mono text-ink-muted border-t border-edge pt-2">
+                <div className="flex items-center justify-between text-xs font-mono text-ink-muted border-t border-edge pt-2">
                   <span>SABA EXPLOIT VERIFIED REPO</span>
                   <span className="text-emerald-500 dark:text-emerald-400 font-bold">AUTONOMOUS PROJECT</span>
                 </div>
@@ -364,11 +364,11 @@ export function ProjectDetailModal({
                     <span className="font-bold text-ink text-xs sm:text-sm truncate">
                       {project.author.name}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary/20 border border-primary/40 text-primary">
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-primary/20 border border-primary/40 text-primary">
                       Ketua Tim / Submitter
                     </span>
                   </div>
-                  <p className="text-[11px] text-ink-muted font-mono">
+                  <p className="text-xs text-ink-muted font-mono">
                     {formatGrade(project.author.classGrade)}
                   </p>
                 </div>
@@ -386,7 +386,7 @@ export function ProjectDetailModal({
                     <Users className="h-3.5 w-3.5 text-purple-500 dark:text-purple-400" />
                     <span>Anggota &amp; Kontributor Tim ({project.contributors?.length})</span>
                   </span>
-                  <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold">
+                  <span className="text-xs font-mono text-purple-600 dark:text-purple-400 font-bold">
                     +50 XP per orang
                   </span>
                 </div>
@@ -397,13 +397,13 @@ export function ProjectDetailModal({
                       key={c.id}
                       className="flex items-center gap-2 p-2 rounded-xl bg-surface border border-edge"
                     >
-                      <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold shrink-0 font-mono overflow-hidden">
+                      <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xs font-bold shrink-0 font-mono overflow-hidden">
                         {c.image ? (
                           <Image
                             src={c.image}
                             alt={c.name}
-                            width={28}
-                            height={28}
+                            width={32}
+                            height={32}
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover rounded-full"
                           />
@@ -412,10 +412,10 @@ export function ProjectDetailModal({
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <span className="text-xs font-semibold text-ink block truncate">
+                        <span className="text-xs sm:text-sm font-semibold text-ink block truncate">
                           {c.name}
                         </span>
-                        <span className="text-[10px] text-ink-muted font-mono">
+                        <span className="text-xs text-ink-muted font-mono">
                           {formatGrade(c.classGrade)}
                         </span>
                       </div>

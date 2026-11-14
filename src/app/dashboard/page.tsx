@@ -387,13 +387,13 @@ export default async function DashboardPage() {
               const gradeLabel = formatGrade(dbUser.classGrade);
               if (!gradeLabel || !gradeLabel.trim()) return null;
               return (
-                <span className="inline-flex items-center rounded-full bg-surface-container px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border hairline-border font-mono">
+                <span className="inline-flex items-center rounded-full bg-surface-container px-2.5 py-0.5 text-xs font-semibold text-ink-secondary border hairline-border font-mono">
                   {gradeLabel}
                 </span>
               );
             })()}
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${roleMeta.style}`}
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${roleMeta.style}`}
             >
               {roleMeta.label}
             </span>
@@ -401,7 +401,7 @@ export default async function DashboardPage() {
               const divMeta = getDivisionBadge(dbUser.mainDivision);
               return (
                 <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${divMeta.style}`}
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${divMeta.style}`}
                 >
                   {divMeta.label}
                 </span>
@@ -414,7 +414,7 @@ export default async function DashboardPage() {
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ink font-display">
               Halo, {dbUser.name.split(" ")[0]} 👋
             </h1>
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed mt-1">
+            <p className="text-sm sm:text-base text-ink-muted leading-relaxed mt-1">
               Pusat kendali aktivitas, presensi rapat, dan kepanitiaan organisasi Saba ExploIT.
             </p>
           </div>
@@ -441,7 +441,7 @@ export default async function DashboardPage() {
               return (
                 <div
                   key={task.id}
-                  className={`p-4 rounded-2xl border text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
+                  className={`p-4 rounded-2xl border text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
                     isOverdue
                       ? "bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-300"
                       : "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200"
@@ -460,7 +460,7 @@ export default async function DashboardPage() {
                           : "⚠️ Jatuh Tempo Besok: "}
                         <span className="font-extrabold">{task.title}</span>
                       </p>
-                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
+                      <p className="text-xs sm:text-sm text-ink-muted truncate mt-0.5">
                         Seksi {task.section.name} • {task.section.event.title}
                       </p>
                     </div>
@@ -468,10 +468,10 @@ export default async function DashboardPage() {
 
                   <Link
                     href={`/acara/${task.section.event.id}`}
-                    className="h-9 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shrink-0 transition-all self-end sm:self-auto cursor-pointer"
+                    className="h-10 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-1.5 shrink-0 transition-all self-end sm:self-auto cursor-pointer"
                   >
                     <span>Buka Tugas</span>
-                    <ChevronRight className="h-3.5 w-3.5" />
+                    <ChevronRight className="h-4 w-4" />
                   </Link>
                 </div>
               );
@@ -493,12 +493,12 @@ export default async function DashboardPage() {
                   <div className="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/25">
                     <Sparkles className="h-4 w-4" />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-ink-muted font-display">
+                  <span className="text-sm font-bold uppercase tracking-wider text-ink-muted font-display">
                     Poin Kontribusi
                   </span>
                 </div>
 
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 font-mono">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 font-mono">
                   <Trophy className="h-3 w-3 text-amber-500" />
                   <span>Peringkat #{myRank}</span>
                 </span>
@@ -511,7 +511,7 @@ export default async function DashboardPage() {
                   </span>
                   <span className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono">XP</span>
                 </div>
-                <p className="text-xs text-ink-muted mt-1">
+                <p className="text-sm text-ink-muted mt-1 leading-relaxed">
                   +{dbUser.monthlyPoints} XP diperoleh pada periode bulan ini
                 </p>
               </div>
@@ -536,17 +536,17 @@ export default async function DashboardPage() {
                   <Activity className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-ink uppercase tracking-wider font-display">
+                  <h2 className="text-base font-bold text-ink uppercase tracking-wider font-display">
                     Keaktifan Global
                   </h2>
-                  <p className="text-xs text-ink-muted mt-0.5">
+                  <p className="text-sm text-ink-muted mt-0.5 leading-relaxed">
                     Rasio kehadiran seluruh anggota aktif pada agenda rapat organisasi
                   </p>
                 </div>
               </div>
 
               <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border shrink-0 ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border shrink-0 ${
                   globalHealth.globalPercentage >= 75
                     ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25"
                     : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25"
@@ -562,16 +562,16 @@ export default async function DashboardPage() {
             </div>
 
             <div className="bg-surface-container-low/70 rounded-xl p-4 border hairline-border space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs sm:text-sm">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-semibold text-ink">Total Kehadiran Kolektif</span>
-                  <span className="text-[11px] text-ink-muted">({globalHealth.totalActual}/{globalHealth.totalExpected} sesi)</span>
+                  <span className="text-xs text-ink-muted font-mono">({globalHealth.totalActual}/{globalHealth.totalExpected} sesi)</span>
                 </div>
                 <div className="flex items-baseline gap-1.5">
                   <span className="font-mono font-bold text-ink text-base sm:text-lg font-mono-num leading-none">
                     {globalHealth.globalPercentage}%
                   </span>
-                  <span className="text-[11px] text-ink-muted font-normal font-body">
+                  <span className="text-xs text-ink-muted font-normal font-body">
                     dari kuota diharapkan
                   </span>
                 </div>
@@ -608,17 +608,17 @@ export default async function DashboardPage() {
                   <CalendarDays className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-xs sm:text-sm font-bold text-ink uppercase tracking-widest font-display">
+                  <h2 className="text-sm sm:text-base font-bold text-ink uppercase tracking-widest font-display">
                     Agenda Acara Terdekat
                   </h2>
-                  <p className="text-xs text-ink-muted mt-0.5">
+                  <p className="text-xs sm:text-sm text-ink-muted mt-0.5">
                     Workspace &amp; kepanitiaan acara organisasi
                   </p>
                 </div>
               </div>
               <Link
                 href="/acara"
-                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1 min-h-11 px-2 active:scale-95 transition-transform"
+                className="text-sm text-primary font-semibold hover:underline flex items-center gap-1 min-h-11 px-2 active:scale-95 transition-transform"
               >
                 <span>Semua Acara</span>
                 <ChevronRight className="h-4 w-4" />
@@ -631,10 +631,10 @@ export default async function DashboardPage() {
                   <Coffee className="h-6 w-6 stroke-[1.8]" />
                 </div>
                 <div className="space-y-1 max-w-xs mx-auto">
-                  <p className="text-sm font-bold text-ink font-display">
+                  <p className="text-base font-bold text-ink font-display">
                     Tidak ada agenda terdekat
                   </p>
-                  <p className="text-xs text-ink-muted leading-relaxed">
+                  <p className="text-sm text-ink-muted leading-relaxed">
                     Semua jadwal rapat &amp; acara saat ini telah selesai. Nikmati proses eksplorasimu!
                   </p>
                 </div>
@@ -651,7 +651,7 @@ export default async function DashboardPage() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                               agenda.isSingleDay
                                 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
                                 : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
@@ -665,24 +665,24 @@ export default async function DashboardPage() {
                             <span>{agenda.categoryLabel}</span>
                           </span>
 
-                          <span className="text-[10px] font-mono text-ink-muted">
+                          <span className="text-xs font-mono text-ink-muted">
                             {agenda.formattedSchedule}
                           </span>
                         </div>
 
-                        <h3 className="text-sm font-bold text-ink line-clamp-2 group-hover:text-primary transition-colors font-display">
+                        <h3 className="text-base font-bold text-ink line-clamp-2 group-hover:text-primary transition-colors font-display">
                           {agenda.title}
                         </h3>
 
                         {agenda.progressText && (
-                          <p className="text-xs text-ink-muted truncate">
+                          <p className="text-xs sm:text-sm text-ink-muted truncate">
                             {agenda.progressText}
                           </p>
                         )}
                       </div>
 
                       {/* Ticket Perforated Edge Indicator (Luma Ticket Aesthetic) */}
-                      <div className="pt-2.5 border-t border-dashed hairline-border flex items-center justify-between text-xs font-semibold text-primary">
+                      <div className="pt-2.5 border-t border-dashed hairline-border flex items-center justify-between text-xs sm:text-sm font-semibold text-primary">
                         <span>Buka Detail Acara</span>
                         <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>

@@ -85,12 +85,12 @@ export function SplashScreen() {
           />
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-semibold tracking-widest text-ink-muted uppercase font-mono">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold tracking-widest text-ink-muted uppercase font-mono">
             SE-Core
           </span>
-          <span className="text-[10px] text-ink-muted/50">•</span>
-          <span className="text-[11px] font-medium tracking-wide text-ink-muted/80">
+          <span className="text-xs text-ink-muted/50">•</span>
+          <span className="text-xs font-medium tracking-wide text-ink-muted/80">
             Saba ExploIT
           </span>
         </div>

@@ -67,45 +67,45 @@ export function WelcomeOnboardingModal({
 
         {/* Hype Typography */}
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 border border-primary/20 text-primary">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold bg-primary/10 border border-primary/20 text-primary">
+            <Sparkles className="w-4 h-4" />
             <span>Halo, {userName.split(" ")[0]}!</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-ink leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink leading-tight font-display">
             Selamat Datang di Ekosistem Digital SE-Core!
           </h2>
 
-          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm mx-auto">
+          <p className="text-sm sm:text-base text-ink-muted leading-relaxed max-w-sm mx-auto">
             Selesaikan tugas, kumpulkan XP, dan jadilah legenda di Lorong Waktu. Mari mulai kolaborasi kita!
           </p>
         </div>
 
         {/* 3 Value Pillars */}
         <div className="grid grid-cols-1 gap-2.5 text-left pt-1">
-          <div className="p-3 rounded-2xl bg-surface-container-low/60 border border-edge flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
-              <Rocket className="h-4 w-4" />
+          <div className="p-3.5 rounded-2xl bg-surface-container-low/60 border border-edge flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 shrink-0">
+              <Rocket className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <span className="text-xs font-bold text-ink block">
+              <span className="text-sm font-bold text-ink block">
                 Eksplorasi &amp; Portofolio
               </span>
-              <span className="text-[11px] text-ink-muted block truncate">
+              <span className="text-xs sm:text-sm text-ink-muted block truncate">
                 Pamerkan ide cemerlang &amp; karya divisimu
               </span>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-surface-container-low/60 border border-edge flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
-              <Trophy className="h-4 w-4" />
+          <div className="p-3.5 rounded-2xl bg-surface-container-low/60 border border-edge flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 shrink-0">
+              <Trophy className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <span className="text-xs font-bold text-ink block">
+              <span className="text-sm font-bold text-ink block">
                 XP &amp; Podium Prestasi
               </span>
-              <span className="text-[11px] text-ink-muted block truncate">
+              <span className="text-xs sm:text-sm text-ink-muted block truncate">
                 Raih posisi puncak di Hall of Fame tahunan
               </span>
             </div>
@@ -118,7 +118,7 @@ export function WelcomeOnboardingModal({
             type="button"
             onClick={handleDismiss}
             disabled={isPending}
-            className="w-full h-12 min-h-12 rounded-2xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/25 transition-all cursor-pointer disabled:opacity-50"
+            className="w-full h-12 min-h-12 rounded-2xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-primary/25 transition-all cursor-pointer disabled:opacity-50"
           >
             {isPending ? (
               <>

@@ -134,7 +134,7 @@ export function NotificationSettingsCard() {
             <span className="text-xs sm:text-sm font-bold text-ink">
               🔔 Notifikasi Web Push (OS Native)
             </span>
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-sm text-ink-muted leading-relaxed">
               Pemberitahuan agenda rapat dan tagihan kas langsung di layar HP/Desktop
             </p>
           </div>
@@ -142,38 +142,38 @@ export function NotificationSettingsCard() {
 
         {/* Status Badge */}
         {permission === "loading" ? (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono">
             ...
           </span>
         ) : permission === "granted" && isSubscribed ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 font-mono shrink-0">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 font-mono shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5" />
             <span>Terkoneksi ✅</span>
           </span>
         ) : permission === "granted" ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/30 font-mono shrink-0">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/30 font-mono shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5" />
             <span>Izin Aktif</span>
           </span>
         ) : permission === "denied" ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 font-mono shrink-0">
-            <XCircle className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 font-mono shrink-0">
+            <XCircle className="w-3.5 h-3.5" />
             <span>Diblokir ⚠️</span>
           </span>
         ) : permission === "unsupported" ? (
-          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono shrink-0">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono shrink-0">
             Tidak Didukung
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 font-mono shrink-0">
-            <AlertTriangle className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 font-mono shrink-0">
+            <AlertTriangle className="w-3.5 h-3.5" />
             <span>Perlu Izin ⚠️</span>
           </span>
         )}
       </div>
 
       {feedback && (
-        <p className="text-[11px] text-ink-secondary bg-surface-container/60 p-2 rounded-lg border border-edge">
+        <p className="text-xs text-ink-secondary bg-surface-container/60 p-2.5 rounded-xl border border-edge">
           {feedback}
         </p>
       )}
@@ -181,23 +181,23 @@ export function NotificationSettingsCard() {
       {/* Description & Action Button */}
       {(!isSubscribed || permission !== "granted") && permission !== "unsupported" && permission !== "denied" && (
         <div className="pt-2 border-t border-edge/60 space-y-2.5">
-          <p className="text-[11px] text-ink-secondary leading-relaxed">
+          <p className="text-sm text-ink-secondary leading-relaxed">
             Hubungkan browser perangkat ini untuk menerima pemberitahuan langsung saat rapat pleno dibuat atau saat ada tagihan kas baru.
           </p>
           <button
             type="button"
             onClick={handleRequestPermission}
             disabled={isRequesting}
-            className="w-full h-10 min-h-10 px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+            className="w-full h-11 min-h-11 px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
             {isRequesting ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Menghubungkan ke Server Push...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4" />
                 <span>Aktifkan Notifikasi di Perangkat Ini</span>
               </>
             )}
@@ -207,16 +207,16 @@ export function NotificationSettingsCard() {
 
       {permission === "granted" && (
         <div className="pt-2 border-t border-edge/60 flex items-center justify-between gap-2">
-          <p className="text-[11px] text-ink-muted">
+          <p className="text-xs text-ink-muted">
             Perangkat siap menerima pemberitahuan otomatis di latar belakang.
           </p>
           <button
             type="button"
             onClick={handleSendTestNotification}
             disabled={testSent}
-            className="h-8 px-3 rounded-lg bg-surface-container hover:bg-surface-container-low text-ink font-semibold text-[11px] flex items-center gap-1.5 border border-edge transition-all cursor-pointer active:scale-95 shrink-0"
+            className="h-9 px-3.5 rounded-lg bg-surface-container hover:bg-surface-container-low text-ink font-semibold text-xs flex items-center gap-1.5 border border-edge transition-all cursor-pointer active:scale-95 shrink-0"
           >
-            <Send className="w-3 h-3 text-primary" />
+            <Send className="w-3.5 h-3.5 text-primary" />
             <span>{testSent ? "Terkirim!" : "Uji Notifikasi"}</span>
           </button>
         </div>
@@ -224,7 +224,7 @@ export function NotificationSettingsCard() {
 
       {permission === "denied" && (
         <div className="pt-2 border-t border-edge/60">
-          <p className="text-[11px] text-rose-500 dark:text-rose-400 leading-relaxed">
+          <p className="text-xs text-rose-500 dark:text-rose-400 leading-relaxed">
             Notifikasi diblokir di pengaturan peramban/sistem. Buka info situs (ikon gembok/pengaturan peramban) dan ubah izin Notifikasi ke <strong>Izinkan (Allow)</strong>.
           </p>
         </div>

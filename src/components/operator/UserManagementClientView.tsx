@@ -438,7 +438,7 @@ export function UserManagementClientView({
         </Link>
 
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono">
+          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono">
             TA {academicYearInfo.label}
           </span>
         </div>
@@ -455,11 +455,11 @@ export function UserManagementClientView({
               <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight font-display">
                 Manajemen Akun &amp; Role
               </h1>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25 uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25 uppercase tracking-wider">
                 Operator Control
               </span>
             </div>
-            <p className="text-xs text-ink-muted mt-0.5">
+            <p className="text-sm text-ink-muted mt-0.5 leading-relaxed">
               Pusat aktivasi pengguna, filter angkatan dinamis, &amp; otorisasi sistem
             </p>
           </div>
@@ -499,7 +499,7 @@ export function UserManagementClientView({
           >
             <Users className="w-4 h-4 text-sky-500 shrink-0" />
             <span>Semua</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary hairline-border font-mono-num">
+            <span className="px-2 py-0.5 rounded-full bg-surface-container text-xs text-ink-secondary hairline-border font-mono-num font-semibold">
               {counts.totalCount}
             </span>
           </button>
@@ -517,11 +517,11 @@ export function UserManagementClientView({
             <Clock className="w-4 h-4 text-amber-500 shrink-0" />
             <span>Menunggu</span>
             {counts.guestCount > 0 ? (
-              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/40 font-mono-num animate-pulse">
+              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold border border-amber-500/40 font-mono-num animate-pulse">
                 {counts.guestCount}
               </span>
             ) : (
-              <span className="text-[10px] text-ink-muted font-mono-num">(0)</span>
+              <span className="text-xs text-ink-muted font-mono-num">(0)</span>
             )}
           </button>
 
@@ -539,7 +539,7 @@ export function UserManagementClientView({
             <Sparkles className={`w-3.5 h-3.5 shrink-0 ${isSecondaryActive ? "text-purple-600 dark:text-purple-400" : "text-primary"}`} />
             <span className="truncate max-w-[80px] sm:max-w-none">{isSecondaryActive ? activeSecondaryInfo?.label : "Lainnya"}</span>
             {isSecondaryActive && activeSecondaryInfo && (
-              <span className="px-1.5 py-0.2 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-[10px] font-bold font-mono-num">
+              <span className="px-2 py-0.5 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-xs font-bold font-mono-num">
                 {activeSecondaryInfo.count}
               </span>
             )}
@@ -625,7 +625,7 @@ export function UserManagementClientView({
                       </span>
                       {u.mainDivision && (
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                             getDivisionMeta(u.mainDivision).style
                           }`}
                         >
@@ -633,7 +633,7 @@ export function UserManagementClientView({
                         </span>
                       )}
                       {gradeLabel && (
-                        <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container text-ink-muted border border-edge font-mono">
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container text-ink-muted border border-edge font-mono">
                           {gradeLabel}
                         </span>
                       )}
@@ -871,7 +871,7 @@ export function UserManagementClientView({
               </div>
               <div>
                 <h4 className="text-sm font-bold text-ink">Reset Kata Sandi Akun</h4>
-                <p className="text-[11px] text-ink-muted truncate max-w-48">
+                <p className="text-xs text-ink-muted truncate max-w-48">
                   {resettingUser?.name}
                 </p>
               </div>
@@ -893,14 +893,14 @@ export function UserManagementClientView({
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>Kata Sandi Berhasil Di-reset!</span>
                 </div>
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-xs text-ink-muted leading-relaxed">
                   Kata sandi sementara akun telah aktif. Pengguna akan diwajibkan menggantinya saat login berikutnya.
                 </p>
               </div>
 
               {/* Box Sandi Sementara + Tombol Copy */}
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-ink-muted block">
+                <label className="text-xs font-semibold text-ink-muted block">
                   Kata Sandi Sementara:
                 </label>
                 <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-edge font-mono text-sm font-bold text-ink">
@@ -962,7 +962,7 @@ export function UserManagementClientView({
                   onChange={(e) => setCustomPasswordInput(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-xs text-ink-muted leading-relaxed">
                   Bila dikosongkan, sistem akan membuat kata sandi acak aman (contoh: Saba-XXXX!).
                 </p>
               </div>
@@ -1010,7 +1010,7 @@ export function UserManagementClientView({
                 <h4 className="text-sm font-bold text-ink">
                   Filter Angkatan &amp; Kategori
                 </h4>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-ink-muted">
                   Pilih angkatan aktif atau kategori khusus pengguna
                 </p>
               </div>
@@ -1060,7 +1060,7 @@ export function UserManagementClientView({
                       </span>
                     </div>
                     <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-mono-num ${
                         isSelected
                           ? "bg-primary text-white font-bold"
                           : "bg-surface-container text-ink-muted hairline-border"
@@ -1102,7 +1102,7 @@ export function UserManagementClientView({
                   <span className="text-xs font-semibold">Alumni</span>
                 </div>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
+                  className={`text-xs px-2.5 py-0.5 rounded-full font-mono-num ${
                     activeTab === "ALUMNI"
                       ? "bg-primary text-white font-bold"
                       : "bg-surface-container text-ink-muted hairline-border"
@@ -1136,7 +1136,7 @@ export function UserManagementClientView({
                   <span className="text-xs font-semibold">Kolaborator</span>
                 </div>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
+                  className={`text-xs px-2.5 py-0.5 rounded-full font-mono-num ${
                     activeTab === "KOLABORATOR"
                       ? "bg-primary text-white font-bold"
                       : "bg-surface-container text-ink-muted hairline-border"

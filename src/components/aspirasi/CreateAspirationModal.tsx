@@ -99,8 +99,8 @@ export function CreateAspirationModal({
               <MessageSquarePlus className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Tulis Suara &amp; Aspirasi</h2>
-              <p className="text-[11px] text-ink-muted">Dapatkan +10 XP atas usulanmu</p>
+              <h2 className="text-base font-bold text-ink">Tulis Suara &amp; Aspirasi</h2>
+              <p className="text-xs sm:text-sm text-ink-muted">Dapatkan +10 XP atas usulanmu</p>
             </div>
           </div>
           <button
@@ -153,7 +153,7 @@ export function CreateAspirationModal({
                 <span>Privat ke Admin/Dev</span>
               </button>
             </div>
-            <p className="text-[10px] text-ink-muted leading-relaxed pl-0.5">
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed pl-0.5">
               {targetScope === "PUBLIC"
                 ? "Dapat dibaca dan didiskusikan oleh seluruh anggota organisasi."
                 : "Hanya dapat dibaca oleh kamu dan Pengurus/Pengembang (untuk bug & kendala teknis)."}
@@ -170,7 +170,7 @@ export function CreateAspirationModal({
                 <span className="text-xs font-bold text-rose-700 dark:text-rose-300 block">
                   Kategori: Bug &amp; Kendala Sistem (Dev)
                 </span>
-                <span className="text-[10px] text-ink-muted block">
+                <span className="text-xs text-ink-muted block">
                   Laporan akan langsung diteruskan ke Pengembang Aplikasi.
                 </span>
               </div>

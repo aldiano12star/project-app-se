@@ -63,7 +63,7 @@ export function AddSectionModal({
             </div>
             <div>
               <h2 className="text-sm font-bold text-ink">Tambah Seksi Panitia</h2>
-              <p className="text-[11px] text-ink-muted">Divisi kerja kepanitiaan</p>
+              <p className="text-xs sm:text-sm text-ink-muted">Divisi kerja kepanitiaan</p>
             </div>
           </div>
           <button

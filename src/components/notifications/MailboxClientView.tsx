@@ -138,13 +138,13 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
               Kotak Masuk
             </h1>
             {unreadCount > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/25 text-[11px] font-bold font-mono">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/25 text-xs font-bold font-mono">
                 <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
                 {unreadCount} Baru
               </span>
             )}
           </div>
-          <p className="text-xs text-ink-muted">
+          <p className="text-sm text-ink-muted leading-relaxed">
             Pusat instruksi resmi, siaran jarkom, dan status tagihan kas.
           </p>
         </div>
@@ -165,7 +165,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
               )}
               <span className="hidden sm:inline">Hapus yang Dibaca</span>
               <span className="sm:hidden">Hapus Dibaca</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-rose-500/15 text-[10px] font-mono font-bold">
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-500/15 text-xs font-mono font-bold">
                 {readCount}
               </span>
             </button>
@@ -257,7 +257,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
           </div>
           <div className="space-y-1">
             <h3 className="text-sm font-bold text-ink font-display">Semua Pesan Selesai</h3>
-            <p className="text-xs text-ink-muted max-w-xs">
+            <p className="text-sm text-ink-muted max-w-sm leading-relaxed">
               Kotak masukmu bersih dan teratur. Setiap notifikasi penting akan langsung tampil di sini.
             </p>
           </div>
@@ -267,7 +267,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
           {grouped.map((group) => (
             <div key={group.title} className="space-y-2.5">
               <div className="flex items-center gap-2 px-1">
-                <span className="text-[11px] font-mono font-bold tracking-wider text-ink-muted uppercase">
+                <span className="text-xs font-mono font-bold tracking-wider text-ink-muted uppercase">
                   {group.title}
                 </span>
                 <span className="h-px flex-1 bg-edge/40" />
@@ -302,7 +302,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
                           <div className="space-y-1 min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span
-                                className={`text-xs leading-snug ${
+                                className={`text-sm leading-snug ${
                                   !notif.isRead
                                     ? "font-extrabold text-ink"
                                     : "font-semibold text-ink-secondary"
@@ -310,17 +310,17 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
                               >
                                 {notif.title}
                               </span>
-                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface-container border hairline-border text-ink-muted font-medium">
+                              <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-container border hairline-border text-ink-muted font-medium">
                                 {getBadgeLabel(notif.type)}
                               </span>
                             </div>
-                            <p className="text-xs text-ink-muted leading-relaxed font-body">
+                            <p className="text-sm text-ink-secondary leading-relaxed font-body">
                               {notif.message}
                             </p>
                           </div>
                         </div>
 
-                        <span className="text-[10px] font-mono text-ink-muted shrink-0 tabular-nums">
+                        <span className="text-xs font-mono text-ink-muted shrink-0 tabular-nums">
                           {formattedTime}
                         </span>
                       </div>
@@ -331,10 +331,10 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
                           <Link
                             href={notif.actionUrl}
                             onClick={() => !notif.isRead && handleMarkAsRead(notif.id)}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline min-h-[36px] py-1.5 px-1 cursor-pointer"
+                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline min-h-[36px] py-1.5 px-1 cursor-pointer"
                           >
                             <span>Buka Tindakan</span>
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="h-3.5 w-3.5" />
                           </Link>
                         ) : (
                           <span />
@@ -344,14 +344,14 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
                           <button
                             type="button"
                             onClick={() => handleMarkAsRead(notif.id)}
-                            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-ink-muted hover:text-emerald-500 transition-colors min-h-[36px] py-1.5 px-2.5 rounded-lg hover:bg-surface-container active:scale-95 cursor-pointer"
+                            className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-muted hover:text-emerald-500 transition-colors min-h-[36px] py-1.5 px-2.5 rounded-lg hover:bg-surface-container active:scale-95 cursor-pointer"
                           >
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                             <span>Tandai sudah dibaca</span>
                           </button>
                         ) : (
-                          <span className="text-[11px] text-ink-muted/60 flex items-center gap-1 py-1.5 font-mono">
-                            <CheckCheck className="h-3 w-3 text-slate-400" />
+                          <span className="text-xs text-ink-muted/60 flex items-center gap-1 py-1.5 font-mono">
+                            <CheckCheck className="h-3.5 w-3.5 text-slate-400" />
                             <span>Telah dibaca</span>
                           </span>
                         )}

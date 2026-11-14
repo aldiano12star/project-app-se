@@ -215,7 +215,7 @@ export function SettingsSection({
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     Kontak &amp; Portofolio
                   </span>
-                  <p className="text-[10px] text-ink-muted truncate max-w-[200px] sm:max-w-xs">
+                  <p className="text-xs text-ink-muted truncate max-w-[200px] sm:max-w-xs">
                     {user.noWhatsapp || "WhatsApp belum diatur"} • {user.portfolioUrl || "Portofolio"}
                   </p>
                 </div>
@@ -251,12 +251,12 @@ export function SettingsSection({
 
                 {/* Input Nama Lengkap Resmi (Dapat diedit) */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center justify-between">
+                  <label className="text-xs font-semibold text-ink flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-primary" />
                       <span>Nama Lengkap Asli</span>
                     </span>
-                    <span className="text-[10px] text-ink-muted">Sesuai KTP / Rapor</span>
+                    <span className="text-xs text-ink-muted">Sesuai KTP / Rapor</span>
                   </label>
                   <input
                     type="text"
@@ -271,7 +271,7 @@ export function SettingsSection({
 
                 {/* Input WhatsApp (Dapat diedit) */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-emerald-500" />
                     <span>Nomor WhatsApp Aktif</span>
                   </label>
@@ -286,7 +286,7 @@ export function SettingsSection({
 
                 {/* Input Tautan Portofolio */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-blue-500" />
                     <span>Tautan Portofolio / Website</span>
                   </label>
@@ -301,7 +301,7 @@ export function SettingsSection({
 
                 {/* Input Tautan GitHub */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <GithubIcon className="w-3.5 h-3.5 text-ink" />
                     <span>Profil GitHub</span>
                   </label>
@@ -316,7 +316,7 @@ export function SettingsSection({
 
                 {/* Input Tautan Instagram */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <InstagramIcon className="w-3.5 h-3.5 text-pink-500" />
                     <span>Profil Instagram</span>
                   </label>
@@ -331,7 +331,7 @@ export function SettingsSection({
 
                 {/* Input Tautan LinkedIn */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <LinkedinIcon className="w-3.5 h-3.5 text-sky-500" />
                     <span>Profil LinkedIn</span>
                   </label>
@@ -379,7 +379,7 @@ export function SettingsSection({
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     Keamanan &amp; Sandi
                   </span>
-                  <p className="text-[10px] text-ink-muted">
+                  <p className="text-xs text-ink-muted">
                     Atur atau ubah kata sandi autentikasi mandiri
                   </p>
                 </div>
@@ -416,7 +416,7 @@ export function SettingsSection({
                 )}
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-slate-400" />
                     <span>Kata Sandi Lama (Kosongkan jika pertama kali)</span>
                   </label>
@@ -430,7 +430,7 @@ export function SettingsSection({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-amber-500" />
                     <span>Kata Sandi Baru (Minimal 6 Karakter)</span>
                   </label>
@@ -446,7 +446,7 @@ export function SettingsSection({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-ink flex items-center gap-1.5">
+                  <label className="text-xs font-semibold text-ink flex items-center gap-1.5">
                     <Lock className="w-3.5 h-3.5 text-amber-500" />
                     <span>Konfirmasi Kata Sandi Baru</span>
                   </label>
@@ -495,7 +495,7 @@ export function SettingsSection({
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     KTA Digital
                   </span>
-                  <span className="px-1.5 py-0.2 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded">
+                  <span className="px-2 py-0.5 text-xs font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded">
                     Aktif
                   </span>
                 </div>
@@ -526,7 +526,7 @@ export function SettingsSection({
                 <span className="text-xs sm:text-sm font-semibold text-ink block leading-snug">
                   Notifikasi Agenda
                 </span>
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-sm text-ink-muted leading-relaxed">
                   Pemberitahuan agenda rapat dan pengingat jadwal kegiatan organisasi
                 </p>
               </div>
@@ -556,7 +556,7 @@ export function SettingsSection({
                 <span className="text-xs sm:text-sm font-semibold text-ink">
                   Tema Tampilan
                 </span>
-                <p className="text-[10px] text-ink-muted">
+                <p className="text-xs text-ink-muted">
                   {resolvedTheme === "dark"
                     ? "Mode Gelap (Eye-Friendly Charcoal)"
                     : "Mode Terang (Soft Slate White)"}
@@ -577,7 +577,7 @@ export function SettingsSection({
                 title="Aktifkan Mode Terang"
               >
                 <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span className="text-[11px]">Terang</span>
+                <span className="text-xs">Terang</span>
               </button>
               <button
                 type="button"
@@ -590,7 +590,7 @@ export function SettingsSection({
                 title="Aktifkan Mode Gelap"
               >
                 <Moon className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                <span className="text-[11px]">Gelap</span>
+                <span className="text-xs">Gelap</span>
               </button>
             </div>
           </div>
@@ -606,7 +606,7 @@ export function SettingsSection({
                 <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                   Hall of Fame
                 </span>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-ink-muted">
                   Galeri sejarah abadi: arsip juara, acara, &amp; karya lintas generasi
                 </p>
               </div>
@@ -636,13 +636,13 @@ export function SettingsSection({
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
                     Manajemen Akun &amp; Role
                   </span>
-                  <p className="text-[10px] text-ink-muted leading-relaxed">
+                  <p className="text-xs text-ink-muted leading-relaxed">
                     Aktivasi akun tamu, filter angkatan dinamis, &amp; kelola role divisi
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono uppercase">
+                <span className="text-xs font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono uppercase">
                   Kelola
                 </span>
                 <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
@@ -662,13 +662,13 @@ export function SettingsSection({
                     <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-danger transition-colors">
                       Rollover Kepengurusan
                     </span>
-                    <p className="text-[10px] text-ink-muted leading-relaxed">
+                    <p className="text-xs text-ink-muted leading-relaxed">
                       End-of-Year Wizard: abadikan juara, acara, &amp; karya ke lorong waktu
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
                     Operator
                   </span>
                   <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
@@ -729,7 +729,7 @@ export function SettingsSection({
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-surface-container text-ink-secondary border border-edge font-mono">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded bg-surface-container text-ink-secondary border border-edge font-mono">
               STABLE
             </span>
           </div>

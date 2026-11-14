@@ -93,12 +93,12 @@ export function MeetingQrModal({
 
         {/* ── TOP TICKET STUB: Header & Detail Acara ── */}
         <div className="relative p-6 pb-5 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-primary/10 text-primary hairline-border mb-3">
-            <Sparkles className="h-3 w-3" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/10 text-primary hairline-border mb-3">
+            <Sparkles className="h-3.5 w-3.5" />
             <span>Tiket Presensi Acara</span>
           </div>
 
-          <h3 className="font-display text-lg font-bold text-ink leading-snug line-clamp-2 px-4">
+          <h3 className="font-display text-xl font-bold text-ink leading-snug line-clamp-2 px-4">
             {sessionData?.title || "Presensi Rapat Organisasi"}
           </h3>
 
@@ -106,18 +106,18 @@ export function MeetingQrModal({
           <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
             {audienceBadge && sessionData?.targetAudience !== TargetAudience.ALL && (
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${audienceBadge.badgeClass}`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${audienceBadge.badgeClass}`}
               >
                 {audienceBadge.label}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono-num">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono-num">
               +10 XP Kehadiran
             </span>
           </div>
 
           {dateFormatted && (
-            <div className="inline-flex items-center gap-1 text-[11px] text-ink-muted mt-2 font-mono-num">
+            <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-ink-muted mt-2 font-mono-num">
               <Calendar className="h-3.5 w-3.5" />
               <span>{dateFormatted}</span>
             </div>
@@ -168,7 +168,7 @@ export function MeetingQrModal({
                   className="h-auto w-full max-w-[180px]"
                 />
               </div>
-              <p className="text-[11px] font-medium text-ink-muted mt-3">
+              <p className="text-xs sm:text-sm font-medium text-ink-muted mt-3">
                 Arahkan pemindai aplikasi Saba ke QR ini
               </p>
             </div>
@@ -178,7 +178,7 @@ export function MeetingQrModal({
               <button
                 type="button"
                 onClick={fetchSession}
-                className="tactile-btn mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-primary-hover transition-colors cursor-pointer min-h-[40px]"
+                className="tactile-btn mt-3 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover transition-colors cursor-pointer min-h-[40px]"
               >
                 Muat Sesi QR
               </button>
@@ -189,7 +189,7 @@ export function MeetingQrModal({
           <button
             type="button"
             onClick={onClose}
-            className="tactile-btn mt-5 flex h-11 min-h-[44px] w-full items-center justify-center rounded-xl bg-surface hairline-border text-xs font-semibold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
+            className="tactile-btn mt-5 flex h-11 min-h-[44px] w-full items-center justify-center rounded-xl bg-surface hairline-border text-sm font-bold text-ink hover:bg-surface-container-low transition-colors cursor-pointer"
           >
             Selesai
           </button>

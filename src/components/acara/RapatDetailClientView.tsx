@@ -252,7 +252,7 @@ export function RapatDetailClientView({
       <div className="flex items-center justify-between">
         <Link
           href="/acara"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-secondary hover:text-ink transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali</span>
@@ -261,9 +261,9 @@ export function RapatDetailClientView({
         {meeting.event && (
           <Link
             href={`/acara/${meeting.event.id}`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
           >
-            <Layers className="w-3.5 h-3.5" />
+            <Layers className="w-4 h-4" />
             <span>Bagian dari: {meeting.event.title}</span>
           </Link>
         )}
@@ -280,23 +280,23 @@ export function RapatDetailClientView({
 
             {audienceBadge && (
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${audienceBadge.badgeClass}`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${audienceBadge.badgeClass}`}
               >
                 {audienceBadge.label}
               </span>
             )}
           </div>
 
-          <span className="text-xs font-mono text-ink-muted">
+          <span className="text-sm font-mono text-ink-muted">
             ID: MEET-{meeting.id.slice(-6).toUpperCase()}
           </span>
         </div>
 
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-ink leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink leading-tight font-display tracking-tight">
             {meeting.title}
           </h1>
-          <p className="text-xs sm:text-sm text-ink-muted flex items-center gap-2 mt-1.5">
+          <p className="text-sm sm:text-base text-ink-muted flex items-center gap-2 mt-1.5">
             <Clock className="w-4 h-4 text-primary shrink-0" />
             <span className="font-semibold text-ink">{dateFormatted}</span>
           </p>
@@ -309,7 +309,7 @@ export function RapatDetailClientView({
               <button
                 type="button"
                 onClick={handleShareWA}
-                className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                className="h-11 min-h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-sm font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                 title="Kirim Pesan Siaran Rapat Resmi ke WhatsApp"
               >
                 <Share2 className="w-4 h-4 shrink-0" />
@@ -319,7 +319,7 @@ export function RapatDetailClientView({
               <button
                 type="button"
                 onClick={() => setIsQrModalOpen(true)}
-                className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                className="h-11 min-h-11 px-4 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
                 title="Buka QR Presensi Sesi Rapat Ini"
               >
                 <QrCode className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
@@ -330,7 +330,7 @@ export function RapatDetailClientView({
             <div className="flex justify-center">
               <a
                 href="#notulensi-section"
-                className="h-11 min-h-11 px-6 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                className="h-11 min-h-11 px-6 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
               >
                 <FileText className="w-4 h-4 text-primary shrink-0" />
                 <span>Lihat Notulensi Rapat</span>
@@ -360,11 +360,11 @@ export function RapatDetailClientView({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-              <h3 className="text-sm font-bold text-ink">
+              <h3 className="text-base font-bold text-ink">
                 Rekapitulasi Kehadiran Presensi
               </h3>
             </div>
-            <div className="flex flex-wrap items-center gap-2 text-[11px] text-ink-muted">
+            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-ink-muted">
               <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                 {hadirCount} Hadir
               </span>
@@ -412,8 +412,8 @@ export function RapatDetailClientView({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-edge/70">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-bold text-[11px] uppercase tracking-wider">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-bold text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Nama Anggota</th>
                   <th className="px-4 py-3">Kelas / Gen</th>
@@ -456,12 +456,12 @@ export function RapatDetailClientView({
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span>{item.user.name}</span>
                           {item.user.role === Role.KOLABORATOR && (
-                            <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                            <span className="text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
                               Kolaborator
                             </span>
                           )}
                           {item.isManual && (
-                            <span className="text-[9px] px-1.5 py-0.2 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
+                            <span className="text-xs px-2 py-0.5 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
                               Manual
                             </span>
                           )}
@@ -473,7 +473,7 @@ export function RapatDetailClientView({
                       <td className="px-4 py-3 text-ink-secondary">
                         {item.user.mainDivision || "-"}
                       </td>
-                      <td className="px-4 py-3 text-center font-mono text-[11px] text-ink-muted">
+                      <td className="px-4 py-3 text-center font-mono text-xs text-ink-muted">
                         {checkTime}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -488,7 +488,7 @@ export function RapatDetailClientView({
                               onChange={(e) =>
                                 handleStatusChange(item.userId, e.target.value)
                               }
-                              className={`h-9 px-2.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-primary ${
+                              className={`h-9 px-2.5 rounded-lg text-sm font-bold border transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-primary ${
                                 currentStatus === AttendanceStatus.HADIR
                                   ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
                                   : currentStatus === AttendanceStatus.SAKIT
@@ -509,7 +509,7 @@ export function RapatDetailClientView({
                           </div>
                         ) : (
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
                               currentStatus === AttendanceStatus.HADIR
                                 ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
                                 : currentStatus === AttendanceStatus.SAKIT
@@ -547,11 +547,11 @@ export function RapatDetailClientView({
         <section className="pt-2 border-t border-edge">
           <div className="card-solid bg-card p-5 rounded-2xl border border-edge flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-ink flex items-center gap-1.5">
+              <h4 className="text-sm font-bold text-ink flex items-center gap-1.5">
                 <Trash2 className="w-4 h-4 text-red-500" />
                 <span>Pengaturan Sesi Rapat &amp; Zona Bahaya</span>
               </h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed">
+              <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
                 Hapus sesi rapat ini beserta notulensi dan riwayat presensi kehadirannya secara permanen.
               </p>
             </div>
@@ -559,7 +559,7 @@ export function RapatDetailClientView({
             <button
               type="button"
               onClick={() => setIsDeleteModalOpen(true)}
-              className="h-11 min-h-11 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+              className="h-11 min-h-11 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white text-sm font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
             >
               <Trash2 className="h-4 w-4" />
               <span>Hapus Sesi Rapat Ini</span>

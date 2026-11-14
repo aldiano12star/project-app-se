@@ -19,14 +19,16 @@
   - `npm run build`: **LULUS 100% (0 error)**, seluruh 23 rute terkompilasi bersih dengan Turbopack.
   - `npx tsc --noEmit`: **LULUS 100% (0 error)**, validasi tipe TypeScript bersih sempurna (0 error).
   - Unit Tests: `academic-year.test.ts`, `drive-parser.test.ts`, dan `rollover-query.test.ts` seluruhnya **PASS 100%**.
-- **Status Eksekusi Fase Desain**:
+  - Teks Mikro (`text-[8px]..[11px]`): **0 record di seluruh codebase `src/` (100% bersih)**.
+- **Status Eksekusi Fase Desain & Maintenance**:
   - ✅ **FASE 1 SELESAI**: Global CSS Tokens, Typography, Splash Screen, & Auth Gateway.
   - ✅ **FASE 2 SELESAI**: AppShell, Ergonomic BottomNav (dengan safe clearance, no MutationObserver hack), Desktop Sidebar, & Unified BottomSheet / Modal Engine.
   - ✅ **FASE 3 SELESAI**: Overhaul Modul Dashboard & Kas (Apple Wallet Aesthetics, fix Keaktifan Global flex collision, fix PodiumTop3 asymmetry & mobile Hall of Fame link, responsive card stack for targeted members table, tone mentor).
   - ✅ **FASE 4 SELESAI**: Overhaul Modul Acara & Eksplorasi (Luma Connected Timeline Circuit, Date Chips, eliminasi double icon `+ + Seksi Baru`, un-truncate nama seksi, Luma Ticket Pass QR dialog, humanisasi raw enum `PANDUAN_TEKNIS`, edge-to-edge horizontal chip scroll, dan modern tech mockup thumbnail fallback).
   - ✅ **FASE 5 SELESAI**: Overhaul Hall of Fame (avatar 2 huruf, perbaikan proporsi filmstrip mobile & pemotongan judul), Aspirasi & Polling (edge-to-edge status chips, apple-card polls), Pengaturan & Operator Control Center (kartu aksi unduh CSV multi-baris tanpa terpotong, progressive disclosure modal kaca, elevasi visual area Operator), serta Eliminasi Dead Code (`AdminUserManagementSection.tsx`).
   - ✅ **FASE 6 SELESAI**: Comprehensive UX Bug Fixes, Apple Liquid Glass BottomNav Viewport Locking, React `createPortal` Modal Engine, Hapus Notifikasi Terbaca, Penyelarasan TA 2025/2026 & Mobile 390px Overflow Elimination.
-  - 🏆 **STATUS PROYEK**: **SELURUH 6 FASE OVERHAUL UI/UX TUNTAS 100% (PRODUCTION READY)**.
+  - ✅ **FASE 7 SELESAI**: Database Reset (Hapus Semua Acara/Rapat/Presensi/Notulensi/RAB/Tugas, Reset XP Semua Anggota = 0), Acara Single Timeline View (Hapus Tab Kiri Daftar Tiket), Bottom Nav Spacer `h-32` Terisolasi di AppShell, dan Global Readability Boost (Eliminasi Total Font Mikro 8-11px, Standardisasi Teks Skala Nyaman 14-16px, Line Height Relaxed).
+  - 🏆 **STATUS PROYEK**: **SELURUH 7 FASE OVERHAUL & OPTIMASI SISTEM TUNTAS 100% (PRODUCTION READY)**.
 
 ---
 
@@ -294,6 +296,23 @@ Seluruh target perombakan antarmuka (Fase 1 sampai Fase 5) dari dokumen inisiasi
 
 ### 📝 Log Perubahan Fase 1 (Selesai):
 - **[src/app/globals.css](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/globals.css)**, **[src/app/layout.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/layout.tsx)**, **[src/components/layout/SplashScreen.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/SplashScreen.tsx)**, **[src/app/login/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/login/page.tsx)**.
+
+### 📝 Log Perubahan Fase 7: Database Reset (Events & XP = 0), Acara Single View, Bottom Spacer & Global Readability Boost (Selesai):
+- **1. Backup & Reset Database (Acara, Rapat & XP = 0)**:
+  - Backup pra-reset berhasil dieksekusi dan disimpan di [backups/pre-reset-events-xp.json](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/backups/pre-reset-events-xp.json) (terdaftar aman di `.gitignore`).
+  - Menghapus bersih relasi cascading: 6 data presensi (`Attendance`), 2 log baca notulensi (`NotulensiReadLog`), 0 tugas (`EventTask`), 3 seksi kepanitiaan (`EventSection`), 1 item anggaran RAB (`EventBudgetItem`), 3 rapat (`Meeting`), dan 5 acara (`Event`).
+  - Menghapus riwayat transaksi/log XP jika ada, serta mereset poin seluruh 8 akun `User` menjadi `monthlyPoints: 0` dan `totalPoints: 0`. Seluruh relasi kas/keuangan (`CashTransaction`, `MonthlyInvoice`) tetap aman 100%. Verifikasi final database: `Event = 0`, `Meeting = 0`, `Attendance = 0`, `Non-zero XP Users = 0`.
+- **2. Tab Acara Tunggal (`/acara`)**:
+  - Pada [src/components/acara/AcaraClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/AcaraClientView.tsx), menghapus tab kiri "Daftar Acara & Tiket Pass" serta bar pemilih 2 tab (*dual-mode switcher*).
+  - Menjadikan tampilan "Timeline Sirkuit Kalender" (`SnakingPathCalendar`) sebagai tampilan tunggal utama langsung di `/acara`.
+- **3. Bottom Clearance & Physical Spacer**:
+  - Pada [src/components/layout/AppShell.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/AppShell.tsx), memisahkan `py-6` menjadi `pt-6` agar tidak menimpa `pb-36 pb-safe md:pb-16`.
+  - Menambahkan physical spacer `<div className="h-32 w-full shrink-0 pointer-events-none md:hidden" aria-hidden="true" />` di dasar kontainer `<main>` sehingga saat pengguna menggulir halaman mana pun sampai mentok ke bawah di layar seluler, selalu tersedia ruang kosong yang lapang di atas `BottomNav` tanpa ada teks atau tombol terbawah yang terpotong.
+- **4. Global Readability Boost & Eliminasi 100% Font Mikro**:
+  - **Global Base**: Menaikkan basis `body` di [src/app/globals.css](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/globals.css) dari `14px` menjadi `15px` (`0.9375rem`) dengan line-height `1.5` (`leading-normal`), serta menaikkan proporsi judul dan kartu.
+  - **Eliminasi Total Font Mikro**: Mengeliminasi 100% penggunaan font mikro (`text-[8px]`, `text-[9px]`, `text-[10px]`, `text-[11px]`) di seluruh folder `src/` (termasuk modul Acara, Kas, Eksplorasi, Aspirasi, Hall of Fame, Pengaturan, Operator, Onboarding, Auth, Layout, PWA, dan UI Components) dan menaikkannya ke `text-xs font-semibold` (12px) atau `text-sm font-medium` (14px).
+  - **Keterbacaan Kalimat & Paragraf**: Menaikkan teks deskripsi, catatan kaki, subjudul, dan teks bantuan yang sebelumnya memakai `text-xs` (12px) menjadi `text-sm` (14px) / `text-base` (16px) dengan `leading-relaxed` agar sangat nyaman dan ramah di mata saat dibaca di layar smartphone.
+  - **Keamanan Responsif**: Seluruh teks dan kontainer flex/grid dipastikan aman dari *text truncation* canggung maupun *horizontal overflow* pada layar sempit 390px.
 
 ### 🚦 Instruksi Pasca-Overhaul (Pemeliharaan & Rilis):
 1. **Status Reset Database (Kepengurusan 2025/2026)**:

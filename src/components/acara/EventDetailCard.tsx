@@ -211,7 +211,7 @@ export function EventDetailCard({
           <button
             type="button"
             onClick={handleShareWA}
-            className="w-full sm:flex-1 h-11 min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all duration-150 ease-out shadow-sm cursor-pointer"
+            className="w-full sm:flex-1 h-11 min-h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all duration-150 ease-out shadow-sm cursor-pointer"
           >
             <Share2 className="h-4 w-4" />
             <span>📱 Bagikan ke Grup WA</span>
@@ -223,7 +223,7 @@ export function EventDetailCard({
               href={event.driveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-all duration-150 ease-out active:scale-95 border border-emerald-500/20 shadow-sm"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all duration-150 ease-out active:scale-95 border border-emerald-500/20 shadow-sm"
             >
               <Folder className="h-4 w-4 text-amber-400 fill-amber-400" />
               <span>Drive Acara</span>
@@ -233,7 +233,7 @@ export function EventDetailCard({
             <button
               type="button"
               onClick={onOpenDriveModal}
-              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low/60 dark:bg-white/5 hover:bg-surface-container text-ink-muted rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-all duration-150 ease-out active:scale-95 border border-edge/80 dark:border-white/10 shadow-sm cursor-pointer"
+              className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low/60 dark:bg-white/5 hover:bg-surface-container text-ink-muted rounded-xl flex items-center justify-center gap-2 text-sm font-medium transition-all duration-150 ease-out active:scale-95 border border-edge/80 dark:border-white/10 shadow-sm cursor-pointer"
             >
               <Folder className="h-4 w-4 text-amber-500" />
               <span>Drive Belum Diatur</span>
@@ -244,7 +244,7 @@ export function EventDetailCard({
         {/* Indikator Progres Persiapan (Khusus Kegiatan yang Memiliki Tugas) */}
         {totalTasks > 0 && (
           <div className="space-y-2 pt-1 border-t border-edge">
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between text-sm">
               <span className="text-ink font-medium">Total Progres Persiapan</span>
               <span className="text-primary font-bold">
                 {completedTasks}/{totalTasks} Tugas Selesai ({progressPercentage}%)
@@ -258,7 +258,7 @@ export function EventDetailCard({
               />
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-ink-muted">
+            <div className="flex items-center justify-between text-xs text-ink-muted">
               <span>Target Kesiapan: 100% Selesai</span>
               <span>{totalTasks - completedTasks} Tugas Menunggu</span>
             </div>
@@ -269,7 +269,7 @@ export function EventDetailCard({
       {/* Quick Stats Strip Dinamis (Real-Time dari Database) */}
       {totalTasks > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
             <CheckCircle2 className="h-4 w-4 text-success" />
             <span className="text-ink-secondary">
               <strong className="text-ink font-bold font-mono">{terverifikasiCount}</strong>{" "}
@@ -277,7 +277,7 @@ export function EventDetailCard({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
             <Hourglass className="h-4 w-4 text-warning" />
             <span className="text-ink-secondary">
               <strong className="text-ink font-bold font-mono">{sedangBerjalanCount}</strong>{" "}
@@ -285,7 +285,7 @@ export function EventDetailCard({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
             <UserPlus className="h-4 w-4 text-primary" />
             <span className="text-ink-secondary">
               <strong className="text-ink font-bold font-mono">{butuhRelawanCount}</strong>{" "}

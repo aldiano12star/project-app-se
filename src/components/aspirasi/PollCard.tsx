@@ -306,20 +306,20 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
                     </span>
 
                     {isWinner && (
-                      <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400 px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 shrink-0">
+                      <span className="text-xs font-extrabold text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 shrink-0">
                         Pemenang
                       </span>
                     )}
 
                     {isUserChoice && (
-                      <span className="text-[10px] font-bold text-primary px-1.5 py-0.2 rounded bg-primary-subtle shrink-0">
+                      <span className="text-xs font-bold text-primary px-2 py-0.5 rounded bg-primary-subtle shrink-0">
                         Pilihanmu
                       </span>
                     )}
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0 text-right font-mono-num">
-                    <span className="text-[11px] text-ink-muted">
+                    <span className="text-xs text-ink-muted">
                       {option.votesCount} suara
                     </span>
                     <span
@@ -368,9 +368,9 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
       </div>
 
       {/* Action Footer */}
-      <div className="pt-2 flex items-center justify-between border-t border-edge text-[11px] text-ink-muted">
+      <div className="pt-2 flex items-center justify-between border-t border-edge text-xs sm:text-sm text-ink-muted">
         <span className="flex items-center gap-1 font-medium">
-          <Users className="h-3.5 w-3.5" />
+          <Users className="h-4 w-4" />
           <span>Total {poll.totalVotes} Suara Masuk</span>
         </span>
 
@@ -379,7 +379,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
             type="button"
             disabled={!selectedOptionId || isLoading}
             onClick={handleVote}
-            className="h-10 min-h-10 px-4 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+            className="h-10 min-h-10 px-4 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>{isLoading ? "Mengirim..." : "Kirim Suara (+5 XP)"}</span>
@@ -387,14 +387,14 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
         )}
 
         {showResults && hasVoted && !isClosed && (
-          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-            <CheckCircle2 className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">
+            <CheckCircle2 className="h-4 w-4" />
             <span>Suara Kamu Tercatat</span>
           </span>
         )}
 
         {isClosed && (
-          <span className="text-[11px] font-semibold text-ink-muted">
+          <span className="text-xs font-semibold text-ink-muted">
             Hasil Akhir Pemungutan Suara
           </span>
         )}

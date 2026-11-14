@@ -101,7 +101,7 @@ export function DigitalWalletCard({
             </button>
           </div>
 
-          <span className="text-[11px] font-mono text-ink-muted hidden sm:inline-block">
+          <span className="text-xs font-mono text-ink-muted hidden sm:inline-block">
             {activeCard === "ORG" ? "Buku Kas Publik" : "Saldo Anggota"}
           </span>
         </div>
@@ -121,23 +121,23 @@ export function DigitalWalletCard({
             {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
+                <span className="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
                   SE-CORE // TREASURY
                 </span>
-                <span className="text-xs font-bold text-neutral-300 font-display">
+                <span className="text-sm font-bold text-neutral-300 font-display">
                   Kas Utama Saba ExploIT
                 </span>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-[10px] font-bold font-mono tracking-wider">
+              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-xs font-bold font-mono tracking-wider">
                 ORGANISASI
               </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}
             <div className="space-y-1 relative z-10">
-              <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider font-mono">
+              <span className="text-xs sm:text-sm font-medium text-neutral-400 uppercase tracking-wider font-mono">
                 Total Saldo Kas Riil Tersedia
               </span>
               <div className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono-num font-mono text-white tracking-tight">
@@ -151,8 +151,8 @@ export function DigitalWalletCard({
                 <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2">
                   <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-400" />
                   <div>
-                    <span className="text-[9px] text-neutral-400 block font-mono">Masuk</span>
-                    <span className="text-xs font-bold font-mono text-emerald-400 tabular-nums">
+                    <span className="text-xs text-neutral-400 block font-mono">Masuk</span>
+                    <span className="text-sm font-bold font-mono text-emerald-400 tabular-nums">
                       +Rp {totalIncome.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -161,8 +161,8 @@ export function DigitalWalletCard({
                 <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2">
                   <ArrowUpRight className="h-3.5 w-3.5 text-rose-400" />
                   <div>
-                    <span className="text-[9px] text-neutral-400 block font-mono">Keluar</span>
-                    <span className="text-xs font-bold font-mono text-rose-400 tabular-nums">
+                    <span className="text-xs text-neutral-400 block font-mono">Keluar</span>
+                    <span className="text-sm font-bold font-mono text-rose-400 tabular-nums">
                       -Rp {totalExpense.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -170,10 +170,10 @@ export function DigitalWalletCard({
               </div>
 
               <div className="text-left sm:text-right">
-                <span className="text-[10px] text-neutral-400 font-mono tracking-wider block">
+                <span className="text-xs text-neutral-400 font-mono tracking-wider block">
                   PEMEGANG BUKU KAS
                 </span>
-                <span className="text-xs font-extrabold text-neutral-200 tracking-wide font-display">
+                <span className="text-sm font-extrabold text-neutral-200 tracking-wide font-display">
                   BENDAHARA UMUM // SABA EXPLOIT
                 </span>
               </div>
@@ -188,23 +188,23 @@ export function DigitalWalletCard({
             {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
-                <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5">
+                <span className="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
                   SE-CORE // MEMBER CASH
                 </span>
-                <span className="text-xs font-bold text-neutral-300 font-display">
+                <span className="text-sm font-bold text-neutral-300 font-display">
                   Dompet Kas Anggota
                 </span>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-[10px] font-bold font-mono tracking-wider">
+              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-xs font-bold font-mono tracking-wider">
                 PERSONAL
               </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}
             <div className="space-y-1 relative z-10">
-              <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider font-mono">
+              <span className="text-xs sm:text-sm font-medium text-neutral-400 uppercase tracking-wider font-mono">
                 Saldo Dompet Personal Saya
               </span>
               <div
@@ -225,7 +225,7 @@ export function DigitalWalletCard({
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 border-t border-white/10 relative z-10">
               <div className="flex items-center gap-2">
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold font-mono tracking-wider border ${
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-bold font-mono tracking-wider border ${
                     isPositive
                       ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                       : isZero
@@ -239,16 +239,16 @@ export function DigitalWalletCard({
                     ? "Saldo Nol"
                     : "Defisit Tagihan"}
                 </span>
-                <span className="text-[11px] text-neutral-400 hidden sm:inline-block">
+                <span className="text-xs text-neutral-400 hidden sm:inline-block">
                   {isPositive ? "Dapat memotong tagihan otomatis" : "Hubungi Bendahara"}
                 </span>
               </div>
 
               <div className="text-left sm:text-right">
-                <span className="text-[10px] text-neutral-400 font-mono tracking-wider block">
+                <span className="text-xs text-neutral-400 font-mono tracking-wider block">
                   NAMA ANGGOTA
                 </span>
-                <span className="text-xs font-extrabold text-neutral-200 tracking-wide font-display">
+                <span className="text-sm font-extrabold text-neutral-200 tracking-wide font-display">
                   {userName.toUpperCase()}{gradeLabel ? ` • ${gradeLabel}` : ""}
                 </span>
               </div>
@@ -327,10 +327,10 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
                   </div>
 
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-ink truncate group-hover:text-primary transition-colors">
+                    <p className="text-sm font-bold text-ink truncate group-hover:text-primary transition-colors">
                       {tx.description}
                     </p>
-                    <p className="text-[11px] text-ink-muted flex items-center gap-1.5 mt-0.5 font-mono">
+                    <p className="text-xs sm:text-sm text-ink-muted flex items-center gap-1.5 mt-0.5 font-mono">
                       <span>{dateStr}</span>
                       <span>•</span>
                       <span className="font-semibold text-ink-secondary">
@@ -342,7 +342,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
 
                 <div className="text-right shrink-0">
                   <span
-                    className={`text-xs sm:text-sm font-extrabold font-mono tabular-nums ${
+                    className={`text-sm sm:text-base font-extrabold font-mono tabular-nums ${
                       isIncome
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-rose-600 dark:text-rose-400"
@@ -351,7 +351,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
                     {isIncome ? "+" : "-"} Rp{" "}
                     {tx.amount.toLocaleString("id-ID")}
                   </span>
-                  <span className="block text-[10px] text-ink-muted mt-0.5 font-mono">
+                  <span className="block text-xs text-ink-muted mt-0.5 font-mono">
                     {isIncome ? "Setoran Masuk" : "Potongan Tagihan"}
                   </span>
                 </div>

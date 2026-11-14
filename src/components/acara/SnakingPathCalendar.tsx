@@ -245,9 +245,9 @@ export function SnakingPathCalendar({
               setIsPickerOpen(true);
             }}
             title="Buka Pemilih Bulan & Tahun Cepat"
-            className="text-xs font-bold text-ink px-3 py-1.5 rounded-xl border border-edge bg-surface-container-low hover:bg-surface-container transition-colors select-none min-w-32.5 text-center cursor-pointer flex items-center justify-center gap-1.5 shadow-xs active:scale-95"
+            className="text-sm font-bold text-ink px-3.5 py-2 rounded-xl border border-edge bg-surface-container-low hover:bg-surface-container transition-colors select-none min-w-32.5 text-center cursor-pointer flex items-center justify-center gap-2 shadow-xs active:scale-95"
           >
-            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <Calendar className="h-4 w-4 text-primary" />
             <span>
               {FULL_MONTHS[currentMonthIndex]} {currentYear}
             </span>
@@ -275,10 +275,10 @@ export function SnakingPathCalendar({
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-ink">
+            <h3 className="text-base font-bold text-ink">
               Belum ada agenda terencana di bulan ini
             </h3>
-            <p className="text-xs text-ink-muted leading-relaxed">
+            <p className="text-sm text-ink-muted leading-relaxed">
               Tidak ada kegiatan atau rapat yang terdaftar pada bulan{" "}
               <span className="font-semibold text-ink">
                 {FULL_MONTHS[currentMonthIndex]} {currentYear}
@@ -290,9 +290,9 @@ export function SnakingPathCalendar({
           <button
             type="button"
             onClick={handleResetToCurrentMonth}
-            className="h-9 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors cursor-pointer inline-flex items-center gap-1.5"
+            className="h-10 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold border border-edge transition-colors cursor-pointer inline-flex items-center gap-2"
           >
-            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <Calendar className="h-4 w-4 text-primary" />
             <span>Lihat Bulan Ini</span>
           </button>
         </div>
@@ -307,12 +307,12 @@ export function SnakingPathCalendar({
             </div>
 
             <div className="p-3.5 rounded-xl border border-edge bg-surface-container-low/60 flex flex-wrap items-center justify-between gap-2 shadow-xs">
-              <span className="text-xs font-medium text-ink">
+              <span className="text-sm font-medium text-ink">
                 📍 Hari Ini ({todayDateNumber}{" "}
                 {SHORT_MONTHS[todayJakarta.monthIndex]} {todayJakarta.year}) —
                 Tidak ada agenda kegiatan
               </span>
-              <span className="text-[11px] text-ink-muted">
+              <span className="text-xs text-ink-muted">
                 {INDONESIAN_DAYS[todayJakarta.dayOfWeek]}, {todayDateNumber}{" "}
                 {FULL_MONTHS[todayJakarta.monthIndex]} {todayJakarta.year}
               </span>
@@ -321,10 +321,10 @@ export function SnakingPathCalendar({
 
           <div className="py-6 px-4 text-center space-y-2 max-w-sm mx-auto bg-surface-container-low/40 rounded-xl border border-dashed border-edge">
             <Calendar className="h-5 w-5 text-ink-muted mx-auto" />
-            <h4 className="text-xs font-bold text-ink">
+            <h4 className="text-sm font-bold text-ink">
               Belum ada agenda terencana di bulan ini
             </h4>
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
               Agenda kegiatan baru akan langsung terhubung ke jalur sirkuit ini.
             </p>
           </div>
@@ -348,14 +348,14 @@ export function SnakingPathCalendar({
 
                   <div className="p-3.5 rounded-xl border border-edge bg-surface-container-low/50 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-ink leading-snug">
+                      <span className="text-sm font-semibold text-ink leading-snug">
                         📍 Hari Ini ({entry.dayNumber}{" "}
                         {SHORT_MONTHS[todayJakarta.monthIndex]}{" "}
                         {currentYear}) — Tidak ada agenda kegiatan
                       </span>
                     </div>
 
-                    <span className="text-[11px] text-ink-muted font-medium shrink-0">
+                    <span className="text-xs text-ink-muted font-medium shrink-0">
                       {entry.dayName}, {entry.dayNumber}{" "}
                       {FULL_MONTHS[todayJakarta.monthIndex]} {currentYear}
                     </span>
@@ -457,33 +457,33 @@ export function SnakingPathCalendar({
                     <div className="flex items-start gap-3 min-w-0 flex-1">
                       {/* Luma Date Chip (Always Visible on Mobile & Desktop) */}
                       <div className="flex flex-col items-center justify-center h-11 w-10 sm:h-12 sm:w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center font-mono font-mono-num shadow-2xs">
-                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{dayName.slice(0, 3)}</span>
-                        <span className="text-base font-extrabold text-ink leading-none">{dayNum}</span>
+                        <span className="text-xs font-bold text-primary uppercase tracking-wider">{dayName.slice(0, 3)}</span>
+                        <span className="text-base sm:text-lg font-extrabold text-ink leading-none">{dayNum}</span>
                       </div>
 
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-1.5 text-xs">
                           {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
                           {isFinished ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono">
-                              <CheckCircle2 className="h-2.5 w-2.5 text-emerald-500" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                               <span>Selesai</span>
                             </span>
                           ) : isOngoing ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-xs font-mono">
-                              <Radio className="h-2.5 w-2.5 text-cyan-500 animate-pulse" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-xs font-mono">
+                              <Radio className="h-3 w-3 text-cyan-500 animate-pulse" />
                               <span>Sedang Berlangsung</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-secondary border hairline-border font-mono">
-                              <Clock className="h-2.5 w-2.5 text-ink-muted" />
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-ink-secondary border hairline-border font-mono">
+                              <Clock className="h-3 w-3 text-ink-muted" />
                               <span>Mendatang</span>
                             </span>
                           )}
 
                           {/* Tipe Acara */}
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono ${
                               isIndependent
                                 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
                                 : isParentMegaCard || isMultiDay
@@ -512,7 +512,7 @@ export function SnakingPathCalendar({
                           {/* Privacy Target Audience Badge */}
                           {audienceBadge && ev.targetAudience !== TargetAudience.ALL && (
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${audienceBadge.badgeClass}`}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${audienceBadge.badgeClass}`}
                             >
                               {audienceBadge.label}
                             </span>
@@ -522,14 +522,14 @@ export function SnakingPathCalendar({
                           {isTodayEvent && !isFinished && (
                             <Link
                               href="/dashboard"
-                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-extrabold shadow-xs transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-extrabold shadow-xs transition-colors cursor-pointer"
                               title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
                             >
                               <span>⚡ Hadiri Presensi (+10 XP)</span>
                             </Link>
                           )}
 
-                          <span className="font-semibold text-ink text-[11px] flex items-center gap-1 font-mono font-mono-num">
+                          <span className="font-semibold text-ink text-xs flex items-center gap-1 font-mono font-mono-num">
                             <Clock className="h-3 w-3 text-ink-muted" />
                             <span>{formattedSchedule}</span>
                           </span>
@@ -538,14 +538,14 @@ export function SnakingPathCalendar({
                         {isIndependent ? (
                           <Link
                             href={`/acara/rapat/${ev.id}`}
-                            className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
+                            className="text-lg font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
                           >
                             {ev.title}
                           </Link>
                         ) : (
                           <Link
                             href={`/acara/${ev.id}`}
-                            className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
+                            className="text-lg font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
                           >
                             {ev.title}
                           </Link>
@@ -568,7 +568,7 @@ export function SnakingPathCalendar({
 
                   {/* Deskripsi Singkat */}
                   {ev.description && (
-                    <p className="text-xs text-ink-secondary line-clamp-2 leading-relaxed">
+                    <p className="text-sm text-ink-secondary line-clamp-2 leading-relaxed">
                       {ev.description}
                     </p>
                   )}
@@ -576,9 +576,9 @@ export function SnakingPathCalendar({
                   {/* Progress Bar Seksi / Tugas (Khusus Proker Induk) */}
                   {hasSections && totalTasks > 0 && (
                     <div className="space-y-1.5 pt-1">
-                      <div className="flex items-center justify-between text-[11px] text-ink-muted">
+                      <div className="flex items-center justify-between text-xs sm:text-sm text-ink-muted">
                         <span className="flex items-center gap-1">
-                          <ListTodo className="h-3 w-3" />
+                          <ListTodo className="h-3.5 w-3.5" />
                           <span>{ev.sectionsCount} Seksi Panitia</span>
                         </span>
                         <span className="font-semibold text-ink">
@@ -600,11 +600,11 @@ export function SnakingPathCalendar({
                   {childMeetings.length > 0 && !isIndependent && (
                     <div className="pt-2 space-y-2.5">
                       <div className="flex items-center justify-between px-1">
-                        <span className="text-xs font-bold text-ink flex items-center gap-1.5">
-                          <MessageSquare className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                        <span className="text-sm font-bold text-ink flex items-center gap-1.5">
+                          <MessageSquare className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                           <span>Sesi Rapat Koordinasi ({childMeetings.length})</span>
                         </span>
-                        <span className="text-[10px] text-ink-muted">
+                        <span className="text-xs text-ink-muted">
                           Lihat Detail
                         </span>
                       </div>
@@ -630,47 +630,47 @@ export function SnakingPathCalendar({
                                 <div className="flex flex-wrap items-center gap-2">
                                   <Link
                                     href={`/acara/rapat/${meeting.id}`}
-                                    className="text-xs font-bold text-ink hover:text-primary transition-colors truncate block"
+                                    className="text-sm font-bold text-ink hover:text-primary transition-colors truncate block"
                                   >
                                     {meeting.title}
                                   </Link>
                                   {mBadge && meeting.targetAudience !== TargetAudience.ALL && (
                                     <span
-                                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${mBadge.badgeClass}`}
+                                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${mBadge.badgeClass}`}
                                     >
                                       {mBadge.label}
                                     </span>
                                   )}
                                   {meeting.attendanceStatus === "HADIR" || (meeting.isAttended && !meeting.attendanceStatus) ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                                       <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                       <span>Hadir</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "ALPHA" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                                       <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" />
                                       <span>Alfa</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "SAKIT" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                                       <span>Sakit</span>
                                     </span>
                                   ) : meeting.attendanceStatus === "IZIN" ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                                       <span>Izin</span>
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-muted border border-edge">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-ink-muted border border-edge">
                                       Belum Presensi
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[11px] text-ink-muted flex items-center gap-1.5">
+                                <p className="text-xs text-ink-muted flex items-center gap-1.5">
                                   <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
                                   <span>{mDateStr}</span>
                                 </p>
                                 {meeting.notes && (
-                                  <p className="text-[11px] text-ink-secondary line-clamp-1 italic">
+                                  <p className="text-xs text-ink-secondary line-clamp-1 italic">
                                     &ldquo;{meeting.notes}&rdquo;
                                   </p>
                                 )}
@@ -693,7 +693,7 @@ export function SnakingPathCalendar({
                                     <button
                                       type="button"
                                       onClick={() => onOpenQr(meeting.id)}
-                                      className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                                      className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                                       title="Tampilkan QR Presensi Sesi Rapat Ini"
                                     >
                                       <QrCode className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
@@ -727,7 +727,7 @@ export function SnakingPathCalendar({
                           <button
                             type="button"
                             onClick={() => onOpenQr(ev.id)}
-                            className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                            className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                             title="Tampilkan QR Presensi Sesi Rapat Ini"
                           >
                             <QrCode className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
@@ -740,16 +740,16 @@ export function SnakingPathCalendar({
                     <div className="pt-1 flex items-center justify-center gap-2 w-full">
                       <Link
                         href={`/acara/${ev.id}`}
-                        className="flex-1 h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold rounded-xl flex items-center justify-center text-center gap-2 transition-colors border border-edge"
+                        className="flex-1 h-11 min-h-11 px-4 bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold rounded-xl flex items-center justify-center text-center gap-2 transition-colors border border-edge"
                       >
                         <span>Buka Workspace &amp; Kepanitiaan</span>
-                        <ArrowRight className="h-3.5 w-3.5 text-ink-muted shrink-0" />
+                        <ArrowRight className="h-4 w-4 text-ink-muted shrink-0" />
                       </Link>
                       {isOfficer && onEditEvent && (
                         <button
                           type="button"
                           onClick={() => onEditEvent(ev)}
-                          className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
+                          className="h-11 min-h-11 px-3.5 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                           title="Edit Program Kerja Ini"
                         >
                           <Pencil className="w-4 h-4 text-slate-500 dark:text-slate-400" />
@@ -827,7 +827,7 @@ export function SnakingPathCalendar({
                     key={monthName}
                     type="button"
                     onClick={() => handleSelectMonthYear(idx, pickerYear)}
-                    className={`h-11 rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center relative ${
+                    className={`h-12 rounded-xl text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center relative ${
                       isSelected
                         ? "bg-primary text-white shadow-md ring-2 ring-primary/40 scale-[1.02]"
                         : isCurrentCalendarMonth
@@ -837,7 +837,7 @@ export function SnakingPathCalendar({
                   >
                     <span>{monthName}</span>
                     {isCurrentCalendarMonth && !isSelected && (
-                      <span className="text-[9px] font-normal text-primary/80 leading-none">
+                      <span className="text-xs font-normal text-primary/80 leading-none">
                         Bulan Ini
                       </span>
                     )}
@@ -851,16 +851,16 @@ export function SnakingPathCalendar({
               <button
                 type="button"
                 onClick={handleResetToCurrentMonth}
-                className="h-9 px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors cursor-pointer flex items-center gap-1.5"
+                className="h-10 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold border border-edge transition-colors cursor-pointer flex items-center gap-2"
               >
-                <Calendar className="h-3.5 w-3.5 text-primary" />
+                <Calendar className="h-4 w-4 text-primary" />
                 <span>Lompat ke Hari Ini</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsPickerOpen(false)}
-                className="h-9 px-4 rounded-xl bg-surface hover:bg-surface-container text-ink-muted text-xs font-semibold border border-edge transition-colors cursor-pointer"
+                className="h-10 px-4 rounded-xl bg-surface hover:bg-surface-container text-ink-muted text-sm font-semibold border border-edge transition-colors cursor-pointer"
               >
                 Batal
               </button>

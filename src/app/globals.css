@@ -148,8 +148,12 @@ body {
   background: var(--saba-surface);
   color: var(--saba-ink);
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ── Utilities ─────────────────────────────────────────────────────── */
@@ -159,14 +163,14 @@ body {
 
 @utility text-hero-title {
   font-family: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-size: clamp(1.85rem, 4vw, 2.75rem);
   letter-spacing: -0.03em;
   line-height: 1.15;
 }
 
 @utility text-section-title {
   font-family: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
   letter-spacing: -0.02em;
   line-height: 1.25;
 }

@@ -145,7 +145,7 @@ export function OnboardingForm({
             </span>
           </div>
 
-          <span className="text-[11px] font-mono font-bold text-primary px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+          <span className="text-xs font-mono font-bold text-primary px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
             Langkah {step} dari 3
           </span>
         </div>
@@ -190,7 +190,7 @@ export function OnboardingForm({
           <span className="text-xs font-bold text-ink block truncate font-display">
             {fullName || initialName || "Pengguna Baru"}
           </span>
-          <span className="text-[11px] text-ink-muted block truncate font-mono">
+          <span className="text-xs text-ink-muted block truncate font-mono">
             {userEmail}
           </span>
         </div>
@@ -239,7 +239,7 @@ export function OnboardingForm({
                 className="w-full h-12 pl-10 pr-4 rounded-xl bg-surface border hairline-border text-ink text-sm focus:outline-none focus:border-primary font-medium transition-all"
               />
             </div>
-            <p className="text-[11px] text-ink-muted px-1">
+            <p className="text-xs text-ink-muted px-1 leading-relaxed">
               Gunakan nama lengkap asli sesuai identitas sekolah/KTP.
             </p>
           </div>
@@ -290,7 +290,7 @@ export function OnboardingForm({
                 className="w-full h-12 pl-10 pr-4 rounded-xl bg-surface border hairline-border text-ink text-sm focus:outline-none focus:border-primary font-medium transition-all font-mono"
               />
             </div>
-            <div className="flex items-center justify-between text-[11px] text-ink-muted px-1">
+            <div className="flex items-center justify-between text-xs text-ink-muted px-1">
               <span>Minimal 10 digit angka bersih</span>
               {rawDigits.length > 0 && (
                 <span
@@ -379,7 +379,7 @@ export function OnboardingForm({
                       <p className={`text-xs font-bold ${isSelected ? "text-primary" : "text-ink"} font-display`}>
                         {opt.title}
                       </p>
-                      <p className="text-[11px] text-ink-muted truncate">
+                      <p className="text-xs text-ink-muted truncate">
                         {opt.desc}
                       </p>
                     </div>
@@ -399,7 +399,7 @@ export function OnboardingForm({
             })}
           </div>
 
-          <div className="p-3 rounded-2xl bg-surface-container-low border hairline-border text-[11px] text-ink-muted leading-relaxed flex items-start gap-2">
+          <div className="p-3.5 rounded-2xl bg-surface-container-low border hairline-border text-xs text-ink-muted leading-relaxed flex items-start gap-2">
             <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
             <span>
               Akun baru terdaftar dengan status <strong>Tamu (GUEST)</strong>. Pengurus akan mengaktivasi akunmu menjadi Anggota Resmi setelah verifikasi.

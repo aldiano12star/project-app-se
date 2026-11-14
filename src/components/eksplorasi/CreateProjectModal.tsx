@@ -181,8 +181,8 @@ export function CreateProjectModal({
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink font-display">Submit Karya ke Showcase</h2>
-              <p className="text-[11px] text-ink-muted">
+              <h2 className="text-base font-bold text-ink font-display">Submit Karya ke Showcase</h2>
+              <p className="text-xs sm:text-sm text-ink-muted">
                 +50 XP untuk kamu &amp; +50 XP per anggota tim (hingga 10 orang)
               </p>
             </div>
@@ -268,7 +268,7 @@ export function CreateProjectModal({
                 <Users className="h-3.5 w-3.5 text-purple-500" />
                 <span>Kontributor Tim ({formData.contributorIds.length}/10)</span>
               </label>
-              <span className="text-[10px] text-purple-400 font-semibold font-mono">
+              <span className="text-xs text-purple-400 font-semibold font-mono">
                 +50 XP per anggota
               </span>
             </div>
@@ -282,7 +282,7 @@ export function CreateProjectModal({
                     className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-medium animate-in fade-in"
                   >
                     <span>{member.name}</span>
-                    <span className="text-[10px] opacity-75 font-mono">
+                    <span className="text-xs opacity-75 font-mono">
                       ({formatGrade(member.classGrade)})
                     </span>
                     <button
@@ -346,15 +346,15 @@ export function CreateProjectModal({
                           className="w-full px-3 py-2.5 text-left hover:bg-surface-container-low flex items-center justify-between transition-colors cursor-pointer text-xs group"
                         >
                           <div className="min-w-0">
-                            <span className="font-semibold text-ink block truncate group-hover:text-primary transition-colors">
+                            <span className="font-semibold text-ink block truncate group-hover:text-primary transition-colors text-xs sm:text-sm">
                               {m.name}
                             </span>
-                            <span className="text-[10px] text-ink-muted font-mono">
+                            <span className="text-xs text-ink-muted font-mono">
                               {formatGrade(m.classGrade)}
                             </span>
                           </div>
-                          <span className="h-7 px-2.5 rounded-lg bg-purple-500/15 text-purple-400 text-[10px] font-bold inline-flex items-center gap-1 shrink-0">
-                            <Plus className="h-3 w-3" /> Tambah
+                          <span className="h-7 px-2.5 rounded-lg bg-purple-500/15 text-purple-400 text-xs font-bold inline-flex items-center gap-1 shrink-0">
+                            <Plus className="h-3.5 w-3.5" /> Tambah
                           </span>
                         </button>
                       ))
@@ -364,7 +364,7 @@ export function CreateProjectModal({
               </div>
             )}
 
-            <p className="text-[11px] text-ink-muted leading-tight">
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
               💡 Seluruh anggota tim dan kontributor terpilih akan otomatis mendapatkan apresiasi penuh +50 XP!
             </p>
           </div>

@@ -110,29 +110,29 @@ export function WikiCard({ article, onOpenDetail, onClick }: WikiCardProps) {
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2">
           <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${categoryMeta.bg} ${categoryMeta.text} ${categoryMeta.border}`}
           >
             <span>{categoryMeta.label}</span>
           </span>
 
-          <span className="text-[10px] text-ink-muted">
+          <span className="text-xs text-ink-muted">
             Perpustakaan Digital
           </span>
         </div>
 
         {/* Title & Preview */}
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-ink group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug line-clamp-2">
+          <h3 className="text-base font-bold text-ink group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug line-clamp-2">
             {article.title}
           </h3>
-          <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
+          <p className="text-sm text-ink-muted line-clamp-2 leading-relaxed">
             {article.content.replace(/[#*`_]/g, "")}
           </p>
         </div>
       </div>
 
       {/* Footer Info */}
-      <div className="flex items-center justify-between pt-2 border-t hairline-border text-[11px] text-ink-muted">
+      <div className="flex items-center justify-between pt-2 border-t hairline-border text-xs sm:text-sm text-ink-muted">
         <span className="flex items-center gap-1 truncate max-w-[200px]">
           <Clock className="h-3 w-3 shrink-0" />
           <span className="truncate">

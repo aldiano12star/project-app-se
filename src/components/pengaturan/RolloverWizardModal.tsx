@@ -251,7 +251,7 @@ export function RolloverWizardModal({
                     }`}
                   />
                   <span
-                    className={`text-[10px] font-bold block truncate text-center ${
+                    className={`text-xs font-bold block truncate text-center ${
                       step === item.s ? "text-primary" : "text-ink-muted"
                     }`}
                   >
@@ -315,24 +315,24 @@ export function RolloverWizardModal({
                       </div>
 
                       <div className="space-y-0.5 w-full">
-                        <span className="text-[11px] font-extrabold block">
+                        <span className="text-xs font-extrabold block">
                           {rankBadge.icon} {rankBadge.label}
                         </span>
                         <h4 className="text-xs sm:text-sm font-bold text-ink truncate">
                           {member.name}
                         </h4>
-                        <span className="text-[10px] text-ink-muted block truncate">
+                        <span className="text-xs text-ink-muted block truncate">
                           {member.mainDivision || "Anggota"}
                         </span>
                       </div>
 
-                      <div className="w-full pt-2 border-t border-edge/60 flex items-center justify-around text-[11px] font-mono">
+                      <div className="w-full pt-2 border-t border-edge/60 flex items-center justify-around text-xs font-mono">
                         <div>
-                          <span className="text-ink-muted text-[10px] block font-sans">XP Total</span>
+                          <span className="text-ink-muted text-xs block font-sans">XP Total</span>
                           <span className="font-bold text-primary">{member.totalPoints.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-ink-muted text-[10px] block font-sans">Karya</span>
+                          <span className="text-ink-muted text-xs block font-sans">Karya</span>
                           <span className="font-bold text-ink">{member.workCount}</span>
                         </div>
                       </div>
@@ -403,10 +403,10 @@ export function RolloverWizardModal({
                           <h4 className="text-xs sm:text-sm font-bold text-ink truncate">
                             {evt.title}
                           </h4>
-                          <p className="text-[11px] text-ink-muted line-clamp-1 mt-0.5">
+                          <p className="text-xs text-ink-muted line-clamp-1 mt-0.5">
                             {evt.description || "Acara organisasi"}
                           </p>
-                          <span className="text-[10px] text-ink-muted font-mono mt-1 block">
+                          <span className="text-xs text-ink-muted font-mono mt-1 block">
                             {new Date(evt.startDate).toLocaleDateString("id-ID")}
                           </span>
                         </div>
@@ -496,7 +496,7 @@ export function RolloverWizardModal({
                           <h4 className="text-xs font-bold text-ink truncate">
                             {work.title}
                           </h4>
-                          <span className="text-[10px] text-ink-muted block truncate">
+                          <span className="text-xs text-ink-muted block truncate">
                             Oleh: {work.authorName} • {work.primaryDivision}
                           </span>
                         </div>
@@ -535,7 +535,7 @@ export function RolloverWizardModal({
               {/* Curated Snapshot Summary Chips */}
               <div className="space-y-2 text-xs">
                 <span className="font-bold text-ink block">Rangkuman Kurasi Terpilih:</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div className="p-3 rounded-xl bg-surface-container-low border border-edge space-y-1">
                     <span className="font-bold text-ink block">Top 3 Anggota:</span>
                     <p className="text-ink-muted truncate">

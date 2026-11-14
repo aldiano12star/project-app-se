@@ -76,8 +76,8 @@ export function MultiEventSelectorModal({
               <Calendar className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">{formattedDate}</h2>
-              <p className="text-[11px] text-ink-muted">
+              <h2 className="text-base font-bold text-ink">{formattedDate}</h2>
+              <p className="text-xs sm:text-sm text-ink-muted">
                 Terdapat {events.length} kegiatan pada tanggal ini
               </p>
             </div>
@@ -93,7 +93,7 @@ export function MultiEventSelectorModal({
 
         {/* List of Events on this Day */}
         <div className="p-5 space-y-3 overflow-y-auto flex-1">
-          <p className="text-xs text-ink-secondary">
+          <p className="text-sm text-ink-secondary">
             Pilih kegiatan yang ingin kamu buka detail kepanitiaan atau notulensinya:
           </p>
 
@@ -120,7 +120,7 @@ export function MultiEventSelectorModal({
                   {/* Badge & Jam */}
                   <div className="flex items-center justify-between">
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
                         isSingleDay
                           ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                           : "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
@@ -136,7 +136,7 @@ export function MultiEventSelectorModal({
                       </span>
                     </span>
 
-                    <span className="text-[11px] text-ink-muted flex items-center gap-1">
+                    <span className="text-xs text-ink-muted flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       <span>{formattedSchedule}</span>
                     </span>
@@ -144,12 +144,12 @@ export function MultiEventSelectorModal({
 
                   {/* Title & Description */}
                   <div>
-                    <h3 className="text-sm font-bold text-ink leading-snug">
+                    <h3 className="text-base font-bold text-ink leading-snug">
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="text-xs text-ink-secondary line-clamp-1 mt-0.5 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-ink-muted shrink-0" />
+                      <p className="text-sm text-ink-secondary line-clamp-1 mt-0.5 flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 text-ink-muted shrink-0" />
                         <span className="truncate">{item.description}</span>
                       </p>
                     )}
@@ -157,9 +157,9 @@ export function MultiEventSelectorModal({
 
                   {/* Seksi & Progress jika ada */}
                   {hasSections && item.totalTasksCount !== undefined && item.totalTasksCount > 0 && (
-                    <div className="flex items-center justify-between text-[11px] text-ink-muted pt-1 border-t border-edge/60">
+                    <div className="flex items-center justify-between text-xs text-ink-muted pt-1 border-t border-edge/60">
                       <span className="flex items-center gap-1">
-                        <ListTodo className="h-3 w-3" />
+                        <ListTodo className="h-3.5 w-3.5" />
                         <span>{item.sectionsCount} Seksi</span>
                       </span>
                       <span>
@@ -172,10 +172,10 @@ export function MultiEventSelectorModal({
                   <Link
                     href={`/acara/${item.id}`}
                     onClick={onClose}
-                    className="w-full h-10 min-h-10 bg-surface-container-low hover:bg-surface-container text-ink hover:text-primary text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors border border-edge"
+                    className="w-full h-11 min-h-11 bg-surface-container-low hover:bg-surface-container text-ink hover:text-primary text-sm font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-edge"
                   >
                     <span>Buka Detail &amp; Workspace</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
               );
@@ -188,7 +188,7 @@ export function MultiEventSelectorModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-10 min-h-10 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-ink text-xs font-bold border border-edge transition-colors cursor-pointer"
+            className="h-10 min-h-10 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink text-sm font-bold border border-edge transition-colors cursor-pointer"
           >
             Tutup
           </button>

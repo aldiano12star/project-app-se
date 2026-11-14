@@ -63,8 +63,8 @@ export function EditNotulensiModal({
               <Edit3 className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">Tulis / Edit Notulensi</h2>
-              <p className="text-[11px] text-ink-muted truncate max-w-[220px] sm:max-w-xs">
+              <h2 className="text-base font-bold text-ink">Tulis / Edit Notulensi</h2>
+              <p className="text-xs sm:text-sm text-ink-muted truncate max-w-[220px] sm:max-w-xs">
                 {eventTitle}
               </p>
             </div>
@@ -81,15 +81,15 @@ export function EditNotulensiModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4 overflow-y-auto flex-1 flex flex-col">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-danger-subtle border border-danger/30 text-xs text-danger flex items-center gap-2">
+            <div className="p-3 rounded-xl bg-danger-subtle border border-danger/30 text-sm text-danger flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           <div className="space-y-1.5 flex-1 flex flex-col">
-            <label className="text-xs font-bold text-ink flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <label className="text-sm font-bold text-ink flex items-center gap-1.5">
+              <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Isi Catatan &amp; Hasil Kesepakatan Rapat:</span>
             </label>
             <textarea
@@ -97,9 +97,9 @@ export function EditNotulensiModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Tuliskan poin-poin penting pembahasan, keputusan rapat, pembagian tanggung jawab, atau tindak lanjut berikutnya..."
-              className="w-full flex-1 p-3.5 rounded-xl bg-surface border border-edge text-ink text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-y min-h-[160px]"
+              className="w-full flex-1 p-3.5 rounded-xl bg-surface border border-edge text-ink text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-y min-h-[160px]"
             />
-            <p className="text-[11px] text-ink-muted">
+            <p className="text-xs sm:text-sm text-ink-muted">
               Kosongkan jika belum ada notulensi resmi.
             </p>
           </div>
@@ -110,14 +110,14 @@ export function EditNotulensiModal({
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-xs font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="h-11 min-h-[44px] px-4 rounded-xl border border-edge text-sm font-semibold text-ink-secondary hover:bg-surface-container-low transition-colors cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="h-11 min-h-[44px] px-5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white text-xs font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="h-11 min-h-[44px] px-5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {isPending ? (
                 <>

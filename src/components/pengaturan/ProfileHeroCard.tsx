@@ -229,7 +229,7 @@ export function ProfileHeroCard({
               {onOpenAvatarModal && (
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
                   <Camera className="w-4 h-4 text-white drop-shadow-sm" />
-                  <span className="text-[8px] font-bold tracking-tight mt-0.5">Ubah</span>
+                  <span className="text-xs font-bold tracking-tight mt-0.5">Ubah</span>
                 </div>
               )}
             </div>

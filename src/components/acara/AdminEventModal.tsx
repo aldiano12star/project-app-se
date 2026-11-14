@@ -485,7 +485,7 @@ export function AdminEventModal({
                   ? "Buat Rapat / Agenda Singkat"
                   : "Buat Program Kerja / Acara Besar"}
               </h2>
-              <p className="text-[11px] text-ink-muted">Khusus Pengurus &amp; Operator</p>
+              <p className="text-xs text-ink-muted">Khusus Pengurus &amp; Operator</p>
             </div>
           </div>
           <button
@@ -516,17 +516,17 @@ export function AdminEventModal({
                     {/* Naked Icon */}
                     <MessageSquare className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
                     <div>
-                      <h3 className="text-sm font-bold text-ink group-hover:text-primary transition-colors">
+                      <h3 className="text-base font-bold text-ink group-hover:text-primary transition-colors">
                         Rapat / Agenda Singkat (1 Hari)
                       </h3>
-                      <span className="text-[10px] font-semibold text-ink-secondary px-1.5 py-0.5 rounded bg-surface-container border border-edge">
+                      <span className="text-xs font-semibold text-ink-secondary px-2 py-0.5 rounded bg-surface-container border border-edge">
                         Format Presensi QR Cepat
                       </span>
                     </div>
                   </div>
                   <CheckCircle className="w-5 h-5 text-ink-muted group-hover:text-primary transition-colors" />
                 </div>
-                <p className="text-xs text-ink-muted leading-relaxed pl-1">
+                <p className="text-xs sm:text-sm text-ink-muted leading-relaxed pl-1">
                   Untuk rapat pleno, briefing mingguan, atau koordinasi proker. Mendukung penautan ke proker induk (Nested Card) atau rapat mandiri.
                 </p>
               </button>
@@ -542,17 +542,17 @@ export function AdminEventModal({
                     {/* Naked Icon */}
                     <Layers className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors" />
                     <div>
-                      <h3 className="text-sm font-bold text-ink group-hover:text-primary transition-colors">
+                      <h3 className="text-base font-bold text-ink group-hover:text-primary transition-colors">
                         Program Kerja / Acara Besar (Parent Mega-Card)
                       </h3>
-                      <span className="text-[10px] font-semibold text-primary px-1.5 py-0.5 rounded bg-primary-subtle border border-primary/20">
+                      <span className="text-xs font-semibold text-primary px-2 py-0.5 rounded bg-primary-subtle border border-primary/20">
                         Workspace &amp; Seksi SOP
                       </span>
                     </div>
                   </div>
                   <CheckCircle className="w-5 h-5 text-ink-muted group-hover:text-primary transition-colors" />
                 </div>
-                <p className="text-xs text-ink-muted leading-relaxed pl-1">
+                <p className="text-xs sm:text-sm text-ink-muted leading-relaxed pl-1">
                   Untuk workshop, expo lomba, studi banding, atau proker berskala besar dengan rentang hari, folder Google Drive, RAB, dan seksi panitia otomatis.
                 </p>
               </button>
@@ -574,7 +574,7 @@ export function AdminEventModal({
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Ganti Jenis Agenda</span>
                 </button>
-                <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+                <span className="text-xs font-bold text-ink-muted uppercase tracking-wider">
                   {categoryType === "RAPAT" ? "Format Rapat" : "Format Proker"}
                 </span>
               </div>
@@ -634,11 +634,11 @@ export function AdminEventModal({
                         <span className="text-xs font-bold text-ink block">
                           Pilih Anggota Peserta Rapat <span className="text-primary">*</span>
                         </span>
-                        <span className="text-[10px] text-ink-muted">
+                        <span className="text-xs text-ink-muted">
                           {rapatForm.targetUserIds.length} dari {allMembers.length} anggota terpilih
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px]">
+                      <div className="flex items-center gap-1.5 text-xs">
                         <button
                           type="button"
                           onClick={() => handleSelectAll(true)}
@@ -658,13 +658,13 @@ export function AdminEventModal({
 
                     {/* Filter Cepat per Divisi */}
                     <div className="flex flex-wrap items-center gap-1">
-                      <span className="text-[10px] font-bold text-ink-muted mr-1">Divisi:</span>
+                      <span className="text-xs font-bold text-ink-muted mr-1">Divisi:</span>
                       {DIVISIONS.map((div) => (
                         <button
                           key={div}
                           type="button"
                           onClick={() => handleSelectDivision(div, true)}
-                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-card border border-edge text-ink-secondary hover:text-primary hover:border-primary transition-colors cursor-pointer"
+                          className="px-2 py-0.5 rounded-full text-xs font-semibold bg-card border border-edge text-ink-secondary hover:text-primary hover:border-primary transition-colors cursor-pointer"
                         >
                           +{div.slice(0, 4)}
                         </button>
@@ -686,7 +686,7 @@ export function AdminEventModal({
                     {/* Daftar Checklist Anggota */}
                     <div className="max-h-44 overflow-y-auto space-y-1 p-1 bg-surface rounded-lg border border-edge">
                       {filteredMembers.length === 0 ? (
-                        <p className="text-[11px] text-ink-muted text-center py-3">
+                        <p className="text-xs sm:text-sm text-ink-muted text-center py-3">
                           Tidak ada anggota yang cocok dengan pencarian.
                         </p>
                       ) : (
@@ -710,16 +710,16 @@ export function AdminEventModal({
                                 />
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="text-xs font-semibold text-ink truncate leading-tight">
+                                    <span className="text-xs sm:text-sm font-semibold text-ink truncate leading-tight">
                                       {member.name}
                                     </span>
                                     {member.role === "KOLABORATOR" && (
-                                      <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                                      <span className="text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
                                         Kolaborator
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[10px] text-ink-muted block truncate mt-0.5">
+                                  <span className="text-xs text-ink-muted block truncate mt-0.5">
                                     {member.role === "KOLABORATOR"
                                       ? "Mitra Eksternal"
                                       : member.classGrade === "KELAS_10"
@@ -741,13 +741,13 @@ export function AdminEventModal({
 
                 {/* Hubungkan ke Proker Induk (Contextual Grouping) */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-ink block">
+                  <label className="text-xs sm:text-sm font-bold text-ink block">
                     Hubungkan ke Program Kerja Induk (Opsional)
                   </label>
                   <select
                     value={rapatForm.eventId}
                     onChange={(e) => setRapatForm({ ...rapatForm, eventId: e.target.value })}
-                    className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   >
                     <option value="">-- Rapat Mandiri / Tanpa Proker Induk --</option>
                     {parentEvents.map((pe) => (
@@ -756,7 +756,7 @@ export function AdminEventModal({
                       </option>
                     ))}
                   </select>
-                  <p className="text-[11px] text-ink-muted">
+                  <p className="text-xs text-ink-muted">
                     Hanya program kerja jangka panjang resmi yang dapat menjadi induk rapat.
                   </p>
                 </div>
@@ -908,11 +908,11 @@ export function AdminEventModal({
                         <span className="text-xs font-bold text-ink block">
                           Pilih Anggota Peserta Kegiatan <span className="text-primary">*</span>
                         </span>
-                        <span className="text-[10px] text-ink-muted">
+                        <span className="text-xs text-ink-muted">
                           {(acaraForm.targetUserIds || []).length} dari {allMembers.length} anggota terpilih
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px]">
+                      <div className="flex items-center gap-1.5 text-xs">
                         <button
                           type="button"
                           onClick={() => handleSelectAll(false)}
@@ -932,13 +932,13 @@ export function AdminEventModal({
 
                     {/* Filter Cepat per Divisi */}
                     <div className="flex flex-wrap items-center gap-1">
-                      <span className="text-[10px] font-bold text-ink-muted mr-1">Divisi:</span>
+                      <span className="text-xs font-bold text-ink-muted mr-1">Divisi:</span>
                       {DIVISIONS.map((div) => (
                         <button
                           key={div}
                           type="button"
                           onClick={() => handleSelectDivision(div, false)}
-                          className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-card border border-edge text-ink-secondary hover:text-primary hover:border-primary transition-colors cursor-pointer"
+                          className="px-2 py-0.5 rounded-full text-xs font-semibold bg-card border border-edge text-ink-secondary hover:text-primary hover:border-primary transition-colors cursor-pointer"
                         >
                           +{div.slice(0, 4)}
                         </button>
@@ -960,7 +960,7 @@ export function AdminEventModal({
                     {/* Daftar Checklist Anggota */}
                     <div className="max-h-44 overflow-y-auto space-y-1 p-1 bg-surface rounded-lg border border-edge">
                       {filteredMembers.length === 0 ? (
-                        <p className="text-[11px] text-ink-muted text-center py-3">
+                        <p className="text-xs sm:text-sm text-ink-muted text-center py-3">
                           Tidak ada anggota yang cocok dengan pencarian.
                         </p>
                       ) : (
@@ -984,16 +984,16 @@ export function AdminEventModal({
                                 />
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="text-xs font-semibold text-ink truncate leading-tight">
+                                    <span className="text-xs sm:text-sm font-semibold text-ink truncate leading-tight">
                                       {member.name}
                                     </span>
                                     {member.role === "KOLABORATOR" && (
-                                      <span className="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                                      <span className="text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
                                         Kolaborator
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[10px] text-ink-muted block truncate mt-0.5">
+                                  <span className="text-xs text-ink-muted block truncate mt-0.5">
                                     {member.role === "KOLABORATOR"
                                       ? "Mitra Eksternal"
                                       : member.classGrade === "KELAS_10"
@@ -1098,7 +1098,7 @@ export function AdminEventModal({
                     <span className="font-bold text-ink block">
                       Inisialisasi Seksi &amp; SOP Standar
                     </span>
-                    <span className="text-ink-muted text-[11px]">
+                    <span className="text-ink-muted text-xs sm:text-sm">
                       Otomatis membuat Seksi Kesekretariatan, Acara, dan Humas.
                     </span>
                   </div>

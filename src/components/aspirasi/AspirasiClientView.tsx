@@ -174,7 +174,7 @@ export function AspirasiClientView({
         >
           <Globe className="h-4 w-4 text-sky-500 shrink-0" />
           <span className="truncate">Papan Isu</span>
-          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-surface-container text-[11px] text-ink-secondary hairline-border font-mono-num">
+          <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-surface-container text-xs text-ink-secondary hairline-border font-mono-num font-semibold">
             {publicIssues.length}
           </span>
         </button>
@@ -186,7 +186,7 @@ export function AspirasiClientView({
             setActiveTab("PRIVATE_ASPIRATIONS");
             setStatusFilter("ALL");
           }}
-          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "PRIVATE_ASPIRATIONS"
               ? "bg-card text-ink shadow-xs hairline-border"
               : "text-ink-muted hover:text-ink"
@@ -196,7 +196,7 @@ export function AspirasiClientView({
           <span className="truncate">
             {isOperator ? "Aspirasi" : "Aspirasi Privat"}
           </span>
-          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-bold border border-purple-300 dark:border-purple-500/30 font-mono-num">
+          <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-xs font-bold border border-purple-300 dark:border-purple-500/30 font-mono-num">
             {privateIssues.length}
           </span>
         </button>
@@ -205,7 +205,7 @@ export function AspirasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("POLLS")}
-          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "POLLS"
               ? "bg-card text-ink shadow-xs hairline-border"
               : "text-ink-muted hover:text-ink"
@@ -214,7 +214,7 @@ export function AspirasiClientView({
           <Vote className="h-4 w-4 text-emerald-500 shrink-0" />
           <span className="truncate">Polling</span>
           {activePollsCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-300 dark:border-emerald-500/30 font-mono-num">
+            <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-300 dark:border-emerald-500/30 font-mono-num">
               {activePollsCount}
             </span>
           )}
@@ -288,7 +288,7 @@ export function AspirasiClientView({
                   ? "Peti Saluran Rahasia Operator"
                   : "Saluran Aspirasi & Evaluasi Privat"}
               </span>
-              <p className="text-slate-600 dark:text-slate-400 font-normal leading-relaxed text-[11px]">
+              <p className="text-slate-600 dark:text-slate-400 font-normal leading-relaxed text-xs sm:text-sm">
                 {isOperator
                   ? "Seluruh pesan di bawah ini bersifat rahasia dan hanya dapat diakses oleh akun dengan wewenang Operator Organisasi."
                   : "Pesan yang kamu kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}
@@ -308,7 +308,7 @@ export function AspirasiClientView({
               }`}
             >
               <span>Semua</span>
-              <span className="font-mono-num text-[11px] opacity-80">
+              <span className="font-mono-num text-xs font-semibold opacity-80">
                 ({privateIssues.length})
               </span>
             </button>

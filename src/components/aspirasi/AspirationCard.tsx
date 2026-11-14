@@ -258,7 +258,7 @@ export function AspirationCard({
             <button
               type="button"
               onClick={() => setIsReplying(false)}
-              className="text-[11px] font-semibold text-ink-muted hover:text-ink cursor-pointer"
+              className="text-xs font-semibold text-ink-muted hover:text-ink cursor-pointer"
             >
               Tutup
             </button>
@@ -271,7 +271,7 @@ export function AspirationCard({
           )}
 
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-ink block">
+            <label className="text-xs font-bold text-ink block">
               Isi Tanggapan:
             </label>
             <textarea
@@ -280,7 +280,7 @@ export function AspirationCard({
               placeholder="Tuliskan respon, solusi, atau penjelasan dari pengurus/developer..."
               value={replyInput}
               onChange={(e) => setReplyInput(e.target.value)}
-              className="w-full p-2.5 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+              className="w-full p-2.5 rounded-lg border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
             />
           </div>
 
@@ -318,7 +318,7 @@ export function AspirationCard({
       )}
 
       {/* Footer Kartu: Penulis & Kontrol Pengurus */}
-      <div className="pt-2 flex items-center justify-between border-t border-edge text-[11px]">
+      <div className="pt-2 flex items-center justify-between border-t border-edge text-xs sm:text-sm">
         <div className="flex items-center gap-1.5 text-ink-muted">
           <User className="h-3.5 w-3.5 shrink-0" />
           <span className={aspiration.isAnonymous ? "italic text-ink-secondary" : "font-medium text-ink"}>
@@ -330,7 +330,7 @@ export function AspirationCard({
           <button
             type="button"
             onClick={() => setIsReplying(true)}
-            className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
           >
             <ShieldCheck className="h-3.5 w-3.5" />
             <span>{aspiration.adminReply ? "Edit Tanggapan" : "Beri Tanggapan"}</span>

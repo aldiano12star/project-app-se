@@ -77,7 +77,7 @@ export function ShowcaseTab({
           }`}
         >
           <span>Semua</span>
-          <span className="font-mono-num text-[11px] opacity-80">
+          <span className="font-mono-num text-xs font-semibold opacity-80">
             ({projects.length})
           </span>
         </button>
@@ -190,7 +190,7 @@ export function ShowcaseTab({
             <div className="space-y-2">
               <div className="flex items-center gap-2 px-1">
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[11px] font-mono font-bold tracking-wider text-ink-muted uppercase">
+                <span className="text-xs font-mono font-bold tracking-wider text-ink-muted uppercase">
                   Spotlight Karya Terpilih
                 </span>
               </div>
@@ -207,7 +207,7 @@ export function ShowcaseTab({
           {/* Grid Mahakarya Kolektif */}
           <div className="space-y-2">
             {selectedCategory === "ALL" && !searchQuery.trim() && filteredProjects.length > 1 && (
-              <div className="px-1 text-[11px] font-mono font-bold tracking-wider text-ink-muted uppercase">
+              <div className="px-1 text-xs font-mono font-bold tracking-wider text-ink-muted uppercase">
                 Semua Karya Divisi
               </div>
             )}

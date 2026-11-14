@@ -46,10 +46,10 @@ export function AppShell({
           <div className="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 shadow-xs animate-in fade-in">
             <span className="text-xl shrink-0">⏳</span>
             <div className="space-y-1 min-w-0 flex-1">
-              <span className="font-semibold block text-amber-200 text-sm">
+              <span className="font-semibold block text-amber-200 text-base">
                 Menunggu Verifikasi Pengurus
               </span>
-              <p className="text-xs text-ink-muted leading-relaxed font-body">
+              <p className="text-sm text-ink-muted leading-relaxed font-body">
                 Akun kamu sedang menunggu verifikasi pengurus Saba ExploIT. Hubungi pengurus untuk aktivasi akun.
               </p>
             </div>
@@ -58,11 +58,19 @@ export function AppShell({
 
         {/* Slot Konten Utama dengan Generous Bottom Clearance (Mencegah BottomNav overlap) */}
         <main
-          className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
+          className={`flex-1 px-4 md:px-8 pt-6 w-full max-w-7xl mx-auto ${
             showNav ? "pb-36 pb-safe md:pb-16" : "pb-12"
           }`}
         >
           {children}
+
+          {/* Spacer fisik di bagian paling bawah konten untuk menjamin keleluasaan pandang di atas BottomNav */}
+          {showNav && (
+            <div
+              className="h-32 w-full shrink-0 pointer-events-none md:hidden"
+              aria-hidden="true"
+            />
+          )}
         </main>
       </div>
 

@@ -273,7 +273,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                       >
                         <span className="text-xs font-bold block">{opt.label}</span>
                         <span
-                          className={`text-[10px] block ${
+                          className={`text-xs block ${
                             isSelected ? "text-white/80" : "text-ink-muted"
                           }`}
                         >
@@ -296,7 +296,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                       Teralokasi ke Generasi {autoGenInfo.gen} (Gen {autoGenInfo.gen})
                     </span>
                   </div>
-                  <p className="text-[11px] text-ink-muted leading-relaxed pl-8">
+                  <p className="text-xs text-ink-muted leading-relaxed pl-8">
                     Dihitung otomatis untuk Tahun Ajaran {autoGenInfo.academicYear} berdasarkan Kelas {autoGenInfo.kelasLabel}.
                   </p>
                 </div>
@@ -332,7 +332,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                           <span className="text-xs font-bold text-ink block truncate">
                             {div.title}
                           </span>
-                          <span className="text-[10px] text-ink-muted block line-clamp-1">
+                          <span className="text-xs text-ink-muted block line-clamp-1">
                             {div.desc}
                           </span>
                         </div>
@@ -353,7 +353,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
+                      className="text-xs text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       <span>{showPassword ? "Sembunyikan" : "Lihat"}</span>
@@ -374,7 +374,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                   <label className="text-xs font-semibold text-ink flex items-center justify-between">
                     <span>Konfirmasi Kata Sandi *</span>
                     {confirmPassword && (
-                      <span className={`text-[11px] ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
+                      <span className={`text-xs font-bold ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
                         {password === confirmPassword ? "Cocok ✓" : "Belum Cocok"}
                       </span>
                     )}
@@ -388,7 +388,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
                   />
-                  <p className="text-[11px] text-ink-muted px-0.5">
+                  <p className="text-xs text-ink-muted px-0.5 leading-relaxed">
                     Digunakan untuk autentikasi sekunder &amp; keamanan akun Anda di perangkat bersama.
                   </p>
                 </div>
@@ -411,7 +411,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                       Asal Organisasi / Instansi <span className="text-primary">*</span>
                     </span>
                   </span>
-                  <span className="text-[11px] text-ink-muted">Wajib diisi</span>
+                  <span className="text-xs text-ink-muted">Wajib diisi</span>
                 </label>
                 <input
                   type="text"
@@ -422,7 +422,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                   onChange={(e) => setInstansi(e.target.value)}
                   className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-medium"
                 />
-                <p className="text-[11px] text-ink-muted px-0.5">
+                <p className="text-xs text-ink-muted px-0.5 leading-relaxed">
                   Akun kolaborator berkolaborasi pada proyek karya tanpa kewajiban iuran kas, kuis, maupun KTA digital.
                 </p>
               </div>
@@ -438,7 +438,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-[11px] text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
+                      className="text-xs text-ink-muted hover:text-ink flex items-center gap-1 cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                       <span>{showPassword ? "Sembunyikan" : "Lihat"}</span>
@@ -459,7 +459,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                   <label className="text-xs font-semibold text-ink flex items-center justify-between">
                     <span>Konfirmasi Kata Sandi *</span>
                     {confirmPassword && (
-                      <span className={`text-[11px] ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
+                      <span className={`text-xs font-bold ${password === confirmPassword ? "text-emerald-500" : "text-rose-500"}`}>
                         {password === confirmPassword ? "Cocok ✓" : "Belum Cocok"}
                       </span>
                     )}

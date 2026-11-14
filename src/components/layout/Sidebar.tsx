@@ -92,15 +92,15 @@ export function Sidebar({ user }: SidebarProps) {
                 className="object-contain h-7 w-7"
               />
             ) : (
-              <span className="font-bold text-xs text-primary">SE</span>
+              <span className="font-bold text-sm text-primary">SE</span>
             )}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold tracking-tight text-ink leading-tight truncate font-display">
+            <span className="text-base font-bold tracking-tight text-ink leading-tight truncate font-display">
               SE-Core
             </span>
-            <span className="text-[11px] text-ink-muted leading-tight mt-0.5 truncate font-body">
-              SMAN 1 Bantul
+            <span className="text-xs text-ink-muted leading-tight mt-0.5 truncate font-body">
+              SMAN 1 Bangsal
             </span>
           </div>
         </Link>
@@ -108,7 +108,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Nav Menu Items */}
       <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1.5 text-[10px] font-bold text-ink-muted uppercase tracking-wider font-mono">
+        <div className="px-3 py-1.5 text-xs font-bold text-ink-muted uppercase tracking-wider font-mono">
           Menu Utama
         </div>
 
@@ -142,7 +142,7 @@ export function Sidebar({ user }: SidebarProps) {
               >
                 <span className="absolute left-0 top-2 bottom-2 w-1 bg-primary rounded-r-full shadow-[0_0_8px_rgba(225,29,42,0.8)]" />
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
-                <span className="text-xs leading-none tracking-tight font-display">
+                <span className="text-sm leading-none tracking-tight font-display">
                   {item.label}
                 </span>
               </Link>
@@ -158,7 +158,7 @@ export function Sidebar({ user }: SidebarProps) {
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-ink-secondary hover:text-ink hover:bg-surface-container-high/60 border border-transparent font-medium transition-all min-h-11"
             >
               <Icon className="h-5 w-5 stroke-[1.8] text-ink-muted shrink-0" />
-              <span className="text-xs leading-none tracking-tight font-body">
+              <span className="text-sm leading-none tracking-tight font-body">
                 {item.label}
               </span>
             </Link>
@@ -200,10 +200,10 @@ export function Sidebar({ user }: SidebarProps) {
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <span className="text-xs font-semibold text-ink block truncate leading-tight font-display">
+            <span className="text-sm font-semibold text-ink block truncate leading-tight font-display">
               {user?.name || "Pengaturan"}
             </span>
-            <span className="text-[10px] text-ink-muted block truncate mt-0.5 font-mono">
+            <span className="text-xs text-ink-muted block truncate mt-0.5 font-mono">
               {user?.role ? user.role : "Profil & Akun"}
             </span>
           </div>

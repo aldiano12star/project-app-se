@@ -125,7 +125,7 @@ export function ImagePickerField({
           <ImageIcon className="w-3.5 h-3.5 text-primary" />
           <span>{label}</span>
         </label>
-        <span className="text-[10px] text-ink-muted font-mono">
+        <span className="text-xs text-ink-muted font-mono">
           Canvas → WebP
         </span>
       </div>
@@ -205,7 +205,7 @@ export function ImagePickerField({
                   ? "Mengompresi foto ke WebP..."
                   : "Mengunggah foto..."}
               </p>
-              <span className="text-[10px] text-ink-muted">
+              <span className="text-xs text-ink-muted">
                 Memangkas ukuran berkas agar hemat kuota...
               </span>
             </div>
@@ -218,7 +218,7 @@ export function ImagePickerField({
                 <p className="text-xs font-bold text-ink">
                   {placeholder}
                 </p>
-                <p className="text-[11px] text-ink-muted">
+                <p className="text-xs text-ink-muted">
                   Mendukung JPG, PNG, atau WebP dari ponsel atau komputer
                 </p>
               </div>
@@ -242,7 +242,7 @@ export function ImagePickerField({
       )}
 
       {helperText && (
-        <p className="text-[11px] text-ink-muted leading-tight">
+        <p className="text-xs text-ink-muted leading-relaxed">
           💡 {helperText}
         </p>
       )}

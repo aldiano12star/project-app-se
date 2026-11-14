@@ -130,7 +130,7 @@ export function InstallPWAPrompt() {
             {/* App Icon Badge */}
             <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#E11D2A] to-[#991B1B] text-white font-black text-xs shadow-md ring-2 ring-[#E11D2A]/40">
               SEC
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white">
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-xs text-white">
                 <Sparkles className="w-2.5 h-2.5" />
               </span>
             </div>
@@ -138,14 +138,14 @@ export function InstallPWAPrompt() {
             {/* Banner Text */}
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#E11D2A]/20 text-[#FF4D5E] border border-[#E11D2A]/30 font-mono uppercase tracking-wider">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-[#E11D2A]/20 text-[#FF4D5E] border border-[#E11D2A]/30 font-mono uppercase tracking-wider">
                   Mobile App
                 </span>
-                <span className="text-[11px] text-slate-400 font-medium">
+                <span className="text-xs text-slate-400 font-medium">
                   SE-Core
                 </span>
               </div>
-              <p className="text-xs font-semibold text-slate-100 leading-snug">
+              <p className="text-sm font-semibold text-slate-100 leading-snug">
                 Pasang Aplikasi SE-Core di HP untuk akses portal Saba ExploIT!
               </p>
             </div>
@@ -203,7 +203,7 @@ export function InstallPWAPrompt() {
                   <h2 id="ios-install-title" className="text-sm font-bold text-white">
                     Pasang di iOS / iPhone
                   </h2>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-xs text-slate-400">
                     Panduan 2 langkah mudah
                   </p>
                 </div>
@@ -229,7 +229,7 @@ export function InstallPWAPrompt() {
                     Ketuk tombol <span className="text-blue-400 font-bold">Bagikan (Share)</span>
                     <Share className="w-3.5 h-3.5 text-blue-400 inline shrink-0" />
                   </p>
-                  <p className="text-slate-400 text-[11px]">
+                  <p className="text-slate-400 text-xs leading-relaxed">
                     Ikon kotak panah ke atas di bagian bawah layar peramban Safari.
                   </p>
                 </div>
@@ -245,7 +245,7 @@ export function InstallPWAPrompt() {
                     Pilih <span className="text-emerald-400 font-bold">Tambahkan ke Layar Utama</span>
                     <PlusSquare className="w-3.5 h-3.5 text-emerald-400 inline shrink-0" />
                   </p>
-                  <p className="text-slate-400 text-[11px]">
+                  <p className="text-slate-400 text-xs leading-relaxed">
                     Gulir ke bawah pada menu pop-up, lalu ketuk tombol <strong>Tambah (Add)</strong> di sudut kanan atas.
                   </p>
                 </div>
@@ -255,7 +255,7 @@ export function InstallPWAPrompt() {
             {/* Keuntungan Standalone */}
             <div className="p-3 rounded-xl bg-[#E11D2A]/10 border border-[#E11D2A]/20 flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-[#E11D2A] shrink-0 mt-0.5" />
-              <p className="text-[11px] text-slate-300 leading-tight">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Aplikasi akan langsung muncul di layar utama HP milikmu dengan pengalaman layar penuh tanpa bilah peramban.
               </p>
             </div>

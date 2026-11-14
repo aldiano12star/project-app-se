@@ -116,14 +116,14 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
               </div>
               <div className="min-w-0 space-y-0.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h5 className="text-xs font-bold text-ink">
+                  <h5 className="text-sm font-bold text-ink">
                     Rekapitulasi Data Anggota
                   </h5>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface hairline-border text-ink-muted uppercase">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface hairline-border text-ink-muted uppercase">
                     .CSV
                   </span>
                 </div>
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-sm text-ink-muted leading-relaxed">
                   Daftar nama, divisi, angkatan, peran, kontak WhatsApp, dan akumulasi poin XP anggota aktif.
                 </p>
               </div>
@@ -157,14 +157,14 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
               </div>
               <div className="min-w-0 space-y-0.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h5 className="text-xs font-bold text-ink">
+                  <h5 className="text-sm font-bold text-ink">
                     Arsip Kehadiran Rapat &amp; Pleno
                   </h5>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface hairline-border text-ink-muted uppercase">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface hairline-border text-ink-muted uppercase">
                     .CSV
                   </span>
                 </div>
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-sm text-ink-muted leading-relaxed">
                   Log lengkap riwayat presensi rapat per sesi, verifikasi QR kehadiran, dan keterlibatan anggota.
                 </p>
               </div>
@@ -198,14 +198,14 @@ export function AdminBackupSection({ currentUserRole }: AdminBackupSectionProps)
               </div>
               <div className="min-w-0 space-y-0.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h5 className="text-xs font-bold text-ink">
+                  <h5 className="text-sm font-bold text-ink">
                     Buku Besar Kas Organisasi
                   </h5>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface hairline-border text-ink-muted uppercase">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-surface hairline-border text-ink-muted uppercase">
                     .CSV
                   </span>
                 </div>
-                <p className="text-[11px] text-ink-muted leading-relaxed">
+                <p className="text-sm text-ink-muted leading-relaxed">
                   Catatan transaksi kas masuk &amp; keluar, status pelunasan iuran berkala, dan saldo mutasi riil.
                 </p>
               </div>

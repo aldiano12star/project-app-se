@@ -308,7 +308,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-[#27272A] pb-5">
             <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+                <span className="text-xs font-mono font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
                   FRAME #{String(entry.generationYear).padStart(2, "0")}
                 </span>
                 <span className="text-xs text-[#71717A] font-mono truncate">
@@ -323,17 +323,17 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
             {/* 3 Metric Legacy Cards: Kehadiran, Total Event, Total Karya (Non-Finansial) */}
             <div className="flex items-center gap-2 self-start lg:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono shrink-0">
               <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
-                <span className="text-[10px] text-[#71717A] block font-sans">Keaktifan</span>
+                <span className="text-xs text-[#71717A] block font-sans">Keaktifan</span>
                 <strong className="text-emerald-400">{attendanceRate}</strong>
               </div>
               <div className="w-[1px] h-6 bg-[#27272A]" />
               <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
-                <span className="text-[10px] text-[#71717A] block font-sans">Agenda</span>
+                <span className="text-xs text-[#71717A] block font-sans">Agenda</span>
                 <strong className="text-sky-400">{totalEventsCount} Acara</strong>
               </div>
               <div className="w-[1px] h-6 bg-[#27272A]" />
               <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
-                <span className="text-[10px] text-[#71717A] block font-sans">Karya</span>
+                <span className="text-xs text-[#71717A] block font-sans">Karya</span>
                 <strong className="text-purple-400">{totalWorksCount} Karya</strong>
               </div>
             </div>
@@ -344,7 +344,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
             {/* Header Keterangan Foto Kenangan (Dipindahkan ke luar gambar agar tidak menutupi wajah) */}
             <div className="flex items-center justify-between gap-3 px-1">
               <div className="flex items-center gap-2 min-w-0">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30 shrink-0">
+                <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-500/20 px-2.5 py-0.5 rounded-full border border-amber-500/30 shrink-0">
                   FOTO KENANGAN PENGURUS
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate">
@@ -395,7 +395,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   <p className="text-xs font-bold text-[#F4F4F5]">
                     Tambahkan Foto Kenangan Pengurus
                   </p>
-                  <p className="text-[11px] text-[#71717A] mt-0.5">
+                  <p className="text-xs sm:text-sm text-[#71717A] mt-0.5">
                     Sentuh di sini untuk mengunggah foto dokumentasi kepengurusan periode ini
                   </p>
                 </div>
@@ -412,7 +412,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   Panggung Kehormatan (Top 3 Champions)
                 </h4>
               </div>
-              <span className="text-[10px] text-[#71717A] font-mono whitespace-nowrap shrink-0">
+              <span className="text-xs text-[#71717A] font-mono whitespace-nowrap shrink-0">
                 Sentuh untuk ringkasan
               </span>
             </div>
@@ -442,13 +442,13 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                         <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
                           {champ.name}
                         </h5>
-                        <span className="text-[10px] text-[#A1A1AA] block truncate">
+                        <span className="text-xs text-[#A1A1AA] block truncate">
                           {champ.division || "Anggota"}
                         </span>
                       </div>
                     </div>
 
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 whitespace-nowrap ${champ.badgeColor}`}>
+                    <span className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full border shrink-0 whitespace-nowrap ${champ.badgeColor}`}>
                       {champ.icon}
                       <span>{champ.label}</span>
                     </span>
@@ -458,7 +458,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                     <span className="flex items-center gap-1 font-mono-num">
                       <strong className="text-primary font-bold">{champ.points.toLocaleString()}</strong> XP
                     </span>
-                    <span className="text-[10px] font-sans text-[#71717A] truncate font-mono-num">
+                    <span className="text-xs font-sans text-[#71717A] truncate font-mono-num">
                       {champ.works} Karya Terarsip
                     </span>
                   </div>
@@ -487,7 +487,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   >
                     <div className="min-w-0 space-y-1 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/40 px-2 py-0.5 rounded-md shrink-0">
+                        <span className="text-xs font-bold text-sky-400 bg-sky-950/40 border border-sky-800/40 px-2 py-0.5 rounded-md shrink-0">
                           #{i + 1}
                         </span>
                         <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-primary transition-colors">
@@ -495,12 +495,12 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                         </h5>
                       </div>
                       {evt.desc && (
-                        <p className="text-[11px] text-[#A1A1AA] line-clamp-1 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[#A1A1AA] line-clamp-1 leading-relaxed">
                           {evt.desc}
                         </p>
                       )}
                       {evt.date && (
-                        <span className="text-[10px] text-[#71717A] font-mono block">
+                        <span className="text-xs text-[#71717A] font-mono block">
                           📅 {evt.date}
                         </span>
                       )}
@@ -549,7 +549,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                       <h5 className="text-xs sm:text-sm font-bold text-[#F4F4F5] truncate group-hover:text-purple-400 transition-colors">
                         {wk.title}
                       </h5>
-                      <p className="text-[11px] text-[#A1A1AA] truncate">
+                      <p className="text-xs sm:text-sm text-[#A1A1AA] truncate">
                         Karya: <strong>{wk.author}</strong> {wk.div ? `• ${wk.div}` : ""}
                       </p>
                     </div>
@@ -636,26 +636,26 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
 
             <div className="grid grid-cols-3 gap-2 pt-1">
               <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
-                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                <span className="text-xs text-[#71717A] uppercase font-bold block">
                   Poin XP
                 </span>
-                <span className="text-sm font-extrabold text-primary font-mono block truncate">
+                <span className="text-sm sm:text-base font-extrabold text-primary font-mono block truncate">
                   {selectedChampion.points.toLocaleString()}
                 </span>
               </div>
               <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
-                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                <span className="text-xs text-[#71717A] uppercase font-bold block">
                   Karya Dibuat
                 </span>
-                <span className="text-sm font-extrabold text-purple-400 font-mono block">
+                <span className="text-sm sm:text-base font-extrabold text-purple-400 font-mono block">
                   {selectedChampion.works} Karya
                 </span>
               </div>
               <div className="p-2.5 rounded-2xl bg-[#121214] border border-[#27272A] text-center space-y-0.5">
-                <span className="text-[9px] text-[#71717A] uppercase font-bold block">
+                <span className="text-xs text-[#71717A] uppercase font-bold block">
                   Kehadiran
                 </span>
-                <span className="text-sm font-extrabold text-sky-400 font-mono block">
+                <span className="text-sm sm:text-base font-extrabold text-sky-400 font-mono block">
                   {entry.totalMeetings} Sesi
                 </span>
               </div>
@@ -663,10 +663,10 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
 
             {/* Rincian Rekam Jejak Kontribusi */}
             <div className="space-y-2 pt-1 border-t border-[#27272A] text-left">
-              <span className="text-[10px] uppercase font-mono font-bold text-[#71717A] tracking-wider block">
+              <span className="text-xs uppercase font-mono font-bold text-[#71717A] tracking-wider block">
                 Rekam Jejak Kontribusi
               </span>
-              <div className="space-y-1.5 text-xs text-[#A1A1AA]">
+              <div className="space-y-1.5 text-xs sm:text-sm text-[#A1A1AA]">
                 <div className="flex items-center gap-2 p-2 rounded-xl bg-[#121214] border border-[#27272A]">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span className="truncate">Menuntaskan {entry.totalMeetings} agenda rapat &amp; kepanitiaan</span>
@@ -678,9 +678,9 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 flex items-center gap-2.5">
+            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs sm:text-sm text-amber-300 flex items-center gap-2.5">
               <Award className="w-4 h-4 text-amber-400 shrink-0" />
-              <p className="text-[11px] leading-relaxed">
+              <p className="text-xs sm:text-sm leading-relaxed">
                 Diabadikan atas dedikasi luar biasa dalam kepengurusan {displayTitle}.
               </p>
             </div>

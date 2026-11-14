@@ -116,10 +116,10 @@ export function CreateWikiModal({
               <BookOpen className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-ink">
+              <h2 className="text-base font-bold text-ink">
                 {formData.id ? "Edit Panduan Perpustakaan" : "Tulis Panduan Baru"}
               </h2>
-              <p className="text-[11px] text-ink-muted">
+              <p className="text-xs sm:text-sm text-ink-muted">
                 Mendapat +15 XP setelah panduan berhasil dipublikasikan
               </p>
             </div>

@@ -87,7 +87,7 @@ export function AddTaskModal({
             </div>
             <div>
               <h2 className="text-sm font-bold text-ink">Tambah Tugas Ad-Hoc</h2>
-              <p className="text-[11px] text-ink-muted">Tugas baru untuk kepanitiaan</p>
+              <p className="text-xs sm:text-sm text-ink-muted">Tugas baru untuk kepanitiaan</p>
             </div>
           </div>
           <button

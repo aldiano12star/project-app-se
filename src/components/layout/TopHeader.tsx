@@ -68,20 +68,20 @@ export function TopHeader({ user }: TopHeaderProps) {
                   className="object-contain h-7 w-7"
                 />
               ) : (
-                <span className="font-bold text-xs text-primary font-display">SE</span>
+                <span className="font-bold text-sm text-primary font-display">SE</span>
               )}
             </div>
             <div className="flex flex-col">
               <span className="text-base font-bold tracking-tight text-ink leading-tight font-display">
                 SE-Core
               </span>
-              <span className="text-xs text-ink-muted tracking-normal leading-tight mt-0.5">
-                SMAN 1 Bantul
+              <span className="text-sm text-ink-muted tracking-normal leading-tight mt-0.5">
+                SMAN 1 Bangsal
               </span>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-2.5 text-xs font-semibold text-ink-muted">
+          <div className="hidden md:flex items-center gap-2.5 text-sm font-semibold text-ink-muted">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
             <span className="text-ink font-display font-bold">Saba ExploIT Portal Organisasi</span>
             <span>&bull;</span>
@@ -94,10 +94,10 @@ export function TopHeader({ user }: TopHeaderProps) {
           {/* XP Pill: Khusus anggota reguler/pengurus, disembunyikan untuk KOLABORATOR */}
           {role !== "KOLABORATOR" && (
             <div className="flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 min-h-9 shadow-[0_0_12px_-2px_rgba(245,158,11,0.2)]">
-              <Zap className="h-3.5 w-3.5 fill-amber-500 text-amber-500 animate-pulse" />
-              <span className="text-xs font-bold font-mono text-amber-700 dark:text-amber-300 tabular-nums">
+              <Zap className="h-4 w-4 fill-amber-500 text-amber-500 animate-pulse" />
+              <span className="text-sm font-bold font-mono text-amber-700 dark:text-amber-300 tabular-nums">
                 {points.toLocaleString("id-ID")}{" "}
-                <span className="text-[10px] font-bold text-amber-600/80 dark:text-amber-400/80 font-mono uppercase tracking-widest">XP</span>
+                <span className="text-xs font-bold text-amber-600/90 dark:text-amber-400/90 font-mono uppercase tracking-wider">XP</span>
               </span>
             </div>
           )}

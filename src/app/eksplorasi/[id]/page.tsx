@@ -246,7 +246,7 @@ export default async function ShowcaseDetailPage({
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                   </div>
-                  <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
+                  <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
                     Karya Terverifikasi
                   </span>
                 </div>
@@ -260,7 +260,7 @@ export default async function ShowcaseDetailPage({
                   </h2>
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] font-mono text-ink-muted">
+                <div className="flex items-center justify-between text-xs font-mono text-ink-muted">
                   <span>SABA EXPLOIT SHOWCASE</span>
                   <span className="text-emerald-400">AUTHENTIC REPO</span>
                 </div>
@@ -317,19 +317,19 @@ export default async function ShowcaseDetailPage({
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-ink text-sm truncate">
+                        <span className="font-bold text-ink text-sm sm:text-base truncate">
                           {project.author.name}
                         </span>
                         {project.author.classGrade && (
-                          <span className="text-[10px] text-ink-muted shrink-0 font-mono">
+                          <span className="text-xs text-ink-muted shrink-0 font-mono">
                             ({formatGrade(project.author.classGrade)})
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-ink-muted">Ketua / Pembuat Karya</span>
+                      <span className="text-xs sm:text-sm text-ink-muted">Ketua / Pembuat Karya</span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono border border-amber-500/20">
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono border border-amber-500/20">
                     +50 XP
                   </span>
                 </div>
@@ -346,19 +346,19 @@ export default async function ShowcaseDetailPage({
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-ink text-sm truncate">
+                          <span className="font-bold text-ink text-sm sm:text-base truncate">
                             {contrib.name}
                           </span>
                           {contrib.classGrade && (
-                            <span className="text-[10px] text-ink-muted shrink-0 font-mono">
+                            <span className="text-xs text-ink-muted shrink-0 font-mono">
                               ({formatGrade(contrib.classGrade)})
                             </span>
                           )}
                         </div>
-                        <span className="text-xs text-ink-muted">Kontributor Tim</span>
+                        <span className="text-xs sm:text-sm text-ink-muted">Kontributor Tim</span>
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-purple-400 px-2 py-0.5 rounded-full bg-purple-500/15 shrink-0 font-mono border border-purple-500/30">
+                    <span className="text-xs font-bold text-purple-400 px-2.5 py-1 rounded-full bg-purple-500/15 shrink-0 font-mono border border-purple-500/30">
                       +50 XP
                     </span>
                   </div>

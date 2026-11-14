@@ -99,36 +99,36 @@ export function PrintRABModal({
           {/* Formal Sheet Paper Container */}
           <div
             id="printable-rab-document"
-            className="w-full max-w-2xl mx-auto bg-white text-black p-6 sm:p-10 rounded-xl shadow-lg border border-slate-300 print:shadow-none print:border-none print:p-0 print:max-w-none font-serif text-[12px] leading-normal"
+            className="w-full max-w-2xl mx-auto bg-white text-black p-6 sm:p-10 rounded-xl shadow-lg border border-slate-300 print:shadow-none print:border-none print:p-0 print:max-w-none font-serif text-sm leading-normal"
           >
             {/* 1. KOP SURAT RESMI ORGANISASI & SEKOLAH */}
             <div className="text-center border-b-4 border-double border-black pb-3 mb-5">
               <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase font-sans text-slate-800">
                 EKSTRAKURIKULER TEKNOLOGI INFORMASI &amp; MULTIMEDIA
               </h3>
-              <h1 className="text-base sm:text-xl font-black tracking-widest uppercase font-sans text-black mt-0.5">
+              <h1 className="text-lg sm:text-2xl font-black tracking-widest uppercase font-sans text-black mt-0.5">
                 SABA EXPLOIT (SE)
               </h1>
-              <p className="text-[11px] text-slate-600 font-sans mt-0.5">
+              <p className="text-xs text-slate-600 font-sans mt-0.5">
                 Sekretariat: Lab Komputer IT &amp; Multimedia • SMA Negeri 1 Bantul
               </p>
-              <p className="text-[10px] text-slate-500 font-sans">
+              <p className="text-xs text-slate-500 font-sans">
                 Jl. KH. Wahid Hasyim No. 58 Bantul, D.I. Yogyakarta 55711 • Website: saba-exploit.app
               </p>
             </div>
 
             {/* 2. JUDUL DOKUMEN & NOMOR */}
             <div className="text-center mb-5 font-sans">
-              <h2 className="text-sm sm:text-base font-bold underline uppercase tracking-wide text-black">
+              <h2 className="text-base sm:text-lg font-bold underline uppercase tracking-wide text-black">
                 RANCANGAN ANGGARAN BIAYA (RAB) KEGIATAN
               </h2>
-              <span className="text-[11px] text-slate-600 font-mono block mt-0.5">
+              <span className="text-xs text-slate-600 font-mono block mt-0.5">
                 Nomor: RAB/SE-{event.id.slice(-6).toUpperCase()}/{new Date().getFullYear()}
               </span>
             </div>
 
             {/* 3. INFORMASI ACARA / KEGIATAN */}
-            <div className="mb-4 bg-slate-50 border border-slate-300 p-3 rounded-md font-sans text-[11px] space-y-1">
+            <div className="mb-4 bg-slate-50 border border-slate-300 p-3.5 rounded-md font-sans text-xs sm:text-sm space-y-1.5">
               <div className="grid grid-cols-3 gap-1">
                 <span className="font-bold text-slate-700">Nama Kegiatan</span>
                 <span className="col-span-2 font-bold text-black">: {event.title}</span>
@@ -139,7 +139,7 @@ export function PrintRABModal({
               </div>
               <div className="grid grid-cols-3 gap-1">
                 <span className="font-semibold text-slate-700">Tempat / Lokasi</span>
-                <span className="col-span-2 text-slate-900">: Lab Komputer / Lingkungan Sekolah</span>
+                <span className="col-span-2 text-slate-900">: {formattedDate}</span>
               </div>
               <div className="grid grid-cols-3 gap-1">
                 <span className="font-semibold text-slate-700">Perihal</span>
@@ -149,7 +149,7 @@ export function PrintRABModal({
 
             {/* 4. TABEL KALKULASI RESMI ANGGARAN BIAYA */}
             <div className="mb-6 font-sans">
-              <table className="w-full border-collapse border border-black text-[11px]">
+              <table className="w-full border-collapse border border-black text-xs sm:text-sm">
                 <thead>
                   <tr className="bg-slate-200 text-black border-b border-black">
                     <th className="border border-black p-2 text-center w-8">No</th>
@@ -197,8 +197,8 @@ export function PrintRABModal({
             </div>
 
             {/* 5. 4 BLOK TANDA TANGAN RESMI (2 BARIS x 2 KOLOM) */}
-            <div className="mt-8 pt-2 font-sans text-[11px] space-y-8 break-inside-avoid">
-              <div className="text-right text-slate-700 text-[11px] mb-2">
+            <div className="mt-8 pt-2 font-sans text-xs sm:text-sm space-y-8 break-inside-avoid">
+              <div className="text-right text-slate-700 text-xs sm:text-sm mb-2">
                 Bantul, {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
               </div>
 
@@ -210,7 +210,7 @@ export function PrintRABModal({
                     <p className="font-bold underline text-black uppercase tracking-wide">
                       ( .................................................... )
                     </p>
-                    <p className="text-[10px] text-slate-600">NISN. ........................................</p>
+                    <p className="text-xs text-slate-600">NISN. ........................................</p>
                   </div>
                 </div>
 
@@ -220,7 +220,7 @@ export function PrintRABModal({
                     <p className="font-bold underline text-black uppercase tracking-wide">
                       ( .................................................... )
                     </p>
-                    <p className="text-[10px] text-slate-600">NISN. ........................................</p>
+                    <p className="text-xs text-slate-600">NISN. ........................................</p>
                   </div>
                 </div>
               </div>
@@ -233,7 +233,7 @@ export function PrintRABModal({
                     <p className="font-bold underline text-black uppercase tracking-wide">
                       ( .................................................... )
                     </p>
-                    <p className="text-[10px] text-slate-600">NIP. ........................................</p>
+                    <p className="text-xs text-slate-600">NIP. ........................................</p>
                   </div>
                 </div>
 
@@ -243,7 +243,7 @@ export function PrintRABModal({
                     <p className="font-bold underline text-black uppercase tracking-wide">
                       ( .................................................... )
                     </p>
-                    <p className="text-[10px] text-slate-600">NIP. ........................................</p>
+                    <p className="text-xs text-slate-600">NIP. ........................................</p>
                   </div>
                 </div>
               </div>

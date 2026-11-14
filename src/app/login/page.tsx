@@ -42,19 +42,19 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         {/* Pill Badge */}
         <div className="mt-2.5 flex justify-center relative z-10">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-[11px] font-semibold text-primary font-mono tracking-wider uppercase">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-semibold text-primary font-mono tracking-wider uppercase">
             <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             SMAN 1 Bantul • Musim 2025/2026
           </span>
         </div>
 
-        <p className="mt-3 text-xs sm:text-sm text-ink-muted leading-relaxed relative z-10 font-body">
+        <p className="mt-3 text-sm sm:text-base text-ink-muted leading-relaxed relative z-10 font-body">
           Portal Kegiatan, Presensi &amp; Kolaborasi Anggota
         </p>
 
         {/* Alert Error Konfigurasi / Login */}
         {errorType && (
-          <div className="mt-4 p-3.5 rounded-2xl bg-danger-subtle/50 dark:bg-danger-subtle/20 border border-danger/25 text-xs text-danger flex items-center gap-2.5 text-left relative z-10">
+          <div className="mt-4 p-3.5 rounded-2xl bg-danger-subtle/50 dark:bg-danger-subtle/20 border border-danger/25 text-sm text-danger flex items-center gap-2.5 text-left relative z-10">
             <AlertTriangle className="h-4 w-4 shrink-0 text-danger" />
             <span className="leading-relaxed">
               {errorType === "Configuration"

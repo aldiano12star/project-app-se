@@ -57,18 +57,18 @@ export function PengaturanClientView({
         </Link>
 
         {/* Screen Title */}
-        <h1 className="text-xs sm:text-sm font-bold text-ink tracking-tight">
+        <h1 className="text-sm sm:text-base font-bold text-ink tracking-tight font-display">
           Profil &amp; Pengaturan
         </h1>
 
         {/* Right Indicator Badge */}
         <div className="min-h-[44px] flex items-center justify-end">
           {user.role === "OPERATOR" ? (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 font-mono">
               OPERATOR
             </span>
           ) : (
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary-subtle border border-primary/20 text-primary font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-primary-subtle border border-primary/20 text-primary font-mono">
               {formatGrade(user.classGrade)}
             </span>
           )}
@@ -102,11 +102,11 @@ export function PengaturanClientView({
         <LogoutButton />
 
         {/* 6. Footer Hak Cipta Resmi Eksklusif di Halaman Pengaturan */}
-        <footer className="pt-8 pb-12 text-center space-y-1.5 text-xs text-ink-muted select-none border-t hairline-border">
+        <footer className="pt-8 pb-12 text-center space-y-1.5 text-sm text-ink-muted select-none border-t hairline-border">
           <p className="font-semibold text-ink-secondary">
             &copy; 2026 Saba ExploIT • SMAN 1 Bangsal
           </p>
-          <p className="text-[11px] font-mono text-ink-muted">
+          <p className="text-xs font-mono text-ink-muted">
             SE-Core v1.3.0 • Zero-Cost Cloud Architecture
           </p>
         </footer>
