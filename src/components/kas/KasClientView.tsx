@@ -52,12 +52,12 @@ export function KasClientView({
       {/* ── EDITORIAL HEADER ── */}
       <section className="flex items-center justify-between pt-1">
         <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-display">
               {isKolaborator ? "Urunan & Dompet Kegiatan" : "Kas & Dompet Digital"}
             </h1>
             {unpaidInvoicesCount > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/25 text-[11px] font-bold font-mono">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/25 text-[11px] font-bold font-mono whitespace-nowrap shrink-0">
                 {unpaidInvoicesCount} Tagihan Aktif
               </span>
             )}
@@ -87,21 +87,21 @@ export function KasClientView({
       />
 
       {/* ── 2. GLASS SEGMENTED ACTIVITY DOCK (Revolut / Apple Wallet Style) ── */}
-      <div className="flex items-center gap-1 p-1 rounded-2xl bg-surface-container/60 border hairline-border overflow-x-auto select-none">
+      <div className="flex items-center gap-1 p-1 rounded-2xl bg-surface-container/60 border hairline-border w-full max-w-full select-none">
         <button
           type="button"
           onClick={() => {
             haptic.tap();
             setActiveTab("PERSONAL");
           }}
-          className={`flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-0 py-2 px-1.5 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
             activeTab === "PERSONAL"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
-          <Receipt className="h-3.5 w-3.5" />
-          <span>Dompet Personal</span>
+          <Receipt className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">Dompet Personal</span>
         </button>
 
         {!isKolaborator && (
@@ -111,14 +111,14 @@ export function KasClientView({
               haptic.tap();
               setActiveTab("PUBLIC");
             }}
-            className={`flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`flex-1 min-w-0 py-2 px-1.5 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === "PUBLIC"
                 ? "bg-card text-ink shadow-xs border hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
             }`}
           >
-            <FileText className="h-3.5 w-3.5" />
-            <span>Buku Kas LPJ</span>
+            <FileText className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">Buku Kas LPJ</span>
           </button>
         )}
 
@@ -129,14 +129,16 @@ export function KasClientView({
               haptic.tap();
               setActiveTab("TREASURER");
             }}
-            className={`flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`flex-1 min-w-0 py-2 px-1.5 sm:px-3 rounded-xl text-[11px] sm:text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === "TREASURER"
                 ? "bg-card text-amber-500 shadow-xs border hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
             }`}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            <span>Panel Kelola Kas</span>
+            <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">
+              <span className="hidden sm:inline">Panel </span>Kelola Kas
+            </span>
           </button>
         )}
       </div>

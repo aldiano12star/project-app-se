@@ -1,12 +1,23 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, Check, Upload, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { ImagePickerField } from "@/components/ui/ImagePickerField";
 import { updateUserAvatar } from "@/actions/profile";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { haptic } from "@/lib/haptic";
+
+const emptySubscribe = () => () => {};
+
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 export interface AvatarTemplate {
   id: string;
@@ -69,6 +80,7 @@ export function AvatarSelectorModal({
   currentName = "Pengguna",
   onAvatarUpdated,
 }: AvatarSelectorModalProps) {
+  const isClient = useIsClient();
   useBodyScrollLock(isOpen);
 
   const [activeTab, setActiveTab] = useState<"TEMPLATE" | "UPLOAD">("TEMPLATE");
@@ -78,7 +90,7 @@ export function AvatarSelectorModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  if (!isOpen) return null;
+  if (!isOpen || !isClient) return null;
 
   const initials = currentName
     .split(" ")
@@ -107,8 +119,8 @@ export function AvatarSelectorModal({
     });
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div className="relative w-full max-w-md rounded-3xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col text-ink animate-in zoom-in-95 duration-200 max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-edge bg-surface-container-low/60 shrink-0">
@@ -290,6 +302,7 @@ export function AvatarSelectorModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

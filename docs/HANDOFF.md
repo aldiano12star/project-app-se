@@ -17,7 +17,7 @@
   - **PWA & Notifikasi**: Service Worker native PWA terdaftar dengan integrasi VAPID Web-Push di [src/lib/web-push.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/lib/web-push.ts).
 - **Kondisi Kesehatan Terakhir**:
   - `npm run build`: **LULUS 100% (0 error)**, seluruh 23 rute terkompilasi bersih dengan Turbopack.
-  - `npx tsc --noEmit`: **LULUS 100% (0 error)**, validasi tipe TypeScript bersih sempurna.
+  - `npx tsc --noEmit`: **LULUS 100% (0 error)**, validasi tipe TypeScript bersih sempurna (0 error).
   - Unit Tests: `academic-year.test.ts`, `drive-parser.test.ts`, dan `rollover-query.test.ts` seluruhnya **PASS 100%**.
 - **Status Eksekusi Fase Desain**:
   - ✅ **FASE 1 SELESAI**: Global CSS Tokens, Typography, Splash Screen, & Auth Gateway.
@@ -25,7 +25,8 @@
   - ✅ **FASE 3 SELESAI**: Overhaul Modul Dashboard & Kas (Apple Wallet Aesthetics, fix Keaktifan Global flex collision, fix PodiumTop3 asymmetry & mobile Hall of Fame link, responsive card stack for targeted members table, tone mentor).
   - ✅ **FASE 4 SELESAI**: Overhaul Modul Acara & Eksplorasi (Luma Connected Timeline Circuit, Date Chips, eliminasi double icon `+ + Seksi Baru`, un-truncate nama seksi, Luma Ticket Pass QR dialog, humanisasi raw enum `PANDUAN_TEKNIS`, edge-to-edge horizontal chip scroll, dan modern tech mockup thumbnail fallback).
   - ✅ **FASE 5 SELESAI**: Overhaul Hall of Fame (avatar 2 huruf, perbaikan proporsi filmstrip mobile & pemotongan judul), Aspirasi & Polling (edge-to-edge status chips, apple-card polls), Pengaturan & Operator Control Center (kartu aksi unduh CSV multi-baris tanpa terpotong, progressive disclosure modal kaca, elevasi visual area Operator), serta Eliminasi Dead Code (`AdminUserManagementSection.tsx`).
-  - 🏆 **STATUS PROYEK**: **SELURUH 5 FASE OVERHAUL UI/UX TUNTAS 100% (PRODUCTION READY)**.
+  - ✅ **FASE 6 SELESAI**: Comprehensive UX Bug Fixes, Apple Liquid Glass BottomNav Viewport Locking, React `createPortal` Modal Engine, Hapus Notifikasi Terbaca, Penyelarasan TA 2025/2026 & Mobile 390px Overflow Elimination.
+  - 🏆 **STATUS PROYEK**: **SELURUH 6 FASE OVERHAUL UI/UX TUNTAS 100% (PRODUCTION READY)**.
 
 ---
 
@@ -266,6 +267,23 @@ Seluruh target perombakan antarmuka (Fase 1 sampai Fase 5) dari dokumen inisiasi
   * Merombak daftar anggota tertarget yang sebelumnya terpotong horizontal di layar ponsel menjadi tampilan *responsive card stack* di viewport seluler (`< md`), sementara layar Desktop (`>= md`) tetap menampilkan tabel terstruktur berbingkai hairline yang sejajar rapi.
 - **[src/components/kas/PublicCashLedger.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/PublicCashLedger.tsx)**:
   * Menerapkan angka tabular `.font-mono-num` pada saldo kas riil, total dana masuk, dan total pengeluaran untuk mencegah pergeseran angka saat animasi hitung berlangsung.
+
+### 📝 Log Perubahan Fase 6: Comprehensive UX Bug Fixes, UI Polish & 2025/2026 Alignment (Selesai):
+- **[src/app/globals.css](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/globals.css)**: Eliminasi properti `transform` dan `will-change: transform` dari kelas `.animate-page-enter` transisi masuk halaman (menggantinya dengan transisi opasitas murni `opacity: 0.85 -> 1`). Hal ini menuntaskan bug di mana `BottomNav` dan modal ikut tergulir karena containing block CSS yang rusak.
+- **[src/components/layout/BottomNav.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/BottomNav.tsx)**: Mengunci `BottomNav` pada viewport layar pengguna dengan `fixed bottom-5 left-1/2 -translate-x-1/2 z-40`, mempertahankan Apple Liquid Glass (`bg-white/70 dark:bg-[#1C1C1F]/65`, `backdrop-blur-2xl saturate-150`, specular top rim highlight, tactile active lens sliding indicator).
+- **[src/components/ui/Modal.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/ui/Modal.tsx)**: Standardisasi z-index ke `z-50`, eliminasi selector agresif `[&>div]` yang menonaktifkan border/shadow elemen anak, memastikan Apple-style Bottom Sheet (< md) dan centered dialog (>= md) terportal bersih ke `document.body`.
+- **Modals Pengaturan (`KTADigitalModal.tsx`, `AvatarSelectorModal.tsx`, `PanduanOrganisasiModal.tsx`, `RolloverConfirmationModal.tsx`, `RolloverWizardModal.tsx`)**: Seluruh modal di `/pengaturan` kini terportal langsung ke `document.body` melalui `createPortal(..., document.body)` dengan state guard `useIsClient` (`useSyncExternalStore`) dan `z-50`. Ini menuntaskan 100% bug "layar hitam kosong" saat mengklik tombol **Foto**, **Buka KTA**, atau **Panduan Organisasi**.
+- **[src/actions/notification.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/actions/notification.ts) & [src/components/notifications/MailboxClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/notifications/MailboxClientView.tsx)**: Fitur baru **"Hapus yang Dibaca"** dengan Server Action `deleteReadNotifications()`. Menghapus permanen seluruh notifikasi dengan `isRead: true` milik user dari database, dilengkapi tombol aksi di Things 3 header, count badge dinamis, dan state loading.
+- **[src/lib/academic-year.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/lib/academic-year.ts) & [src/components/operator/UserManagementClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/operator/UserManagementClientView.tsx)**:
+  - Penyelarasan periode aktif ke **`TA 2025/2026`** (menghapus tampilan 2026/2027) dengan basis hitung Kelas 10 = Gen 21, Kelas 11 = Gen 20, Kelas 12 = Gen 19.
+  - Perbaikan overflow horizontal (`overflow-x`) pada mobile viewport 390px: kontainer `w-full max-w-full overflow-hidden`, edge-to-edge controlled horizontal scroll untuk filter chips (`w-full max-w-full overflow-x-auto no-scrollbar whitespace-nowrap`), dan search bar `w-full min-w-0 truncate`.
+- **[src/components/kas/DigitalWalletCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/DigitalWalletCard.tsx) & [src/components/kas/KasClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/KasClientView.tsx)**:
+  - Menghapus chip ATM emas/perak imitasi dan gelombang contactless WiFi dari kartu Kas Utama & Dompet Anggota agar tampil bersih, minimalis, dan profesional.
+  - Memperbaiki badge `X Tagihan Aktif` dengan `whitespace-nowrap shrink-0` dan layout flex-wrap rapi.
+  - Mengoptimalkan dock 3 tab kas (`Dompet Personal`, `Buku Kas LPJ`, `Kelola Kas`) agar 100% muat proporsional di layar 390px tanpa terpotong di tepi kanan.
+- **[src/app/dashboard/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/dashboard/page.tsx)**:
+  - Menghapus baris tanggal `SABTU, 14 NOVEMBER 2026` di atas lencana `Gen 21` agar area header ringkas dan tidak memicu kerancuan dengan periode `2025/2026`.
+  - Menghapus tautan redundan `Klasemen Hall of Fame — Lihat Leaderboard ↗` dari dalam kartu POIN KONTRIBUSI (karena sudah tersedia di kartu podium di bawahnya).
 
 ### 📝 Log Perubahan Fase 2 (Selesai):
 - **[src/hooks/useBodyScrollLock.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/hooks/useBodyScrollLock.ts)**: Reaktif external store berbasis `useSyncExternalStore` pelacak modal aktif.

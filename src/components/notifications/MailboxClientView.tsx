@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { NotifType, type Notification } from "@prisma/client";
-import { markNotificationAsRead, markAllNotificationsAsRead } from "@/actions/notification";
+import {
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteReadNotifications,
+} from "@/actions/notification";
 import {
   Bell,
   Receipt,
@@ -14,6 +18,8 @@ import {
   ExternalLink,
   Inbox,
   Sparkles,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { haptic } from "@/lib/haptic";
 
@@ -54,6 +60,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [selectedTab, setSelectedTab] = useState<"ALL" | NotifType>("ALL");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeletingRead, setIsDeletingRead] = useState(false);
 
   const filteredNotifications = notifications.filter((item) => {
     if (selectedTab === "ALL") return true;
@@ -61,6 +68,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
   });
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const readCount = notifications.filter((n) => n.isRead).length;
 
   const handleMarkAsRead = async (id: string) => {
     haptic.tap();
@@ -77,6 +85,19 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     await markAllNotificationsAsRead();
     setIsUpdating(false);
+  };
+
+  const handleDeleteRead = async () => {
+    if (readCount === 0 || isDeletingRead) return;
+    haptic.tap();
+    setIsDeletingRead(true);
+    // Optimistic update
+    setNotifications((prev) => prev.filter((n) => !n.isRead));
+    const res = await deleteReadNotifications();
+    if (res.success) {
+      haptic.success();
+    }
+    setIsDeletingRead(false);
   };
 
   const getNotifIcon = (type: NotifType) => {
@@ -128,18 +149,41 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
           </p>
         </div>
 
-        {unreadCount > 0 && (
-          <button
-            type="button"
-            onClick={handleMarkAllAsRead}
-            disabled={isUpdating}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-emerald-500 transition-colors py-2 px-3 rounded-full hover:bg-surface-container border hairline-border active:scale-95 cursor-pointer"
-          >
-            <CheckCheck className="h-3.5 w-3.5 text-emerald-500" />
-            <span className="hidden sm:inline">Tandai Semua Dibaca</span>
-            <span className="sm:hidden">Tandai Baca</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {readCount > 0 && (
+            <button
+              type="button"
+              onClick={handleDeleteRead}
+              disabled={isDeletingRead}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-500 hover:text-rose-600 transition-colors py-2 px-3 rounded-full hover:bg-rose-500/10 border border-rose-500/25 active:scale-95 cursor-pointer disabled:opacity-50"
+              title="Hapus semua notifikasi yang sudah dibaca"
+            >
+              {isDeletingRead ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Hapus yang Dibaca</span>
+              <span className="sm:hidden">Hapus Dibaca</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-500/15 text-[10px] font-mono font-bold">
+                {readCount}
+              </span>
+            </button>
+          )}
+
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              onClick={handleMarkAllAsRead}
+              disabled={isUpdating}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-emerald-500 transition-colors py-2 px-3 rounded-full hover:bg-surface-container border hairline-border active:scale-95 cursor-pointer disabled:opacity-50"
+            >
+              <CheckCheck className="h-3.5 w-3.5 text-emerald-500" />
+              <span className="hidden sm:inline">Tandai Semua Dibaca</span>
+              <span className="sm:hidden">Tandai Baca</span>
+            </button>
+          )}
+        </div>
       </section>
 
       {/* ── GLASS SEGMENTED FILTER CAPSULE (Apple iOS 18 Filter) ── */}

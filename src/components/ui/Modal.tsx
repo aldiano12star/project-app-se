@@ -46,7 +46,7 @@ export function Modal({
   footer,
   className = "",
   backdropClassName = "",
-  zIndex = "z-[100]",
+  zIndex = "z-50",
   showCloseButton = false,
 }: ModalProps) {
   const isClient = useIsClient();
@@ -118,8 +118,8 @@ export function Modal({
           </div>
         )}
 
-        {/* Scrollable Body Content (strip duplicate outer card styling if passed from caller) */}
-        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 w-full [&>div]:border-0 [&>div]:shadow-none [&>div]:rounded-none">
+        {/* Scrollable Body Content */}
+        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 w-full">
           {children}
         </div>
 

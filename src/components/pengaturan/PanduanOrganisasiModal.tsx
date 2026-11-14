@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   BookOpen,
@@ -36,18 +37,29 @@ interface AccordionItem {
   content: React.ReactNode;
 }
 
+const emptySubscribe = () => () => {};
+
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 export function PanduanOrganisasiModal({
   isOpen,
   onClose,
   userRole,
 }: PanduanOrganisasiModalProps) {
+  const isClient = useIsClient();
   useBodyScrollLock(isOpen);
   const [activeTab, setActiveTab] = useState<"umum" | "operator">("umum");
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({
     umum_1: true, // Buka item pertama secara default
   });
 
-  if (!isOpen) return null;
+  if (!isOpen || !isClient) return null;
 
   const toggleAccordion = (id: string) => {
     setExpandedIds((prev) => ({
@@ -268,7 +280,7 @@ export function PanduanOrganisasiModal({
 
   const currentItems = activeTab === "umum" ? umumItems : operatorItems;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in"
       onClick={(e) => {
@@ -403,6 +415,7 @@ export function PanduanOrganisasiModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

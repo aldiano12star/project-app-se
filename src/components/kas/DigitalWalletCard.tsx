@@ -9,7 +9,6 @@ import {
   History,
   Info,
   ShieldCheck,
-  Wifi,
   Sparkles,
 } from "lucide-react";
 import { TransactionType, TransactionCategory } from "@prisma/client";
@@ -119,7 +118,7 @@ export function DigitalWalletCard({
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Top Row: Brand & EMV Chip / Contactless */}
+            {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
                 <span className="text-[10px] font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
@@ -131,16 +130,9 @@ export function DigitalWalletCard({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Wifi className="h-5 w-5 text-neutral-400 rotate-90" />
-                {/* Simulated EMV Gold Chip */}
-                <div className="w-10 h-7 rounded-md bg-linear-to-br from-amber-200 via-amber-400 to-amber-600 border border-amber-300/40 p-1 flex items-center justify-center shadow-inner">
-                  <div className="w-full h-full border border-amber-800/30 rounded-xs flex flex-col justify-between p-0.5">
-                    <div className="h-px bg-amber-800/40 w-full" />
-                    <div className="h-px bg-amber-800/40 w-full" />
-                  </div>
-                </div>
-              </div>
+              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-[10px] font-bold font-mono tracking-wider">
+                ORGANISASI
+              </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}
@@ -193,7 +185,7 @@ export function DigitalWalletCard({
             {/* Ambient Emerald Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Top Row: Brand & EMV Chip / Contactless */}
+            {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
                 <span className="text-[10px] font-mono font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5">
@@ -205,16 +197,9 @@ export function DigitalWalletCard({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Wifi className="h-5 w-5 text-neutral-400 rotate-90" />
-                {/* Simulated EMV Silver Chip */}
-                <div className="w-10 h-7 rounded-md bg-linear-to-br from-slate-200 via-slate-300 to-slate-400 border border-slate-200/40 p-1 flex items-center justify-center shadow-inner">
-                  <div className="w-full h-full border border-slate-600/30 rounded-xs flex flex-col justify-between p-0.5">
-                    <div className="h-px bg-slate-600/40 w-full" />
-                    <div className="h-px bg-slate-600/40 w-full" />
-                  </div>
-                </div>
-              </div>
+              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-[10px] font-bold font-mono tracking-wider">
+                PERSONAL
+              </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}

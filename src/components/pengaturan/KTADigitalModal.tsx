@@ -1,12 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, CheckCircle2 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { UserProfileData } from "./ProfileHeroCard";
 import { Division, Role } from "@prisma/client";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+
+const emptySubscribe = () => () => {};
+
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 interface KTADigitalModalProps {
   isOpen: boolean;
@@ -67,9 +78,10 @@ export function KTADigitalModal({
   onClose,
   user,
 }: KTADigitalModalProps) {
+  const isClient = useIsClient();
   useBodyScrollLock(isOpen);
 
-  if (!isOpen || user.role === Role.KOLABORATOR) return null;
+  if (!isOpen || !isClient || user.role === Role.KOLABORATOR) return null;
 
   const initials = user.name
     .split(" ")
@@ -89,8 +101,8 @@ export function KTADigitalModal({
     system: "SABA_EXPLOIT_AUTHENTIC_MEMBER",
   });
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
       <div className="relative w-full max-w-sm rounded-3xl bg-card border border-edge shadow-2xl overflow-hidden flex flex-col text-ink">
         {/* Header Modal Bar */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-edge bg-surface-container-low/60">
@@ -238,6 +250,7 @@ export function KTADigitalModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

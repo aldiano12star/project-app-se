@@ -313,21 +313,19 @@ body {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* ── Smooth Page Transition Animations (Zero-Jank 140ms Tactile Glide) ── */
+/* ── Smooth Page Transition Animations (Zero-Jank Opacity Fade) ───────── */
 @keyframes pageEnter {
   0% {
     opacity: 0.85;
-    transform: translateY(3px);
   }
   100% {
     opacity: 1;
-    transform: none;
   }
 }
 
 .animate-page-enter {
-  animation: pageEnter 140ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  animation: pageEnter 140ms ease-out;
+  will-change: opacity;
 }
 
 html.splash-done #se-splash-screen,

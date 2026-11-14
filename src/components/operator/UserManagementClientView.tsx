@@ -426,7 +426,7 @@ export function UserManagementClientView({
   const academicYearInfo = getAcademicYear();
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-full max-w-full overflow-hidden">
       {/* Top Header Navigasi Kembali */}
       <div className="flex items-center justify-between pt-1">
         <Link
@@ -484,14 +484,14 @@ export function UserManagementClientView({
         </div>
       )}
 
-      {/* Dynamic Filter Tabs (Progressive Disclosure) */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-surface-container-low hairline-border shadow-xs">
+      {/* Dynamic Filter Tabs (Edge-to-Edge Controlled Horizontal Scroll) */}
+      <div className="space-y-3 w-full max-w-full">
+        <div className="w-full max-w-full overflow-x-auto no-scrollbar flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface-container-low hairline-border shadow-xs">
           {/* Tab 1: Semua */}
           <button
             type="button"
             onClick={() => setActiveTab("ALL")}
-            className={`tactile-btn flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn shrink-0 flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
               activeTab === "ALL"
                 ? "bg-card text-ink shadow-xs hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
@@ -508,7 +508,7 @@ export function UserManagementClientView({
           <button
             type="button"
             onClick={() => setActiveTab("GUEST")}
-            className={`tactile-btn flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn shrink-0 flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
               activeTab === "GUEST"
                 ? "bg-card text-ink shadow-xs hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
@@ -529,15 +529,15 @@ export function UserManagementClientView({
           <button
             type="button"
             onClick={() => setIsMoreFiltersOpen(true)}
-            className={`tactile-btn flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn shrink-0 flex-1 sm:flex-none px-3 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
               isSecondaryActive
                 ? "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300 dark:border-purple-500/50 shadow-xs font-bold"
                 : "text-ink-muted hover:text-ink bg-surface-container/60 hover:bg-surface-container hairline-border"
             }`}
             title="Buka pilihan filter angkatan & kategori"
           >
-            <Sparkles className={`w-3.5 h-3.5 ${isSecondaryActive ? "text-purple-600 dark:text-purple-400" : "text-primary"}`} />
-            <span>{isSecondaryActive ? activeSecondaryInfo?.label : "Lainnya"}</span>
+            <Sparkles className={`w-3.5 h-3.5 shrink-0 ${isSecondaryActive ? "text-purple-600 dark:text-purple-400" : "text-primary"}`} />
+            <span className="truncate max-w-[80px] sm:max-w-none">{isSecondaryActive ? activeSecondaryInfo?.label : "Lainnya"}</span>
             {isSecondaryActive && activeSecondaryInfo && (
               <span className="px-1.5 py-0.2 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-[10px] font-bold font-mono-num">
                 {activeSecondaryInfo.count}
@@ -548,14 +548,14 @@ export function UserManagementClientView({
         </div>
 
         {/* Search Bar */}
-        <div className="relative">
+        <div className="relative w-full min-w-0">
           <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            placeholder="Cari berdasarkan nama, email, WhatsApp, atau keterangan pendaftaran..."
+            placeholder="Cari berdasarkan nama, email, WhatsApp..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-11 pl-10 pr-4 rounded-xl border border-edge bg-card text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            className="w-full min-w-0 h-11 pl-10 pr-4 rounded-xl border border-edge bg-card text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all truncate"
           />
         </div>
       </div>

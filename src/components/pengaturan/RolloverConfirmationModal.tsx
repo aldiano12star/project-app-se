@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useTransition, useEffect, useRef } from "react";
+import React, { useState, useTransition, useEffect, useRef, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import {
   AlertTriangle,
   X,
@@ -15,6 +16,16 @@ import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 const CONFIRMATION_KEYWORD = "TUTUP BUKU PERIODE";
 
+const emptySubscribe = () => () => {};
+
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 interface RolloverConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -26,6 +37,7 @@ export function RolloverConfirmationModal({
   isOpen,
   onClose,
 }: RolloverConfirmationModalProps) {
+  const isClient = useIsClient();
   useBodyScrollLock(isOpen);
   const [phase, setPhase] = useState<ModalPhase>("warning");
   const [confirmText, setConfirmText] = useState("");
@@ -51,7 +63,7 @@ export function RolloverConfirmationModal({
     }
   }, [phase]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !isClient) return null;
 
   const isKeywordValid = confirmText.trim() === CONFIRMATION_KEYWORD;
 
@@ -73,7 +85,7 @@ export function RolloverConfirmationModal({
     });
   };
 
-  return (
+  return createPortal(
     // Overlay backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in"
@@ -329,6 +341,7 @@ export function RolloverConfirmationModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

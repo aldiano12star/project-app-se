@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import {
   Trophy,
   Calendar,
@@ -35,6 +36,16 @@ interface RolloverWizardModalProps {
   onSuccess?: () => void;
 }
 
+const emptySubscribe = () => () => {};
+
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
 type WizardStep = 1 | 2 | 3 | 4 | 5; // 5 is celebration success
 
 export function RolloverWizardModal({
@@ -42,6 +53,7 @@ export function RolloverWizardModal({
   onClose,
   onSuccess,
 }: RolloverWizardModalProps) {
+  const isClient = useIsClient();
   useBodyScrollLock(isOpen);
 
   const [step, setStep] = useState<WizardStep>(1);
@@ -181,7 +193,9 @@ export function RolloverWizardModal({
       w.authorName.toLowerCase().includes(workSearch.toLowerCase())
   );
 
-  return (
+  if (!isOpen || !isClient) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-in fade-in"
       onClick={(e) => {
@@ -683,6 +697,7 @@ export function RolloverWizardModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

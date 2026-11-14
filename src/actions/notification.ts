@@ -128,6 +128,35 @@ export async function markAllNotificationsAsRead(): Promise<ActionResponse> {
 }
 
 /**
+ * Menghapus permanen seluruh notifikasi personal pengguna yang telah dibaca (isRead = true).
+ */
+export async function deleteReadNotifications(): Promise<ActionResponse<{ deletedCount: number }>> {
+  try {
+    const user = await assertAuthenticated();
+
+    const result = await prisma.notification.deleteMany({
+      where: {
+        userId: user.id,
+        isRead: true,
+      },
+    });
+
+    revalidatePath("/kotak-masuk");
+    return {
+      success: true,
+      message: `${result.count} notifikasi yang sudah dibaca berhasil dihapus.`,
+      data: { deletedCount: result.count },
+    };
+  } catch (error) {
+    console.error("[Notification] deleteReadNotifications error:", error);
+    return {
+      success: false,
+      message: "Gagal menghapus notifikasi yang sudah dibaca.",
+    };
+  }
+}
+
+/**
  * Mengirim notifikasi personal ke pengguna tertentu.
  * Hanya dapat dipanggil oleh BENDAHARA, ADMIN, atau OPERATOR.
  */

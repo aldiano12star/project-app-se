@@ -24,7 +24,6 @@ import {
   Coffee,
   Sparkles,
   Trophy,
-  ArrowUpRight,
 } from "lucide-react";
 import {
   getJakartaDateParts,
@@ -360,14 +359,6 @@ export default async function DashboardPage() {
     ...multiDayAgendas,
   ].slice(0, 3);
 
-  const todayFormattedText = new Date().toLocaleDateString("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "Asia/Jakarta",
-  });
-
   return (
     <AppShell user={dbUser}>
       <WelcomeOnboardingModal
@@ -390,39 +381,32 @@ export default async function DashboardPage() {
         {/* EDITORIAL GREETING & STATUS HEADER                        */}
         {/* ========================================================= */}
         <section className="space-y-3 pt-1">
-          {/* Top Line: Date & Status Badges */}
-          <div className="flex flex-wrap items-center justify-between gap-2.5">
-            <span className="text-[11px] font-mono font-bold tracking-widest text-ink-muted uppercase inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              {todayFormattedText}
+          {/* Top Line: Status & Identity Badges */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {(() => {
+              const gradeLabel = formatGrade(dbUser.classGrade);
+              if (!gradeLabel || !gradeLabel.trim()) return null;
+              return (
+                <span className="inline-flex items-center rounded-full bg-surface-container px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border hairline-border font-mono">
+                  {gradeLabel}
+                </span>
+              );
+            })()}
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${roleMeta.style}`}
+            >
+              {roleMeta.label}
             </span>
-
-            <div className="flex flex-wrap items-center gap-1.5">
-              {(() => {
-                const gradeLabel = formatGrade(dbUser.classGrade);
-                if (!gradeLabel || !gradeLabel.trim()) return null;
-                return (
-                  <span className="inline-flex items-center rounded-full bg-surface-container px-2.5 py-0.5 text-[11px] font-semibold text-ink-secondary border hairline-border font-mono">
-                    {gradeLabel}
-                  </span>
-                );
-              })()}
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${roleMeta.style}`}
-              >
-                {roleMeta.label}
-              </span>
-              {(() => {
-                const divMeta = getDivisionBadge(dbUser.mainDivision);
-                return (
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${divMeta.style}`}
-                  >
-                    {divMeta.label}
-                  </span>
-                );
-              })()}
-            </div>
+            {(() => {
+              const divMeta = getDivisionBadge(dbUser.mainDivision);
+              return (
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${divMeta.style}`}
+                >
+                  {divMeta.label}
+                </span>
+              );
+            })()}
           </div>
 
           {/* Main Asymmetric Editorial Title */}
@@ -531,17 +515,6 @@ export default async function DashboardPage() {
                   +{dbUser.monthlyPoints} XP diperoleh pada periode bulan ini
                 </p>
               </div>
-            </div>
-
-            <div className="pt-2 border-t hairline-border flex items-center justify-between relative z-10 text-xs">
-              <span className="text-ink-muted font-medium">Klasemen Hall of Fame</span>
-              <Link
-                href="/hall-of-fame"
-                className="inline-flex items-center gap-1 font-bold text-primary hover:text-primary-hover active:scale-95 transition-all cursor-pointer"
-              >
-                <span>Lihat Leaderboard</span>
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
             </div>
           </div>
 

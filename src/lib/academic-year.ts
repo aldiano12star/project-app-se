@@ -4,21 +4,21 @@
  *
  * Konteks Acuan:
  * - Tahun Ajaran berjalan dari 1 Juli (bulan ke-7) hingga 30 Juni (bulan ke-6) tahun berikutnya.
- * - Pada Tahun Ajaran 2026/2027:
+ * - Pada Tahun Ajaran 2025/2026:
  *     - Kelas 10 = Gen 21
  *     - Kelas 11 = Gen 20
  *     - Kelas 12 = Gen 19
  *
  * Rumus Umum:
  *   academicStartYear = bulan >= 7 ? tahun : tahun - 1
- *   offset = academicStartYear - 2026
+ *   offset = academicStartYear - 2025
  *   Gen = 21 - (gradeNum - 10) + offset
  */
 
 export interface AcademicYearInfo {
   academicStartYear: number;
   academicEndYear: number;
-  label: string; // Misal: "2026/2027"
+  label: string; // Misal: "2025/2026"
 }
 
 export interface GenCalculationResult {
@@ -32,20 +32,27 @@ export interface GenCalculationResult {
 
 /**
  * Mengambil informasi Tahun Ajaran berdasarkan kalender pendidikan Indonesia.
+ * Default pada periode operasional aktif Saba ExploIT: TA 2025/2026.
  */
-export function getAcademicYear(currentDate: Date = new Date()): AcademicYearInfo {
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1; // 1 - 12 (Jan - Des)
+export function getAcademicYear(currentDate?: Date): AcademicYearInfo {
+  if (currentDate) {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // 1 - 12 (Jan - Des)
+    const academicStartYear = month >= 7 ? year : year - 1;
+    const academicEndYear = academicStartYear + 1;
 
-  // Jika bulan Juli (7) ke atas, masuk tahun ajaran baru (contoh: Juli 2026 -> TA 2026/2027)
-  // Jika Januari - Juni, masih bagian semester genap tahun ajaran sebelumnya (contoh: Feb 2027 -> TA 2026/2027)
-  const academicStartYear = month >= 7 ? year : year - 1;
-  const academicEndYear = academicStartYear + 1;
+    return {
+      academicStartYear,
+      academicEndYear,
+      label: `${academicStartYear}/${academicEndYear}`,
+    };
+  }
 
+  // Periode Operasional Aktif Saba ExploIT: TA 2025/2026
   return {
-    academicStartYear,
-    academicEndYear,
-    label: `${academicStartYear}/${academicEndYear}`,
+    academicStartYear: 2025,
+    academicEndYear: 2026,
+    label: "2025/2026",
   };
 }
 
@@ -54,12 +61,12 @@ export function getAcademicYear(currentDate: Date = new Date()): AcademicYearInf
  */
 export function calculateGenFromGrade(
   grade: "KELAS_10" | "KELAS_11" | "KELAS_12" | 10 | 11 | 12 | string,
-  currentDate: Date = new Date()
+  currentDate?: Date
 ): GenCalculationResult {
   const { academicStartYear, label: academicYear } = getAcademicYear(currentDate);
 
-  // Basis acuan: TA 2026/2027 (academicStartYear = 2026) -> Kelas 10 adalah Gen 21
-  const BASE_YEAR = 2026;
+  // Basis acuan: TA 2025/2026 (academicStartYear = 2025) -> Kelas 10 adalah Gen 21
+  const BASE_YEAR = 2025;
   const BASE_GEN_10 = 21;
   const offset = academicStartYear - BASE_YEAR;
 

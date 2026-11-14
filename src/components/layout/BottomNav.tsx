@@ -88,7 +88,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-[420px] rounded-full bg-white/70 dark:bg-[#1C1C1F]/65 backdrop-blur-2xl saturate-150 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] border border-white/40 dark:border-white/10 md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-[94%] max-w-[420px] rounded-full bg-white/70 dark:bg-[#1C1C1F]/65 backdrop-blur-2xl saturate-150 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] border border-white/40 dark:border-white/10 md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
         isModalActive
           ? "translate-y-28 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100 pointer-events-auto"
