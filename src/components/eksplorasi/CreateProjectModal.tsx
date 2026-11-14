@@ -183,7 +183,7 @@ export function CreateProjectModal({
             <div>
               <h2 className="text-sm font-bold text-ink font-display">Submit Karya ke Showcase</h2>
               <p className="text-[11px] text-ink-muted">
-                +50 XP untuk Anda &amp; +50 XP per anggota tim (hingga 10 orang)
+                +50 XP untuk kamu &amp; +50 XP per anggota tim (hingga 10 orang)
               </p>
             </div>
           </div>
@@ -406,7 +406,7 @@ export function CreateProjectModal({
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
             label="Banner"
             aspectRatio="video"
-            helperText="Unggah foto cover karya langsung dari galeri perangkat Anda (WebP otomatis)."
+            helperText="Unggah foto cover karya langsung dari galeri perangkatmu (WebP otomatis)."
           />
 
           {/* Action Buttons */}

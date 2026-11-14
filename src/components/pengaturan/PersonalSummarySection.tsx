@@ -26,7 +26,7 @@ export function PersonalSummarySection({
           Rekapitulasi Mandiri (Privat)
         </h3>
         <span className="text-xs text-ink-muted flex items-center gap-1 font-mono">
-          🔒 Hanya Terlihat Oleh Anda
+          🔒 Hanya Terlihat Olehmu
         </span>
       </div>
 

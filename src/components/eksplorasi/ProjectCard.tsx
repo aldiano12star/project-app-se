@@ -222,10 +222,10 @@ export function ProjectCard({
   return (
     <div
       onClick={() => router.push(`/eksplorasi/${project.id}`)}
-      className="specular-card bg-card border border-edge/80 dark:border-white/10 rounded-2xl overflow-hidden shadow-xs hover:border-primary/50 hover:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_16px_36px_-8px_rgba(0,0,0,0.6)] transition-all duration-150 ease-out space-y-3 relative cursor-pointer group active:scale-95"
+      className="apple-card overflow-hidden hover:border-primary/40 transition-all duration-200 space-y-3 relative cursor-pointer group active:scale-[0.99] flex flex-col justify-between"
     >
       {/* 16:9 Thumbnail Header */}
-      <div className="relative w-full aspect-video bg-surface-container-low/60 dark:bg-white/5 overflow-hidden border-b border-edge/80 dark:border-white/10 flex items-center justify-center">
+      <div className="relative w-full aspect-video bg-surface-container-low/60 overflow-hidden border-b hairline-border flex items-center justify-center">
         {project.imageUrl ? (
           <Image
             src={project.imageUrl}
@@ -235,31 +235,31 @@ export function ProjectCard({
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-[#0c1322] p-3.5 flex flex-col justify-between">
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-[#0c1322] p-3.5 flex flex-col justify-between text-slate-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-rose-500/80" />
                 <span className="w-2 h-2 rounded-full bg-amber-500/80" />
                 <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
-                <span className="ml-1.5 text-[9px] font-mono text-ink-muted">
+                <span className="ml-1.5 text-[9px] font-mono text-slate-400">
                   saba-exploit.app/showcase
                 </span>
               </div>
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/20 text-primary border border-primary/30 uppercase tracking-wider font-mono">
                 Karya Terverifikasi
               </span>
             </div>
 
-            <div className="my-auto text-center flex flex-col items-center justify-center">
-              <div className="h-10 w-10 rounded-xl bg-primary/20 border border-primary/40 text-primary flex items-center justify-center mb-1">
+            <div className="my-auto text-center flex flex-col items-center justify-center py-2">
+              <div className="h-10 w-10 rounded-xl bg-primary/20 border border-primary/40 text-primary flex items-center justify-center mb-1.5">
                 <CategoryIcon className="h-5 w-5" />
               </div>
-              <span className="text-xs font-bold text-ink tracking-wide font-mono line-clamp-1 px-4">
+              <span className="text-xs font-bold text-white tracking-wide font-display line-clamp-1 px-4">
                 {project.title}
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-[9px] font-mono text-ink-muted">
+            <div className="flex items-center justify-between text-[9px] font-mono text-slate-400 border-t border-white/10 pt-1.5">
               <span>SABA EXPLOIT SHOWCASE</span>
               <span className="text-emerald-400">AUTHENTIC REPO</span>
             </div>
@@ -337,23 +337,23 @@ export function ProjectCard({
             type="button"
             onClick={handleLike}
             disabled={isLiking}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all duration-150 ease-out cursor-pointer active:scale-95 border ${
+            className={`tactile-btn flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all duration-150 ease-out cursor-pointer active:scale-95 border ${
               isLiked
                 ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/25"
-                : "bg-surface-container-low/60 dark:bg-white/5 text-ink-muted hover:text-rose-500 border-edge/80 dark:border-white/10"
+                : "bg-surface-container-low text-ink-muted hover:text-rose-500 hairline-border"
             }`}
             title="Sukai karya ini"
           >
             <Heart
               className={`h-3.5 w-3.5 ${isLiked ? "fill-rose-500 text-rose-500" : ""}`}
             />
-            <span className="tabular-nums font-mono">{likesCount}</span>
+            <span className="tabular-nums font-mono-num font-semibold">{likesCount}</span>
           </button>
         </div>
 
         {/* Title & Description */}
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-ink leading-snug group-hover:text-primary transition-colors">
+          <h3 className="text-sm font-bold text-ink leading-snug group-hover:text-primary transition-colors font-display">
             {project.title}
           </h3>
           <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
@@ -362,7 +362,7 @@ export function ProjectCard({
         </div>
 
         {/* Author & Contributors Section */}
-        <div className="space-y-2 pt-1 border-t border-edge/60 dark:border-white/10 text-[11px]">
+        <div className="space-y-2 pt-1 border-t hairline-border text-[11px]">
           {/* Author Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
@@ -375,7 +375,7 @@ export function ProjectCard({
                     {project.author.name}
                   </span>
                   {project.author.classGrade && (
-                    <span className="text-[10px] text-ink-muted shrink-0 font-mono">
+                    <span className="text-[10px] text-ink-muted shrink-0 font-mono-num">
                       ({formatGrade(project.author.classGrade)})
                     </span>
                   )}
@@ -383,14 +383,14 @@ export function ProjectCard({
                 <span className="text-[10px] text-ink-muted block">Ketua Tim</span>
               </div>
             </div>
-            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono border border-amber-500/20">
+            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 shrink-0 font-mono-num border border-amber-500/20">
               +50 XP
             </span>
           </div>
 
           {/* Team Contributors Row */}
           {hasContributors && (
-            <div className="flex items-start justify-between bg-surface-container-low/40 p-2.5 rounded-xl border border-edge/50">
+            <div className="flex items-start justify-between bg-surface-container-low/40 p-2.5 rounded-xl hairline-border">
               <div className="flex items-start gap-1.5 min-w-0 flex-1">
                 <Users className="h-3.5 w-3.5 text-purple-500 shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
@@ -401,11 +401,11 @@ export function ProjectCard({
                     {project.contributors?.map((c) => (
                       <span
                         key={c.id}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card border border-edge text-[10px] text-ink font-medium"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card hairline-border text-[10px] text-ink font-medium"
                       >
                         <span>{c.name}</span>
                         {c.classGrade && (
-                          <span className="text-[9px] text-ink-muted font-mono">
+                          <span className="text-[9px] text-ink-muted font-mono-num">
                             ({formatGrade(c.classGrade)})
                           </span>
                         )}
@@ -414,7 +414,7 @@ export function ProjectCard({
                   </div>
                 </div>
               </div>
-              <span className="text-[9px] font-semibold text-purple-400 px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 shrink-0 ml-1 font-mono">
+              <span className="text-[9px] font-semibold text-purple-400 px-1.5 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 shrink-0 ml-1 font-mono-num">
                 +50 XP/org
               </span>
             </div>
@@ -431,7 +431,7 @@ export function ProjectCard({
               href={project.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 h-11 min-h-[44px] px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
+              className="tactile-btn flex-1 h-11 min-h-[44px] px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
             >
               <ExternalLink className="h-4 w-4" />
               <span>Lihat Demo Karya</span>
@@ -443,7 +443,7 @@ export function ProjectCard({
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="h-11 min-h-[44px] px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink border border-edge flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs font-semibold"
+              className="tactile-btn h-11 min-h-[44px] px-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink hairline-border flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs font-semibold"
               title="Buka Repositori GitHub"
             >
               <GitBranch className="h-4 w-4" />

@@ -14,25 +14,25 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   const adminWa = process.env.NEXT_PUBLIC_ADMIN_WA || "6281234567890";
   const helpMessage = encodeURIComponent(
-    "Halo Admin SE-Core, saya butuh bantuan terkait akses login ke aplikasi."
+    "Halo Pengurus SE-Core, saya butuh bantuan terkait akses login ke aplikasi."
   );
   const waHelpUrl = `https://wa.me/${adminWa}?text=${helpMessage}`;
 
   return (
-    <main className="app-shell flex min-h-screen flex-col justify-center px-6 py-12">
-      <div className="specular-card bg-card p-8 sm:p-10 text-center rounded-3xl border border-edge/80 dark:border-white/10 shadow-xs relative overflow-hidden">
+    <main className="app-shell flex min-h-screen flex-col justify-center px-4 sm:px-6 py-8 relative">
+      <div className="glass-surface-subtle dark:bg-[#1C1C1F]/90 rounded-3xl p-7 sm:p-9 text-center border hairline-border shadow-xl relative overflow-hidden">
         {/* Ambient Top Glow */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-56 h-56 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Brand Header with Squircle Logo */}
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 ring-4 ring-primary/10 shadow-xs p-2.5 relative z-10">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-container/80 dark:bg-white/5 border border-edge/60 dark:border-white/10 shadow-sm p-3 relative z-10">
           <Image
             src="/logo.png"
-            alt="SE-Core Logo"
+            alt="Logo SE-Core"
             width={64}
             height={64}
             priority
-            className="object-contain h-full w-full"
+            className="object-contain h-full w-full drop-shadow-sm"
           />
         </div>
 
@@ -41,32 +41,33 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </h1>
 
         {/* Pill Badge */}
-        <div className="mt-2 flex justify-center relative z-10">
-          <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/20 px-3 py-0.5 text-[10px] font-bold text-primary font-mono tracking-widest uppercase">
+        <div className="mt-2.5 flex justify-center relative z-10">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-[11px] font-semibold text-primary font-mono tracking-wider uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             SMAN 1 Bantul • Musim 2026/2027
           </span>
         </div>
 
-        <p className="mt-2.5 text-xs sm:text-sm text-ink-muted leading-relaxed relative z-10">
+        <p className="mt-3 text-xs sm:text-sm text-ink-muted leading-relaxed relative z-10 font-body">
           Portal Kegiatan, Presensi &amp; Kolaborasi Anggota
         </p>
 
         {/* Alert Error Konfigurasi / Login */}
         {errorType && (
-          <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-500 flex items-center gap-2 text-left relative z-10">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-red-500" />
-            <span>
+          <div className="mt-4 p-3.5 rounded-2xl bg-danger-subtle/50 dark:bg-danger-subtle/20 border border-danger/25 text-xs text-danger flex items-center gap-2.5 text-left relative z-10">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-danger" />
+            <span className="leading-relaxed">
               {errorType === "Configuration"
                 ? "Konfigurasi OAuth Google atau Secret belum lengkap di Environment Variables."
                 : errorType === "AccessDenied"
-                ? "Akses login ditolak. Pastikan akun email Anda aktif."
+                ? "Akses login ditolak. Pastikan kamu menggunakan email aktif yang terdaftar."
                 : `Terjadi kendala autentikasi (${errorType}).`}
             </span>
           </div>
         )}
 
-        {/* Login Action via Server Action */}
-        <div className="mt-6 space-y-3 relative z-10">
+        {/* Login Action via Server Action (Google OAuth Only) */}
+        <div className="mt-6 space-y-3.5 relative z-10">
           <form
             action={async () => {
               "use server";
@@ -75,9 +76,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           >
             <button
               type="submit"
-              className="flex h-11 min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-edge/80 bg-white px-4 text-neutral-900 font-semibold transition-all duration-150 ease-out hover:bg-neutral-50 active:scale-95 cursor-pointer shadow-xs"
+              className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl bg-white text-zinc-900 border border-zinc-200/90 hover:bg-zinc-50 active:scale-[0.98] font-semibold text-sm shadow-xs transition-all duration-150 tactile-btn cursor-pointer"
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -100,30 +101,30 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </form>
 
           {/* Helper Text Resmi Single-Sign-On */}
-          <p className="text-xs text-ink-muted">
-            Gunakan Akun Google Anda untuk masuk atau mendaftar secara otomatis.
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Gunakan akun Google kamu untuk masuk atau mendaftar secara otomatis.
           </p>
 
           {/* Login Assistance Button (Mitigasi Lupa Akses) */}
-          <div className="pt-2">
+          <div className="pt-1.5">
             <a
               href={waHelpUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-edge bg-surface-container-low hover:bg-surface hover:border-emerald-500/40 text-xs font-semibold text-ink transition-all active:scale-[0.98] cursor-pointer"
+              className="inline-flex h-11 min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border hairline-border bg-surface-container-low/70 hover:bg-surface-container text-xs font-semibold text-ink-secondary hover:text-ink transition-all active:scale-[0.98] cursor-pointer"
             >
-              <MessageCircle className="h-4 w-4 text-emerald-500" />
-              <span>Butuh Bantuan Login? Hubungi Admin</span>
+              <MessageCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Butuh Bantuan Akses? Hubungi Pengurus</span>
             </a>
           </div>
         </div>
 
-        <p className="mt-5 pt-4 border-t border-edge text-xs text-ink-muted">
+        <p className="mt-6 pt-4 border-t hairline-border text-xs text-ink-muted leading-relaxed">
           Akses dibatasi khusus untuk anggota aktif dan pengurus resmi Saba ExploIT.
         </p>
 
-        <p className="mt-3 pt-3 border-t border-edge/60 text-[11px] text-ink-muted/80 font-mono">
-          &copy; 2026 Saba ExploIT. Powered by SE-Core.
+        <p className="mt-3 pt-3 border-t hairline-border text-[11px] text-ink-muted/80 font-mono">
+          &copy; 2026 Saba ExploIT • Powered by SE-Core
         </p>
       </div>
     </main>

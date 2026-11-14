@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
   MessageSquareText,
 } from "lucide-react";
 import { haptic } from "@/lib/haptic";
+import { useIsModalOpen } from "@/hooks/useBodyScrollLock";
 
 interface NavItem {
   label: string;
@@ -50,7 +51,9 @@ export function BottomNav() {
   const pathname = usePathname();
   const [optimisticPath, setOptimisticPath] = useState<string | null>(null);
   const [prevPathname, setPrevPathname] = useState(pathname);
-  const [isModalActive, setIsModalActive] = useState(false);
+
+  // Pure React 19 external store hook to reactively hide navigation when any modal opens
+  const isModalActive = useIsModalOpen();
 
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
@@ -58,26 +61,6 @@ export function BottomNav() {
   }
 
   const activePath = optimisticPath || pathname;
-
-  useEffect(() => {
-    const checkModalInDOM = () => {
-      // Deteksi modal overlay yang aktif di DOM (dialog atau backdrop modal, kecualikan nav & splash)
-      const activeModal = document.querySelector(
-        '[role="dialog"], .fixed.inset-0:not([data-nav="true"]):not([data-splash="true"])'
-      );
-      setIsModalActive(!!activeModal);
-    };
-
-    checkModalInDOM();
-
-    const observer = new MutationObserver(checkModalInDOM);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   if (pathname.startsWith("/pengaturan") || pathname.startsWith("/operator")) {
     return null;
@@ -87,8 +70,10 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[410px] rounded-full bg-card/85 backdrop-blur-xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.65)] border border-edge/90 dark:border-white/12 md:hidden p-1.5 transition-all duration-300 ${
-        isModalActive ? "hidden" : ""
+      className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[410px] rounded-full bg-card/85 backdrop-blur-xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.65)] border hairline-border md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isModalActive
+          ? "translate-y-28 opacity-0 pointer-events-none"
+          : "translate-y-0 opacity-100 pointer-events-auto"
       }`}
     >
       <div className="flex items-center justify-between w-full">
@@ -142,7 +127,7 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2.5 rounded-full transition-all duration-150 ease-out active:scale-95 hover:bg-surface-container-low/60 dark:hover:bg-white/5 flex items-center justify-center min-h-11 min-w-11 shrink-0"
+              className="text-ink-muted hover:text-ink hover:bg-surface-container-high/60 p-2.5 rounded-full transition-all duration-150 ease-out active:scale-95 flex items-center justify-center min-h-11 min-w-11 shrink-0"
             >
               <Icon className="h-5 w-5 stroke-[1.8]" />
             </Link>

@@ -63,7 +63,7 @@ export function NotificationSettingsCard() {
       if (result.success) {
         setPermission("granted");
         setIsSubscribed(true);
-        setFeedback("Perangkat Anda kini terhubung dengan notifikasi instan.");
+        setFeedback("Perangkatmu kini terhubung dengan notifikasi instan.");
 
         // Notifikasi konfirmasi selamat datang
         if ("serviceWorker" in navigator) {

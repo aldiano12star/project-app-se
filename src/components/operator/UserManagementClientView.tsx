@@ -444,17 +444,22 @@ export function UserManagementClientView({
         </div>
       </div>
 
-      {/* Hero Section */}
-      <div className="space-y-1">
-        <div className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+      {/* Hero Section (Elevasi Visual Area Operator) */}
+      <div className="apple-card p-5 sm:p-6 space-y-2 relative overflow-hidden">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 hairline-border flex items-center justify-center shrink-0">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight">
-              Manajemen Akun &amp; Role
-            </h1>
-            <p className="text-xs text-ink-muted">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight font-display">
+                Manajemen Akun &amp; Role
+              </h1>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25 uppercase tracking-wider">
+                Operator Control
+              </span>
+            </div>
+            <p className="text-xs text-ink-muted mt-0.5">
               Pusat aktivasi pengguna, filter angkatan dinamis, &amp; otorisasi sistem
             </p>
           </div>
@@ -481,20 +486,20 @@ export function UserManagementClientView({
 
       {/* Dynamic Filter Tabs (Progressive Disclosure) */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-surface-container-low border border-edge shadow-xs">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-surface-container-low hairline-border shadow-xs">
           {/* Tab 1: Semua */}
           <button
             type="button"
             onClick={() => setActiveTab("ALL")}
-            className={`flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
               activeTab === "ALL"
-                ? "bg-card text-ink shadow-xs border border-edge font-bold"
+                ? "bg-card text-ink shadow-xs hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
             }`}
           >
             <Users className="w-4 h-4 text-sky-500 shrink-0" />
             <span>Semua</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary border border-edge font-mono">
+            <span className="px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-ink-secondary hairline-border font-mono-num">
               {counts.totalCount}
             </span>
           </button>
@@ -503,20 +508,20 @@ export function UserManagementClientView({
           <button
             type="button"
             onClick={() => setActiveTab("GUEST")}
-            className={`flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn flex-1 sm:flex-none px-4 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
               activeTab === "GUEST"
-                ? "bg-card text-ink shadow-xs border border-edge font-bold"
+                ? "bg-card text-ink shadow-xs hairline-border font-bold"
                 : "text-ink-muted hover:text-ink"
             }`}
           >
             <Clock className="w-4 h-4 text-amber-500 shrink-0" />
             <span>Menunggu</span>
             {counts.guestCount > 0 ? (
-              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/40 font-mono animate-pulse">
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold border border-amber-500/40 font-mono-num animate-pulse">
                 {counts.guestCount}
               </span>
             ) : (
-              <span className="text-[10px] text-ink-muted font-mono">(0)</span>
+              <span className="text-[10px] text-ink-muted font-mono-num">(0)</span>
             )}
           </button>
 
@@ -524,17 +529,17 @@ export function UserManagementClientView({
           <button
             type="button"
             onClick={() => setIsMoreFiltersOpen(true)}
-            className={`flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+            className={`tactile-btn flex-1 sm:flex-none px-3.5 py-2.5 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
               isSecondaryActive
                 ? "bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300 dark:border-purple-500/50 shadow-xs font-bold"
-                : "text-ink-muted hover:text-ink bg-surface-container/60 hover:bg-surface-container border border-edge/60"
+                : "text-ink-muted hover:text-ink bg-surface-container/60 hover:bg-surface-container hairline-border"
             }`}
             title="Buka pilihan filter angkatan & kategori"
           >
             <Sparkles className={`w-3.5 h-3.5 ${isSecondaryActive ? "text-purple-600 dark:text-purple-400" : "text-primary"}`} />
             <span>{isSecondaryActive ? activeSecondaryInfo?.label : "Lainnya"}</span>
             {isSecondaryActive && activeSecondaryInfo && (
-              <span className="px-1.5 py-0.2 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-[10px] font-bold font-mono">
+              <span className="px-1.5 py-0.2 rounded-full bg-purple-200/80 dark:bg-purple-900/60 text-[10px] font-bold font-mono-num">
                 {activeSecondaryInfo.count}
               </span>
             )}
@@ -995,8 +1000,8 @@ export function UserManagementClientView({
         onClose={() => setIsMoreFiltersOpen(false)}
         className="max-w-md"
       >
-        <div className="w-full rounded-2xl bg-card border border-edge p-5 shadow-2xl space-y-4 text-ink">
-          <div className="flex items-center justify-between pb-3 border-b border-edge">
+        <div className="w-full rounded-3xl glass-surface-subtle hairline-border p-5 sm:p-6 shadow-2xl space-y-4 text-ink">
+          <div className="flex items-center justify-between pb-3 border-b hairline-border">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
@@ -1038,10 +1043,10 @@ export function UserManagementClientView({
                       setActiveTab(tabKey);
                       setIsMoreFiltersOpen(false);
                     }}
-                    className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                    className={`tactile-btn p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
                       isSelected
                         ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
-                        : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                        : "bg-surface-container-low hairline-border text-ink hover:bg-surface-container"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -1055,10 +1060,10 @@ export function UserManagementClientView({
                       </span>
                     </div>
                     <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
                         isSelected
                           ? "bg-primary text-white font-bold"
-                          : "bg-surface-container text-ink-muted border border-edge"
+                          : "bg-surface-container text-ink-muted hairline-border"
                       }`}
                     >
                       {count}
@@ -1082,10 +1087,10 @@ export function UserManagementClientView({
                   setActiveTab("ALUMNI");
                   setIsMoreFiltersOpen(false);
                 }}
-                className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                className={`tactile-btn p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
                   activeTab === "ALUMNI"
                     ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
-                    : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                    : "bg-surface-container-low hairline-border text-ink hover:bg-surface-container"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -1097,10 +1102,10 @@ export function UserManagementClientView({
                   <span className="text-xs font-semibold">Alumni</span>
                 </div>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
                     activeTab === "ALUMNI"
                       ? "bg-primary text-white font-bold"
-                      : "bg-surface-container text-ink-muted border border-edge"
+                      : "bg-surface-container text-ink-muted hairline-border"
                   }`}
                 >
                   {counts.alumniCount}
@@ -1114,10 +1119,10 @@ export function UserManagementClientView({
                   setActiveTab("KOLABORATOR");
                   setIsMoreFiltersOpen(false);
                 }}
-                className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
+                className={`tactile-btn p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer active:scale-95 ${
                   activeTab === "KOLABORATOR"
                     ? "bg-primary/10 border-primary text-primary font-bold shadow-xs"
-                    : "bg-surface-container-low border-edge text-ink hover:bg-surface-container"
+                    : "bg-surface-container-low hairline-border text-ink hover:bg-surface-container"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -1131,10 +1136,10 @@ export function UserManagementClientView({
                   <span className="text-xs font-semibold">Kolaborator</span>
                 </div>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                  className={`text-[11px] px-2 py-0.5 rounded-full font-mono-num ${
                     activeTab === "KOLABORATOR"
                       ? "bg-primary text-white font-bold"
-                      : "bg-surface-container text-ink-muted border border-edge"
+                      : "bg-surface-container text-ink-muted hairline-border"
                   }`}
                 >
                   {counts.kolaboratorCount}

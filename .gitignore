@@ -1,5 +1,3 @@
-
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -12,8 +10,10 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# testing & audits
 /coverage
+audit-*/
+*.log
 
 # next.js
 /.next/
@@ -42,5 +42,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# superpowers scratchpad
+# AI harness & local configs
+.gemini/
+.claude/
+.codex/
+.pi/
+.remember/
 .superpowers/
+.mcp.json
+
+# UI Reference Screenshots (local inspection only)
+ui-refs/

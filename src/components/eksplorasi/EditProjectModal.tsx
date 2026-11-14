@@ -444,7 +444,7 @@ export function EditProjectModal({
             onChange={(url) => setFormData({ ...formData, imageUrl: url })}
             label="Banner"
             aspectRatio="video"
-            helperText="Unggah foto cover karya langsung dari galeri perangkat Anda (WebP otomatis)."
+            helperText="Unggah foto cover karya langsung dari galeri perangkatmu (WebP otomatis)."
           />
         </form>
 

@@ -162,7 +162,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
           <div className="space-y-1">
             <h3 className="text-sm font-semibold text-ink">Tidak Ada Pesan</h3>
             <p className="text-xs text-ink-muted max-w-xs">
-              Kotak masuk Anda bersih. Seluruh notifikasi tagihan dan jarkom personal akan ditampilkan di sini.
+              Kotak masukmu bersih. Seluruh notifikasi tagihan dan jarkom personal akan ditampilkan di sini.
             </p>
           </div>
         </div>

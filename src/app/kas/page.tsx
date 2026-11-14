@@ -225,7 +225,7 @@ export default async function KasPage() {
               <span>Status Akun: Kolaborator Kepanitiaan Eksternal</span>
             </div>
             <p className="text-xs text-ink-muted max-w-md mx-auto leading-relaxed">
-              Anda terdaftar sebagai mitra kepanitiaan gabungan. Akun Anda tidak dibebani iuran kas rutin mingguan/bulanan organisasi. Riwayat mutasi di atas hanya menampilkan tagihan insidental (Urunan proker) dan setoran dana khusus untuk kegiatan yang Anda ikuti.
+              Kamu terdaftar sebagai mitra kepanitiaan gabungan. Akunmu tidak dibebani iuran kas rutin mingguan/bulanan organisasi. Riwayat mutasi di atas hanya menampilkan tagihan insidental (Urunan proker) dan setoran dana khusus untuk kegiatan yang kamu ikuti.
             </p>
           </div>
         )}

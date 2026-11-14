@@ -111,6 +111,15 @@ interface ChampionDetailData {
   label: string;
 }
 
+function getTwoLetterInitials(name: string): string {
+  if (!name) return "??";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
 export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -283,8 +292,8 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
 
       {/* ── 35MM FILMSTRIP BODY WITH LATERAL PERFORATIONS (MOBILE & DESKTOP) ── */}
       <div className="flex">
-        {/* Left Sprocket Column (Visible on all viewports) */}
-        <div className="flex flex-col justify-around py-4 sm:py-6 px-1 sm:px-1.5 bg-[#121214] border-r border-[#27272A] select-none opacity-40 shrink-0 w-3.5 sm:w-5">
+        {/* Left Sprocket Column (Visible on all viewports, ergonomis mobile) */}
+        <div className="flex flex-col justify-around py-4 sm:py-6 px-0.5 sm:px-1.5 bg-[#121214] border-r border-[#27272A] select-none opacity-40 shrink-0 w-2.5 sm:w-5">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
@@ -306,24 +315,24 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   Arsip: {new Date(entry.archivedAt).toLocaleDateString("id-ID", { year: "numeric", month: "long" })}
                 </span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F5] tracking-tight truncate">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#F4F4F5] tracking-tight font-display line-clamp-2 leading-snug break-words">
                 {displayTitle}
               </h3>
             </div>
 
             {/* 3 Metric Legacy Cards: Kehadiran, Total Event, Total Karya (Non-Finansial) */}
             <div className="flex items-center gap-2 self-start lg:self-center bg-[#121214] p-1.5 rounded-2xl border border-[#27272A] text-xs font-mono shrink-0">
-              <div className="px-2.5 sm:px-3 py-1 text-center">
+              <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
                 <span className="text-[10px] text-[#71717A] block font-sans">Keaktifan</span>
                 <strong className="text-emerald-400">{attendanceRate}</strong>
               </div>
               <div className="w-[1px] h-6 bg-[#27272A]" />
-              <div className="px-2.5 sm:px-3 py-1 text-center">
+              <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
                 <span className="text-[10px] text-[#71717A] block font-sans">Agenda</span>
                 <strong className="text-sky-400">{totalEventsCount} Acara</strong>
               </div>
               <div className="w-[1px] h-6 bg-[#27272A]" />
-              <div className="px-2.5 sm:px-3 py-1 text-center">
+              <div className="px-2.5 sm:px-3 py-1 text-center font-mono-num">
                 <span className="text-[10px] text-[#71717A] block font-sans">Karya</span>
                 <strong className="text-purple-400">{totalWorksCount} Karya</strong>
               </div>
@@ -396,14 +405,14 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
 
           {/* ── 1. THE CHAMPIONS (TOP 3 ANGGOTA) ── */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-amber-400" />
-                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#A1A1AA] truncate">
                   Panggung Kehormatan (Top 3 Champions)
                 </h4>
               </div>
-              <span className="text-[10px] text-[#71717A] font-mono">
+              <span className="text-[10px] text-[#71717A] font-mono whitespace-nowrap shrink-0">
                 Sentuh untuk ringkasan
               </span>
             </div>
@@ -413,11 +422,11 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 <div
                   key={champ.rank}
                   onClick={() => setSelectedChampion(champ)}
-                  className="group relative p-3.5 sm:p-4 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-amber-500/50 transition-all duration-300 ease-out flex flex-col justify-between space-y-3 overflow-hidden min-w-0 w-full cursor-pointer active:scale-[0.98]"
+                  className="tactile-btn group relative p-3.5 sm:p-4 rounded-2xl bg-[#121214] border border-[#27272A] hover:border-amber-500/50 transition-all duration-300 ease-out flex flex-col justify-between space-y-3 overflow-hidden min-w-0 w-full cursor-pointer active:scale-[0.98]"
                 >
                   <div className="flex items-start justify-between gap-2 min-w-0">
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <div className="w-11 h-11 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center font-bold text-base text-[#F4F4F5] shadow-xs">
+                      <div className="w-11 h-11 rounded-xl bg-[#202024] border border-[#2C2C30] overflow-hidden shrink-0 flex items-center justify-center font-bold text-sm tracking-wider text-[#F4F4F5] shadow-xs font-display">
                         {champ.avatar ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -426,7 +435,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span>{champ.name.charAt(0)}</span>
+                          <span>{getTwoLetterInitials(champ.name)}</span>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -446,10 +455,10 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   </div>
 
                   <div className="pt-2 border-t border-[#27272A] flex items-center justify-between text-xs font-mono text-[#A1A1AA]">
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1 font-mono-num">
                       <strong className="text-primary font-bold">{champ.points.toLocaleString()}</strong> XP
                     </span>
-                    <span className="text-[10px] font-sans text-[#71717A] truncate">
+                    <span className="text-[10px] font-sans text-[#71717A] truncate font-mono-num">
                       {champ.works} Karya Terarsip
                     </span>
                   </div>
@@ -530,7 +539,9 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-base">🎨</span>
+                        <div className="w-full h-full flex items-center justify-center bg-purple-950/30 text-purple-400">
+                          <Sparkles className="w-4 h-4" />
+                        </div>
                       )}
                     </div>
 
@@ -553,8 +564,8 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
           </div>
         </div>
 
-        {/* Right Sprocket Column (Visible on all viewports) */}
-        <div className="flex flex-col justify-around py-4 sm:py-6 px-1 sm:px-1.5 bg-[#121214] border-l border-[#27272A] select-none opacity-40 shrink-0 w-3.5 sm:w-5">
+        {/* Right Sprocket Column (Visible on all viewports, ergonomis mobile) */}
+        <div className="flex flex-col justify-around py-4 sm:py-6 px-0.5 sm:px-1.5 bg-[#121214] border-l border-[#27272A] select-none opacity-40 shrink-0 w-2.5 sm:w-5">
           {[...Array(14)].map((_, i) => (
             <div
               key={i}
@@ -601,7 +612,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
             </div>
 
             <div className="text-center space-y-2">
-              <div className="w-16 h-16 rounded-2xl bg-[#202024] border border-[#2C2C30] overflow-hidden mx-auto flex items-center justify-center font-bold text-xl text-[#F4F4F5] shadow-md">
+              <div className="w-16 h-16 rounded-2xl bg-[#202024] border border-[#2C2C30] overflow-hidden mx-auto flex items-center justify-center font-bold text-lg text-[#F4F4F5] shadow-md font-display tracking-wider">
                 {selectedChampion.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -610,7 +621,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span>{selectedChampion.name.charAt(0)}</span>
+                  <span>{getTwoLetterInitials(selectedChampion.name)}</span>
                 )}
               </div>
               <div>
@@ -713,7 +724,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                 onChange={(url) => setNewPhotoUrl(url)}
                 label="Pilih Foto Angkatan"
                 aspectRatio="banner"
-                helperText="Pilih foto kenangan pengurus langsung dari perangkat Anda."
+                helperText="Pilih foto kenangan pengurus langsung dari perangkatmu."
               />
 
               {saveMessage && (

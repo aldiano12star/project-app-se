@@ -35,7 +35,7 @@ export function AppShell({
 
       {/* Kontainer Konten Utama */}
       <div
-        className={`relative flex min-h-screen w-full max-w-md md:max-w-none md:w-auto md:flex-1 min-w-0 flex-col bg-surface border-x md:border-x-0 border-edge/30 shadow-sm transition-all ${
+        className={`relative flex min-h-screen w-full max-w-md md:max-w-none md:w-auto md:flex-1 min-w-0 flex-col bg-surface border-x md:border-x-0 hairline-border shadow-xs transition-all ${
           showNav ? "md:ml-64" : "mx-auto"
         }`}
       >
@@ -44,23 +44,23 @@ export function AppShell({
 
         {/* Banner Proteksi Akun GUEST */}
         {user?.role === Role.GUEST && (
-          <div className="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 shadow-sm animate-in fade-in">
+          <div className="mx-4 md:mx-8 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm flex items-start gap-3 shadow-xs animate-in fade-in">
             <span className="text-xl shrink-0">⏳</span>
             <div className="space-y-1 min-w-0 flex-1">
               <span className="font-semibold block text-amber-200 text-sm">
                 Menunggu Verifikasi Pengurus
               </span>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Akun Anda sedang menunggu verifikasi pengurus Saba ExploIT. Hubungi pengurus untuk aktivasi akun.
+              <p className="text-xs text-ink-muted leading-relaxed font-body">
+                Akun kamu sedang menunggu verifikasi pengurus Saba ExploIT. Hubungi pengurus untuk aktivasi akun.
               </p>
             </div>
           </div>
         )}
 
-        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus */}
+        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus & Safe Clearance */}
         <main
           className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
-            showNav ? "pb-28 md:pb-12" : "pb-8"
+            showNav ? "pb-36 pb-safe md:pb-12" : "pb-8"
           }`}
         >
           <PageTransition>
@@ -69,8 +69,8 @@ export function AppShell({
         </main>
 
         {/* Footer Hak Cipta & Powered by (Clearance di atas Bottom Nav Mobile) */}
-        <footer className="pt-4 pb-32 md:pb-6 px-4 text-center text-xs text-ink-muted/70 select-none">
-          <p>&copy; 2026 Saba ExploIT. Powered by SE-Core.</p>
+        <footer className="pt-4 pb-36 pb-safe md:pb-8 px-4 text-center text-xs text-ink-muted/70 select-none">
+          <p>&copy; 2026 Saba ExploIT • Powered by SE-Core</p>
         </footer>
       </div>
 

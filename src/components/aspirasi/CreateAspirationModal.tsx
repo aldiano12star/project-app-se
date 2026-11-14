@@ -100,7 +100,7 @@ export function CreateAspirationModal({
             </div>
             <div>
               <h2 className="text-sm font-bold text-ink">Tulis Suara &amp; Aspirasi</h2>
-              <p className="text-[11px] text-ink-muted">Dapatkan +10 XP atas usulan Anda</p>
+              <p className="text-[11px] text-ink-muted">Dapatkan +10 XP atas usulanmu</p>
             </div>
           </div>
           <button
@@ -156,7 +156,7 @@ export function CreateAspirationModal({
             <p className="text-[10px] text-ink-muted leading-relaxed pl-0.5">
               {targetScope === "PUBLIC"
                 ? "Dapat dibaca dan didiskusikan oleh seluruh anggota organisasi."
-                : "Hanya dapat dibaca oleh Anda dan Pengurus/Pengembang (untuk bug & kendala teknis)."}
+                : "Hanya dapat dibaca oleh kamu dan Pengurus/Pengembang (untuk bug & kendala teknis)."}
             </p>
           </div>
 
@@ -224,7 +224,7 @@ export function CreateAspirationModal({
               required
               placeholder={
                 targetScope === "PRIVATE_ADMIN"
-                  ? "Jelaskan kronologi kendala, halaman yang bermasalah, dan perangkat yang Anda gunakan..."
+                  ? "Jelaskan kronologi kendala, halaman yang bermasalah, dan perangkat yang kamu gunakan..."
                   : "Ceritakan latar belakang usulan, manfaat bagi anggota, atau solusi konkret..."
               }
               value={content}

@@ -72,15 +72,15 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigasi Utama Desktop"
-      className="hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 bg-surface-container border-r border-edge select-none"
+      className="hidden md:flex flex-col w-64 fixed left-0 top-0 bottom-0 z-40 bg-surface-container border-r hairline-border select-none"
     >
       {/* Brand Header */}
-      <div className="flex h-16 items-center px-5 border-b border-edge shrink-0">
+      <div className="flex h-16 items-center px-5 border-b hairline-border shrink-0">
         <Link
           href="/dashboard"
           className="flex items-center gap-3 group cursor-pointer"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border border-edge overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container-low border hairline-border overflow-hidden shadow-xs shrink-0 group-hover:border-primary/50 transition-colors">
             {!logoError ? (
               <Image
                 src="/logo.png"
@@ -99,7 +99,7 @@ export function Sidebar({ user }: SidebarProps) {
             <span className="text-sm font-bold tracking-tight text-ink leading-tight truncate font-display">
               SE-Core
             </span>
-            <span className="text-[11px] text-ink-muted leading-tight mt-0.5 truncate">
+            <span className="text-[11px] text-ink-muted leading-tight mt-0.5 truncate font-body">
               SMAN 1 Bantul
             </span>
           </div>
@@ -108,7 +108,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Nav Menu Items */}
       <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1.5 text-[10px] font-bold text-ink-muted uppercase tracking-wider">
+        <div className="px-3 py-1.5 text-[10px] font-bold text-ink-muted uppercase tracking-wider font-mono">
           Menu Utama
         </div>
 
@@ -138,9 +138,9 @@ export function Sidebar({ user }: SidebarProps) {
                 href={item.href}
                 prefetch={true}
                 onClick={() => setOptimisticPath(item.href)}
-                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-linear-to-r from-primary/15 via-rose-500/10 to-transparent text-primary dark:text-rose-400 border border-primary/25 font-bold shadow-xs transition-all min-h-11 relative overflow-hidden"
+                className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-primary/10 dark:bg-primary/15 text-primary dark:text-rose-400 border border-primary/20 dark:border-primary/30 font-semibold shadow-xs transition-all min-h-11 relative overflow-hidden"
               >
-                <span className="absolute left-0 top-1.5 bottom-1.5 w-1 bg-primary rounded-r-full shadow-[0_0_8px_rgba(225,29,42,0.8)]" />
+                <span className="absolute left-0 top-2 bottom-2 w-1 bg-primary rounded-r-full shadow-[0_0_8px_rgba(225,29,42,0.8)]" />
                 <Icon className="h-5 w-5 stroke-[2.2] shrink-0" />
                 <span className="text-xs leading-none tracking-tight font-display">
                   {item.label}
@@ -158,7 +158,7 @@ export function Sidebar({ user }: SidebarProps) {
               className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-ink-secondary hover:text-ink hover:bg-surface-container-high/60 border border-transparent font-medium transition-all min-h-11"
             >
               <Icon className="h-5 w-5 stroke-[1.8] text-ink-muted shrink-0" />
-              <span className="text-xs leading-none tracking-tight">
+              <span className="text-xs leading-none tracking-tight font-body">
                 {item.label}
               </span>
             </Link>
@@ -167,13 +167,13 @@ export function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* Footer Profile & Pengaturan */}
-      <div className="p-3 border-t border-edge shrink-0">
+      <div className="p-3 border-t hairline-border shrink-0">
         <Link
           href="/pengaturan"
           prefetch={true}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
             pathname.startsWith("/pengaturan")
-              ? "bg-rose-50 text-rose-600 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50 font-semibold shadow-xs"
+              ? "bg-primary/10 text-primary border border-primary/20 dark:bg-primary/15 dark:text-rose-400 dark:border-primary/30 font-semibold shadow-xs"
               : "text-ink-secondary hover:text-ink hover:bg-surface-container-high/60 border border-transparent font-medium"
           }`}
           title="Pengaturan Akun & Profil"
@@ -185,10 +185,10 @@ export function Sidebar({ user }: SidebarProps) {
               width={32}
               height={32}
               referrerPolicy="no-referrer"
-              className="h-8 w-8 rounded-full border border-edge object-cover ring-2 ring-primary/20 shrink-0"
+              className="h-8 w-8 rounded-full border hairline-border object-cover ring-2 ring-primary/20 shrink-0"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-edge bg-surface text-xs font-semibold text-ink ring-2 ring-primary/20 shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border hairline-border bg-surface text-xs font-semibold text-ink ring-2 ring-primary/20 shrink-0">
               {user?.name
                 ? user.name
                     .split(" ")
@@ -200,10 +200,10 @@ export function Sidebar({ user }: SidebarProps) {
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <span className="text-xs font-semibold text-ink block truncate leading-tight">
+            <span className="text-xs font-semibold text-ink block truncate leading-tight font-display">
               {user?.name || "Pengaturan"}
             </span>
-            <span className="text-[10px] text-ink-muted block truncate mt-0.5">
+            <span className="text-[10px] text-ink-muted block truncate mt-0.5 font-mono">
               {user?.role ? user.role : "Profil & Akun"}
             </span>
           </div>

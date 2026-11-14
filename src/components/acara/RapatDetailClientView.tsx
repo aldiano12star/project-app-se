@@ -601,7 +601,7 @@ export function RapatDetailClientView({
 
             <div className="space-y-2 text-xs text-ink-secondary leading-relaxed">
               <p>
-                Apakah Anda yakin ingin menghapus sesi rapat{" "}
+                Apakah kamu yakin ingin menghapus sesi rapat{" "}
                 <strong className="text-ink">"{meeting.title}"</strong>?
               </p>
               <p className="text-danger font-medium">

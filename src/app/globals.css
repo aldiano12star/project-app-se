@@ -171,6 +171,53 @@ body {
   line-height: 1.25;
 }
 
+@utility apple-card {
+  background-color: var(--saba-card);
+  border: 1px solid var(--saba-edge);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  @variant dark {
+    box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+}
+
+@utility hairline-border {
+  border-color: rgba(0, 0, 0, 0.08);
+  @variant dark {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@utility glass-surface-subtle {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  @variant dark {
+    background: rgba(28, 28, 31, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+}
+
+@utility tactile-btn {
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, background-color 0.15s ease;
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+@utility font-mono-num {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility ticket-notch {
+  position: relative;
+  border-radius: 1.5rem;
+}
+
 @utility specular-card {
   background-color: var(--saba-card);
   border: 1px solid var(--saba-edge);
@@ -283,7 +330,8 @@ body {
   will-change: opacity;
 }
 
-html.splash-done #se-splash-screen {
+html.splash-done #se-splash-screen,
+html.splash-done #se-custom-splash-screen {
   display: none !important;
 }
 

@@ -116,7 +116,7 @@ export function EventDetailClientView({
             className="h-11 px-3.5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-[44px]"
           >
             <Plus className="h-4 w-4" />
-            <span>+ Seksi Baru</span>
+            <span>Seksi Baru</span>
           </button>
         )}
       </div>
@@ -259,7 +259,7 @@ export function EventDetailClientView({
               Hapus Acara Ini?
             </h3>
             <p className="text-xs text-ink-secondary leading-relaxed">
-              Apakah Anda yakin ingin menghapus acara ini? Data presensi dan agenda terkait akan ikut terhapus.
+              Apakah kamu yakin ingin menghapus acara ini? Data presensi dan agenda terkait akan ikut terhapus.
             </p>
           </div>
 

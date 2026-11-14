@@ -95,7 +95,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
   };
 
   const handleClosePoll = async () => {
-    if (!confirm("Apakah Anda yakin ingin menutup polling ini?")) return;
+    if (!confirm("Apakah kamu yakin ingin menutup polling ini?")) return;
     setIsLoading(true);
     setFeedback(null);
 
@@ -150,8 +150,8 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
     <div
       className={`p-6 rounded-2xl transition-all space-y-4 ${
         !isClosed
-          ? "card-solid bg-card border border-edge shadow-sm hover:border-primary/40"
-          : "bg-surface-container-low/40 border border-edge/60 shadow-none opacity-90"
+          ? "apple-card hover:border-primary/40"
+          : "apple-card opacity-80"
       }`}
     >
       {/* Header Polling: Badge Status Kontras & Tindakan Pengurus */}
@@ -164,20 +164,20 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
                   <span>Berlangsung</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/60 text-amber-400 border border-amber-500/40">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-950/60 text-amber-400 border border-amber-500/40 font-mono-num">
                   <Sparkles className="h-3.5 w-3.5" />
                   <span>+5 XP</span>
                 </span>
               </>
             ) : (
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-surface-container text-slate-400 border border-edge">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-surface-container text-ink-muted hairline-border">
                 <Lock className="h-3.5 w-3.5" />
                 <span>Polling Ditutup</span>
               </span>
             )}
 
             {formattedClosesAt && (
-              <span className="text-xs text-slate-400 flex items-center gap-1">
+              <span className="text-xs text-ink-muted flex items-center gap-1 font-mono-num">
                 <Clock className="h-3.5 w-3.5" />
                 <span>Batas: {formattedClosesAt}</span>
               </span>
@@ -185,7 +185,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
           </div>
 
           <h3
-            className={`text-base sm:text-lg font-semibold leading-relaxed ${
+            className={`text-base sm:text-lg font-semibold leading-relaxed font-display ${
               !isClosed ? "text-ink" : "text-ink/80"
             }`}
           >
@@ -201,7 +201,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
                 type="button"
                 onClick={handleClosePoll}
                 disabled={isLoading || isDeleting}
-                className="h-9 px-3 text-xs font-semibold text-slate-300 hover:text-white transition-colors cursor-pointer border border-edge rounded-lg hover:bg-surface-container-low min-h-[36px]"
+                className="tactile-btn h-9 px-3 text-xs font-semibold text-ink-muted hover:text-ink transition-colors cursor-pointer hairline-border rounded-lg hover:bg-surface-container-low min-h-[36px]"
               >
                 Tutup Poll
               </button>
@@ -212,7 +212,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
               onClick={() => setIsDeleteModalOpen(true)}
               disabled={isLoading || isDeleting}
               title="Hapus Polling"
-              className="p-2 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-transparent hover:border-rose-900 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+              className="tactile-btn p-2 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-transparent hover:border-rose-900 transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -288,7 +288,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
                     )}
 
                     {isUserChoice && !isWinner && (
-                      <span className="h-5 w-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs" title="Pilihan Anda">
+                      <span className="h-5 w-5 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-xs" title="Pilihanmu">
                         <Check className="h-3 w-3 stroke-[3]" />
                       </span>
                     )}
@@ -318,7 +318,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0 text-right">
+                  <div className="flex items-center gap-2 shrink-0 text-right font-mono-num">
                     <span className="text-[11px] text-ink-muted">
                       {option.votesCount} suara
                     </span>
@@ -389,7 +389,7 @@ export function PollCard({ poll, currentUserRole, currentUserId }: PollCardProps
         {showResults && hasVoted && !isClosed && (
           <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
             <CheckCircle2 className="h-3.5 w-3.5" />
-            <span>Suara Anda Tercatat</span>
+            <span>Suara Kamu Tercatat</span>
           </span>
         )}
 

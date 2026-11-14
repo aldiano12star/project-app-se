@@ -401,9 +401,15 @@ export default async function DashboardPage() {
 
           {/* Role, Grade & Division Badges */}
           <div className="flex flex-wrap items-center gap-2 relative z-10 pt-1">
-            <span className="inline-flex items-center rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-secondary border border-edge font-mono">
-              {formatGrade(dbUser.classGrade)}
-            </span>
+            {(() => {
+              const gradeLabel = formatGrade(dbUser.classGrade);
+              if (!gradeLabel || !gradeLabel.trim()) return null;
+              return (
+                <span className="inline-flex items-center rounded-full bg-surface-container px-3 py-1 text-xs font-semibold text-ink-secondary border hairline-border font-mono">
+                  {gradeLabel}
+                </span>
+              );
+            })()}
             <span
               className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${roleMeta.style}`}
             >
@@ -535,20 +541,23 @@ export default async function DashboardPage() {
               </span>
             </div>
 
-            <div className="bg-surface-container-low rounded-xl p-4 border border-edge/60 space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-ink">
-                  Total Kehadiran Kolektif:
-                </span>
-                <span className="font-mono font-bold text-ink text-sm sm:text-base">
-                  {globalHealth.globalPercentage}%{" "}
-                  <span className="text-xs font-normal text-ink-muted">
-                    ({globalHealth.totalActual} dari {globalHealth.totalExpected} kehadiran diharapkan)
+            <div className="bg-surface-container-low/70 rounded-2xl p-4 border hairline-border space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-semibold text-ink">Total Kehadiran Kolektif</span>
+                  <span className="text-[11px] text-ink-muted">({globalHealth.totalActual}/{globalHealth.totalExpected} sesi)</span>
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-mono font-bold text-ink text-base sm:text-lg font-mono-num leading-none">
+                    {globalHealth.globalPercentage}%
                   </span>
-                </span>
+                  <span className="text-[11px] text-ink-muted font-normal font-body">
+                    dari kuota diharapkan
+                  </span>
+                </div>
               </div>
 
-              <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border border-edge/40">
+              <div className="w-full h-2.5 bg-surface-container rounded-full overflow-hidden border hairline-border">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
                     globalHealth.globalPercentage >= 75

@@ -158,7 +158,7 @@ export function AspirasiClientView({
       </div>
 
       {/* Main Tab Navigation (Tab 1: Papan Isu, Tab 2: Aspirasi Privat, Tab 3: Polling) */}
-      <div className="grid grid-cols-3 p-1.5 rounded-2xl bg-surface-container-low border border-edge shadow-xs relative z-10">
+      <div className="grid grid-cols-3 p-1.5 rounded-2xl bg-surface-container-low hairline-border shadow-xs relative z-10 gap-1">
         {/* Tab 1: Papan Isu Sistem */}
         <button
           type="button"
@@ -166,15 +166,15 @@ export function AspirasiClientView({
             setActiveTab("PUBLIC_ISSUES");
             setStatusFilter("ALL");
           }}
-          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "PUBLIC_ISSUES"
-              ? "bg-card text-ink shadow-xs border border-edge"
+              ? "bg-card text-ink shadow-xs hairline-border"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <Globe className="h-4 w-4 text-sky-500 shrink-0" />
           <span className="truncate">Papan Isu</span>
-          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-surface-container text-[11px] text-ink-secondary border border-edge font-mono">
+          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-surface-container text-[11px] text-ink-secondary hairline-border font-mono-num">
             {publicIssues.length}
           </span>
         </button>
@@ -186,17 +186,17 @@ export function AspirasiClientView({
             setActiveTab("PRIVATE_ASPIRATIONS");
             setStatusFilter("ALL");
           }}
-          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "PRIVATE_ASPIRATIONS"
-              ? "bg-card text-ink shadow-xs border border-edge"
+              ? "bg-card text-ink shadow-xs hairline-border"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <Lock className="h-4 w-4 text-purple-500 shrink-0" />
           <span className="truncate">
-            {isOperator ? "Aspirasi Operator" : "Aspirasi Privat"}
+            {isOperator ? "Aspirasi" : "Aspirasi Privat"}
           </span>
-          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-bold border border-purple-300 dark:border-purple-500/30 font-mono">
+          <span className="hidden sm:inline-flex px-1.5 py-0.2 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-[11px] font-bold border border-purple-300 dark:border-purple-500/30 font-mono-num">
             {privateIssues.length}
           </span>
         </button>
@@ -205,16 +205,16 @@ export function AspirasiClientView({
         <button
           type="button"
           onClick={() => setActiveTab("POLLS")}
-          className={`h-12 min-h-12 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
+          className={`tactile-btn h-11 min-h-11 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-95 ${
             activeTab === "POLLS"
-              ? "bg-card text-ink shadow-xs border border-edge"
+              ? "bg-card text-ink shadow-xs hairline-border"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <Vote className="h-4 w-4 text-emerald-500 shrink-0" />
           <span className="truncate">Polling</span>
           {activePollsCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-300 dark:border-emerald-500/30 font-mono">
+            <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-300 dark:border-emerald-500/30 font-mono-num">
               {activePollsCount}
             </span>
           )}
@@ -291,31 +291,34 @@ export function AspirasiClientView({
               <p className="text-slate-600 dark:text-slate-400 font-normal leading-relaxed text-[11px]">
                 {isOperator
                   ? "Seluruh pesan di bawah ini bersifat rahasia dan hanya dapat diakses oleh akun dengan wewenang Operator Organisasi."
-                  : "Pesan yang Anda kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}
+                  : "Pesan yang kamu kirimkan ke saluran ini bersifat rahasia dan hanya dibaca langsung oleh Operator Organisasi untuk evaluasi internal."}
               </p>
             </div>
           </div>
 
-          {/* Filter Status */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container-low border border-edge overflow-x-auto no-scrollbar">
+          {/* Filter Status (Edge-to-Edge Scroll on Mobile) */}
+          <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
             <button
               type="button"
               onClick={() => setStatusFilter("ALL")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+              className={`tactile-btn px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 flex items-center gap-1.5 ${
                 statusFilter === "ALL"
-                  ? "bg-card text-ink shadow-xs border border-edge"
-                  : "text-ink-muted hover:text-ink"
+                  ? "bg-primary text-white shadow-xs"
+                  : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
               }`}
             >
-              Semua ({privateIssues.length})
+              <span>Semua</span>
+              <span className="font-mono-num text-[11px] opacity-80">
+                ({privateIssues.length})
+              </span>
             </button>
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.IN_PROGRESS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+              className={`tactile-btn px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.IN_PROGRESS
-                  ? "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 shadow-xs border border-sky-300 dark:border-sky-500/30"
-                  : "text-ink-muted hover:text-ink"
+                  ? "bg-sky-600 text-white shadow-xs"
+                  : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
               }`}
             >
               Sedang Ditangani
@@ -323,10 +326,10 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.RESOLVED)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+              className={`tactile-btn px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.RESOLVED
-                  ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 shadow-xs border border-emerald-300 dark:border-emerald-500/30"
-                  : "text-ink-muted hover:text-ink"
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
               }`}
             >
               Selesai
@@ -334,10 +337,10 @@ export function AspirasiClientView({
             <button
               type="button"
               onClick={() => setStatusFilter(IssueStatus.PENDING)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
+              className={`tactile-btn px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap min-h-9 ${
                 statusFilter === IssueStatus.PENDING
-                  ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 shadow-xs border border-amber-300 dark:border-amber-500/30"
-                  : "text-ink-muted hover:text-ink"
+                  ? "bg-amber-600 text-white shadow-xs"
+                  : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
               }`}
             >
               Ditinjau
@@ -346,15 +349,15 @@ export function AspirasiClientView({
 
           {/* Daftar Kartu Aspirasi Privat */}
           {filteredPrivateIssues.length === 0 ? (
-            <div className="card-solid bg-card p-8 text-center space-y-3 rounded-2xl border border-edge">
-              <Lock className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
+            <div className="apple-card p-8 text-center space-y-3">
+              <Lock className="h-8 w-8 text-ink-muted mx-auto" />
               <h3 className="text-base font-semibold text-ink">
                 Kotak Aspirasi Masih Bersih
               </h3>
               <p className="text-xs text-ink-muted max-w-xs mx-auto leading-relaxed">
                 {isOperator
                   ? "Belum ada aspirasi privat atau laporan evaluasi rahasia yang masuk dari anggota."
-                  : "Anda belum mengirimkan pesan atau kritik evaluasi internal ke Operator."}
+                  : "Kamu belum mengirimkan pesan atau kritik evaluasi internal ke Operator."}
               </p>
               {canCreate && (
                 <button

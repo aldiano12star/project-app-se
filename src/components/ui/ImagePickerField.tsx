@@ -26,7 +26,7 @@ export function ImagePickerField({
   label = "Foto / Banner",
   placeholder = "Sentuh untuk memilih foto dari galeri perangkat...",
   aspectRatio = "video",
-  helperText = "Otomatis dikompresi ke format WebP ultra-ringan (< 40 KB) langsung di browser Anda.",
+  helperText = "Otomatis dikompresi ke format WebP ultra-ringan (< 40 KB) langsung di browsermu.",
 }: ImagePickerFieldProps) {
   const inputId = useId();
   const [isCompressing, setIsCompressing] = useState(false);

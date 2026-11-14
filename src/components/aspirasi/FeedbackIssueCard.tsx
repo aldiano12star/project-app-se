@@ -143,7 +143,7 @@ export function FeedbackIssueCard({
   };
 
   const handleDelete = () => {
-    if (!confirm("Apakah Anda yakin ingin menghapus laporan/aspirasi ini?")) {
+    if (!confirm("Apakah kamu yakin ingin menghapus laporan/aspirasi ini?")) {
       return;
     }
 
@@ -216,7 +216,7 @@ export function FeedbackIssueCard({
   };
 
   return (
-    <article className="card-solid bg-card border border-edge rounded-2xl p-5 shadow-xs space-y-4 transition-all">
+    <article className="apple-card p-5 space-y-4 transition-all">
       {/* Header Kartu: Kategori & Status Badge */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap">

@@ -126,30 +126,30 @@ export function PublicCashLedger({
 
       {/* Ringkasan Finansial Singkat (Full-Width Saldo + 2-Column Pemasukan/Pengeluaran) */}
       <div className="space-y-3">
-        <div className="card-hover p-4 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
+        <div className="card-hover p-4 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
           <span className="text-[11px] text-ink-muted block font-medium">
             Saldo Kas Riil Tersedia
           </span>
-          <span className="text-xl sm:text-2xl font-extrabold text-ink tabular-nums">
+          <span className="text-xl sm:text-2xl font-extrabold text-ink font-mono-num font-mono">
             Rp {animatedBalance.toLocaleString("id-ID")}
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
-            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
+            <span className="text-[11px] text-emerald-700 dark:text-emerald-400 block font-medium">
               Total Dana Masuk
             </span>
-            <span className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
+            <span className="text-sm sm:text-base font-extrabold text-emerald-700 dark:text-emerald-400 font-mono-num font-mono">
               + Rp {animatedIncome.toLocaleString("id-ID")}
             </span>
           </div>
 
-          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low border border-edge/70 space-y-1">
-            <span className="text-[11px] text-rose-600 dark:text-rose-400 block font-medium">
+          <div className="card-hover p-3.5 rounded-xl bg-surface-container-low/70 border hairline-border space-y-1">
+            <span className="text-[11px] text-rose-700 dark:text-rose-400 block font-medium">
               Total Pengeluaran
             </span>
-            <span className="text-sm sm:text-base font-extrabold text-rose-600 dark:text-rose-400 tabular-nums">
+            <span className="text-sm sm:text-base font-extrabold text-rose-700 dark:text-rose-400 font-mono-num font-mono">
               - Rp {animatedExpense.toLocaleString("id-ID")}
             </span>
           </div>

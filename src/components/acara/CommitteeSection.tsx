@@ -461,7 +461,7 @@ export function CommitteeSection({
                     <FolderPlus className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h2 className="text-sm font-bold text-ink truncate">
+                    <h2 className="text-sm font-bold text-ink line-clamp-2 leading-snug break-words font-display">
                       {section.name}
                     </h2>
                     <p className="text-[11px] text-ink-muted">
@@ -507,7 +507,7 @@ export function CommitteeSection({
                             {section.pj ? (
                               <span>
                                 {section.pj.name}
-                                {section.pj.id === currentUserId ? " (Anda)" : ""}
+                                {section.pj.id === currentUserId ? " (kamu)" : ""}
                               </span>
                             ) : (
                               <span className="text-amber-500 font-semibold">
@@ -926,7 +926,7 @@ export function CommitteeSection({
             className="min-h-11 h-11 px-3.5 bg-card hover:bg-surface-container-low text-ink text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all border border-edge shadow-xs cursor-pointer"
           >
             <FolderPlus className="h-4 w-4 text-ink-secondary" />
-            <span>+ Seksi Baru</span>
+            <span>Seksi Baru</span>
           </button>
         )}
 

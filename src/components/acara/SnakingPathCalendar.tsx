@@ -403,14 +403,16 @@ export function SnakingPathCalendar({
 
             // Diferensiasi Border & Background Kartu Kegiatan
             const cardStyleClass = isFinished
-              ? "border border-emerald-500/25 bg-card"
-              : isParentMegaCard
-              ? "border border-edge/80 dark:border-white/10 bg-card shadow-sm"
-              : isMultiDay
-              ? "border border-indigo-500/30 bg-card shadow-sm"
-              : "border border-edge/80 dark:border-white/10 bg-card shadow-xs";
+              ? "apple-card border-emerald-500/25 bg-card/85 opacity-90 shadow-2xs"
+              : isOngoing || isTodayEvent
+              ? "apple-card border-primary/30 shadow-md ring-2 ring-primary/20 bg-card"
+              : "apple-card shadow-xs bg-card";
 
             const todayAccentClass = isTodayEvent ? "ring-2 ring-primary/30" : "";
+
+            const startD = new Date(ev.startDate);
+            const dayNum = startD.getDate();
+            const dayName = INDONESIAN_DAYS[startD.getDay()] || "Aga";
 
             return (
               <div key={ev.id} className="relative group">
@@ -446,101 +448,109 @@ export function SnakingPathCalendar({
                   )}
                 </div>
 
-                {/* KONTEN KARTU KEGIATAN */}
+                {/* KONTEN KARTU KEGIATAN GAYA LUMA */}
                 <div
-                  className={`p-5 rounded-2xl transition-all space-y-3.5 ${cardStyleClass} ${todayAccentClass}`}
+                  className={`p-4 sm:p-5 rounded-2xl transition-all space-y-3.5 ${cardStyleClass} ${todayAccentClass}`}
                 >
                   {/* Header Tag & Tanggal */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1.5 min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                        {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
-                        {isFinished ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
-                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400" />
-                            <span>✓ Selesai</span>
-                          </span>
-                        ) : isOngoing ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs">
-                            <Radio className="h-2.5 w-2.5 text-cyan-400 animate-pulse" />
-                            <span>Sedang Berlangsung</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-secondary border border-edge">
-                            <Clock className="h-2.5 w-2.5 text-ink-muted" />
-                            <span>Mendatang</span>
-                          </span>
-                        )}
-
-                        {/* Tipe Acara */}
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            isIndependent
-                              ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                              : isParentMegaCard || isMultiDay
-                              ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                              : "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-                          }`}
-                        >
-                          {isIndependent ? (
-                            <MessageSquare className="h-3 w-3" />
-                          ) : isParentMegaCard || isMultiDay ? (
-                            <Layers className="h-3 w-3" />
-                          ) : (
-                            <Zap className="h-3 w-3" />
-                          )}
-                          <span>
-                            {isIndependent
-                              ? "Rapat Mandiri"
-                              : isParentMegaCard
-                              ? "Program Kerja Utama"
-                              : isMultiDay
-                              ? "Proker / Multi-Hari"
-                              : "Agenda Singkat"}
-                          </span>
-                        </span>
-
-                        {/* Privacy Target Audience Badge */}
-                        {audienceBadge && ev.targetAudience !== TargetAudience.ALL && (
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${audienceBadge.badgeClass}`}
-                          >
-                            {audienceBadge.label}
-                          </span>
-                        )}
-
-                        {/* Penanda Insentif Poin Khusus Acara Hari Ini */}
-                        {isTodayEvent && !isFinished && (
-                          <Link
-                            href="/dashboard"
-                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 border border-amber-500/30 text-[10px] font-extrabold shadow-xs transition-colors cursor-pointer"
-                            title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
-                          >
-                            <span>⚡ Hadiri Presensi (+10 XP)</span>
-                          </Link>
-                        )}
-
-                        <span className="font-semibold text-ink text-[11px] flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-ink-muted" />
-                          <span>{formattedSchedule}</span>
-                        </span>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      {/* Luma Date Chip */}
+                      <div className="hidden sm:flex flex-col items-center justify-center h-12 w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center font-mono font-mono-num shadow-2xs">
+                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{dayName.slice(0, 3)}</span>
+                        <span className="text-base font-extrabold text-ink leading-none">{dayNum}</span>
                       </div>
 
-                      {isIndependent ? (
-                        <Link
-                          href={`/acara/rapat/${ev.id}`}
-                          className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
-                        >
-                          {ev.title}
-                        </Link>
-                      ) : (
-                        <Link
-                          href={`/acara/${ev.id}`}
-                          className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug"
-                        >
-                          {ev.title}
-                        </Link>
-                      )}
+                      <div className="space-y-1.5 min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                          {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
+                          {isFinished ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono">
+                              <CheckCircle2 className="h-2.5 w-2.5 text-emerald-500" />
+                              <span>Selesai</span>
+                            </span>
+                          ) : isOngoing ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-xs font-mono">
+                              <Radio className="h-2.5 w-2.5 text-cyan-500 animate-pulse" />
+                              <span>Sedang Berlangsung</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container text-ink-secondary border hairline-border font-mono">
+                              <Clock className="h-2.5 w-2.5 text-ink-muted" />
+                              <span>Mendatang</span>
+                            </span>
+                          )}
+
+                          {/* Tipe Acara */}
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
+                              isIndependent
+                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                                : isParentMegaCard || isMultiDay
+                                ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
+                                : "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20"
+                            }`}
+                          >
+                            {isIndependent ? (
+                              <MessageSquare className="h-3 w-3" />
+                            ) : isParentMegaCard || isMultiDay ? (
+                              <Layers className="h-3 w-3" />
+                            ) : (
+                              <Zap className="h-3 w-3" />
+                            )}
+                            <span>
+                              {isIndependent
+                                ? "Rapat Mandiri"
+                                : isParentMegaCard
+                                ? "Program Kerja Utama"
+                                : isMultiDay
+                                ? "Proker / Multi-Hari"
+                                : "Agenda Singkat"}
+                            </span>
+                          </span>
+
+                          {/* Privacy Target Audience Badge */}
+                          {audienceBadge && ev.targetAudience !== TargetAudience.ALL && (
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${audienceBadge.badgeClass}`}
+                            >
+                              {audienceBadge.label}
+                            </span>
+                          )}
+
+                          {/* Penanda Insentif Poin Khusus Acara Hari Ini */}
+                          {isTodayEvent && !isFinished && (
+                            <Link
+                              href="/dashboard"
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-extrabold shadow-xs transition-colors cursor-pointer"
+                              title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
+                            >
+                              <span>⚡ Hadiri Presensi (+10 XP)</span>
+                            </Link>
+                          )}
+
+                          <span className="font-semibold text-ink text-[11px] flex items-center gap-1 font-mono font-mono-num">
+                            <Clock className="h-3 w-3 text-ink-muted" />
+                            <span>{formattedSchedule}</span>
+                          </span>
+                        </div>
+
+                        {isIndependent ? (
+                          <Link
+                            href={`/acara/rapat/${ev.id}`}
+                            className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
+                          >
+                            {ev.title}
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/acara/${ev.id}`}
+                            className="text-base font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
+                          >
+                            {ev.title}
+                          </Link>
+                        )}
+                      </div>
                     </div>
 
                     {ev.driveUrl && (
@@ -548,7 +558,7 @@ export function SnakingPathCalendar({
                         href={ev.driveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary border border-edge transition-colors shrink-0"
+                        className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary border hairline-border transition-colors shrink-0"
                         title="Buka Google Drive"
                       >
                         <Folder className="h-4 w-4" />

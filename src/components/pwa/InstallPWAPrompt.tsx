@@ -256,7 +256,7 @@ export function InstallPWAPrompt() {
             <div className="p-3 rounded-xl bg-[#E11D2A]/10 border border-[#E11D2A]/20 flex items-start gap-2.5">
               <CheckCircle2 className="w-4 h-4 text-[#E11D2A] shrink-0 mt-0.5" />
               <p className="text-[11px] text-slate-300 leading-tight">
-                Aplikasi akan langsung muncul di layar utama HP Anda dengan pengalaman layar penuh tanpa bilah peramban.
+                Aplikasi akan langsung muncul di layar utama HP milikmu dengan pengalaman layar penuh tanpa bilah peramban.
               </p>
             </div>
 

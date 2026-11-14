@@ -69,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased bg-white dark:bg-surface`}
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased bg-surface text-ink`}
       suppressHydrationWarning
     >
       <head>

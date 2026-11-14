@@ -162,7 +162,7 @@ export function EventDetailCard({
                 <span>{isSingleDay ? "Agenda Singkat / Rapat" : "Program Kerja / Acara"}</span>
               </span>
 
-              <span className="text-xs font-mono text-ink-muted">
+              <span className="text-xs font-mono text-ink-muted whitespace-nowrap font-mono-num">
                 ID: EVT-{event.id.slice(-6).toUpperCase()}
               </span>
             </div>

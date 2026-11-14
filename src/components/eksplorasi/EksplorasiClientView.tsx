@@ -116,7 +116,7 @@ export function EksplorasiClientView({
           <button
             type="button"
             onClick={() => setIsCreateProjectOpen(true)}
-            className="h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
+            className="tactile-btn h-11 px-4 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
           >
             <Plus className="h-4 w-4" />
             <span>Submit Karya</span>
@@ -128,7 +128,7 @@ export function EksplorasiClientView({
               setEditingWikiArticle(null);
               setIsCreateWikiOpen(true);
             }}
-            className="h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
+            className="tactile-btn h-11 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer min-h-11 relative z-10"
           >
             <Plus className="h-4 w-4" />
             <span>Tulis Panduan</span>
@@ -145,12 +145,12 @@ export function EksplorasiClientView({
           type="text"
           placeholder={
             activeTab === "SHOWCASE"
-              ? "Cari karya proyek, divisi, teknologi, atau kontributor..."
-              : "Cari modul pelatihan, format surat, atau panduan teknis..."
+              ? "Cari karya, divisi, atau kontributor..."
+              : "Cari modul, format surat, atau panduan..."
           }
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-11 min-h-11 pl-10 pr-3.5 bg-card border border-edge rounded-xl text-xs text-ink placeholder-ink-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-xs"
+          className="w-full h-11 min-h-11 pl-10 pr-3.5 bg-card hairline-border rounded-xl text-xs text-ink placeholder-ink-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-xs"
         />
       </div>
 

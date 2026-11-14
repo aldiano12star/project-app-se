@@ -66,7 +66,7 @@ export function PanduanOrganisasiModal({
       content: (
         <div className="space-y-2 text-xs text-ink-muted leading-relaxed">
           <p>
-            Setiap ada kegiatan atau Rapat Pleno, Anda wajib melakukan presensi kehadiran digital untuk mencatat keaktifan dan mendapatkan poin XP (+10 XP).
+            Setiap ada kegiatan atau Rapat Pleno, kamu wajib melakukan presensi kehadiran digital untuk mencatat keaktifan dan mendapatkan poin XP (+10 XP).
           </p>
           <div className="p-3 rounded-xl bg-surface-container-low border border-edge/60 space-y-1.5 font-sans">
             <p className="font-semibold text-ink">Langkah Presensi:</p>
@@ -96,7 +96,7 @@ export function PanduanOrganisasiModal({
             <ul className="list-disc list-inside space-y-1 pl-1">
               <li>Setiap periode kas memiliki nominal standar (misal Rp5.000 per periode).</li>
               <li>Pembayaran disetorkan secara tunai langsung kepada Bendahara umum atau melalui konfirmasi pencatatan sistem.</li>
-              <li>Cek status pembayaran Anda di menu <span className="font-mono text-primary font-semibold">Kas</span> untuk memastikan status Lunas atau Tunggakan tercatat akurat.</li>
+              <li>Cek status pembayaranmu di menu <span className="font-mono text-primary font-semibold">Kas</span> untuk memastikan status Lunas atau Tunggakan tercatat akurat.</li>
             </ul>
           </div>
         </div>

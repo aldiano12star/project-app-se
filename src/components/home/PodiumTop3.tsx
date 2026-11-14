@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { Sparkles, Trophy, Zap } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Trophy, Zap, ChevronRight } from "lucide-react";
 import { Division, Role } from "@prisma/client";
 
 export interface ContributorItem {
@@ -173,24 +174,25 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
               {rank2 ? rank2.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
-              className={`text-xs font-medium truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
+              className={`text-xs font-semibold truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
                 rank2?.mainDivision
               )}`}
             >
-              {rank2?.classGrade ? formatGrade(rank2.classGrade) : getDivisionLabel(rank2?.mainDivision)}
+              {getDivisionLabel(rank2?.mainDivision)}
             </span>
 
             {/* Pilar Perak Berjejang */}
-            <div className="w-full h-32 sm:h-36 bg-surface-container-low/50 dark:bg-white/5 border border-edge/80 dark:border-white/10 rounded-t-xl mt-3 flex flex-col items-center justify-center p-3 shadow-xs">
-              <span className="text-xl font-extrabold text-ink">2</span>
-              <div className="flex items-center gap-1 mt-1 bg-card dark:bg-white/5 px-2 py-0.5 rounded-full border border-edge/80 dark:border-white/10">
-                <Zap className="h-3 w-3 text-slate-500 dark:text-slate-400 fill-slate-500 dark:fill-slate-400" />
-                <span className="text-xs font-extrabold text-ink tabular-nums">
+            <div className="w-full h-32 sm:h-36 bg-surface-container-low/50 dark:bg-white/5 border hairline-border rounded-t-xl mt-3 flex flex-col items-center justify-center p-3 shadow-xs">
+              <span className="text-xl font-extrabold text-ink font-display">2</span>
+              <div className="flex items-center gap-1.5 mt-1.5 bg-slate-500/10 dark:bg-slate-400/10 px-2 py-0.5 rounded-full border border-slate-400/25">
+                <Zap className="h-3 w-3 text-slate-500 dark:text-slate-400 fill-slate-500 dark:fill-slate-400 shrink-0" />
+                <span className="text-xs font-extrabold text-ink font-mono-num">
                   {rank2 ? rank2.totalPoints : 0}
                 </span>
+                <span className="text-[10px] font-bold text-ink-muted">XP</span>
               </div>
-              <span className="text-[10px] font-extrabold text-ink-muted uppercase tracking-widest mt-1">
-                XP
+              <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mt-1.5 font-mono">
+                JUARA 2
               </span>
             </div>
           </div>
@@ -211,7 +213,7 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
                 rank1?.mainDivision
               )}`}
             >
-              {rank1?.classGrade ? formatGrade(rank1.classGrade) : getDivisionLabel(rank1?.mainDivision)}
+              {getDivisionLabel(rank1?.mainDivision)}
             </span>
 
             {/* Pilar Emas Tertinggi */}
@@ -219,13 +221,13 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
               <div className="absolute top-0 inset-x-0 h-1 bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.6)]" />
               <span className="text-3xl font-black text-amber-600 dark:text-amber-400 font-display">1</span>
               <div className="flex items-center gap-1.5 mt-1.5 bg-amber-500/15 dark:bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/30">
-                <Zap className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 fill-amber-600 dark:fill-amber-400" />
-                <span className="text-xs font-extrabold text-amber-700 dark:text-amber-300 tabular-nums">
+                <Zap className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 fill-amber-600 dark:fill-amber-400 shrink-0" />
+                <span className="text-xs font-extrabold text-amber-700 dark:text-amber-300 font-mono-num">
                   {rank1 ? rank1.totalPoints : 0}
                 </span>
-                <span className="text-[10px] font-extrabold text-amber-700 dark:text-amber-400">XP</span>
+                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">XP</span>
               </div>
-              <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-widest mt-1.5">
+              <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-widest mt-1.5 font-mono">
                 JUARA 1
               </span>
             </div>
@@ -242,33 +244,40 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
               {rank3 ? rank3.name.split(" ")[0] : "Belum Ada"}
             </span>
             <span
-              className={`text-xs font-medium truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
+              className={`text-xs font-semibold truncate max-w-full mt-0.5 ${getDivisionBadgeColor(
                 rank3?.mainDivision
               )}`}
             >
-              {rank3?.classGrade ? formatGrade(rank3.classGrade) : getDivisionLabel(rank3?.mainDivision)}
+              {getDivisionLabel(rank3?.mainDivision)}
             </span>
 
             {/* Pilar Perunggu Berjejang */}
-            <div className="w-full h-28 sm:h-32 bg-surface-container-low/50 dark:bg-white/5 border border-edge/80 dark:border-white/10 rounded-t-xl mt-3 flex flex-col items-center justify-center p-3 shadow-xs">
-              <span className="text-xl font-extrabold text-ink">3</span>
-              <div className="flex items-center gap-1 mt-1 bg-card dark:bg-white/5 px-2 py-0.5 rounded-full border border-edge/80 dark:border-white/10">
-                <Zap className="h-3 w-3 text-amber-600 dark:text-amber-400 fill-amber-600 dark:fill-amber-400" />
-                <span className="text-xs font-extrabold text-ink tabular-nums">
+            <div className="w-full h-28 sm:h-32 bg-surface-container-low/50 dark:bg-white/5 border hairline-border rounded-t-xl mt-3 flex flex-col items-center justify-center p-3 shadow-xs">
+              <span className="text-xl font-extrabold text-ink font-display">3</span>
+              <div className="flex items-center gap-1.5 mt-1.5 bg-amber-700/10 dark:bg-amber-600/10 px-2 py-0.5 rounded-full border border-amber-700/25">
+                <Zap className="h-3 w-3 text-amber-700 dark:text-amber-500 fill-amber-700 dark:fill-amber-500 shrink-0" />
+                <span className="text-xs font-extrabold text-ink font-mono-num">
                   {rank3 ? rank3.totalPoints : 0}
                 </span>
+                <span className="text-[10px] font-bold text-ink-muted">XP</span>
               </div>
-              <span className="text-[10px] font-extrabold text-ink-muted uppercase tracking-widest mt-1">
-                XP
+              <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mt-1.5 font-mono">
+                JUARA 3
               </span>
             </div>
           </div>
         </div>
 
-        {/* Footer Info Transparan */}
-        <div className="pt-4 border-t border-edge/80 dark:border-white/10 mt-4 flex items-center justify-between text-xs text-ink-muted relative z-10">
-          <span>Klasemen Peringkat Akumulasi XP</span>
-          <span className="text-amber-600 dark:text-amber-400 font-semibold">Kompetisi Terbuka &amp; Transparan</span>
+        {/* Footer Info Transparan & Akses Ergonomis Hall of Fame */}
+        <div className="pt-4 border-t hairline-border mt-4 flex items-center justify-between text-xs text-ink-muted relative z-10">
+          <span className="font-medium">Klasemen Akumulasi XP</span>
+          <Link
+            href="/hall-of-fame"
+            className="inline-flex items-center gap-1 text-primary hover:text-primary-hover font-semibold tactile-btn py-1 px-2.5 rounded-lg hover:bg-primary/5 transition-colors cursor-pointer"
+          >
+            <span>Buka Hall of Fame</span>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
     </section>
