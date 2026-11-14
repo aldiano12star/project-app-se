@@ -658,47 +658,30 @@ export default async function DashboardPage() {
                   <Coffee className="h-6 w-6 stroke-[1.8]" />
                 </div>
                 <div className="space-y-1 max-w-xs mx-auto">
-                  <p className="text-sm font-bold text-ink">
-                    Tidak ada agenda terdekat. Waktunya fokus berkarya!
+                  <p className="text-sm font-bold text-ink font-display">
+                    Tidak ada agenda terdekat
                   </p>
-                  <p className="text-xs text-ink-muted">
+                  <p className="text-xs text-ink-muted leading-relaxed">
                     Semua jadwal rapat &amp; acara saat ini telah selesai. Nikmati proses eksplorasimu!
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-none snap-x">
                 {prioritizedAgendas.map((agenda) => {
                   return (
                     <Link
                       key={agenda.id}
                       href="/acara"
-                      className="card-hover p-4 rounded-xl bg-surface-container-low/70 dark:bg-white/5 hover:bg-surface-container dark:hover:bg-white/10 border border-edge/80 dark:border-white/10 transition-all flex items-center justify-between gap-4 group active:scale-95 duration-150 ease-out min-h-16"
+                      className="min-w-[270px] sm:min-w-[300px] max-w-[320px] shrink-0 snap-start p-4 rounded-2xl bg-surface-container-low/70 dark:bg-white/5 hover:bg-surface-container dark:hover:bg-white/10 border border-edge/80 dark:border-white/10 transition-all flex flex-col justify-between gap-3 group active:scale-[0.98] cursor-pointer shadow-xs"
                     >
-                      <div className="min-w-0 flex-1 space-y-1.5">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          {agenda.timeStatus === "ACTIVE" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25">
-                              <Radio className="h-3 w-3 text-cyan-500 animate-pulse" />
-                              <span>{agenda.isMeeting ? "Hari Ini" : "Sedang Berlangsung"}</span>
-                            </span>
-                          ) : agenda.timeStatus === "UPCOMING" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-ink-muted border border-edge">
-                              <Clock className="h-3 w-3 text-ink-muted" />
-                              <span>Mendatang</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                              <span>✓ Selesai</span>
-                            </span>
-                          )}
-
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2">
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                               agenda.isSingleDay
-                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-                                : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20"
+                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                : "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
                             }`}
                           >
                             {agenda.isSingleDay ? (
@@ -709,12 +692,12 @@ export default async function DashboardPage() {
                             <span>{agenda.categoryLabel}</span>
                           </span>
 
-                          <span className="text-xs font-mono text-ink-muted">
+                          <span className="text-[10px] font-mono text-ink-muted">
                             {agenda.formattedSchedule}
                           </span>
                         </div>
 
-                        <h3 className="text-sm font-bold text-ink truncate group-hover:text-primary transition-colors">
+                        <h3 className="text-sm font-bold text-ink line-clamp-2 group-hover:text-primary transition-colors font-display">
                           {agenda.title}
                         </h3>
 
@@ -724,8 +707,11 @@ export default async function DashboardPage() {
                           </p>
                         )}
                       </div>
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-card border border-edge text-ink-muted group-hover:text-primary shrink-0 transition-colors">
-                        <ChevronRight className="h-4 w-4" />
+
+                      {/* Ticket Perforated Edge Indicator (Luma Ticket Aesthetic) */}
+                      <div className="pt-2.5 border-t border-dashed hairline-border flex items-center justify-between text-xs font-semibold text-primary">
+                        <span>Buka Detail Acara</span>
+                        <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
                     </Link>
                   );

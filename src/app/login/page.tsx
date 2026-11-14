@@ -122,10 +122,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="mt-6 pt-4 border-t hairline-border text-xs text-ink-muted leading-relaxed">
           Akses dibatasi khusus untuk anggota aktif dan pengurus resmi Saba ExploIT.
         </p>
-
-        <p className="mt-3 pt-3 border-t hairline-border text-[11px] text-ink-muted/80 font-mono">
-          &copy; 2026 Saba ExploIT • Powered by SE-Core
-        </p>
       </div>
     </main>
   );

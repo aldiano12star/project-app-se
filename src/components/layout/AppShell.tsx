@@ -2,7 +2,6 @@ import React from "react";
 import { TopHeader } from "./TopHeader";
 import { BottomNav } from "./BottomNav";
 import { Sidebar } from "./Sidebar";
-import { PageTransition } from "./PageTransition";
 import { Role } from "@prisma/client";
 
 export interface AppShellUser {
@@ -57,15 +56,13 @@ export function AppShell({
           </div>
         )}
 
-        {/* Slot Konten Utama dengan Animasi Transisi Halaman Mulus & Generous Bottom Clearance */}
+        {/* Slot Konten Utama dengan Generous Bottom Clearance (Mencegah BottomNav overlap) */}
         <main
           className={`flex-1 px-4 md:px-8 py-6 w-full max-w-7xl mx-auto ${
-            showNav ? "pb-40 pb-safe md:pb-16" : "pb-12"
+            showNav ? "pb-36 pb-safe md:pb-16" : "pb-12"
           }`}
         >
-          <PageTransition>
-            {children}
-          </PageTransition>
+          {children}
         </main>
       </div>
 

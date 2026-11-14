@@ -88,16 +88,19 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-[420px] rounded-full bg-surface/85 backdrop-blur-2xl shadow-[0_16px_40px_-10px_rgba(0,0,0,0.22)] dark:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.75)] border hairline-border md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-[420px] rounded-full bg-white/70 dark:bg-[#1C1C1F]/65 backdrop-blur-2xl saturate-150 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] border border-white/40 dark:border-white/10 md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
         isModalActive
           ? "translate-y-28 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100 pointer-events-auto"
       }`}
     >
+      {/* Specular Top Edge Highlight catching light from above (Apple Optical Material) */}
+      <div className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-white/80 dark:via-white/25 to-transparent pointer-events-none" />
+
       <div className="relative flex items-center justify-between w-full">
-        {/* ── SMOOTH SLIDING ACTIVE PILL INDICATOR (60fps Spring Translation) ── */}
+        {/* ── TACTILE SLIDING ACTIVE LENS PILL (Apple-Style Refined Glass Indicator) ── */}
         <div
-          className="absolute top-0 bottom-0 rounded-full bg-linear-to-r from-primary to-rose-600 shadow-[0_4px_18px_rgba(225,29,42,0.4)] pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="absolute top-0 bottom-0 rounded-full bg-white dark:bg-white/15 border border-black/5 dark:border-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.4)] pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
             width: "20%",
             transform: `translateX(${activeIndex * 100}%)`,
@@ -120,26 +123,33 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className={`relative z-10 flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full min-h-[46px] transition-transform duration-150 active:scale-85 ${
-                isActive ? "text-white" : "text-ink-muted hover:text-ink"
+              className={`relative z-10 flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-full min-h-[46px] transition-transform duration-150 active:scale-95 ${
+                isActive
+                  ? "text-zinc-950 dark:text-zinc-50"
+                  : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               }`}
             >
               <Icon
                 className={`h-5 w-5 transition-all duration-200 ${
                   isActive
-                    ? "stroke-[2.4] scale-105 text-white"
-                    : "stroke-[1.8] scale-100 opacity-70 hover:opacity-100"
+                    ? "stroke-[2.3] scale-105 text-zinc-950 dark:text-zinc-50"
+                    : "stroke-[1.75] scale-100 opacity-70 hover:opacity-100"
                 }`}
               />
-              <span
-                className={`text-[10px] mt-0.5 tracking-tight font-display transition-all duration-200 ${
-                  isActive
-                    ? "font-bold text-white opacity-100"
-                    : "font-medium opacity-65"
-                }`}
-              >
-                {item.label}
-              </span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span
+                  className={`text-[10px] tracking-tight font-display transition-all duration-200 ${
+                    isActive
+                      ? "font-bold text-zinc-950 dark:text-zinc-50"
+                      : "font-medium opacity-75"
+                  }`}
+                >
+                  {item.label}
+                </span>
+                {isActive && (
+                  <span className="h-1 w-1 rounded-full bg-primary shrink-0 animate-in fade-in zoom-in duration-200" />
+                )}
+              </div>
             </Link>
           );
         })}

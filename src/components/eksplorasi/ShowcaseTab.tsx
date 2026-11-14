@@ -184,15 +184,49 @@ export function ShowcaseTab({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              currentUser={currentUser}
-              onOpenDetail={onOpenDetailModal}
-            />
-          ))}
+        <div className="space-y-6">
+          {/* Spotlight Hero Karya Pilihan (Behance / Spotify Showcase Style) */}
+          {selectedCategory === "ALL" && !searchQuery.trim() && filteredProjects.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-[11px] font-mono font-bold tracking-wider text-ink-muted uppercase">
+                  Spotlight Karya Terpilih
+                </span>
+              </div>
+              <div className="rounded-3xl border border-primary/30 p-1 bg-linear-to-b from-primary/10 via-primary/5 to-transparent">
+                <ProjectCard
+                  project={filteredProjects[0]}
+                  currentUser={currentUser}
+                  onOpenDetail={onOpenDetailModal}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Grid Mahakarya Kolektif */}
+          <div className="space-y-2">
+            {selectedCategory === "ALL" && !searchQuery.trim() && filteredProjects.length > 1 && (
+              <div className="px-1 text-[11px] font-mono font-bold tracking-wider text-ink-muted uppercase">
+                Semua Karya Divisi
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(selectedCategory === "ALL" && !searchQuery.trim() && filteredProjects.length > 1
+                ? filteredProjects.slice(1)
+                : selectedCategory === "ALL" && !searchQuery.trim()
+                ? []
+                : filteredProjects
+              ).map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  currentUser={currentUser}
+                  onOpenDetail={onOpenDetailModal}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

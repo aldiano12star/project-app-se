@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   X,
 } from "lucide-react";
+import { haptic } from "@/lib/haptic";
 import { EventDetailCard, EventDetailData } from "./EventDetailCard";
 import { CommitteeSection } from "./CommitteeSection";
 import { NotulensiCard } from "./NotulensiCard";
@@ -73,6 +74,10 @@ export function EventDetailClientView({
   const hasSections = event.sections.length > 0;
   const isRapat = !hasSections || isSingleDay;
 
+  const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"PANITIA" | "NOTULENSI" | "RAB">(
+    !isRapat && (hasSections || isOfficer) ? "PANITIA" : "NOTULENSI"
+  );
+
   const handleOpenAddTask = (sectionId?: string) => {
     setTargetSectionId(sectionId || event.sections[0]?.id);
     setIsAddTaskModalOpen(true);
@@ -127,32 +132,66 @@ export function EventDetailClientView({
         onOpenDriveModal={() => setIsDriveAlertOpen(true)}
       />
 
-      {/* SECTION 2: Notulensi Acara & Rapat */}
-      <NotulensiCard
-        eventId={event.id}
-        meetingId={latestMeeting?.id}
-        title={`Notulensi: ${event.title}`}
-        notes={event.notulensiText || latestMeeting?.notes}
-        date={event.startDate}
-        isRead={latestMeeting?.isRead}
-        currentUserRole={currentUser.role}
-      />
+      {/* ── TRI-TAB WORKSPACE SWITCHER (Linear Style) ── */}
+      <div className="flex items-center gap-1 p-1 rounded-2xl bg-surface-container/60 border hairline-border overflow-x-auto select-none">
+        {!isRapat && (
+          <button
+            type="button"
+            onClick={() => {
+              haptic.tap();
+              setActiveWorkspaceTab("PANITIA");
+            }}
+            className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+              activeWorkspaceTab === "PANITIA"
+                ? "bg-card text-ink shadow-xs border hairline-border font-bold"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            <Layers className="h-3.5 w-3.5 text-primary" />
+            <span>Kepanitiaan &amp; Tugas</span>
+          </button>
+        )}
 
-      {/* SECTION 4: Modul Rancangan Anggaran Biaya (RAB Acara Siap Cetak Proposal) */}
-      <EventRABSection
-        eventId={event.id}
-        event={event}
-        budgetItems={budgetItems}
-        currentUserRole={currentUser.role}
-      />
+        <button
+          type="button"
+          onClick={() => {
+            haptic.tap();
+            setActiveWorkspaceTab("NOTULENSI");
+          }}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            activeWorkspaceTab === "NOTULENSI"
+              ? "bg-card text-ink shadow-xs border hairline-border font-bold"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <MessageSquare className="h-3.5 w-3.5 text-amber-500" />
+          <span>Notulensi Rapat</span>
+        </button>
 
-      {/* SECTION 5: Seksi Kepanitiaan & Task Board (Khusus untuk Acara Besar / Proker) */}
-      {!isRapat && (hasSections || isOfficer) && (
-        <div className="space-y-2 pt-1">
+        <button
+          type="button"
+          onClick={() => {
+            haptic.tap();
+            setActiveWorkspaceTab("RAB");
+          }}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            activeWorkspaceTab === "RAB"
+              ? "bg-card text-ink shadow-xs border hairline-border font-bold"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <Folder className="h-3.5 w-3.5 text-emerald-500" />
+          <span>RAB Anggaran</span>
+        </button>
+      </div>
+
+      {/* TAB 1: Seksi Kepanitiaan & Task Board (Khusus Acara Besar / Proker) */}
+      {activeWorkspaceTab === "PANITIA" && !isRapat && (
+        <div className="space-y-3 pt-1 animate-in fade-in duration-200">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-1.5">
               <Layers className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-bold text-ink">
+              <h3 className="text-sm font-bold text-ink font-display">
                 Seksi Kepanitiaan &amp; SOP
               </h3>
             </div>
@@ -168,6 +207,33 @@ export function EventDetailClientView({
             allMembers={allMembers}
             onOpenAddSectionModal={() => setIsAddSectionModalOpen(true)}
             onOpenAddTaskModal={handleOpenAddTask}
+          />
+        </div>
+      )}
+
+      {/* TAB 2: Notulensi Acara & Rapat */}
+      {activeWorkspaceTab === "NOTULENSI" && (
+        <div className="animate-in fade-in duration-200">
+          <NotulensiCard
+            eventId={event.id}
+            meetingId={latestMeeting?.id}
+            title={`Notulensi: ${event.title}`}
+            notes={event.notulensiText || latestMeeting?.notes}
+            date={event.startDate}
+            isRead={latestMeeting?.isRead}
+            currentUserRole={currentUser.role}
+          />
+        </div>
+      )}
+
+      {/* TAB 3: Modul Rancangan Anggaran Biaya (RAB Acara Siap Cetak Proposal) */}
+      {activeWorkspaceTab === "RAB" && (
+        <div className="animate-in fade-in duration-200">
+          <EventRABSection
+            eventId={event.id}
+            event={event}
+            budgetItems={budgetItems}
+            currentUserRole={currentUser.role}
           />
         </div>
       )}
