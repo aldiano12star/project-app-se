@@ -98,9 +98,9 @@ export function BottomNav() {
       <div className="absolute inset-x-6 top-0 h-px bg-linear-to-r from-transparent via-white/80 dark:via-white/25 to-transparent pointer-events-none" />
 
       <div className="relative flex items-center justify-between w-full">
-        {/* ── TACTILE SLIDING ACTIVE LENS PILL (Apple-Style Refined Glass Indicator) ── */}
+        {/* ── TACTILE SLIDING ACTIVE LENS PILL (High-Contrast Bold Accent) ── */}
         <div
-          className="absolute top-0 bottom-0 rounded-full bg-white dark:bg-white/15 border border-black/5 dark:border-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.4)] pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="absolute top-0 bottom-0 rounded-full bg-primary text-white shadow-[0_3px_14px_rgba(225,29,42,0.35)] dark:shadow-[0_3px_16px_rgba(225,29,42,0.5)] pointer-events-none transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
             width: "20%",
             transform: `translateX(${activeIndex * 100}%)`,
@@ -125,14 +125,14 @@ export function BottomNav() {
               aria-label={item.label}
               className={`relative z-10 flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-full min-h-[46px] transition-transform duration-150 active:scale-95 ${
                 isActive
-                  ? "text-zinc-950 dark:text-zinc-50"
+                  ? "text-white"
                   : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               }`}
             >
               <Icon
                 className={`h-5 w-5 transition-all duration-200 ${
                   isActive
-                    ? "stroke-[2.3] scale-105 text-zinc-950 dark:text-zinc-50"
+                    ? "stroke-[2.4] scale-105 text-white"
                     : "stroke-[1.75] scale-100 opacity-70 hover:opacity-100"
                 }`}
               />
@@ -140,15 +140,12 @@ export function BottomNav() {
                 <span
                   className={`text-xs tracking-tight font-display transition-all duration-200 ${
                     isActive
-                      ? "font-bold text-zinc-950 dark:text-zinc-50"
+                      ? "font-bold text-white"
                       : "font-medium opacity-80"
                   }`}
                 >
                   {item.label}
                 </span>
-                {isActive && (
-                  <span className="h-1 w-1 rounded-full bg-primary shrink-0 animate-in fade-in zoom-in duration-200" />
-                )}
               </div>
             </Link>
           );

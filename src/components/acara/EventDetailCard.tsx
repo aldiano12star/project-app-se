@@ -11,7 +11,9 @@ import {
   Layers,
   Share2,
   Radio,
+  Calendar,
 } from "lucide-react";
+import { generateGoogleCalendarUrl } from "@/lib/google-calendar";
 import {
   generateWhatsAppLink,
   formatEventBroadcastMessage,
@@ -139,6 +141,14 @@ export function EventDetailCard({
     window.open(waLink, "_blank", "noopener,noreferrer");
   };
 
+  const googleCalendarUrl = generateGoogleCalendarUrl({
+    title: event.title,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    location: "Lab Komputer / Ruang Ekskul Saba",
+    details: event.description || `Agenda kegiatan ${event.title} Saba ExploIT`,
+  });
+
   return (
     <div className="space-y-4" id="workspace-detail">
       {/* Kartu Utama Workspace Kegiatan */}
@@ -205,8 +215,8 @@ export function EventDetailCard({
           </div>
         </div>
 
-        {/* Action Buttons: WhatsApp Share & Google Drive */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+        {/* Action Buttons: WhatsApp Share, Google Calendar & Google Drive */}
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
           {/* Tombol 1-Klik Broadcast WA */}
           <button
             type="button"
@@ -216,6 +226,18 @@ export function EventDetailCard({
             <Share2 className="h-4 w-4" />
             <span>📱 Bagikan ke Grup WA</span>
           </button>
+
+          {/* Tombol Simpan ke Google Calendar */}
+          <a
+            href={googleCalendarUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto h-11 min-h-11 px-4 bg-surface-container-low/80 hover:bg-surface-container text-ink rounded-xl flex items-center justify-center gap-2 text-sm font-bold transition-all duration-150 ease-out active:scale-95 border border-edge shadow-xs"
+            title="Simpan Acara ke Google Calendar"
+          >
+            <Calendar className="h-4 w-4 text-blue-500 shrink-0" />
+            <span>Simpan ke Google Calendar</span>
+          </a>
 
           {/* Tombol Tautan Google Drive Acara */}
           {event.driveUrl ? (

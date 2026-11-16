@@ -170,11 +170,19 @@ export function MultiEventSelectorModal({
 
                   {/* Tombol Navigasi ke Detail */}
                   <Link
-                    href={`/acara/${item.id}`}
+                    href={
+                      item.isIndependentMeeting
+                        ? `/acara/rapat/${item.id}`
+                        : `/acara/${item.id}`
+                    }
                     onClick={onClose}
                     className="w-full h-11 min-h-11 bg-surface-container-low hover:bg-surface-container text-ink hover:text-primary text-sm font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-edge"
                   >
-                    <span>Buka Detail &amp; Workspace</span>
+                    <span>
+                      {item.isIndependentMeeting
+                        ? "Buka Detail Sesi Rapat"
+                        : "Buka Detail & Workspace"}
+                    </span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

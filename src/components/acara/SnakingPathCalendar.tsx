@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { haptic } from "@/lib/haptic";
 import {
   ChevronLeft,
   ChevronRight,
@@ -94,6 +96,7 @@ export function SnakingPathCalendar({
   onEditEvent,
   onEditMeeting,
 }: SnakingPathCalendarProps) {
+  const router = useRouter();
   const isOfficer =
     currentUserRole === Role.ADMIN || currentUserRole === Role.OPERATOR;
 
@@ -450,7 +453,19 @@ export function SnakingPathCalendar({
 
                 {/* KONTEN KARTU KEGIATAN GAYA LUMA */}
                 <div
-                  className={`p-4 sm:p-5 rounded-2xl transition-all space-y-3.5 ${cardStyleClass} ${todayAccentClass}`}
+                  onClick={
+                    isIndependent
+                      ? () => {
+                          haptic.tap();
+                          router.push(`/acara/rapat/${ev.id}`);
+                        }
+                      : undefined
+                  }
+                  className={`p-4 sm:p-5 rounded-2xl transition-all space-y-3.5 ${cardStyleClass} ${todayAccentClass} ${
+                    isIndependent
+                      ? "cursor-pointer hover:border-primary/40 active:scale-[0.99]"
+                      : ""
+                  }`}
                 >
                   {/* Header Tag & Tanggal */}
                   <div className="flex items-start justify-between gap-3">
@@ -522,6 +537,7 @@ export function SnakingPathCalendar({
                           {isTodayEvent && !isFinished && (
                             <Link
                               href="/dashboard"
+                              onClick={(e) => e.stopPropagation()}
                               className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-extrabold shadow-xs transition-colors cursor-pointer"
                               title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
                             >
@@ -536,12 +552,11 @@ export function SnakingPathCalendar({
                         </div>
 
                         {isIndependent ? (
-                          <Link
-                            href={`/acara/rapat/${ev.id}`}
+                          <span
                             className="text-lg font-bold text-ink hover:text-primary transition-colors inline-block leading-snug font-display"
                           >
                             {ev.title}
-                          </Link>
+                          </span>
                         ) : (
                           <Link
                             href={`/acara/${ev.id}`}
@@ -558,6 +573,7 @@ export function SnakingPathCalendar({
                         href={ev.driveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-ink-secondary border hairline-border transition-colors shrink-0"
                         title="Buka Google Drive"
                       >
@@ -624,16 +640,17 @@ export function SnakingPathCalendar({
                           return (
                             <div
                               key={meeting.id}
-                              className="bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                              onClick={() => {
+                                haptic.tap();
+                                router.push(`/acara/rapat/${meeting.id}`);
+                              }}
+                              className="bg-surface-container-low/60 dark:bg-white/5 border border-edge/80 dark:border-white/10 hover:border-primary/40 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer hover:bg-surface-container/70 dark:hover:bg-white/10 active:scale-[0.99] transition-all duration-150"
                             >
                               <div className="space-y-1 min-w-0 flex-1">
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <Link
-                                    href={`/acara/rapat/${meeting.id}`}
-                                    className="text-sm font-bold text-ink hover:text-primary transition-colors truncate block"
-                                  >
+                                  <span className="text-sm font-bold text-ink hover:text-primary transition-colors truncate block">
                                     {meeting.title}
-                                  </Link>
+                                  </span>
                                   {mBadge && meeting.targetAudience !== TargetAudience.ALL && (
                                     <span
                                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${mBadge.badgeClass}`}
@@ -682,7 +699,10 @@ export function SnakingPathCalendar({
                                   {onEditMeeting && (
                                     <button
                                       type="button"
-                                      onClick={() => onEditMeeting(meeting)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEditMeeting(meeting);
+                                      }}
                                       className="p-2 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                                       title="Edit Sesi Rapat Ini"
                                     >
@@ -692,7 +712,10 @@ export function SnakingPathCalendar({
                                   {onOpenQr && (
                                     <button
                                       type="button"
-                                      onClick={() => onOpenQr(meeting.id)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        onOpenQr(meeting.id);
+                                      }}
                                       className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                                       title="Tampilkan QR Presensi Sesi Rapat Ini"
                                     >
@@ -716,7 +739,10 @@ export function SnakingPathCalendar({
                         {onEditEvent && (
                           <button
                             type="button"
-                            onClick={() => onEditEvent(ev)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEditEvent(ev);
+                            }}
                             className="p-2 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                             title="Edit Rapat Mandiri Ini"
                           >
@@ -726,7 +752,10 @@ export function SnakingPathCalendar({
                         {onOpenQr && (
                           <button
                             type="button"
-                            onClick={() => onOpenQr(ev.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenQr(ev.id);
+                            }}
                             className="h-9 px-3 rounded-xl bg-card hover:bg-surface-container text-ink border border-edge text-sm font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98]"
                             title="Tampilkan QR Presensi Sesi Rapat Ini"
                           >

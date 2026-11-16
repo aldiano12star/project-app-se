@@ -75,7 +75,7 @@ export function EventDetailClientView({
   const isRapat = !hasSections || isSingleDay;
 
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<"PANITIA" | "NOTULENSI" | "RAB">(
-    !isRapat && (hasSections || isOfficer) ? "PANITIA" : "NOTULENSI"
+    "PANITIA"
   );
 
   const handleOpenAddTask = (sectionId?: string) => {
@@ -114,7 +114,7 @@ export function EventDetailClientView({
           <span>Kembali</span>
         </Link>
 
-        {isOfficer && !isRapat && (
+        {isOfficer && (
           <button
             type="button"
             onClick={() => setIsAddSectionModalOpen(true)}
@@ -134,23 +134,21 @@ export function EventDetailClientView({
 
       {/* ── TRI-TAB WORKSPACE SWITCHER (Linear Style) ── */}
       <div className="flex items-center gap-1 p-1 rounded-2xl bg-surface-container/60 border hairline-border overflow-x-auto select-none">
-        {!isRapat && (
-          <button
-            type="button"
-            onClick={() => {
-              haptic.tap();
-              setActiveWorkspaceTab("PANITIA");
-            }}
-            className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
-              activeWorkspaceTab === "PANITIA"
-                ? "bg-card text-ink shadow-xs border hairline-border font-bold"
-                : "text-ink-muted hover:text-ink"
-            }`}
-          >
-            <Layers className="h-4 w-4 text-primary" />
-            <span>Kepanitiaan &amp; Tugas</span>
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            haptic.tap();
+            setActiveWorkspaceTab("PANITIA");
+          }}
+          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+            activeWorkspaceTab === "PANITIA"
+              ? "bg-card text-ink shadow-xs border hairline-border font-bold"
+              : "text-ink-muted hover:text-ink"
+          }`}
+        >
+          <Layers className="h-4 w-4 text-primary" />
+          <span>Kepanitiaan &amp; Seksi</span>
+        </button>
 
         <button
           type="button"
@@ -185,8 +183,8 @@ export function EventDetailClientView({
         </button>
       </div>
 
-      {/* TAB 1: Seksi Kepanitiaan & Task Board (Khusus Acara Besar / Proker) */}
-      {activeWorkspaceTab === "PANITIA" && !isRapat && (
+      {/* TAB 1: Seksi Kepanitiaan & Task Board */}
+      {activeWorkspaceTab === "PANITIA" && (
         <div className="space-y-3 pt-1 animate-in fade-in duration-200">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-1.5">

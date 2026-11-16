@@ -34,6 +34,7 @@ import {
   generateWhatsAppLink,
   formatEventBroadcastMessage,
 } from "@/utils/whatsappShare";
+import { generateGoogleCalendarUrl } from "@/lib/google-calendar";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 const MeetingQrModal = dynamic(
@@ -147,6 +148,13 @@ export function RapatDetailClientView({
     const waLink = generateWhatsAppLink("", message);
     window.open(waLink, "_blank", "noopener,noreferrer");
   };
+
+  const googleCalendarUrl = generateGoogleCalendarUrl({
+    title: meeting.title,
+    startDate: meeting.date,
+    location: "Ruang Ekskul Saba / Lab Komputer",
+    details: meeting.notes || `Rapat koordinasi: ${meeting.title} - Saba ExploIT`,
+  });
 
   // Handler Hapus Sesi Rapat
   const handleDeleteMeeting = async () => {
@@ -303,7 +311,7 @@ export function RapatDetailClientView({
         </div>
 
         {/* ── ACTION BUTTONS: 2-COLUMN GRID (ADMIN/OPERATOR) OR CENTERED ANCHOR ── */}
-        <div className="pt-2 border-t border-edge/60">
+        <div className="pt-2 border-t border-edge/60 space-y-2.5">
           {isOfficer ? (
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -337,6 +345,18 @@ export function RapatDetailClientView({
               </a>
             </div>
           )}
+
+          {/* Tombol Simpan ke Google Calendar */}
+          <a
+            href={googleCalendarUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-11 min-h-11 px-4 rounded-xl bg-surface-container-low/80 hover:bg-surface-container text-ink border border-edge text-sm font-bold inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+            title="Simpan Sesi Rapat ke Google Calendar"
+          >
+            <Calendar className="w-4 h-4 text-blue-500 shrink-0" />
+            <span>Simpan ke Google Calendar</span>
+          </a>
         </div>
       </section>
 

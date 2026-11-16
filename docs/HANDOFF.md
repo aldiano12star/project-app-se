@@ -28,7 +28,8 @@
   - ✅ **FASE 5 SELESAI**: Overhaul Hall of Fame (avatar 2 huruf, perbaikan proporsi filmstrip mobile & pemotongan judul), Aspirasi & Polling (edge-to-edge status chips, apple-card polls), Pengaturan & Operator Control Center (kartu aksi unduh CSV multi-baris tanpa terpotong, progressive disclosure modal kaca, elevasi visual area Operator), serta Eliminasi Dead Code (`AdminUserManagementSection.tsx`).
   - ✅ **FASE 6 SELESAI**: Comprehensive UX Bug Fixes, Apple Liquid Glass BottomNav Viewport Locking, React `createPortal` Modal Engine, Hapus Notifikasi Terbaca, Penyelarasan TA 2025/2026 & Mobile 390px Overflow Elimination.
   - ✅ **FASE 7 SELESAI**: Database Reset (Hapus Semua Acara/Rapat/Presensi/Notulensi/RAB/Tugas, Reset XP Semua Anggota = 0), Acara Single Timeline View (Hapus Tab Kiri Daftar Tiket), Bottom Nav Spacer `h-32` Terisolasi di AppShell, dan Global Readability Boost (Eliminasi Total Font Mikro 8-11px, Standardisasi Teks Skala Nyaman 14-16px, Line Height Relaxed).
-  - 🏆 **STATUS PROYEK**: **SELURUH 7 FASE OVERHAUL & OPTIMASI SISTEM TUNTAS 100% (PRODUCTION READY)**.
+  - ✅ **FASE 8 SELESAI**: BottomNav Active High-Contrast Highlight (Pill Latar Merah Tegas & Kontras, Eliminasi Titik Merah Indikator), Kartu Rapat Klik Penuh (`cursor-pointer`, sentuhan halus, dan `e.stopPropagation()` pada tombol QR & Edit), Restorasi Fitur Kepanitiaan & Seksi di Detail Acara (Tab #1 Default Aktif, Seksi Baru, Anggota, Ketua Sie / PJ, dan Tugas Ber-deadline), Integrasi Google Calendar (Helper URL resmi `generateGoogleCalendarUrl` dengan `ctz=Asia/Jakarta`, Tombol Simpan ke Kalender di Detail Acara & Rapat, Endpoint Feed `.ics` di `/api/calendar/ics`, Kartu Sinkronisasi Google Calendar di Pengaturan, dan Perbaikan Layout Full-Width Deskripsi Web Push).
+  - 🏆 **STATUS PROYEK**: **SELURUH 8 FASE OVERHAUL & OPTIMASI SISTEM TUNTAS 100% (PRODUCTION READY)**.
 
 ---
 
