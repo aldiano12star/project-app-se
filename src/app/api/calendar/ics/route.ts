@@ -17,13 +17,33 @@ function formatIcsDate(d: Date): string {
 
 export async function GET() {
   try {
-    const [events, meetings] = await Promise.all([
+    const [events, meetings, tasks] = await Promise.all([
       prisma.event.findMany({
         orderBy: { startDate: "asc" },
         take: 100,
       }),
       prisma.meeting.findMany({
         orderBy: { date: "asc" },
+        take: 100,
+      }),
+      prisma.eventTask.findMany({
+        where: {
+          dueDate: {
+            not: null,
+          },
+        },
+        include: {
+          section: {
+            include: {
+              event: {
+                select: {
+                  title: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { dueDate: "asc" },
         take: 100,
       }),
     ]);
@@ -38,7 +58,7 @@ export async function GET() {
       "METHOD:PUBLISH",
       "X-WR-CALNAME:Saba ExploIT Kalender",
       "X-WR-TIMEZONE:Asia/Jakarta",
-      "X-WR-CALDESC:Jadwal Acara dan Rapat Saba ExploIT Super App",
+      "X-WR-CALDESC:Jadwal Acara, Rapat, dan Deadline Tugas Saba ExploIT",
     ];
 
     for (const ev of events) {
@@ -75,6 +95,35 @@ export async function GET() {
         `SUMMARY:${escapeIcsText(m.title)}`,
         `DESCRIPTION:${escapeIcsText(m.notes || "Sesi Rapat Koordinasi Saba ExploIT")}`,
         "LOCATION:Ruang Ekskul Saba / Lab Komputer",
+        "STATUS:CONFIRMED",
+        "END:VEVENT"
+      );
+    }
+
+    for (const task of tasks) {
+      if (!task.dueDate) continue;
+      const due = new Date(task.dueDate);
+      const start = new Date(due.getTime() - 30 * 60 * 1000);
+      const eventTitle = task.section?.event?.title || "Acara Organisasi";
+      const taskSummary = `[Deadline Tugas] ${task.title} - ${eventTitle}`;
+      const taskDetails = [
+        task.description ? `Deskripsi: ${task.description}` : "",
+        `Seksi: ${task.section?.name || "-"}`,
+        `Kegiatan: ${eventTitle}`,
+        `Status: ${task.status === "DONE" ? "Selesai" : "Belum Selesai"}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      icsLines.push(
+        "BEGIN:VEVENT",
+        `UID:TASK-${task.id}@sabaexploit.org`,
+        `DTSTAMP:${nowStamp}`,
+        `DTSTART:${formatIcsDate(start)}`,
+        `DTEND:${formatIcsDate(due)}`,
+        `SUMMARY:${escapeIcsText(taskSummary)}`,
+        `DESCRIPTION:${escapeIcsText(taskDetails)}`,
+        "LOCATION:Lab Komputer / Ruang Ekskul Saba",
         "STATUS:CONFIRMED",
         "END:VEVENT"
       );

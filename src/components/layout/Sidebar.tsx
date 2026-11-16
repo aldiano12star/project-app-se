@@ -99,8 +99,8 @@ export function Sidebar({ user }: SidebarProps) {
             <span className="text-base font-bold tracking-tight text-ink leading-tight truncate font-display">
               SE-Core
             </span>
-            <span className="text-xs text-ink-muted leading-tight mt-0.5 truncate font-body">
-              SMAN 1 Bangsal
+            <span className="text-xs text-ink-muted leading-tight mt-0.5 truncate font-body whitespace-nowrap">
+              SMAN 1 Bantul
             </span>
           </div>
         </Link>
@@ -108,7 +108,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Nav Menu Items */}
       <nav className="flex-1 p-3 space-y-1.5 overflow-y-auto">
-        <div className="px-3 py-1.5 text-xs font-bold text-ink-muted uppercase tracking-wider font-mono">
+        <div className="px-3 py-1.5 text-xs font-semibold text-ink-muted">
           Menu Utama
         </div>
 

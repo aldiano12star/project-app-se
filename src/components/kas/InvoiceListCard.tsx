@@ -43,11 +43,11 @@ export function InvoiceListCard({
           </div>
 
           {unpaidInvoices.length > 0 ? (
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25 font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25">
               {unpaidInvoices.length} Belum Lunas
             </span>
           ) : (
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 flex items-center gap-1 font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 flex items-center gap-1">
               <CheckCircle2 className="h-3.5 w-3.5" />
               <span>Semua Lunas</span>
             </span>
@@ -61,13 +61,13 @@ export function InvoiceListCard({
               <span className="text-xs sm:text-sm font-medium text-ink-muted">
                 Total Tagihan Tertunda
               </span>
-              <p className="text-base sm:text-lg font-extrabold text-ink font-mono-num font-mono">
+              <p className="text-base sm:text-lg font-bold text-ink tabular-nums">
                 Rp {totalUnpaidAmount.toLocaleString("id-ID")}
               </p>
             </div>
             <div className="flex items-center justify-between pt-1 border-t hairline-border text-xs sm:text-sm">
               <span className="text-ink-muted">Saldo Dompet Saya:</span>
-              <span className="font-bold text-ink font-mono-num font-mono">
+              <span className="font-bold text-ink tabular-nums">
                 Rp {userKasBalance.toLocaleString("id-ID")}
               </span>
             </div>
@@ -122,7 +122,7 @@ export function InvoiceListCard({
                         {inv.title}
                       </span>
                       <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border font-mono ${
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border ${
                           inv.type === InvoiceType.KAS
                             ? "bg-sky-500/10 text-sky-500 border-sky-500/20"
                             : "bg-purple-500/10 text-purple-500 border-purple-500/20"
@@ -133,7 +133,7 @@ export function InvoiceListCard({
                     </div>
 
                     <div className="flex items-center gap-3 text-xs sm:text-sm text-ink-muted">
-                      <span className="font-semibold text-ink tabular-nums font-mono">
+                      <span className="font-semibold text-ink tabular-nums">
                         Rp {inv.amount.toLocaleString("id-ID")}
                       </span>
                       {inv.dueDate && (
@@ -156,7 +156,7 @@ export function InvoiceListCard({
                     </div>
                   </div>
 
-                  <span className="text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/25 px-3 py-1.5 rounded-lg self-start sm:self-center font-mono">
+                  <span className="text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/25 px-3 py-1.5 rounded-lg self-start sm:self-center">
                     Belum Lunas
                   </span>
                 </div>
@@ -172,7 +172,7 @@ export function InvoiceListCard({
               <span className="text-xs sm:text-sm font-semibold text-ink-muted">
                 Riwayat Tagihan Lunas
               </span>
-              <span className="text-xs font-medium text-ink-muted font-mono">
+              <span className="text-xs font-medium text-ink-muted">
                 {recentPaidInvoices.length} Terakhir
                 {paidInvoices.length > 5 ? ` (dari ${paidInvoices.length})` : ""}
               </span>
@@ -187,7 +187,7 @@ export function InvoiceListCard({
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span className="text-ink font-medium">{inv.title}</span>
                   </div>
-                  <span className="text-ink-muted tabular-nums font-medium font-mono">
+                  <span className="text-ink-muted tabular-nums font-medium">
                     Rp {inv.amount.toLocaleString("id-ID")}
                   </span>
                 </div>

@@ -75,8 +75,8 @@ export function TopHeader({ user }: TopHeaderProps) {
               <span className="text-base font-bold tracking-tight text-ink leading-tight font-display">
                 SE-Core
               </span>
-              <span className="text-sm text-ink-muted tracking-normal leading-tight mt-0.5">
-                SMAN 1 Bangsal
+              <span className="text-sm text-ink-muted tracking-normal leading-tight mt-0.5 whitespace-nowrap">
+                SMAN 1 Bantul
               </span>
             </div>
           </Link>

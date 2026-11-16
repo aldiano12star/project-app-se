@@ -18,7 +18,9 @@ import {
   Loader2,
   Check,
   Trash2,
+  Calendar,
 } from "lucide-react";
+import { generateGoogleCalendarUrl } from "@/lib/google-calendar";
 import { Role } from "@prisma/client";
 import {
   claimEventTask,
@@ -500,7 +502,7 @@ export function CommitteeSection({
                           <Crown className="h-3.5 w-3.5" />
                         </div>
                         <div className="min-w-0">
-                          <span className="text-xs text-ink-muted block leading-none font-mono">
+                          <span className="text-xs text-ink-muted block leading-none">
                             Penanggung Jawab (PJ)
                           </span>
                           <span className="text-sm font-bold text-ink truncate block mt-0.5">
@@ -763,7 +765,7 @@ export function CommitteeSection({
                                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                                   {/* Lencana SOP Otomatis */}
                                   {task.isSOP && (
-                                    <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-400 text-xs font-semibold border border-purple-500/30 font-mono">
+                                    <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-400 text-xs font-semibold border border-purple-500/30">
                                       SOP
                                     </span>
                                   )}
@@ -771,16 +773,36 @@ export function CommitteeSection({
                                   {/* Lencana Batas Waktu / Deadline */}
                                   {dueStatus && (
                                     <span
-                                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border font-mono ${dueStatus.badgeClass}`}
+                                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs border ${dueStatus.badgeClass}`}
                                     >
                                       <Clock className="h-3 w-3 shrink-0" />
                                       <span>{dueStatus.label}</span>
                                     </span>
                                   )}
 
+                                  {/* Tombol Simpan Deadline ke Google Calendar */}
+                                  {task.dueDate && (
+                                    <a
+                                      href={generateGoogleCalendarUrl({
+                                        title: `[Deadline Tugas] ${task.title} - ${section.name}`,
+                                        startDate: new Date(new Date(task.dueDate).getTime() - 30 * 60 * 1000),
+                                        endDate: new Date(task.dueDate),
+                                        location: "Lab Komputer / Ruang Ekskul Saba",
+                                        details: task.description || `Deadline tugas seksi ${section.name} Saba ExploIT`,
+                                      })}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 transition-colors"
+                                      title="Simpan deadline tugas ini ke Google Calendar"
+                                    >
+                                      <Calendar className="h-3 w-3" />
+                                      <span>+ Kalender</span>
+                                    </a>
+                                  )}
+
                                   {/* Lencana Status Utama */}
                                   {isVerified ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/30 font-mono">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/30">
                                       <CheckCheck className="h-3.5 w-3.5" />
                                       <span>
                                         ✅ Terverifikasi Selesai{" "}
@@ -788,12 +810,12 @@ export function CommitteeSection({
                                       </span>
                                     </span>
                                   ) : isTaskDone ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-xs font-bold border border-amber-500/40 animate-pulse font-mono">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 text-xs font-bold border border-amber-500/40 animate-pulse">
                                       <Clock className="h-3.5 w-3.5" />
                                       <span>⏳ Menunggu Verifikasi PJ</span>
                                     </span>
                                   ) : task.assignee ? (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-xs font-semibold border border-blue-500/30 font-mono">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-xs font-semibold border border-blue-500/30">
                                       <User className="h-3.5 w-3.5" />
                                       <span>
                                         Sedang Dikerjakan oleh {task.assignee.name}
@@ -801,7 +823,7 @@ export function CommitteeSection({
                                       </span>
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-xs font-semibold border border-amber-500/30 font-mono">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 text-xs font-semibold border border-amber-500/30">
                                       <AlertCircle className="h-3.5 w-3.5" />
                                       <span>Mencari Relawan</span>
                                     </span>

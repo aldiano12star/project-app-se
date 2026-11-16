@@ -471,26 +471,26 @@ export function SnakingPathCalendar({
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
                       {/* Luma Date Chip (Always Visible on Mobile & Desktop) */}
-                      <div className="flex flex-col items-center justify-center h-11 w-10 sm:h-12 sm:w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center font-mono font-mono-num shadow-2xs">
+                      <div className="flex flex-col items-center justify-center h-11 w-10 sm:h-12 sm:w-11 rounded-xl bg-surface-container-low border hairline-border shrink-0 text-center shadow-2xs">
                         <span className="text-xs font-bold text-primary uppercase tracking-wider">{dayName.slice(0, 3)}</span>
-                        <span className="text-base sm:text-lg font-extrabold text-ink leading-none">{dayNum}</span>
+                        <span className="text-base sm:text-lg font-extrabold text-ink leading-none tabular-nums">{dayNum}</span>
                       </div>
 
                       <div className="space-y-1.5 min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-1.5 text-xs">
                           {/* Status Badge (Cyan: Berlangsung, Emerald: Selesai, Slate: Mendatang) */}
                           {isFinished ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 font-mono">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
                               <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                               <span>Selesai</span>
                             </span>
                           ) : isOngoing ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-xs font-mono">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 shadow-xs">
                               <Radio className="h-3 w-3 text-cyan-500 animate-pulse" />
                               <span>Sedang Berlangsung</span>
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-ink-secondary border hairline-border font-mono">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container text-ink-secondary border hairline-border">
                               <Clock className="h-3 w-3 text-ink-muted" />
                               <span>Mendatang</span>
                             </span>
@@ -498,7 +498,7 @@ export function SnakingPathCalendar({
 
                           {/* Tipe Acara */}
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono ${
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                               isIndependent
                                 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
                                 : isParentMegaCard || isMultiDay
@@ -538,14 +538,14 @@ export function SnakingPathCalendar({
                             <Link
                               href="/dashboard"
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-extrabold shadow-xs transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-bold shadow-xs transition-colors cursor-pointer"
                               title="Lakukan presensi kehadiran kegiatan hari ini untuk mendapatkan +10 XP"
                             >
                               <span>⚡ Hadiri Presensi (+10 XP)</span>
                             </Link>
                           )}
 
-                          <span className="font-semibold text-ink text-xs flex items-center gap-1 font-mono font-mono-num">
+                          <span className="font-semibold text-ink text-xs flex items-center gap-1 tabular-nums">
                             <Clock className="h-3 w-3 text-ink-muted" />
                             <span>{formattedSchedule}</span>
                           </span>

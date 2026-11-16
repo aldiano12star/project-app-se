@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Role, TargetAudience } from "@prisma/client";
-import { Plus } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 import { haptic } from "@/lib/haptic";
 import {
   SnakingPathCalendar,
@@ -264,20 +264,33 @@ export function AcaraClientView({
           </p>
         </div>
 
-        {isOfficer && (
-          <button
-            type="button"
-            onClick={() => {
-              haptic.tap();
-              setEditingItem(null);
-              setIsAdminModalOpen(true);
-            }}
-            className="self-start sm:self-auto inline-flex items-center justify-center gap-2 h-11 px-5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">
+          {/* Tombol Unduh Kalender (.ics) Langsung ke HP */}
+          <a
+            href="/api/calendar/ics"
+            download="jadwal-saba-exploit.ics"
+            className="inline-flex items-center justify-center gap-2 h-11 px-4 bg-surface-container-low hover:bg-surface-container active:scale-[0.98] text-ink border border-edge text-sm font-semibold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+            title="Unduh jadwal dan deadline kegiatan ke kalender HP"
           >
-            <Plus className="h-4 w-4" />
-            <span>Buat Agenda</span>
-          </button>
-        )}
+            <Calendar className="h-4 w-4 text-primary" />
+            <span>Unduh Kalender (.ics)</span>
+          </a>
+
+          {isOfficer && (
+            <button
+              type="button"
+              onClick={() => {
+                haptic.tap();
+                setEditingItem(null);
+                setIsAdminModalOpen(true);
+              }}
+              className="inline-flex items-center justify-center gap-2 h-11 px-5 bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Buat Agenda</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* ── TIMELINE SIRKUIT KALENDER (TAMPILAN TUNGGAL UTAMA) ── */}

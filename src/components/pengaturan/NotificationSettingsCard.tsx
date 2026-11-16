@@ -14,6 +14,7 @@ import {
   Copy,
   Check,
   ExternalLink,
+  Download,
 } from "lucide-react";
 import {
   isPushSupported,
@@ -160,30 +161,30 @@ export function NotificationSettingsCard() {
 
           {/* Status Badge */}
           {permission === "loading" ? (
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20">
               ...
             </span>
           ) : permission === "granted" && isSubscribed ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 font-mono shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/30 shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Terkoneksi ✅</span>
             </span>
           ) : permission === "granted" ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/30 font-mono shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/30 shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Izin Aktif</span>
             </span>
           ) : permission === "denied" ? (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 font-mono shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 shrink-0">
               <XCircle className="w-3.5 h-3.5" />
               <span>Diblokir ⚠️</span>
             </span>
           ) : permission === "unsupported" ? (
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20 font-mono shrink-0">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20 shrink-0">
               Tidak Didukung
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 font-mono shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/30 shrink-0">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Perlu Izin ⚠️</span>
             </span>
@@ -265,19 +266,29 @@ export function NotificationSettingsCard() {
               📅 Sinkronisasi Google Calendar (.ics)
             </span>
           </div>
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 font-mono shrink-0">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 shrink-0">
             Feed Aktif
           </span>
         </div>
 
         {/* Deskripsi Full-Width */}
         <p className="text-sm text-ink-muted leading-relaxed">
-          Berlangganan feed kalender agar seluruh agenda kegiatan dan jadwal rapat organisasi otomatis tersinkronisasi ke Google Calendar di HP atau laptopmu.
+          Sinkronisasi kalender agar seluruh agenda kegiatan, jadwal rapat, dan batas waktu (deadline) tugas organisasi otomatis masuk ke Google Calendar di HP atau laptopmu.
         </p>
 
-        <div className="pt-2 border-t border-edge/60 space-y-2.5">
+        <div className="pt-2 border-t border-edge/60 space-y-3">
+          {/* Tombol Utama: 1-Tap Unduh File .ics Langsung ke HP */}
+          <a
+            href="/api/calendar/ics"
+            download="jadwal-saba-exploit.ics"
+            className="w-full h-11 px-4 rounded-xl bg-primary hover:bg-primary-hover active:scale-[0.98] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Unduh File Kalender (.ics)</span>
+          </a>
+
           <div className="p-2.5 rounded-xl bg-surface-container/60 border border-edge flex items-center justify-between gap-2 overflow-hidden">
-            <span className="text-xs font-mono text-ink-secondary truncate select-all">
+            <span className="text-xs text-ink-secondary truncate select-all">
               {calendarIcsUrl}
             </span>
           </div>
@@ -307,10 +318,10 @@ export function NotificationSettingsCard() {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition-all"
+              className="w-full sm:w-auto h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs transition-all"
             >
               <Calendar className="w-4 h-4" />
-              <span>Buka di Google Calendar</span>
+              <span>Buka di Google Calendar Web</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>

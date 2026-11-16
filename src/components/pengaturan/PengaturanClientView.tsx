@@ -104,9 +104,9 @@ export function PengaturanClientView({
         {/* 6. Footer Hak Cipta Resmi Eksklusif di Halaman Pengaturan */}
         <footer className="pt-8 pb-12 text-center space-y-1.5 text-sm text-ink-muted select-none border-t hairline-border">
           <p className="font-semibold text-ink-secondary">
-            &copy; 2026 Saba ExploIT • SMAN 1 Bangsal
+            &copy; 2026 Saba ExploIT • SMAN 1 Bantul
           </p>
-          <p className="text-xs font-mono text-ink-muted">
+          <p className="text-xs text-ink-muted">
             SE-Core v1.3.0 • Zero-Cost Cloud Architecture
           </p>
         </footer>

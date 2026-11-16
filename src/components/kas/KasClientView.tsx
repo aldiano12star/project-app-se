@@ -101,7 +101,7 @@ export function KasClientView({
           }`}
         >
           <Receipt className="h-4 w-4 shrink-0" />
-          <span className="truncate">Dompet Personal</span>
+          <span className="truncate">Dompetku</span>
         </button>
 
         {!isKolaborator && (
@@ -118,7 +118,7 @@ export function KasClientView({
             }`}
           >
             <FileText className="h-4 w-4 shrink-0" />
-            <span className="truncate">Buku Kas LPJ</span>
+            <span className="truncate">Buku Kas</span>
           </button>
         )}
 
@@ -136,9 +136,7 @@ export function KasClientView({
             }`}
           >
             <SlidersHorizontal className="h-4 w-4 shrink-0" />
-            <span className="truncate">
-              <span className="hidden sm:inline">Panel </span>Kelola Kas
-            </span>
+            <span className="truncate">Kelola Kas</span>
           </button>
         )}
       </div>

@@ -8,7 +8,7 @@
 ## 📌 1. Status Terkini Proyek & Ringkasan Arsitektur
 
 - **Nama Aplikasi**: Saba ExploIT Super App (SE-Core v1.3.0).
-- **Target Rilis**: Q4 2026 (Organisasi Ekstrakurikuler IT SMAN 1 Bangsal).
+- **Target Rilis**: Q4 2026 (Organisasi Ekstrakurikuler IT SMAN 1 Bantul).
 - **Arsitektur Nol-Biaya (*Zero-Cost Architecture*)**:
   - **Hosting & Edge**: Vercel (Next.js 16.3.6, Turbopack, App Router, React 19).
   - **Database Serverless**: PostgreSQL di **Neon Tech** dengan `@prisma/adapter-neon` dan WebSocket connection pooling via `ws` di [src/lib/db.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/lib/db.ts).
@@ -29,7 +29,8 @@
   - ✅ **FASE 6 SELESAI**: Comprehensive UX Bug Fixes, Apple Liquid Glass BottomNav Viewport Locking, React `createPortal` Modal Engine, Hapus Notifikasi Terbaca, Penyelarasan TA 2025/2026 & Mobile 390px Overflow Elimination.
   - ✅ **FASE 7 SELESAI**: Database Reset (Hapus Semua Acara/Rapat/Presensi/Notulensi/RAB/Tugas, Reset XP Semua Anggota = 0), Acara Single Timeline View (Hapus Tab Kiri Daftar Tiket), Bottom Nav Spacer `h-32` Terisolasi di AppShell, dan Global Readability Boost (Eliminasi Total Font Mikro 8-11px, Standardisasi Teks Skala Nyaman 14-16px, Line Height Relaxed).
   - ✅ **FASE 8 SELESAI**: BottomNav Active High-Contrast Highlight (Pill Latar Merah Tegas & Kontras, Eliminasi Titik Merah Indikator), Kartu Rapat Klik Penuh (`cursor-pointer`, sentuhan halus, dan `e.stopPropagation()` pada tombol QR & Edit), Restorasi Fitur Kepanitiaan & Seksi di Detail Acara (Tab #1 Default Aktif, Seksi Baru, Anggota, Ketua Sie / PJ, dan Tugas Ber-deadline), Integrasi Google Calendar (Helper URL resmi `generateGoogleCalendarUrl` dengan `ctz=Asia/Jakarta`, Tombol Simpan ke Kalender di Detail Acara & Rapat, Endpoint Feed `.ics` di `/api/calendar/ics`, Kartu Sinkronisasi Google Calendar di Pengaturan, dan Perbaikan Layout Full-Width Deskripsi Web Push).
-  - 🏆 **STATUS PROYEK**: **SELURUH 8 FASE OVERHAUL & OPTIMASI SISTEM TUNTAS 100% (PRODUCTION READY)**.
+  - ✅ **FASE 9 SELESAI**: Kas Theme Adaptation (Permukaan Terang Hangat/Emerald di Light Mode, Elevated `#1E1F25` di Dark Mode), Perbaikan Label Tab Kas (`Dompetku`, `Buku Kas`, `Kelola Kas` anti-terpotong), Perbaikan Nama Sekolah Global (`SMAN 1 Bantul` + `whitespace-nowrap`), Sistem Tipografi Humanis (Eliminasi Penyalahgunaan `font-mono` pada Teks Biasa & Badge, Konversi ALL CAPS / `tracking-widest` Menjadi Sentence Case, Penggunaan Angka Tabular `tabular-nums` Presisi), dan Sinkronisasi 1-Tap Kalender HP (Integrasi Deadline Tugas ke `.ics`, Tombol Unduh `.ics` Langsung di Pengaturan & Acara, Pengujian HTTP 200).
+  - 🏆 **STATUS PROYEK**: **SELURUH 9 FASE OVERHAUL, PENYELARASAN TEMA & OPTIMASI SISTEM TUNTAS 100% (PRODUCTION READY)**.
 
 ---
 
@@ -314,6 +315,46 @@ Seluruh target perombakan antarmuka (Fase 1 sampai Fase 5) dari dokumen inisiasi
   - **Eliminasi Total Font Mikro**: Mengeliminasi 100% penggunaan font mikro (`text-[8px]`, `text-[9px]`, `text-[10px]`, `text-[11px]`) di seluruh folder `src/` (termasuk modul Acara, Kas, Eksplorasi, Aspirasi, Hall of Fame, Pengaturan, Operator, Onboarding, Auth, Layout, PWA, dan UI Components) dan menaikkannya ke `text-xs font-semibold` (12px) atau `text-sm font-medium` (14px).
   - **Keterbacaan Kalimat & Paragraf**: Menaikkan teks deskripsi, catatan kaki, subjudul, dan teks bantuan yang sebelumnya memakai `text-xs` (12px) menjadi `text-sm` (14px) / `text-base` (16px) dengan `leading-relaxed` agar sangat nyaman dan ramah di mata saat dibaca di layar smartphone.
   - **Keamanan Responsif**: Seluruh teks dan kontainer flex/grid dipastikan aman dari *text truncation* canggung maupun *horizontal overflow* pada layar sempit 390px.
+
+### 📝 Log Perubahan Fase 8: BottomNav Active Highlight, Clickable Meeting Cards, Committee Sections Restoration & Google Calendar Integration (Selesai):
+- **[src/components/layout/BottomNav.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/BottomNav.tsx)**:
+  * Menghilangkan titik merah kecil (`h-1 w-1` / dot indikator) di samping teks menu yang sedang aktif.
+  * Menerapkan warna sorotan aktif yang kontras dan tegas (`bg-primary text-white shadow-xs` dengan border halus) pada item navigasi yang dipilih, sementara item non-aktif tetap berpenampilan netral ergonomis.
+- **[src/components/acara/SnakingPathCalendar.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/SnakingPathCalendar.tsx)**:
+  * Menjadikan seluruh area kotak kartu rapat (`div` kartu) dapat diklik langsung untuk membuka halaman detail rapat (`/acara/rapat/[id]`), tidak terbatas pada judulnya saja.
+  * Menambahkan `cursor-pointer` dan efek interaktif halus.
+  * Memasang `e.stopPropagation()` pada tombol aksi QR Code dan Edit agar mengklik QR/Edit tidak memicu navigasi kartu.
+- **[src/components/acara/EventDetailClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/EventDetailClientView.tsx) & [src/components/acara/CommitteeSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/CommitteeSection.tsx)**:
+  * Mengembalikan tab "Kepanitiaan & Seksi" sebagai tab pertama (default aktif) di halaman detail kegiatan (`/acara/[id]`).
+  * Mengintegrasikan kembali manajemen seksi kepanitiaan: pembuatan seksi baru, pengelolaan anggota seksi, penunjukan Ketua Sie (PJ), dan pembuatan tugas berbatas waktu (*deadline*).
+- **[src/lib/google-calendar.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/lib/google-calendar.ts)**:
+  * Membuat modul helper resmi untuk menghasilkan tautan Google Calendar web URL (`calendar.google.com/calendar/render?action=TEMPLATE&...`) dengan parameter `text`, `dates` (UTC ISO format), `location`, `details`, dan `ctz=Asia/Jakarta`.
+- **[src/app/api/calendar/ics/route.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/api/calendar/ics/route.ts)**:
+  * Membuat endpoint publik dinamis (`export const dynamic = "force-dynamic"`) untuk menghasilkan feed kalender standar `text/calendar; charset=utf-8` (`BEGIN:VCALENDAR ... VEVENT ... END:VCALENDAR`).
+- **[src/components/pengaturan/NotificationSettingsCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/NotificationSettingsCard.tsx)**:
+  * Menambahkan kartu "Sinkronisasi Google Calendar (.ics)" lengkap dengan URL feed, tombol salin tautan, dan tombol buka langsung di Google Calendar Web.
+  * Memperbaiki tata letak deskripsi "Notifikasi Web Push (OS Native)" agar berada di bawah judul (full-width) tanpa terdesak oleh badge status.
+
+### 📝 Log Perubahan Fase 9: Kas Theme Adaptation, Humanized Typography, SMAN 1 Bantul Correction & 1-Tap Calendar Sync (Selesai):
+- **Koreksi Identitas Sekolah (`SMAN 1 Bantul`)**:
+  * Mengganti seluruh referensi `Bangsal` menjadi `SMAN 1 Bantul` di [src/components/layout/TopHeader.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/TopHeader.tsx), [src/components/layout/Sidebar.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/Sidebar.tsx), dan [src/components/pengaturan/PengaturanClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/PengaturanClientView.tsx).
+  * Menambahkan kelas `whitespace-nowrap` pada header agar nama sekolah tidak tertekuk menjadi 2 baris di resolusi ponsel sempit.
+- **Adaptasi Tema Kartu Kas (Light & Dark Mode)**:
+  * [src/components/kas/DigitalWalletCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/DigitalWalletCard.tsx):
+    - *Light Mode*: Kartu Kas Organisasi mengadopsi latar terang hangat bergradasi lembut (`from-amber-50/90 via-white to-amber-100/40`) dengan teks gelap kontras (`text-zinc-900`) dan border tipis `border-black/10`. Kartu Dompet Anggota menggunakan permukaan putih bersih dengan aksen emerald lembut (`from-emerald-50/80 via-white to-emerald-100/30`).
+    - *Dark Mode*: Permukaan kartu Kas Organisasi dinaikkan kecerahannya ke elevated warm charcoal (`dark:from-[#23242B] dark:via-[#1E1F25] dark:to-[#191A20]`) dengan border `dark:border-white/15` agar kontras dan tidak tenggelam dengan warna latar utama (`#121214`).
+  * [src/components/kas/KasClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/KasClientView.tsx):
+    - Memperbaiki label 3 tab kas menjadi ringkas (`Dompetku`, `Buku Kas`, `Kelola Kas`) sehingga tidak mengalami pemotongan teks elipsis (`...`) pada layar ponsel 390px.
+- **Sistem Tipografi Humanis (*Humanist Readability*)**:
+  * Menghentikan penyalahgunaan font monospace (`font-mono`) pada teks biasa, nama anggota, badge status, tabel riwayat, dan kalimat deskripsi.
+  * Mengalihkan perataan digit angka nominal rupiah murni ke kelas `tabular-nums` yang rapi dan elegan.
+  * Mengonversi teks judul dan subjudul kapital semua (`ALL CAPS`) berjarak renggang (`tracking-widest`) menjadi **Sentence Case** dengan `tracking-tight` pada judul besar atau `tracking-normal` pada subjudul untuk kemudahan pemindaian mata tanpa melelahkan.
+  * Memperbaiki hierarki ukuran teks di [DigitalWalletCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/DigitalWalletCard.tsx), [InvoiceListCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/InvoiceListCard.tsx), [InvoiceTrackerSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/kas/InvoiceTrackerSection.tsx), [RapatDetailClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/RapatDetailClientView.tsx), [CommitteeSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/CommitteeSection.tsx), [SnakingPathCalendar.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/SnakingPathCalendar.tsx), dan [SettingsSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/SettingsSection.tsx).
+- **Sinkronisasi Kalender 1-Tap & Deadline Tugas**:
+  * Memperbarui [src/app/api/calendar/ics/route.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/api/calendar/ics/route.ts) untuk mengikutsertakan tugas kepanitiaan yang memiliki batas waktu (`dueDate !== null`), diformat sebagai `[Deadline Tugas] Nama Tugas - Nama Acara` lengkap dengan nama seksi dan status pengerjaan.
+  * Menambahkan tombol aksi langsung **"+ Kalender"** pada item tugas ber-deadline di [src/components/acara/CommitteeSection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/CommitteeSection.tsx).
+  * Menyediakan tombol 1-tap **"Unduh File Kalender (.ics)"** (`<a href="/api/calendar/ics" download="jadwal-saba-exploit.ics">`) di [src/components/pengaturan/NotificationSettingsCard.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/NotificationSettingsCard.tsx) dan [src/components/acara/AcaraClientView.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/acara/AcaraClientView.tsx) agar pengguna ponsel dapat mengimpor langsung seluruh jadwal tanpa menyalin URL.
+  * Pengujian verifikasi endpoint `/api/calendar/ics` berhasil menghasilkan status HTTP `200`, `Content-Type: text/calendar; charset=utf-8`, serta blok `BEGIN:VCALENDAR` dan `VEVENT` yang valid.
 
 ### 🚦 Instruksi Pasca-Overhaul (Pemeliharaan & Rilis):
 1. **Status Reset Database (Kepengurusan 2025/2026)**:

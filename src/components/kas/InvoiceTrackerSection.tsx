@@ -439,14 +439,14 @@ export function InvoiceTrackerSection({
                           let statusBadge: React.ReactNode;
                           if (isPaid) {
                             statusBadge = (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 font-mono">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25">
                                 <Check className="h-3.5 w-3.5" />
                                 Lunas
                               </span>
                             );
                           } else if (userBal <= 0) {
                             statusBadge = (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25 font-mono">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25">
                                 <AlertCircle className="h-3.5 w-3.5" />
                                 Belum Bayar
                               </span>
@@ -454,14 +454,14 @@ export function InvoiceTrackerSection({
                           } else if (userBal < item.amount) {
                             const missing = item.amount - userBal;
                             statusBadge = (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 dark:bg-amber-950/40 border border-amber-500/25 font-mono">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-300 dark:bg-amber-950/40 border border-amber-500/25">
                                 <Clock className="h-3.5 w-3.5" />
                                 Kurang Rp {missing.toLocaleString("id-ID")}
                               </span>
                             );
                           } else {
                             statusBadge = (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/10 text-sky-700 dark:text-sky-300 dark:bg-sky-950/40 border border-sky-500/25 font-mono">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-700 dark:text-sky-300 dark:bg-sky-950/40 border border-sky-500/25">
                                 <Wallet className="h-3.5 w-3.5" />
                                 Saldo Cukup
                               </span>
@@ -487,11 +487,11 @@ export function InvoiceTrackerSection({
 
                               <div className="flex items-center justify-between pt-2 border-t hairline-border text-xs sm:text-sm">
                                 <div className="text-xs text-ink-muted">
-                                  Saldo: <span className="font-mono font-semibold text-ink font-mono-num">Rp {userBal.toLocaleString("id-ID")}</span>
+                                  Saldo: <span className="font-semibold text-ink tabular-nums">Rp {userBal.toLocaleString("id-ID")}</span>
                                 </div>
                                 <div>
                                   {isPaid ? (
-                                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1 font-mono">
+                                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
                                       <CheckCircle2 className="h-3.5 w-3.5" />
                                       Selesai
                                     </span>
@@ -531,7 +531,7 @@ export function InvoiceTrackerSection({
                       {/* Desktop Table (>= md) */}
                       <div className="hidden md:block overflow-x-auto rounded-xl border hairline-border bg-card">
                         <table className="w-full text-left text-xs sm:text-sm">
-                          <thead className="bg-surface-container-low border-b hairline-border text-ink-muted font-bold uppercase tracking-wider text-xs font-mono">
+                          <thead className="bg-surface-container-low border-b hairline-border text-ink-muted font-semibold text-xs">
                             <tr>
                               <th className="px-4 py-2.5">Nama Anggota</th>
                               <th className="px-4 py-2.5">Kelas / Divisi</th>
@@ -548,14 +548,14 @@ export function InvoiceTrackerSection({
                               let statusBadge: React.ReactNode;
                               if (isPaid) {
                                 statusBadge = (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 font-mono">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25">
                                     <Check className="h-3.5 w-3.5" />
                                     Lunas
                                   </span>
                                 );
                               } else if (userBal <= 0) {
                                 statusBadge = (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25 font-mono">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-700 dark:text-rose-300 dark:bg-rose-950/40 border border-rose-500/25">
                                     <AlertCircle className="h-3.5 w-3.5" />
                                     Belum Bayar
                                   </span>
@@ -563,14 +563,14 @@ export function InvoiceTrackerSection({
                               } else if (userBal < item.amount) {
                                 const missing = item.amount - userBal;
                                 statusBadge = (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 dark:bg-amber-950/40 border border-amber-500/25 font-mono">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-300 dark:bg-amber-950/40 border border-amber-500/25">
                                     <Clock className="h-3.5 w-3.5" />
                                     Kurang Rp {missing.toLocaleString("id-ID")}
                                   </span>
                                 );
                               } else {
                                 statusBadge = (
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500/10 text-sky-700 dark:text-sky-300 dark:bg-sky-950/40 border border-sky-500/25 font-mono">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-700 dark:text-sky-300 dark:bg-sky-950/40 border border-sky-500/25">
                                     <Wallet className="h-3.5 w-3.5" />
                                     Saldo Cukup
                                   </span>
@@ -593,7 +593,7 @@ export function InvoiceTrackerSection({
                                   </td>
                                   <td className="px-4 py-2.5 text-right">
                                     {isPaid ? (
-                                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1 font-mono">
+                                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
                                         <CheckCircle2 className="h-3.5 w-3.5" />
                                         Selesai
                                       </span>
@@ -778,7 +778,7 @@ export function InvoiceTrackerSection({
                                     {formatGradeGen(item.user)} • {item.user.mainDivision || "Umum"}
                                   </p>
                                 </div>
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 shrink-0 font-mono">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 shrink-0">
                                   <Check className="h-3.5 w-3.5" />
                                   Lunas
                                 </span>
@@ -789,7 +789,7 @@ export function InvoiceTrackerSection({
                           {/* Desktop Table (>= md) */}
                           <div className="hidden md:block overflow-x-auto rounded-xl border hairline-border bg-card">
                             <table className="w-full text-left text-xs sm:text-sm">
-                              <thead className="bg-surface-container-low border-b hairline-border text-ink-muted font-bold uppercase tracking-wider text-xs font-mono">
+                              <thead className="bg-surface-container-low border-b hairline-border text-ink-muted font-semibold text-xs">
                                 <tr>
                                   <th className="px-4 py-2.5">Nama Anggota</th>
                                   <th className="px-4 py-2.5">Kelas / Divisi</th>
@@ -809,7 +809,7 @@ export function InvoiceTrackerSection({
                                       {formatGradeGen(item.user)} • {item.user.mainDivision || "Umum"}
                                     </td>
                                     <td className="px-4 py-2.5 text-center">
-                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25 font-mono">
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 dark:bg-emerald-950/40 border border-emerald-500/25">
                                         <Check className="h-3.5 w-3.5" />
                                         Lunas
                                       </span>

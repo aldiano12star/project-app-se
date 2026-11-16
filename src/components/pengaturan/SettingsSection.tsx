@@ -198,7 +198,7 @@ export function SettingsSection({
       {/* GRUP 1: AKUN, KONTAK & KEAMANAN                           */}
       {/* ========================================================= */}
       <section className="space-y-1.5">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
+        <h3 className="text-xs font-semibold text-ink-muted px-1 tracking-normal">
           Akun &amp; Keamanan Data
         </h3>
         <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
@@ -510,7 +510,7 @@ export function SettingsSection({
       {/* GRUP 2: PREFERENSI SISTEM & NOTIFIKASI PWA               */}
       {/* ========================================================= */}
       <section className="space-y-2">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
+        <h3 className="text-xs font-semibold text-ink-muted px-1 tracking-normal">
           Preferensi Sistem &amp; Notifikasi HP
         </h3>
 
@@ -621,7 +621,7 @@ export function SettingsSection({
       {/* ========================================================= */}
       {(user.role === Role.OPERATOR || user.role === Role.ADMIN) && (
         <section className="space-y-1.5">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
+          <h3 className="text-xs font-semibold text-ink-muted px-1 tracking-normal">
             ⚙️ Manajemen Sistem Operator
           </h3>
           <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">
@@ -642,7 +642,7 @@ export function SettingsSection({
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 font-mono uppercase">
+                <span className="text-xs font-medium px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                   Kelola
                 </span>
                 <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-ink transition-transform group-hover:translate-x-0.5" />
@@ -668,7 +668,7 @@ export function SettingsSection({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 font-mono uppercase">
+                  <span className="text-xs font-medium px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 border border-rose-500/20">
                     Operator
                   </span>
                   <ChevronRight className="w-4 h-4 text-ink-muted group-hover:text-danger transition-colors" />
@@ -683,7 +683,7 @@ export function SettingsSection({
       {/* GRUP 3: TENTANG & BANTUAN                                 */}
       {/* ========================================================= */}
       <section className="space-y-1.5">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-ink-muted px-1 font-mono">
+        <h3 className="text-xs font-semibold text-ink-muted px-1 tracking-normal">
           Tentang &amp; Bantuan
         </h3>
         <div className="bg-card border border-edge rounded-2xl overflow-hidden divide-y divide-edge/60 shadow-xs">

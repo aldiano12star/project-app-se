@@ -433,7 +433,7 @@ export function RapatDetailClientView({
         ) : (
           <div className="overflow-x-auto rounded-xl border border-edge/70">
             <table className="w-full text-left text-sm">
-              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-bold text-xs uppercase tracking-wider">
+              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-semibold text-xs tracking-normal">
                 <tr>
                   <th className="px-4 py-3">Nama Anggota</th>
                   <th className="px-4 py-3">Kelas / Gen</th>
@@ -493,7 +493,7 @@ export function RapatDetailClientView({
                       <td className="px-4 py-3 text-ink-secondary">
                         {item.user.mainDivision || "-"}
                       </td>
-                      <td className="px-4 py-3 text-center font-mono text-xs text-ink-muted">
+                      <td className="px-4 py-3 text-center tabular-nums text-xs text-ink-muted">
                         {checkTime}
                       </td>
                       <td className="px-4 py-3 text-right">

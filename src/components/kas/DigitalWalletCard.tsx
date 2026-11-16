@@ -101,7 +101,7 @@ export function DigitalWalletCard({
             </button>
           </div>
 
-          <span className="text-xs font-mono text-ink-muted hidden sm:inline-block">
+          <span className="text-xs text-ink-muted hidden sm:inline-block">
             {activeCard === "ORG" ? "Buku Kas Publik" : "Saldo Anggota"}
           </span>
         </div>
@@ -112,57 +112,57 @@ export function DigitalWalletCard({
       {/* ========================================================= */}
       <div className="relative">
         {activeCard === "ORG" && !isKolaborator ? (
-          /* CARD A: KAS UTAMA ORGANISASI (TITANIUM OBSIDIAN APPLE CARD) */
-          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-linear-to-br from-neutral-900 via-neutral-950 to-black text-white border border-white/10 shadow-xl space-y-6 transition-all duration-300">
+          /* CARD A: KAS UTAMA ORGANISASI (ADAPTIVE LIGHT / ELEVATED DARK APPLE CARD) */
+          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-linear-to-br from-amber-50/90 via-white to-amber-100/40 dark:from-[#23242B] dark:via-[#1E1F25] dark:to-[#191A20] text-zinc-900 dark:text-white border border-black/10 dark:border-white/15 shadow-md dark:shadow-xl space-y-6 transition-all duration-300">
             {/* Ambient Metallic Glow & Specular Sheen */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 dark:bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
-                <span className="text-xs font-mono font-bold tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
-                  SE-CORE // TREASURY
+                <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  Kas Treasury SE-Core
                 </span>
-                <span className="text-sm font-bold text-neutral-300 font-display">
+                <span className="text-base font-semibold text-zinc-900 dark:text-neutral-100 font-display">
                   Kas Utama Saba ExploIT
                 </span>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-xs font-bold font-mono tracking-wider">
-                ORGANISASI
+              <span className="px-2.5 py-1 rounded-full bg-amber-500/10 dark:bg-white/10 text-amber-900 dark:text-neutral-300 border border-amber-500/20 dark:border-white/15 text-xs font-medium">
+                Organisasi
               </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}
             <div className="space-y-1 relative z-10">
-              <span className="text-xs sm:text-sm font-medium text-neutral-400 uppercase tracking-wider font-mono">
-                Total Saldo Kas Riil Tersedia
+              <span className="text-xs sm:text-sm font-normal text-zinc-500 dark:text-neutral-400 leading-relaxed">
+                Total Saldo Kas Tersedia
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono-num font-mono text-white tracking-tight">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold tabular-nums text-zinc-950 dark:text-white tracking-tight">
                 Rp {animatedOrgBalance.toLocaleString("id-ID")}
               </div>
             </div>
 
             {/* Bottom Row: Pemasukan & Pengeluaran Bento Strip + Cardholder */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 border-t border-white/10 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 border-t border-black/10 dark:border-white/10 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2">
-                  <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-400" />
+                <div className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center gap-2">
+                  <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <span className="text-xs text-neutral-400 block font-mono">Masuk</span>
-                    <span className="text-sm font-bold font-mono text-emerald-400 tabular-nums">
+                    <span className="text-xs text-zinc-500 dark:text-neutral-400 block font-normal">Masuk</span>
+                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
                       +Rp {totalIncome.toLocaleString("id-ID")}
                     </span>
                   </div>
                 </div>
 
-                <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 flex items-center gap-2">
-                  <ArrowUpRight className="h-3.5 w-3.5 text-rose-400" />
+                <div className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center gap-2">
+                  <ArrowUpRight className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
                   <div>
-                    <span className="text-xs text-neutral-400 block font-mono">Keluar</span>
-                    <span className="text-sm font-bold font-mono text-rose-400 tabular-nums">
+                    <span className="text-xs text-zinc-500 dark:text-neutral-400 block font-normal">Keluar</span>
+                    <span className="text-sm font-semibold text-rose-600 dark:text-rose-400 tabular-nums">
                       -Rp {totalExpense.toLocaleString("id-ID")}
                     </span>
                   </div>
@@ -170,50 +170,50 @@ export function DigitalWalletCard({
               </div>
 
               <div className="text-left sm:text-right">
-                <span className="text-xs text-neutral-400 font-mono tracking-wider block">
-                  PEMEGANG BUKU KAS
+                <span className="text-xs text-zinc-500 dark:text-neutral-400 block font-normal">
+                  Pemegang Buku Kas
                 </span>
-                <span className="text-sm font-extrabold text-neutral-200 tracking-wide font-display">
-                  BENDAHARA UMUM // SABA EXPLOIT
+                <span className="text-sm font-semibold text-zinc-800 dark:text-neutral-200 tracking-tight font-display">
+                  Bendahara Umum Saba ExploIT
                 </span>
               </div>
             </div>
           </div>
         ) : (
-          /* CARD B: DOMPET PERSONAL ANGGOTA (EMERALD GLASS APPLE CARD) */
-          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-linear-to-br from-emerald-950 via-teal-950 to-neutral-950 text-white border border-emerald-500/30 shadow-xl space-y-6 transition-all duration-300">
+          /* CARD B: DOMPET PERSONAL ANGGOTA (ADAPTIVE LIGHT / EMERALD APPLE CARD) */
+          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-linear-to-br from-emerald-50/90 via-white to-teal-50/50 dark:from-emerald-950/80 dark:via-teal-950/70 dark:to-[#171E1C] text-zinc-900 dark:text-white border border-black/10 dark:border-emerald-500/30 shadow-md dark:shadow-xl space-y-6 transition-all duration-300">
             {/* Ambient Emerald Glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* Top Row: Brand & Badge */}
             <div className="flex items-center justify-between relative z-10">
               <div className="space-y-0.5">
-                <span className="text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-                  SE-CORE // MEMBER CASH
+                <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  Dompet Anggota SE-Core
                 </span>
-                <span className="text-sm font-bold text-neutral-300 font-display">
+                <span className="text-base font-semibold text-zinc-900 dark:text-neutral-100 font-display">
                   Dompet Kas Anggota
                 </span>
               </div>
 
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-neutral-300 border border-white/15 text-xs font-bold font-mono tracking-wider">
-                PERSONAL
+              <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 dark:bg-white/10 text-emerald-800 dark:text-neutral-300 border border-emerald-500/20 dark:border-white/15 text-xs font-medium">
+                Personal
               </span>
             </div>
 
             {/* Middle: Giant Tabular Balance */}
             <div className="space-y-1 relative z-10">
-              <span className="text-xs sm:text-sm font-medium text-neutral-400 uppercase tracking-wider font-mono">
+              <span className="text-xs sm:text-sm font-normal text-zinc-500 dark:text-neutral-400 leading-relaxed">
                 Saldo Dompet Personal Saya
               </span>
               <div
-                className={`text-3xl sm:text-4xl lg:text-5xl font-black font-mono-num font-mono tracking-tight ${
+                className={`text-3xl sm:text-4xl lg:text-5xl font-bold tabular-nums tracking-tight ${
                   isPositive
-                    ? "text-emerald-400"
+                    ? "text-emerald-600 dark:text-emerald-400"
                     : isZero
-                    ? "text-white"
-                    : "text-rose-400"
+                    ? "text-zinc-950 dark:text-white"
+                    : "text-rose-600 dark:text-rose-400"
                 }`}
               >
                 {animatedPersonalBalance < 0 ? "- " : ""}Rp{" "}
@@ -222,15 +222,15 @@ export function DigitalWalletCard({
             </div>
 
             {/* Bottom Row: Status Pill & Cardholder */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 border-t border-white/10 relative z-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pt-2 border-t border-black/10 dark:border-white/10 relative z-10">
               <div className="flex items-center gap-2">
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-bold font-mono tracking-wider border ${
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium border ${
                     isPositive
-                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                      ? "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 dark:border-emerald-500/40"
                       : isZero
-                      ? "bg-white/10 text-neutral-300 border-white/20"
-                      : "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                      ? "bg-black/5 dark:bg-white/10 text-zinc-600 dark:text-neutral-300 border-black/10 dark:border-white/20"
+                      : "bg-rose-500/10 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/30 dark:border-rose-500/40"
                   }`}
                 >
                   {isPositive
@@ -239,17 +239,17 @@ export function DigitalWalletCard({
                     ? "Saldo Nol"
                     : "Defisit Tagihan"}
                 </span>
-                <span className="text-xs text-neutral-400 hidden sm:inline-block">
+                <span className="text-xs text-zinc-500 dark:text-neutral-400 hidden sm:inline-block">
                   {isPositive ? "Dapat memotong tagihan otomatis" : "Hubungi Bendahara"}
                 </span>
               </div>
 
               <div className="text-left sm:text-right">
-                <span className="text-xs text-neutral-400 font-mono tracking-wider block">
-                  NAMA ANGGOTA
+                <span className="text-xs text-zinc-500 dark:text-neutral-400 block font-normal">
+                  Nama Anggota
                 </span>
-                <span className="text-sm font-extrabold text-neutral-200 tracking-wide font-display">
-                  {userName.toUpperCase()}{gradeLabel ? ` • ${gradeLabel}` : ""}
+                <span className="text-sm font-semibold text-zinc-800 dark:text-neutral-200 tracking-tight font-display">
+                  {userName}{gradeLabel ? ` • ${gradeLabel}` : ""}
                 </span>
               </div>
             </div>
@@ -284,7 +284,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
           </div>
         </div>
 
-        <span className="text-xs font-bold text-ink-muted font-mono bg-surface-container-low px-2.5 py-1 rounded-full border hairline-border">
+        <span className="text-xs font-semibold text-ink-muted bg-surface-container-low px-2.5 py-1 rounded-full border hairline-border">
           {displayedTransactions.length} Transaksi
         </span>
       </div>
@@ -330,7 +330,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
                     <p className="text-sm font-bold text-ink truncate group-hover:text-primary transition-colors">
                       {tx.description}
                     </p>
-                    <p className="text-xs sm:text-sm text-ink-muted flex items-center gap-1.5 mt-0.5 font-mono">
+                    <p className="text-xs sm:text-sm text-ink-muted flex items-center gap-1.5 mt-0.5">
                       <span>{dateStr}</span>
                       <span>•</span>
                       <span className="font-semibold text-ink-secondary">
@@ -342,7 +342,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
 
                 <div className="text-right shrink-0">
                   <span
-                    className={`text-sm sm:text-base font-extrabold font-mono tabular-nums ${
+                    className={`text-sm sm:text-base font-extrabold tabular-nums ${
                       isIncome
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-rose-600 dark:text-rose-400"
@@ -351,7 +351,7 @@ export function MutationHistory({ transactions = [] }: MutationHistoryProps) {
                     {isIncome ? "+" : "-"} Rp{" "}
                     {tx.amount.toLocaleString("id-ID")}
                   </span>
-                  <span className="block text-xs text-ink-muted mt-0.5 font-mono">
+                  <span className="block text-xs text-ink-muted mt-0.5">
                     {isIncome ? "Setoran Masuk" : "Potongan Tagihan"}
                   </span>
                 </div>
