@@ -38,7 +38,13 @@
       1. Kartu Pengingat Tanggungan & Tugas Pribadi di Beranda (tersembunyi otomatis saat 0 tanggungan).
       2. Mode Proyektor QR Layar Penuh pada dialog QR presensi rapat berbasis CSS murni (kompatibel penuh di iOS Safari & Android).
       3. Haptic & Web Audio API pop feedback instan saat QR presensi berhasil terbaca kamera.
-  - 🏆 **STATUS PROYEK**: **SELURUH 11 FASE OVERHAUL, PENYELARASAN TEMA, PEMANGKASAN UX COPY & FITUR BARU SELESAI 100% (PRODUCTION READY & VERIFIED ZERO-ERROR)**.
+  - ✅ **FASE 12 SELESAI**: Icon-Only BottomNav, Hide on Kotak-Masuk, Large Page Titles, Dropdown Border Contrast, Single-Line Header XP Pill, & Move Contribution Points Card:
+    1. **Icon-Only BottomNav**: Menghilangkan seluruh teks label pada [BottomNav.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/BottomNav.tsx), memusatkan dan memperbesar ikon ke `w-6 h-6` (`strokeWidth={2.1}`), menyesuaikan proporsi kapsul mengambang, serta menyembunyikan navigasi di rute `/kotak-masuk`.
+    2. **Perbesar Judul Halaman Utama**: Mengubah seluruh `<h1>` halaman Kas, Acara, Eksplorasi, Aspirasi, dan Kotak Masuk menjadi skala berwibawa `text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display`.
+    3. **Garis Luar Kontras `CustomSelect`**: Menegaskan batas dropdown trigger pada [CustomSelect.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/ui/CustomSelect.tsx) dengan `border border-zinc-300 dark:border-white/20 bg-zinc-50 dark:bg-white/[0.04]` dan hover/focus ring yang jelas.
+    4. **Single-Line Header XP Pill**: Mengunci badge XP di [TopHeader.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/TopHeader.tsx) agar petir, angka, dan `XP` selalu sejajar horizontal tanpa tertekuk (`whitespace-nowrap shrink-0 inline-flex`).
+    5. **Relokasi Kartu Poin Kontribusi**: Menghapus kartu Poin Kontribusi dari Beranda ([dashboard/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/dashboard/page.tsx)) dan memindahkannya ke dalam ringkasan privat profil di Pengaturan ([PersonalSummarySection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/PersonalSummarySection.tsx)).
+  - 🏆 **STATUS PROYEK**: **SELURUH 12 FASE OVERHAUL, PENYELARASAN TEMA, PEMANGKASAN UX COPY, ERGONOMI NAVIGASI & FITUR BARU SELESAI 100% (PRODUCTION READY & VERIFIED ZERO-ERROR)**.
 
 ---
 

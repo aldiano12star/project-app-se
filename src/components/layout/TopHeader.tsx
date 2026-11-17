@@ -93,11 +93,13 @@ export function TopHeader({ user }: TopHeaderProps) {
         <div className="flex items-center gap-2">
           {/* XP Pill: Khusus anggota reguler/pengurus, disembunyikan untuk KOLABORATOR */}
           {role !== "KOLABORATOR" && (
-            <div className="flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 min-h-9 shadow-[0_0_12px_-2px_rgba(245,158,11,0.2)]">
-              <Zap className="h-4 w-4 fill-amber-500 text-amber-500 animate-pulse" />
-              <span className="text-sm font-bold font-mono text-amber-700 dark:text-amber-300 tabular-nums">
-                {points.toLocaleString("id-ID")}{" "}
-                <span className="text-xs font-bold text-amber-600/90 dark:text-amber-400/90 font-mono uppercase tracking-wider">XP</span>
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 min-h-9 shadow-[0_0_12px_-2px_rgba(245,158,11,0.2)] whitespace-nowrap shrink-0">
+              <Zap className="h-4 w-4 fill-amber-500 text-amber-500 animate-pulse shrink-0" />
+              <span className="text-xs sm:text-sm font-bold font-mono text-amber-700 dark:text-amber-300 tabular-nums whitespace-nowrap inline-flex items-center gap-1">
+                <span>{points.toLocaleString("id-ID")}</span>
+                <span className="text-xs font-bold text-amber-600/90 dark:text-amber-400/90 font-mono uppercase tracking-wider">
+                  XP
+                </span>
               </span>
             </div>
           )}

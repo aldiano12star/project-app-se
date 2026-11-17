@@ -26,6 +26,7 @@ const AvatarSelectorModal = dynamic(
 interface PengaturanClientViewProps {
   user: UserProfileData;
   attendanceSummary: AttendanceSummaryData;
+  userRank?: number;
 }
 
 function formatGrade(grade?: string | null) {
@@ -39,6 +40,7 @@ function formatGrade(grade?: string | null) {
 export function PengaturanClientView({
   user,
   attendanceSummary,
+  userRank,
 }: PengaturanClientViewProps) {
   const [isKTAOpen, setIsKTAOpen] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -84,9 +86,12 @@ export function PengaturanClientView({
           onOpenAvatarModal={() => setIsAvatarModalOpen(true)}
         />
 
-        {/* 2. Personal Summary Section (Presensi Mandiri Privat) */}
+        {/* 2. Personal Summary Section (Presensi Mandiri Privat & Poin Kontribusi) */}
         <PersonalSummarySection
           attendanceSummary={attendanceSummary}
+          totalPoints={user.totalPoints}
+          monthlyPoints={user.monthlyPoints}
+          userRank={userRank}
         />
 
         {/* 3. Panel Cadangan Data Khusus Role ADMIN & OPERATOR */}

@@ -16,7 +16,7 @@ import { useIsModalOpen } from "@/hooks/useBodyScrollLock";
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -62,7 +62,11 @@ export function BottomNav() {
 
   const activePath = optimisticPath || pathname;
 
-  if (pathname.startsWith("/pengaturan") || pathname.startsWith("/operator")) {
+  if (
+    pathname.startsWith("/pengaturan") ||
+    pathname.startsWith("/operator") ||
+    pathname.startsWith("/kotak-masuk")
+  ) {
     return null;
   }
 
@@ -88,7 +92,7 @@ export function BottomNav() {
     <nav
       data-nav="true"
       aria-label="Navigasi Utama Bawah"
-      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-[94%] max-w-[420px] rounded-full bg-white/70 dark:bg-[#1C1C1F]/65 backdrop-blur-2xl saturate-150 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] border border-white/40 dark:border-white/10 md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-[94%] max-w-[400px] rounded-full bg-white/70 dark:bg-[#1C1C1F]/65 backdrop-blur-2xl saturate-150 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.18)] dark:shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] border border-white/40 dark:border-white/10 md:hidden p-1.5 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] select-none ${
         isModalActive
           ? "translate-y-28 opacity-0 pointer-events-none"
           : "translate-y-0 opacity-100 pointer-events-auto"
@@ -107,7 +111,7 @@ export function BottomNav() {
           }}
         />
 
-        {/* ── 5 NAVIGATION ITEMS DENGAN TOUCH SCALE & INSTANT PREFETCH ── */}
+        {/* ── 5 NAVIGATION ITEMS ICON-ONLY DENGAN TOUCH SCALE & INSTANT PREFETCH ── */}
         {NAV_ITEMS.map((item, index) => {
           const Icon = item.icon;
           const isActive = activeIndex === index;
@@ -123,30 +127,20 @@ export function BottomNav() {
               }}
               title={item.label}
               aria-label={item.label}
-              className={`relative z-10 flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-full min-h-[46px] transition-transform duration-150 active:scale-95 ${
+              className={`relative z-10 flex-1 flex items-center justify-center h-12 rounded-full transition-transform duration-150 active:scale-95 ${
                 isActive
                   ? "text-white"
                   : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
               }`}
             >
               <Icon
-                className={`h-5 w-5 transition-all duration-200 ${
+                className={`h-6 w-6 transition-all duration-200 ${
                   isActive
-                    ? "stroke-[2.4] scale-105 text-white"
-                    : "stroke-[1.75] scale-100 opacity-70 hover:opacity-100"
+                    ? "scale-105 text-white"
+                    : "scale-100 opacity-70 hover:opacity-100"
                 }`}
+                strokeWidth={2.1}
               />
-              <div className="flex items-center gap-1 mt-0.5">
-                <span
-                  className={`text-xs tracking-tight font-display transition-all duration-200 ${
-                    isActive
-                      ? "font-bold text-white"
-                      : "font-medium opacity-80"
-                  }`}
-                >
-                  {item.label}
-                </span>
-              </div>
             </Link>
           );
         })}

@@ -149,12 +149,12 @@ export function CustomSelect({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`w-full flex items-center justify-between gap-2.5 transition-all outline-hidden cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hairline-border bg-surface-container-low/60 dark:bg-card hover:bg-surface-container-low active:scale-[0.99] text-ink ${
+        className={`w-full flex items-center justify-between gap-2.5 transition-all outline-hidden cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-300 dark:border-white/20 bg-zinc-50 dark:bg-white/[0.04] hover:bg-zinc-100 dark:hover:bg-white/[0.07] active:scale-[0.99] text-ink shadow-2xs focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary ${
           isOpen
-            ? "ring-2 ring-primary/20 border-primary shadow-xs"
+            ? "ring-2 ring-primary/25 border-primary shadow-xs bg-zinc-100/90 dark:bg-white/[0.08]"
             : error
-            ? "border-rose-500 ring-1 ring-rose-500/20"
-            : "hover:border-primary/50"
+            ? "border-rose-500 ring-2 ring-rose-500/20"
+            : "hover:border-primary/60 hover:ring-2 hover:ring-primary/10"
         } ${sizeClasses} ${triggerClassName}`}
       >
         <span className="flex items-center gap-2 min-w-0 flex-1 truncate text-left">

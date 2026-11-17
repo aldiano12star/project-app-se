@@ -3,6 +3,8 @@ import {
   CheckCircle2,
   CalendarCheck,
   AlertTriangle,
+  Sparkles,
+  Trophy,
 } from "lucide-react";
 
 export interface AttendanceSummaryData {
@@ -14,10 +16,16 @@ export interface AttendanceSummaryData {
 
 interface PersonalSummarySectionProps {
   attendanceSummary: AttendanceSummaryData;
+  totalPoints?: number;
+  monthlyPoints?: number;
+  userRank?: number;
 }
 
 export function PersonalSummarySection({
   attendanceSummary,
+  totalPoints,
+  monthlyPoints,
+  userRank,
 }: PersonalSummarySectionProps) {
   return (
     <div className="space-y-4">
@@ -29,6 +37,47 @@ export function PersonalSummarySection({
           🔒 Hanya Terlihat Olehmu
         </span>
       </div>
+
+      {/* KARTU POIN KONTRIBUSI & PERINGKAT */}
+      {typeof totalPoints === "number" && (
+        <div className="specular-card bg-card border border-edge/80 dark:border-white/10 p-5 sm:p-6 rounded-2xl flex flex-col justify-between gap-4 shadow-xs relative overflow-hidden group">
+          <div className="absolute -top-12 -right-12 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="space-y-3 relative z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/25">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider text-ink-muted font-display">
+                  Poin Kontribusi
+                </span>
+              </div>
+
+              {userRank !== undefined && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25 font-mono">
+                  <Trophy className="h-3 w-3 text-amber-500" />
+                  <span>Peringkat #{userRank}</span>
+                </span>
+              )}
+            </div>
+
+            <div className="pt-1">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl font-black text-ink font-mono-num font-mono">
+                  {totalPoints.toLocaleString("id-ID")}
+                </span>
+                <span className="text-sm font-bold text-amber-600 dark:text-amber-400 font-mono">
+                  XP
+                </span>
+              </div>
+              <p className="text-sm text-ink-muted mt-1 leading-relaxed">
+                +{monthlyPoints ?? 0} XP diperoleh pada periode bulan ini
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* REKAPITULASI PRESENSI SAYA */}
       <div className="card-solid p-6 rounded-2xl bg-card border border-edge shadow-xs flex flex-col gap-4">

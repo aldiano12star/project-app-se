@@ -53,7 +53,7 @@ export function KasClientView({
       <section className="flex items-center justify-between pt-1">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-display">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display">
               {isKolaborator ? "Urunan" : "Kas"}
             </h1>
             {unpaidInvoicesCount > 0 && (

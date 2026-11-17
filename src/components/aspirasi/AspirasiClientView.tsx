@@ -111,7 +111,7 @@ export function AspirasiClientView({
       {/* Top Bar Header & Action Buttons */}
       <div className="flex items-center justify-between pt-1 relative z-10">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-ink font-display tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display">
             Aspirasi
           </h1>
         </div>

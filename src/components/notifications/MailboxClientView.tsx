@@ -134,7 +134,7 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
       <section className="flex items-center justify-between pt-1">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-display">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display">
               Kotak Masuk
             </h1>
             {unreadCount > 0 && (
@@ -144,9 +144,6 @@ export function MailboxClientView({ initialNotifications }: MailboxClientViewPro
               </span>
             )}
           </div>
-          <p className="text-sm text-ink-muted leading-relaxed">
-            Pusat instruksi resmi, siaran jarkom, dan status tagihan kas.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

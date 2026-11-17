@@ -256,9 +256,9 @@ export function AcaraClientView({
       {/* ── TOP BAR HEADER & ACTIONS ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div className="space-y-1">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight font-display">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink font-display">
             Acara
-          </h2>
+          </h1>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">

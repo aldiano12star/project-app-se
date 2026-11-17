@@ -54,12 +54,22 @@ export default async function PengaturanPage() {
     redirect("/onboarding");
   }
 
-  // 2. Ambil analitik presensi mandiri pengguna
-  const individualStats = await getIndividualAttendanceStats(
-    session.user.id,
-    dbUser.classGrade,
-    dbUser.role
-  );
+  // 2. Ambil analitik presensi mandiri pengguna & ranking XP global
+  const [individualStats, higherPointsCount] = await Promise.all([
+    getIndividualAttendanceStats(
+      session.user.id,
+      dbUser.classGrade,
+      dbUser.role
+    ),
+    prisma.user.count({
+      where: {
+        status: "ACTIVE",
+        totalPoints: { gt: dbUser.totalPoints },
+      },
+    }),
+  ]);
+
+  const userRank = higherPointsCount + 1;
 
   // Rekapitulasi Presensi Mandiri berbasis Analytics Engine
   const attendanceSummary: AttendanceSummaryData = {
@@ -94,6 +104,7 @@ export default async function PengaturanPage() {
       <PengaturanClientView
         user={serializedUser}
         attendanceSummary={attendanceSummary}
+        userRank={userRank}
       />
     </AppShell>
   );
