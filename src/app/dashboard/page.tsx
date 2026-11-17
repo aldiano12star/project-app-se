@@ -217,7 +217,7 @@ export default async function DashboardPage() {
         };
       case Division.TECHNOPRENEURSHIP:
         return {
-          label: "Technopreneurship",
+          label: "Technopreneur",
           style: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25",
         };
       case Division.DESIGN:

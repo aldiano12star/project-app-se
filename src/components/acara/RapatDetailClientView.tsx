@@ -21,6 +21,8 @@ import {
   FileText,
   UserCheck,
   Check,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import { Role, TargetAudience, AttendanceStatus } from "@prisma/client";
 import { NotulensiCard } from "./NotulensiCard";
@@ -28,7 +30,9 @@ import { deleteMeeting } from "@/actions/acara";
 import {
   updateAttendanceStatus,
   finalizeAttendance,
+  reopenAttendance,
 } from "@/actions/presensi";
+import { CustomSelect, CustomSelectOption } from "@/components/ui/CustomSelect";
 import { getTargetAudienceBadge } from "@/utils/audience";
 import {
   generateWhatsAppLink,
@@ -73,6 +77,7 @@ export interface RapatDetailData {
   } | null;
   attendances: RapatAttendanceItem[];
   isRead?: boolean;
+  isClosed?: boolean;
 }
 
 interface RapatDetailClientViewProps {
@@ -101,6 +106,7 @@ export function RapatDetailClientView({
   // State untuk updating status per baris
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
+  const [isReopening, setIsReopening] = useState(false);
 
   // Toast Notifikasi Sederhana
   const [toastMessage, setToastMessage] = useState<{
@@ -218,6 +224,82 @@ export function RapatDetailClientView({
         showToast("error", res.message);
       }
     });
+  };
+
+  // Handler Buka Kembali Sesi Presensi
+  const handleReopenAttendance = () => {
+    if (
+      !confirm(
+        "Buka kembali sesi presensi rapat ini? Anggota akan dapat memindai kode QR mandiri kembali."
+      )
+    ) {
+      return;
+    }
+
+    setIsReopening(true);
+    startTransition(async () => {
+      const res = await reopenAttendance(meeting.id);
+      setIsReopening(false);
+      if (res.success) {
+        showToast("success", res.message);
+        router.refresh();
+      } else {
+        showToast("error", res.message);
+      }
+    });
+  };
+
+  const ATTENDANCE_STATUS_OPTIONS: CustomSelectOption[] = [
+    { value: "BELUM_PRESENSI", label: "Belum Presensi", colorClass: "text-ink-muted" },
+    { value: AttendanceStatus.HADIR, label: "Hadir", colorClass: "text-emerald-600 dark:text-emerald-400 font-bold" },
+    { value: AttendanceStatus.SAKIT, label: "Sakit", colorClass: "text-amber-600 dark:text-amber-400 font-bold" },
+    { value: AttendanceStatus.IZIN, label: "Izin", colorClass: "text-sky-600 dark:text-sky-400 font-bold" },
+    { value: AttendanceStatus.ALPHA, label: "Alfa", colorClass: "text-rose-600 dark:text-rose-400 font-bold" },
+  ];
+
+  const getStatusBadgeStyle = (status: AttendanceStatus | null | string) => {
+    switch (status) {
+      case AttendanceStatus.HADIR:
+        return "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+      case AttendanceStatus.SAKIT:
+        return "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+      case AttendanceStatus.IZIN:
+        return "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800";
+      case AttendanceStatus.ALPHA:
+        return "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800";
+      default:
+        return "bg-surface-container text-ink-muted border-edge";
+    }
+  };
+
+  const getStatusTriggerClass = (status: AttendanceStatus | null | string) => {
+    switch (status) {
+      case AttendanceStatus.HADIR:
+        return "bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300/60 dark:border-emerald-800 font-bold";
+      case AttendanceStatus.SAKIT:
+        return "bg-amber-50/70 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300/60 dark:border-amber-800 font-bold";
+      case AttendanceStatus.IZIN:
+        return "bg-sky-50/70 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-300/60 dark:border-sky-800 font-bold";
+      case AttendanceStatus.ALPHA:
+        return "bg-rose-50/70 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-300/60 dark:border-rose-800 font-bold";
+      default:
+        return "bg-surface-container-low text-ink-muted border-edge font-medium";
+    }
+  };
+
+  const getStatusLabel = (status: AttendanceStatus | null | string) => {
+    switch (status) {
+      case AttendanceStatus.HADIR:
+        return "Hadir";
+      case AttendanceStatus.SAKIT:
+        return "Sakit";
+      case AttendanceStatus.IZIN:
+        return "Izin";
+      case AttendanceStatus.ALPHA:
+        return "Alfa";
+      default:
+        return "Belum Presensi";
+    }
   };
 
   // Menghitung statistik absensi
@@ -403,26 +485,51 @@ export function RapatDetailClientView({
             </div>
           </div>
 
-          {/* Tombol Tutup Presensi (Set Alfa) Khusus Pengurus */}
-          {isOfficer && (
-            <button
-              type="button"
-              onClick={handleFinalizeAttendance}
-              disabled={isFinalizing || isPending}
-              className="h-10 px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 shrink-0 self-start sm:self-auto"
-              title="Tandai seluruh anggota sasaran yang belum absen menjadi Alfa"
-            >
-              {isFinalizing ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <AlertTriangle className="w-3.5 h-3.5" />
+          {/* Status Presensi & Aksi Tutup / Buka Kembali (Khusus Pengurus) */}
+          {meeting.isClosed ? (
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <span className="h-10 px-3.5 rounded-xl bg-surface-container-low text-ink-muted border border-edge text-xs font-bold inline-flex items-center gap-1.5 shrink-0 select-none">
+                <Lock className="w-3.5 h-3.5 text-rose-500" />
+                <span>Presensi Ditutup</span>
+              </span>
+              {isOfficer && (
+                <button
+                  type="button"
+                  onClick={handleReopenAttendance}
+                  disabled={isReopening || isPending}
+                  className="h-10 px-3.5 rounded-xl bg-surface hover:bg-surface-container-low text-ink border border-edge text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 shrink-0"
+                  title="Buka kembali presensi agar anggota bisa memindai QR mandiri"
+                >
+                  {isReopening ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-ink-muted" />
+                  ) : (
+                    <Unlock className="w-3.5 h-3.5 text-amber-500" />
+                  )}
+                  <span>Buka Kembali Presensi</span>
+                </button>
               )}
-              <span>Tutup Presensi (Set Alfa)</span>
-            </button>
+            </div>
+          ) : (
+            isOfficer && (
+              <button
+                type="button"
+                onClick={handleFinalizeAttendance}
+                disabled={isFinalizing || isPending}
+                className="h-10 px-3.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 shrink-0 self-start sm:self-auto"
+                title="Tandai seluruh anggota sasaran yang belum absen menjadi Alfa dan kunci sesi"
+              >
+                {isFinalizing ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                )}
+                <span>Tutup Presensi (Set Alfa)</span>
+              </button>
+            )
           )}
         </div>
 
-        {/* Tabel Anggota & Status Kehadiran */}
+        {/* Daftar Anggota & Status Kehadiran (Mobile-First Card View + Desktop Table) */}
         {meeting.attendances.length === 0 ? (
           <div className="py-8 text-center bg-surface-container-low rounded-xl border border-edge/60 space-y-1.5">
             <CheckCircle2 className="w-6 h-6 text-slate-400 mx-auto" />
@@ -431,134 +538,198 @@ export function RapatDetailClientView({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-edge/70">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-semibold text-xs tracking-normal">
-                <tr>
-                  <th className="px-4 py-3">Nama Anggota</th>
-                  <th className="px-4 py-3">Kelas / Gen</th>
-                  <th className="px-4 py-3">Divisi</th>
-                  <th className="px-4 py-3 text-center">Waktu Presensi</th>
-                  <th className="px-4 py-3 text-right">Aksi / Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-edge/60 bg-card">
-                {meeting.attendances.map((item) => {
-                  const checkTime = item.checkedAt
-                    ? new Date(item.checkedAt).toLocaleTimeString("id-ID", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }) + " WIB"
+          <>
+            {/* Tampilan Mobile: Kartu Responsif Bebas Pemotongan Teks (Viewport < md / 390px) */}
+            <div className="block md:hidden space-y-2.5">
+              {meeting.attendances.map((item) => {
+                const checkTime = item.checkedAt
+                  ? new Date(item.checkedAt).toLocaleTimeString("id-ID", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }) + " WIB"
+                  : "-";
+
+                const currentStatus = item.status || "BELUM_PRESENSI";
+                const isUpdating = updatingUserId === item.userId;
+
+                const classDisplay =
+                  item.user.role === Role.KOLABORATOR
+                    ? "Kolaborator"
+                    : item.user.gen
+                    ? `Gen ${item.user.gen}`
+                    : item.user.classGrade === "KELAS_10"
+                    ? "Gen 21"
+                    : item.user.classGrade === "KELAS_11"
+                    ? "Gen 20"
+                    : item.user.classGrade === "KELAS_12"
+                    ? "Gen 19"
                     : "-";
 
-                  const currentStatus = item.status || "BELUM_PRESENSI";
-                  const isUpdating = updatingUserId === item.userId;
-
-                  const classDisplay =
-                    item.user.role === Role.KOLABORATOR
-                      ? "Kolaborator"
-                      : item.user.gen
-                      ? `Gen ${item.user.gen}`
-                      : item.user.classGrade === "KELAS_10"
-                      ? "Gen 21"
-                      : item.user.classGrade === "KELAS_11"
-                      ? "Gen 20"
-                      : item.user.classGrade === "KELAS_12"
-                      ? "Gen 19"
-                      : "-";
-
-                  return (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-surface-container-low/50 transition-colors"
-                    >
-                      <td className="px-4 py-3 font-semibold text-ink">
+                return (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-xl bg-card border border-edge/80 shadow-2xs space-y-2.5"
+                  >
+                    {/* Header Item: Nama & Badges */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span>{item.user.name}</span>
+                          <span className="font-bold text-sm text-ink break-words leading-tight">
+                            {item.user.name}
+                          </span>
                           {item.user.role === Role.KOLABORATOR && (
-                            <span className="text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                            <span className="text-[11px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
                               Kolaborator
                             </span>
                           )}
                           {item.isManual && (
-                            <span className="text-xs px-2 py-0.5 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
+                            <span className="text-[11px] px-2 py-0.5 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
                               Manual
                             </span>
                           )}
                         </div>
-                      </td>
-                      <td className="px-4 py-3 text-ink-secondary">
-                        {classDisplay}
-                      </td>
-                      <td className="px-4 py-3 text-ink-secondary">
-                        {item.user.mainDivision || "-"}
-                      </td>
-                      <td className="px-4 py-3 text-center tabular-nums text-xs text-ink-muted">
-                        {checkTime}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        {isOfficer ? (
-                          <div className="inline-flex items-center gap-1.5 justify-end">
-                            {isUpdating && (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin text-ink-muted shrink-0" />
+                        <p className="text-xs text-ink-muted mt-1 leading-normal">
+                          <span className="font-medium text-ink-secondary">{classDisplay}</span>
+                          {" • "}
+                          <span>{item.user.mainDivision || "Umum"}</span>
+                          {checkTime !== "-" && (
+                            <span className="ml-1.5 tabular-nums text-ink-secondary">
+                              ({checkTime})
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Baris Status / Selector */}
+                    <div className="pt-2 flex items-center justify-between gap-2 border-t border-edge/40">
+                      <span className="text-xs text-ink-muted font-medium shrink-0">
+                        Kehadiran:
+                      </span>
+                      {isOfficer ? (
+                        <div className="min-w-[140px] max-w-[180px] shrink-0">
+                          <CustomSelect
+                            size="sm"
+                            value={currentStatus}
+                            disabled={isUpdating || isPending}
+                            onChange={(val) => handleStatusChange(item.userId, val)}
+                            triggerClassName={getStatusTriggerClass(currentStatus)}
+                            options={ATTENDANCE_STATUS_OPTIONS}
+                          />
+                        </div>
+                      ) : (
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusBadgeStyle(
+                            currentStatus
+                          )}`}
+                        >
+                          {getStatusLabel(currentStatus)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Tampilan Desktop: Tabel Lengkap Rapi (Viewport >= md) */}
+            <div className="hidden md:block overflow-x-auto rounded-xl border border-edge/70">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-container-low border-b border-edge text-ink-muted font-semibold text-xs tracking-normal">
+                  <tr>
+                    <th className="px-4 py-3">Nama Anggota</th>
+                    <th className="px-4 py-3">Kelas / Gen</th>
+                    <th className="px-4 py-3">Divisi</th>
+                    <th className="px-4 py-3 text-center">Waktu Presensi</th>
+                    <th className="px-4 py-3 text-right">Aksi / Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-edge/60 bg-card">
+                  {meeting.attendances.map((item) => {
+                    const checkTime = item.checkedAt
+                      ? new Date(item.checkedAt).toLocaleTimeString("id-ID", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }) + " WIB"
+                      : "-";
+
+                    const currentStatus = item.status || "BELUM_PRESENSI";
+                    const isUpdating = updatingUserId === item.userId;
+
+                    const classDisplay =
+                      item.user.role === Role.KOLABORATOR
+                        ? "Kolaborator"
+                        : item.user.gen
+                        ? `Gen ${item.user.gen}`
+                        : item.user.classGrade === "KELAS_10"
+                        ? "Gen 21"
+                        : item.user.classGrade === "KELAS_11"
+                        ? "Gen 20"
+                        : item.user.classGrade === "KELAS_12"
+                        ? "Gen 19"
+                        : "-";
+
+                    return (
+                      <tr
+                        key={item.id}
+                        className="hover:bg-surface-container-low/50 transition-colors"
+                      >
+                        <td className="px-4 py-3 font-semibold text-ink">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span>{item.user.name}</span>
+                            {item.user.role === Role.KOLABORATOR && (
+                              <span className="text-xs px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+                                Kolaborator
+                              </span>
                             )}
-                            <select
-                              value={currentStatus}
-                              disabled={isUpdating || isPending}
-                              onChange={(e) =>
-                                handleStatusChange(item.userId, e.target.value)
-                              }
-                              className={`h-9 px-2.5 rounded-lg text-sm font-bold border transition-colors cursor-pointer outline-none focus:ring-1 focus:ring-primary ${
-                                currentStatus === AttendanceStatus.HADIR
-                                  ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800"
-                                  : currentStatus === AttendanceStatus.SAKIT
-                                  ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-800"
-                                  : currentStatus === AttendanceStatus.IZIN
-                                  ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-800"
-                                  : currentStatus === AttendanceStatus.ALPHA
-                                  ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800"
-                                  : "bg-surface-container-low text-ink-muted border-edge"
-                              }`}
-                            >
-                              <option value="BELUM_PRESENSI">Belum Presensi</option>
-                              <option value={AttendanceStatus.HADIR}>Hadir</option>
-                              <option value={AttendanceStatus.SAKIT}>Sakit</option>
-                              <option value={AttendanceStatus.IZIN}>Izin</option>
-                              <option value={AttendanceStatus.ALPHA}>Alfa</option>
-                            </select>
+                            {item.isManual && (
+                              <span className="text-xs px-2 py-0.5 rounded font-semibold bg-surface-container text-ink-muted border border-edge shrink-0">
+                                Manual
+                              </span>
+                            )}
                           </div>
-                        ) : (
-                          <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
-                              currentStatus === AttendanceStatus.HADIR
-                                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
-                                : currentStatus === AttendanceStatus.SAKIT
-                                ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"
-                                : currentStatus === AttendanceStatus.IZIN
-                                ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800"
-                                : currentStatus === AttendanceStatus.ALPHA
-                                ? "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
-                                : "bg-surface-container text-ink-muted border-edge"
-                            }`}
-                          >
-                            {currentStatus === AttendanceStatus.HADIR
-                              ? "Hadir"
-                              : currentStatus === AttendanceStatus.SAKIT
-                              ? "Sakit"
-                              : currentStatus === AttendanceStatus.IZIN
-                              ? "Izin"
-                              : currentStatus === AttendanceStatus.ALPHA
-                              ? "Alfa"
-                              : "Belum Presensi"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className="px-4 py-3 text-ink-secondary">
+                          {classDisplay}
+                        </td>
+                        <td className="px-4 py-3 text-ink-secondary">
+                          {item.user.mainDivision || "-"}
+                        </td>
+                        <td className="px-4 py-3 text-center tabular-nums text-xs text-ink-muted">
+                          {checkTime}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {isOfficer ? (
+                            <div className="inline-flex items-center gap-1.5 justify-end w-36 ml-auto">
+                              {isUpdating && (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-ink-muted shrink-0" />
+                              )}
+                              <CustomSelect
+                                size="sm"
+                                value={currentStatus}
+                                disabled={isUpdating || isPending}
+                                onChange={(val) => handleStatusChange(item.userId, val)}
+                                triggerClassName={getStatusTriggerClass(currentStatus)}
+                                options={ATTENDANCE_STATUS_OPTIONS}
+                              />
+                            </div>
+                          ) : (
+                            <span
+                              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusBadgeStyle(
+                                currentStatus
+                              )}`}
+                            >
+                              {getStatusLabel(currentStatus)}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </section>
 

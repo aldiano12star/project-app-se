@@ -332,6 +332,28 @@ body {
   will-change: opacity;
 }
 
+/* ── Modern QR Scanner Laser Scanline Animation ──────────────────────── */
+@keyframes qrScanline {
+  0% {
+    top: 10%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 90%;
+    opacity: 0;
+  }
+}
+
+.animate-qr-scan {
+  animation: qrScanline 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 html.splash-done #se-splash-screen,
 html.splash-done #se-custom-splash-screen {
   display: none !important;
@@ -339,6 +361,9 @@ html.splash-done #se-custom-splash-screen {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter {
+    animation: none !important;
+  }
+  .animate-qr-scan {
     animation: none !important;
   }
 }

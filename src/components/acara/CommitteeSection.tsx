@@ -33,6 +33,7 @@ import {
   removeSectionMember,
 } from "@/actions/acara";
 import { getJakartaDateParts } from "@/utils/eventStatus";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export interface CommitteeTask {
   id: string;
@@ -608,18 +609,15 @@ export function CommitteeSection({
                           <p className="text-xs sm:text-sm text-ink-muted">
                             PJ wajib dipilih dari anggota yang sudah terdaftar di seksi ini:
                           </p>
-                          <select
+                          <CustomSelect
                             value={selectedPJUserId}
-                            onChange={(e) => setSelectedPJUserId(e.target.value)}
-                            className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium"
-                          >
-                            <option value="">-- Pilih Anggota Seksi --</option>
-                            {sectionMembers.map((m) => (
-                              <option key={m.id} value={m.id}>
-                                {m.name} {m.classGrade ? `(${m.classGrade})` : ""}
-                              </option>
-                            ))}
-                          </select>
+                            onChange={setSelectedPJUserId}
+                            placeholder="-- Pilih Anggota Seksi --"
+                            options={sectionMembers.map((m) => ({
+                              value: m.id,
+                              label: `${m.name} ${m.classGrade ? `(${formatGrade(m.classGrade)})` : ""}`,
+                            }))}
+                          />
                         </>
                       )}
                       <div className="flex items-center justify-end gap-2 pt-1">
@@ -650,23 +648,21 @@ export function CommitteeSection({
                       <span className="text-xs font-bold text-ink block">
                         Tambah Anggota ke Seksi &quot;{section.name}&quot;
                       </span>
-                      <select
+                      <CustomSelect
                         value={selectedNewMemberUserId}
-                        onChange={(e) => setSelectedNewMemberUserId(e.target.value)}
-                        className="w-full h-10 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-1 focus:ring-primary font-medium"
-                      >
-                        <option value="">-- Pilih Anggota Organisasi --</option>
-                        {allMembers
+                        onChange={setSelectedNewMemberUserId}
+                        placeholder="-- Pilih Anggota Organisasi --"
+                        searchable={true}
+                        options={allMembers
                           .filter(
                             (m) =>
                               !sectionMembers.some((existing) => existing.id === m.id)
                           )
-                          .map((m) => (
-                            <option key={m.id} value={m.id}>
-                              {m.name} {m.classGrade ? `(${formatGrade(m.classGrade)})` : ""}
-                            </option>
-                          ))}
-                      </select>
+                          .map((m) => ({
+                            value: m.id,
+                            label: `${m.name} ${m.classGrade ? `(${formatGrade(m.classGrade)})` : ""}`,
+                          }))}
+                      />
                       <div className="flex items-center justify-end gap-2 pt-1">
                         <button
                           type="button"

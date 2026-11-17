@@ -20,6 +20,7 @@ import {
   AspirationScopeType,
 } from "@/actions/aspirasi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface CreateAspirationModalProps {
   isOpen: boolean;
@@ -181,17 +182,15 @@ export function CreateAspirationModal({
                 <Tag className="h-3.5 w-3.5 text-primary" />
                 <span>Kategori Aspirasi Publik</span>
               </label>
-              <select
+              <CustomSelect
                 value={category}
-                onChange={(e) => setCategory(e.target.value as AspirationCategoryType)}
-                className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              >
-                {PUBLIC_CATEGORIES.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setCategory(val as AspirationCategoryType)}
+                options={PUBLIC_CATEGORIES.map((cat) => ({
+                  value: cat.id,
+                  label: cat.label,
+                  icon: cat.icon,
+                }))}
+              />
             </div>
           )}
 

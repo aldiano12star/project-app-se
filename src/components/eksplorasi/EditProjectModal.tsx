@@ -26,6 +26,7 @@ import {
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { ImagePickerField } from "@/components/ui/ImagePickerField";
 import { ProjectCardData } from "./ProjectCard";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface EditProjectModalProps {
   isOpen: boolean;
@@ -279,23 +280,23 @@ export function EditProjectModal({
                 Divisi <span className="text-primary">*</span>
               </span>
             </label>
-            <select
+            <CustomSelect
               value={formData.category}
-              onChange={(e) =>
+              onChange={(val) =>
                 setFormData({
                   ...formData,
-                  category: e.target.value as ShowcaseCategory,
+                  category: val as ShowcaseCategory,
                 })
               }
-              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
-            >
-              <option value="PROGRAMMING">💻 Programming &amp; Web Development</option>
-              <option value="TECHNOPRENEUR">💼 Technopreneur &amp; Bisnis Digital</option>
-              <option value="DESAIN">🎨 UI/UX &amp; Desain Grafis</option>
-              <option value="FOTOGRAFI">📷 Fotografi &amp; Jurnalistik Visual</option>
-              <option value="SINEMATOGRAFI">🎬 Sinematografi &amp; Video Editing</option>
-              <option value="LAINNYA">✨ Lainnya / Eksperimen Bebas</option>
-            </select>
+              options={[
+                { value: "PROGRAMMING", label: "Programming", description: "Web, Mobile, AI & Software Engineering" },
+                { value: "TECHNOPRENEUR", label: "Technopreneur", description: "Bisnis Digital, Produk & Startup" },
+                { value: "DESAIN", label: "Desain", description: "UI/UX, Visual Branding & Ilustrasi" },
+                { value: "FOTOGRAFI", label: "Fotografi", description: "Fotografi Studio, Jurnalistik & Editorial" },
+                { value: "SINEMATOGRAFI", label: "Cinematografi", description: "Video Produksi, Motion & Editing" },
+                { value: "LAINNYA", label: "Karya Kreatif Lainnya", description: "Game, Animasi & Eksperimen Bebas" },
+              ]}
+            />
           </div>
 
           {/* Deskripsi */}

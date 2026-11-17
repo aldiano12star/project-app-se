@@ -86,10 +86,10 @@ export async function registerUser(
 
     // Mapping divisi
     let mainDivision: Division = Division.PROGRAMMING;
-    if (input.divisi === "Technopreneurship") mainDivision = Division.TECHNOPRENEURSHIP;
-    else if (input.divisi === "Desain") mainDivision = Division.DESIGN;
+    if (input.divisi === "Technopreneurship" || input.divisi === "Technopreneur") mainDivision = Division.TECHNOPRENEURSHIP;
+    else if (input.divisi === "Desain" || input.divisi === "Desain Grafis") mainDivision = Division.DESIGN;
     else if (input.divisi === "Fotografi") mainDivision = Division.PHOTOGRAPHY;
-    else if (input.divisi === "Cinematografi") mainDivision = Division.CINEMATOGRAPHY;
+    else if (input.divisi === "Cinematografi" || input.divisi === "Sinematografi") mainDivision = Division.CINEMATOGRAPHY;
 
     // Buat record user baru
     const newUser = await prisma.user.create({

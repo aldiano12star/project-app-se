@@ -25,6 +25,7 @@ import {
   updateIssueStatusAndNotes,
   deleteFeedbackIssue,
 } from "@/actions/aspirasi";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export interface FeedbackIssueData {
   id: string;
@@ -284,20 +285,16 @@ export function FeedbackIssueCard({
             <label className="text-xs font-bold text-ink block">
               Status Penanganan Isu
             </label>
-            <select
+            <CustomSelect
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as IssueStatus)}
-              className="w-full h-11 px-3 rounded-lg bg-card border border-edge text-ink text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
-            >
-              <option value={IssueStatus.PENDING}>⏳ Ditinjau (Pending)</option>
-              <option value={IssueStatus.IN_PROGRESS}>
-                🔧 Sedang Ditangani (In Progress)
-              </option>
-              <option value={IssueStatus.RESOLVED}>
-                ✅ Terselesaikan (Resolved)
-              </option>
-              <option value={IssueStatus.CLOSED}>🔒 Ditutup (Closed)</option>
-            </select>
+              onChange={(val) => setSelectedStatus(val as IssueStatus)}
+              options={[
+                { value: IssueStatus.PENDING, label: "Ditinjau (Pending)", description: "Laporan baru menunggu verifikasi pengurus" },
+                { value: IssueStatus.IN_PROGRESS, label: "Sedang Ditangani (In Progress)", description: "Laporan sedang diproses dan ditindaklanjuti" },
+                { value: IssueStatus.RESOLVED, label: "Terselesaikan (Resolved)", description: "Solusi telah diterapkan dan terverifikasi" },
+                { value: IssueStatus.CLOSED, label: "Ditutup (Closed)", description: "Isu ditutup atau diarsipkan" },
+              ]}
+            />
           </div>
 
           {/* Textarea Operator Notes */}

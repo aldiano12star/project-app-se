@@ -269,6 +269,7 @@ model Meeting {
   qrToken        String? // Token unik sesi QR dinamis
   qrExpiresAt    DateTime? // Batas kedaluwarsa QR
   notes          String? // Notulensi Rapat Pleno
+  isClosed       Boolean        @default(false) // Status presensi ditutup
   createdById    String
   createdAt      DateTime       @default(now())
 

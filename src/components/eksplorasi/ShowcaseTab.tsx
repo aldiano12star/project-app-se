@@ -32,13 +32,13 @@ export function ShowcaseTab({
       if (selectedCategory === "PROGRAMMING") {
         matchesCategory = project.category === "PROGRAMMING" || project.category === "WEB";
       } else if (selectedCategory === "TECHNOPRENEUR") {
-        matchesCategory = project.category === "TECHNOPRENEUR" || project.category === "IOT";
+        matchesCategory = project.category === "TECHNOPRENEUR" || project.category === "TECHNOPRENEURSHIP" || project.category === "IOT";
       } else if (selectedCategory === "DESAIN") {
         matchesCategory = project.category === "DESAIN" || project.category === "UI_UX";
       } else if (selectedCategory === "FOTOGRAFI") {
-        matchesCategory = project.category === "FOTOGRAFI";
-      } else if (selectedCategory === "SINEMATOGRAFI") {
-        matchesCategory = project.category === "SINEMATOGRAFI";
+        matchesCategory = project.category === "FOTOGRAFI" || project.category === "PHOTOGRAPHY";
+      } else if (selectedCategory === "SINEMATOGRAFI" || selectedCategory === "CINEMATOGRAFI") {
+        matchesCategory = project.category === "SINEMATOGRAFI" || project.category === "CINEMATOGRAFI";
       } else if (selectedCategory === "LAINNYA") {
         matchesCategory =
           project.category === "LAINNYA" ||
@@ -87,11 +87,11 @@ export function ShowcaseTab({
           onClick={() => setSelectedCategory("PROGRAMMING")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "PROGRAMMING"
-              ? "bg-blue-600 text-white shadow-xs"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >
-          Programming &amp; Web
+          Programming
         </button>
 
         <button
@@ -99,7 +99,7 @@ export function ShowcaseTab({
           onClick={() => setSelectedCategory("TECHNOPRENEUR")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "TECHNOPRENEUR"
-              ? "bg-emerald-600 text-white shadow-xs"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >
@@ -111,11 +111,11 @@ export function ShowcaseTab({
           onClick={() => setSelectedCategory("DESAIN")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "DESAIN"
-              ? "bg-purple-600 text-white shadow-xs"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >
-          Desain Grafis &amp; UI/UX
+          Desain
         </button>
 
         <button
@@ -123,7 +123,7 @@ export function ShowcaseTab({
           onClick={() => setSelectedCategory("FOTOGRAFI")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "FOTOGRAFI"
-              ? "bg-amber-600 text-white shadow-xs"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >
@@ -134,12 +134,12 @@ export function ShowcaseTab({
           type="button"
           onClick={() => setSelectedCategory("SINEMATOGRAFI")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-            selectedCategory === "SINEMATOGRAFI"
-              ? "bg-rose-600 text-white shadow-xs"
+            selectedCategory === "SINEMATOGRAFI" || selectedCategory === "CINEMATOGRAFI"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >
-          Sinematografi
+          Cinematografi
         </button>
 
         <button
@@ -147,7 +147,7 @@ export function ShowcaseTab({
           onClick={() => setSelectedCategory("LAINNYA")}
           className={`tactile-btn min-h-9 px-3.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
             selectedCategory === "LAINNYA"
-              ? "bg-slate-700 text-white shadow-xs"
+              ? "bg-primary text-white shadow-xs"
               : "bg-surface-container-low text-ink-muted hover:text-ink hairline-border"
           }`}
         >

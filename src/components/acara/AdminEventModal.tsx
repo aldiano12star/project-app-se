@@ -23,6 +23,7 @@ import {
 import { TargetAudience } from "@prisma/client";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { Modal } from "@/components/ui/Modal";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export interface AdminEventInitialData {
   id: string;
@@ -609,21 +610,21 @@ export function AdminEventModal({
                   <label className="text-xs font-bold text-ink block">
                     Sasaran Peserta / Privasi Angkatan <span className="text-primary">*</span>
                   </label>
-                  <select
+                  <CustomSelect
                     value={rapatForm.targetAudience}
-                    onChange={(e) =>
+                    onChange={(val) =>
                       setRapatForm({
                         ...rapatForm,
-                        targetAudience: e.target.value as TargetAudience,
+                        targetAudience: val as TargetAudience,
                       })
                     }
-                    className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  >
-                    <option value={TargetAudience.ALL}>Semua Angkatan (Publik Organisasi)</option>
-                    <option value={TargetAudience.GEN_20}>Khusus Kelas 11 (Gen 20)</option>
-                    <option value={TargetAudience.GEN_21}>Khusus Kelas 10 (Gen 21)</option>
-                    <option value={TargetAudience.CUSTOM}>Peserta Khusus (Pilih Manual / Divisi)</option>
-                  </select>
+                    options={[
+                      { value: TargetAudience.ALL, label: "Semua Angkatan (Publik Organisasi)" },
+                      { value: TargetAudience.GEN_20, label: "Khusus Kelas 11 (Gen 20)" },
+                      { value: TargetAudience.GEN_21, label: "Khusus Kelas 10 (Gen 21)" },
+                      { value: TargetAudience.CUSTOM, label: "Peserta Khusus (Pilih Manual / Divisi)" },
+                    ]}
+                  />
                 </div>
 
                 {/* MULTI-SELECT CHECKLIST JIKA CUSTOM */}
@@ -744,18 +745,18 @@ export function AdminEventModal({
                   <label className="text-xs sm:text-sm font-bold text-ink block">
                     Hubungkan ke Program Kerja Induk (Opsional)
                   </label>
-                  <select
+                  <CustomSelect
                     value={rapatForm.eventId}
-                    onChange={(e) => setRapatForm({ ...rapatForm, eventId: e.target.value })}
-                    className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  >
-                    <option value="">-- Rapat Mandiri / Tanpa Proker Induk --</option>
-                    {parentEvents.map((pe) => (
-                      <option key={pe.id} value={pe.id}>
-                        {pe.title}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(val) => setRapatForm({ ...rapatForm, eventId: val })}
+                    placeholder="-- Rapat Mandiri / Tanpa Proker Induk --"
+                    options={[
+                      { value: "", label: "-- Rapat Mandiri / Tanpa Proker Induk --" },
+                      ...parentEvents.map((pe) => ({
+                        value: pe.id,
+                        label: pe.title,
+                      })),
+                    ]}
+                  />
                   <p className="text-xs text-ink-muted">
                     Hanya program kerja jangka panjang resmi yang dapat menjadi induk rapat.
                   </p>
@@ -883,21 +884,21 @@ export function AdminEventModal({
                   <label className="text-xs font-bold text-ink block">
                     Sasaran Peserta / Privasi Angkatan <span className="text-primary">*</span>
                   </label>
-                  <select
-                    value={acaraForm.targetAudience}
-                    onChange={(e) =>
+                  <CustomSelect
+                    value={acaraForm.targetAudience || TargetAudience.ALL}
+                    onChange={(val) =>
                       setAcaraForm({
                         ...acaraForm,
-                        targetAudience: e.target.value as TargetAudience,
+                        targetAudience: val as TargetAudience,
                       })
                     }
-                    className="w-full h-11 min-h-11 px-3 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                  >
-                    <option value={TargetAudience.ALL}>Semua Angkatan (Publik Organisasi)</option>
-                    <option value={TargetAudience.GEN_20}>Khusus Kelas 11 (Gen 20)</option>
-                    <option value={TargetAudience.GEN_21}>Khusus Kelas 10 (Gen 21)</option>
-                    <option value={TargetAudience.CUSTOM}>Peserta Khusus (Pilih Manual / Divisi)</option>
-                  </select>
+                    options={[
+                      { value: TargetAudience.ALL, label: "Semua Angkatan (Publik Organisasi)" },
+                      { value: TargetAudience.GEN_20, label: "Khusus Kelas 11 (Gen 20)" },
+                      { value: TargetAudience.GEN_21, label: "Khusus Kelas 10 (Gen 21)" },
+                      { value: TargetAudience.CUSTOM, label: "Peserta Khusus (Pilih Manual / Divisi)" },
+                    ]}
+                  />
                 </div>
 
                 {/* MULTI-SELECT CHECKLIST JIKA CUSTOM */}

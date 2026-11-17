@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { Role, Division } from "@prisma/client";
 import { promoteUserRole, resetUserPasswordByOperator } from "@/actions/profile";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 import { calculateGenFromGrade, getAcademicYear } from "@/lib/academic-year";
 import { Modal } from "@/components/ui/Modal";
 
@@ -104,12 +105,14 @@ function getDivisionMeta(division?: Division | string | null) {
       };
     case Division.TECHNOPRENEURSHIP:
     case "Technopreneurship":
+    case "Technopreneur":
       return {
-        label: "Technopreneurship",
+        label: "Technopreneur",
         style: "bg-amber-950/60 text-amber-400 border-amber-500/50",
       };
     case Division.DESIGN:
     case "Desain":
+    case "Desain Grafis":
       return {
         label: "Desain",
         style: "bg-purple-950/60 text-purple-400 border-purple-500/50",
@@ -122,6 +125,7 @@ function getDivisionMeta(division?: Division | string | null) {
       };
     case Division.CINEMATOGRAPHY:
     case "Cinematografi":
+    case "Sinematografi":
       return {
         label: "Cinematografi",
         style: "bg-rose-950/60 text-rose-400 border-rose-500/50",
@@ -736,24 +740,26 @@ export function UserManagementClientView({
                       </button>
                     </>
                   ) : (
-                    <select
+                    <CustomSelect
                       value={u.role}
                       disabled={isProcessing}
-                      onChange={(e) =>
-                        handlePromote(u.id, e.target.value as Role)
+                      size="sm"
+                      onChange={(val) =>
+                        handlePromote(u.id, val as Role)
                       }
-                      className="h-10 min-h-10 px-3 rounded-xl bg-card border border-edge text-ink text-xs font-semibold focus:outline-hidden focus:ring-2 focus:ring-primary/30 cursor-pointer"
-                    >
-                      <option value={Role.MEMBER}>Set: Member</option>
-                      <option value={Role.KOLABORATOR}>Set: Kolaborator</option>
-                      <option value={Role.BENDAHARA}>Set: Bendahara</option>
-                      <option value={Role.ADMIN}>Set: Admin</option>
-                      {currentUserRole === Role.OPERATOR && (
-                        <option value={Role.OPERATOR}>Set: Operator</option>
-                      )}
-                      <option value={Role.GUEST}>Set: Guest (Tangguhkan)</option>
-                      <option value={Role.BLOCKED}>Set: Blokir Akses</option>
-                    </select>
+                      triggerClassName="h-10 min-h-10 px-3 bg-card border-edge text-ink text-xs font-semibold min-w-[130px]"
+                      options={[
+                        { value: Role.MEMBER, label: "Set: Member" },
+                        { value: Role.KOLABORATOR, label: "Set: Kolaborator" },
+                        { value: Role.BENDAHARA, label: "Set: Bendahara" },
+                        { value: Role.ADMIN, label: "Set: Admin" },
+                        ...(currentUserRole === Role.OPERATOR
+                          ? [{ value: Role.OPERATOR, label: "Set: Operator" }]
+                          : []),
+                        { value: Role.GUEST, label: "Set: Guest (Tangguhkan)" },
+                        { value: Role.BLOCKED, label: "Set: Blokir Akses" },
+                      ]}
+                    />
                   )}
                 </div>
               </div>
@@ -793,18 +799,18 @@ export function UserManagementClientView({
               <label className="text-xs font-semibold text-ink">
                 Divisi Organisasi
               </label>
-              <select
+              <CustomSelect
                 value={selectedDivisi}
-                onChange={(e) => setSelectedDivisi(e.target.value)}
-                className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
-              >
-                <option value="NONE">Tanpa Divisi (Kolaborator / Tamu)</option>
-                <option value={Division.PROGRAMMING}>Programming</option>
-                <option value={Division.TECHNOPRENEURSHIP}>Technopreneurship</option>
-                <option value={Division.DESIGN}>Desain</option>
-                <option value={Division.PHOTOGRAPHY}>Fotografi</option>
-                <option value={Division.CINEMATOGRAPHY}>Cinematografi</option>
-              </select>
+                onChange={setSelectedDivisi}
+                options={[
+                  { value: "NONE", label: "Tanpa Divisi (Kolaborator / Tamu)" },
+                  { value: Division.PROGRAMMING, label: "Programming", description: "Web, Mobile, AI & Rekayasa Software" },
+                  { value: Division.TECHNOPRENEURSHIP, label: "Technopreneur", description: "Bisnis Digital, Sponsorship & Danus" },
+                  { value: Division.DESIGN, label: "Desain", description: "UI/UX, Visual Branding & Ilustrasi" },
+                  { value: Division.PHOTOGRAPHY, label: "Fotografi", description: "Dokumentasi Karya, Studio & Editorial" },
+                  { value: Division.CINEMATOGRAPHY, label: "Cinematografi", description: "Video Produksi, Motion & Directing" },
+                ]}
+              />
             </div>
 
             {/* Dropdown Kelas & Angkatan Dinamis */}
@@ -812,23 +818,17 @@ export function UserManagementClientView({
               <label className="text-xs font-semibold text-ink">
                 Tingkat Kelas &amp; Generasi (Gen)
               </label>
-              <select
+              <CustomSelect
                 value={selectedGrade}
-                onChange={(e) => setSelectedGrade(e.target.value)}
-                className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
-              >
-                <option value="NONE">Tanpa Kelas (Luar Sekolah / Tamu)</option>
-                <option value="KELAS_10">
-                  Kelas X (Gen {calculateGenFromGrade("KELAS_10").gen})
-                </option>
-                <option value="KELAS_11">
-                  Kelas XI (Gen {calculateGenFromGrade("KELAS_11").gen})
-                </option>
-                <option value="KELAS_12">
-                  Kelas XII (Gen {calculateGenFromGrade("KELAS_12").gen})
-                </option>
-                <option value="ALUMNI">Alumni / Demisioner</option>
-              </select>
+                onChange={setSelectedGrade}
+                options={[
+                  { value: "NONE", label: "Tanpa Kelas (Luar Sekolah / Tamu)" },
+                  { value: "KELAS_10", label: `Kelas X (Gen ${calculateGenFromGrade("KELAS_10").gen})` },
+                  { value: "KELAS_11", label: `Kelas XI (Gen ${calculateGenFromGrade("KELAS_11").gen})` },
+                  { value: "KELAS_12", label: `Kelas XII (Gen ${calculateGenFromGrade("KELAS_12").gen})` },
+                  { value: "ALUMNI", label: "Alumni / Demisioner" },
+                ]}
+              />
             </div>
           </div>
 

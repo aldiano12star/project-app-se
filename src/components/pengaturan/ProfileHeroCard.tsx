@@ -48,15 +48,18 @@ function formatDivision(division?: Division | string | null) {
       return "Programming";
     case Division.TECHNOPRENEURSHIP:
     case "Technopreneurship":
-      return "Technopreneurship";
+    case "Technopreneur":
+      return "Technopreneur";
     case Division.DESIGN:
     case "Desain":
+    case "Desain Grafis":
       return "Desain";
     case Division.PHOTOGRAPHY:
     case "Fotografi":
       return "Fotografi";
     case Division.CINEMATOGRAPHY:
     case "Cinematografi":
+    case "Sinematografi":
       return "Cinematografi";
     default:
       return division;

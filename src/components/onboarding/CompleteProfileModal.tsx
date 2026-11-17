@@ -52,7 +52,7 @@ const DIVISION_OPTIONS = [
   },
   {
     id: Division.DESIGN,
-    title: "Desain Grafis",
+    title: "Desain",
     desc: "UI/UX, Visual Branding & Ilustrasi",
     icon: Palette,
     badgeColor: "text-purple-500 bg-purple-500/10 border-purple-500/30",
@@ -66,14 +66,14 @@ const DIVISION_OPTIONS = [
   },
   {
     id: Division.CINEMATOGRAPHY,
-    title: "Sinematografi",
+    title: "Cinematografi",
     desc: "Video Produksi, Motion & Directing",
     icon: Film,
     badgeColor: "text-rose-500 bg-rose-500/10 border-rose-500/30",
   },
   {
     id: Division.TECHNOPRENEURSHIP,
-    title: "Technopreneurship",
+    title: "Technopreneur",
     desc: "Bisnis Digital, Sponsorship & Danus",
     icon: Briefcase,
     badgeColor: "text-emerald-500 bg-emerald-500/10 border-emerald-500/30",

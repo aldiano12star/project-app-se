@@ -50,18 +50,27 @@ export function PodiumTop3({ contributors }: PodiumTop3Props) {
     }
   };
 
-  const getDivisionLabel = (division?: Division | null) => {
+  const getDivisionLabel = (division?: Division | string | null) => {
     switch (division) {
       case Division.PROGRAMMING:
+      case "PROGRAMMING":
         return "Programming";
       case Division.TECHNOPRENEURSHIP:
-        return "Techno";
+      case "TECHNOPRENEUR":
+      case "TECHNOPRENEURSHIP":
+        return "Technopreneur";
       case Division.DESIGN:
+      case "DESIGN":
+      case "DESAIN":
         return "Desain";
       case Division.PHOTOGRAPHY:
+      case "PHOTOGRAPHY":
+      case "FOTOGRAFI":
         return "Fotografi";
       case Division.CINEMATOGRAPHY:
-        return "Cinema";
+      case "CINEMATOGRAPHY":
+      case "SINEMATOGRAFI":
+        return "Cinematografi";
       default:
         return division || "Anggota";
     }

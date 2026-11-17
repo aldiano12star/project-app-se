@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X, Plus, CheckSquare } from "lucide-react";
 import { addEventTask } from "@/actions/acara";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -112,17 +113,14 @@ export function AddTaskModal({
             <label className="text-xs font-bold text-ink block">
               Seksi Panitia <span className="text-primary">*</span>
             </label>
-            <select
+            <CustomSelect
               value={sectionId || sections[0]?.id || ""}
-              onChange={(e) => setSectionId(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            >
-              {sections.map((sec) => (
-                <option key={sec.id} value={sec.id}>
-                  {sec.name}
-                </option>
-              ))}
-            </select>
+              onChange={setSectionId}
+              options={sections.map((sec) => ({
+                value: sec.id,
+                label: sec.name,
+              }))}
+            />
           </div>
 
           {/* Judul Tugas */}

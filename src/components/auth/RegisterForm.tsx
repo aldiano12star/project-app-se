@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { registerUser } from "@/actions/auth";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface RegisterFormProps {
   onSuccess?: () => void;
@@ -159,15 +160,15 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               <GraduationCap className="w-4 h-4 text-amber-500" />
               <span>Kelas</span>
             </label>
-            <select
+            <CustomSelect
               value={kelas}
-              onChange={(e) => setKelas(e.target.value as "X" | "XI" | "XII")}
-              className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-medium cursor-pointer"
-            >
-              <option value="X">Kelas X (Gen 21)</option>
-              <option value="XI">Kelas XI (Gen 20)</option>
-              <option value="XII">Kelas XII (Gen 19)</option>
-            </select>
+              onChange={(val) => setKelas(val as "X" | "XI" | "XII")}
+              options={[
+                { value: "X", label: "Kelas X (Gen 21)" },
+                { value: "XI", label: "Kelas XI (Gen 20)" },
+                { value: "XII", label: "Kelas XII (Gen 19)" },
+              ]}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -175,17 +176,17 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               <Layers className="w-4 h-4 text-purple-500" />
               <span>Divisi</span>
             </label>
-            <select
+            <CustomSelect
               value={divisi}
-              onChange={(e) => setDivisi(e.target.value)}
-              className="w-full h-11 px-3 rounded-xl bg-surface border border-edge text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-medium cursor-pointer"
-            >
-              <option value="Programming">Programming</option>
-              <option value="Technopreneurship">Technopreneur</option>
-              <option value="Desain">Desain</option>
-              <option value="Fotografi">Fotografi</option>
-              <option value="Cinematografi">Cinematografi</option>
-            </select>
+              onChange={setDivisi}
+              options={[
+                { value: "Programming", label: "Programming" },
+                { value: "Technopreneur", label: "Technopreneur" },
+                { value: "Desain", label: "Desain" },
+                { value: "Fotografi", label: "Fotografi" },
+                { value: "Cinematografi", label: "Cinematografi" },
+              ]}
+            />
           </div>
         </div>
 

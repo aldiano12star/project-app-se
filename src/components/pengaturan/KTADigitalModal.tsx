@@ -43,12 +43,14 @@ function getDivisionMeta(division?: Division | string | null) {
       };
     case Division.TECHNOPRENEURSHIP:
     case "Technopreneurship":
+    case "Technopreneur":
       return {
-        label: "Technopreneurship",
+        label: "Technopreneur",
         style: "bg-amber-500/15 text-amber-400 border-amber-500/30",
       };
     case Division.DESIGN:
     case "Desain":
+    case "Desain Grafis":
       return {
         label: "Desain",
         style: "bg-purple-500/15 text-purple-400 border-purple-500/30",
@@ -61,6 +63,7 @@ function getDivisionMeta(division?: Division | string | null) {
       };
     case Division.CINEMATOGRAPHY:
     case "Cinematografi":
+    case "Sinematografi":
       return {
         label: "Cinematografi",
         style: "bg-rose-500/15 text-rose-400 border-rose-500/30",

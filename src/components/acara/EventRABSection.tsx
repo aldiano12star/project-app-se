@@ -15,6 +15,7 @@ import {
 import { Role } from "@prisma/client";
 import { addBudgetItem, deleteBudgetItem } from "@/actions/acara";
 import { BudgetItemData } from "./PrintRABModal";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 const PrintRABModal = dynamic(
   () => import("./PrintRABModal").then((mod) => mod.PrintRABModal),
@@ -232,18 +233,18 @@ export function EventRABSection({
             {/* Unit / Satuan */}
             <div className="space-y-1">
               <label className="text-sm font-semibold text-ink">Satuan (Unit)</label>
-              <select
+              <CustomSelect
                 value={unit}
-                onChange={(e) => setUnit(e.target.value)}
-                className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer font-mono"
-              >
-                <option value="pcs">pcs</option>
-                <option value="paket">paket</option>
-                <option value="box">box</option>
-                <option value="orang">orang</option>
-                <option value="lembar">lembar</option>
-                <option value="rim">rim</option>
-              </select>
+                onChange={setUnit}
+                options={[
+                  { value: "pcs", label: "pcs" },
+                  { value: "paket", label: "paket" },
+                  { value: "box", label: "box" },
+                  { value: "orang", label: "orang" },
+                  { value: "lembar", label: "lembar" },
+                  { value: "rim", label: "rim" },
+                ]}
+              />
             </div>
           </div>
 

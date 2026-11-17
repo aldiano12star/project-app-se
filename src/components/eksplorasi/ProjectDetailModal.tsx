@@ -46,21 +46,21 @@ const CATEGORY_META: Record<
   }
 > = {
   PROGRAMMING: {
-    label: "Programming & Web",
+    label: "Programming",
     bg: "bg-blue-500/15",
     text: "text-blue-500 dark:text-blue-400",
     border: "border-blue-500/30",
     icon: Code2,
   },
   TECHNOPRENEUR: {
-    label: "Technopreneurship",
+    label: "Technopreneur",
     bg: "bg-emerald-500/15",
     text: "text-emerald-600 dark:text-emerald-400",
     border: "border-emerald-500/30",
     icon: Briefcase,
   },
   DESAIN: {
-    label: "Desain Grafis & UI/UX",
+    label: "Desain",
     bg: "bg-purple-500/15",
     text: "text-purple-600 dark:text-purple-400",
     border: "border-purple-500/30",
@@ -74,7 +74,14 @@ const CATEGORY_META: Record<
     icon: Camera,
   },
   SINEMATOGRAFI: {
-    label: "Sinematografi",
+    label: "Cinematografi",
+    bg: "bg-rose-500/15",
+    text: "text-rose-600 dark:text-rose-400",
+    border: "border-rose-500/30",
+    icon: Film,
+  },
+  CINEMATOGRAFI: {
+    label: "Cinematografi",
     bg: "bg-rose-500/15",
     text: "text-rose-600 dark:text-rose-400",
     border: "border-rose-500/30",
@@ -88,21 +95,21 @@ const CATEGORY_META: Record<
     icon: Sparkles,
   },
   WEB: {
-    label: "Programming & Web",
+    label: "Programming",
     bg: "bg-blue-500/15",
     text: "text-blue-500 dark:text-blue-400",
     border: "border-blue-500/30",
     icon: Code2,
   },
   UI_UX: {
-    label: "Desain Grafis & UI/UX",
+    label: "Desain",
     bg: "bg-purple-500/15",
     text: "text-purple-600 dark:text-purple-400",
     border: "border-purple-500/30",
     icon: Palette,
   },
   IOT: {
-    label: "Technopreneurship",
+    label: "Technopreneur",
     bg: "bg-emerald-500/15",
     text: "text-emerald-600 dark:text-emerald-400",
     border: "border-emerald-500/30",

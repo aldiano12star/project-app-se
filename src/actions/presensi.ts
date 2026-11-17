@@ -211,6 +211,14 @@ export async function recordAttendance(
       };
     }
 
+    // Validasi Sesi Ditutup: Tidak diperkenankan scan mandiri jika presensi telah ditutup oleh pengurus
+    if (meeting.isClosed) {
+      return {
+        success: false,
+        message: "Presensi rapat telah ditutup oleh pengurus. Pemindaian QR mandiri tidak lagi diperkenankan.",
+      };
+    }
+
     // Validasi masa berlaku jika ada batasan waktu
     if (meeting.qrExpiresAt && new Date() > new Date(meeting.qrExpiresAt)) {
       return {
@@ -540,10 +548,23 @@ export async function finalizeAttendance(
     const attendedSet = new Set(meeting.attendances.map((a) => a.userId));
     const missingUserIds = eligibleUserIds.filter((id) => !attendedSet.has(id));
 
+    // Tandai sesi rapat sebagai ditutup di database
+    await prisma.meeting.update({
+      where: { id: meeting.id },
+      data: { isClosed: true },
+    });
+
     if (missingUserIds.length === 0) {
+      revalidatePath("/acara");
+      revalidatePath(`/acara/rapat/${meetingId}`);
+      if (meeting.eventId) {
+        revalidatePath(`/acara/${meeting.eventId}`);
+      }
+      revalidatePath("/dashboard");
+
       return {
         success: true,
-        message: "Semua peserta yang berhak telah memiliki catatan kehadiran.",
+        message: "Presensi resmi ditutup (seluruh anggota sudah tercatat).",
         data: { count: 0 },
       };
     }
@@ -569,7 +590,7 @@ export async function finalizeAttendance(
 
     return {
       success: true,
-      message: `Presensi ditutup. Sebanyak ${missingUserIds.length} anggota yang tidak hadir ditandai Alfa.`,
+      message: `Presensi ditutup. Sebanyak ${missingUserIds.length} anggota tanpa keterangan dicatat Alfa.`,
       data: { count: missingUserIds.length },
     };
   } catch (error) {
@@ -578,6 +599,59 @@ export async function finalizeAttendance(
       success: false,
       message:
         error instanceof Error ? error.message : "Gagal menutup presensi rapat.",
+    };
+  }
+}
+
+/**
+ * Membuka kembali sesi presensi rapat yang sebelumnya telah ditutup (Admin/Operator).
+ */
+export async function reopenAttendance(
+  meetingId: string
+): Promise<ActionResponse> {
+  try {
+    await assertRole([Role.ADMIN, Role.OPERATOR]);
+
+    if (!meetingId || meetingId.trim() === "") {
+      return {
+        success: false,
+        message: "ID rapat presensi tidak valid.",
+      };
+    }
+
+    const meeting = await prisma.meeting.findUnique({
+      where: { id: meetingId.trim() },
+    });
+
+    if (!meeting) {
+      return {
+        success: false,
+        message: "Sesi rapat tidak ditemukan.",
+      };
+    }
+
+    await prisma.meeting.update({
+      where: { id: meeting.id },
+      data: { isClosed: false },
+    });
+
+    revalidatePath("/acara");
+    revalidatePath(`/acara/rapat/${meetingId}`);
+    if (meeting.eventId) {
+      revalidatePath(`/acara/${meeting.eventId}`);
+    }
+    revalidatePath("/dashboard");
+
+    return {
+      success: true,
+      message: "Sesi presensi rapat berhasil dibuka kembali.",
+    };
+  } catch (error) {
+    console.error("[Presensi Action] reopenAttendance error:", error);
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Gagal membuka kembali presensi rapat.",
     };
   }
 }

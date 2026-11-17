@@ -22,6 +22,7 @@ import {
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { ImagePickerField } from "@/components/ui/ImagePickerField";
 import { Modal } from "@/components/ui/Modal";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -227,23 +228,23 @@ export function CreateProjectModal({
               <Tag className="h-3.5 w-3.5 text-primary" />
               <span>Divisi <span className="text-primary">*</span></span>
             </label>
-            <select
+            <CustomSelect
               value={formData.category}
-              onChange={(e) =>
+              onChange={(val) =>
                 setFormData({
                   ...formData,
-                  category: e.target.value as ShowcaseCategory,
+                  category: val as ShowcaseCategory,
                 })
               }
-              className="w-full h-11 min-h-11 px-3.5 rounded-xl border border-edge/80 dark:border-white/10 bg-surface-container-low/40 dark:bg-white/5 text-ink text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer font-medium"
-            >
-              <option value="PROGRAMMING">💻 1. Programming &amp; Web</option>
-              <option value="TECHNOPRENEUR">💼 2. Technopreneurship</option>
-              <option value="DESAIN">🎨 3. Desain Grafis &amp; UI/UX</option>
-              <option value="FOTOGRAFI">📷 4. Fotografi</option>
-              <option value="SINEMATOGRAFI">🎬 5. Sinematografi</option>
-              <option value="LAINNYA">✨ 6. Karya Kreatif Lainnya</option>
-            </select>
+              options={[
+                { value: "PROGRAMMING", label: "Programming", description: "Web, Mobile, AI & Software Engineering" },
+                { value: "TECHNOPRENEUR", label: "Technopreneur", description: "Bisnis Digital, Produk & Startup" },
+                { value: "DESAIN", label: "Desain", description: "UI/UX, Visual Branding & Ilustrasi" },
+                { value: "FOTOGRAFI", label: "Fotografi", description: "Fotografi Studio, Jurnalistik & Editorial" },
+                { value: "SINEMATOGRAFI", label: "Cinematografi", description: "Video Produksi, Motion & Editing" },
+                { value: "LAINNYA", label: "Karya Kreatif Lainnya", description: "Game, Animasi & Eksperimen Bebas" },
+              ]}
+            />
           </div>
 
           {/* Deskripsi Proyek */}

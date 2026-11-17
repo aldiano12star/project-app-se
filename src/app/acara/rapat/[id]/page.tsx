@@ -249,6 +249,7 @@ export default async function RapatDetailPage({ params }: RapatDetailPageProps) 
     eventId: dbMeeting.eventId,
     event: dbMeeting.event,
     isRead: dbMeeting.readLogs.length > 0,
+    isClosed: dbMeeting.isClosed ?? false,
     attendances: allTableMembers,
   };
 

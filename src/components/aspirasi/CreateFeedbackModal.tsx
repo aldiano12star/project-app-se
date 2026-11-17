@@ -14,6 +14,7 @@ import {
 import { FeedbackType } from "@prisma/client";
 import { submitFeedbackIssue } from "@/actions/aspirasi";
 import { Modal } from "@/components/ui/Modal";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface CreateFeedbackModalProps {
   isOpen: boolean;
@@ -269,19 +270,13 @@ export function CreateFeedbackModal({
             <label className="text-xs font-bold text-ink block">
               Kategori <span className="text-primary">*</span>
             </label>
-            <select
+            <CustomSelect
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full h-11 px-3.5 rounded-xl bg-surface border border-edge text-ink text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer"
-            >
-              {(isPrivat ? PRIVATE_CATEGORY_OPTIONS : PUBLIC_CATEGORY_OPTIONS).map(
-                (cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                )
+              onChange={setCategory}
+              options={(isPrivat ? PRIVATE_CATEGORY_OPTIONS : PUBLIC_CATEGORY_OPTIONS).map(
+                (cat) => ({ value: cat, label: cat })
               )}
-            </select>
+            />
           </div>
 
           {/* Judul Laporan */}

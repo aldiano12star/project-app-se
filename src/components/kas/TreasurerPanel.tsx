@@ -25,6 +25,7 @@ import {
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { triggerMicroConfetti } from "@/lib/confetti";
 import { haptic } from "@/lib/haptic";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 export interface TreasurerMemberData {
   id: string;
@@ -154,6 +155,14 @@ export function TreasurerPanel({
     Division.CINEMATOGRAPHY,
     Division.TECHNOPRENEURSHIP,
   ];
+
+  const DIVISION_LABELS: Record<Division, string> = {
+    [Division.PROGRAMMING]: "Prog",
+    [Division.DESIGN]: "Desain",
+    [Division.PHOTOGRAPHY]: "Foto",
+    [Division.CINEMATOGRAPHY]: "Cinema",
+    [Division.TECHNOPRENEURSHIP]: "Techno",
+  };
 
   const handleToggleSelectUser = (id: string) => {
     setCustomSelectedUserIds((prev) =>
@@ -399,22 +408,20 @@ export function TreasurerPanel({
             <form onSubmit={handleSubmitDeposit} className="space-y-3.5">
               <div>
                 <label className="text-xs font-bold text-ink block mb-1">
-                  Pilih Anggota
+                  Pilih Anggota <span className="text-primary">*</span>
                 </label>
-                <select
+                <CustomSelect
                   value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
-                  required
-                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
-                >
-                  {allMembers.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.name} ({formatGradeGen(m)}) - Saldo:{" "}
-                      {m.kasBalance < 0 ? "-" : "+"}Rp{" "}
-                      {Math.abs(m.kasBalance).toLocaleString("id-ID")}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedUserId}
+                  searchable={true}
+                  placeholder="Pilih Anggota..."
+                  options={allMembers.map((m) => ({
+                    value: m.id,
+                    label: `${m.name} (${formatGradeGen(m)})`,
+                    description: `Saldo: ${m.kasBalance < 0 ? "-" : "+"}Rp ${Math.abs(m.kasBalance).toLocaleString("id-ID")} • Divisi: ${m.mainDivision || "Umum"}`,
+                    badge: m.kasBalance < 0 ? "Nunggak" : undefined,
+                  }))}
+                />
               </div>
 
               <div>
@@ -587,7 +594,7 @@ export function TreasurerPanel({
                           onClick={() => handleSelectDivisionCustom(div)}
                           className="px-2 py-0.5 rounded-full text-xs font-semibold bg-card border border-edge text-ink-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
                         >
-                          +{div.slice(0, 4)}
+                          +{DIVISION_LABELS[div] || div.slice(0, 4)}
                         </button>
                       ))}
                     </div>
@@ -650,22 +657,26 @@ export function TreasurerPanel({
                 <label className="text-xs font-bold text-ink block mb-1">
                   Kategori Tagihan
                 </label>
-                <select
+                <CustomSelect
                   value={billCategory}
-                  onChange={(e) =>
+                  onChange={(val) =>
                     setBillCategory(
-                      e.target.value as "TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL"
+                      val as "TAGIHAN_RUTIN" | "TAGIHAN_INSIDENTAL"
                     )
                   }
-                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
-                >
-                  <option value="TAGIHAN_RUTIN">
-                    Tagihan Rutin Kas Organisasi
-                  </option>
-                  <option value="TAGIHAN_INSIDENTAL">
-                    Tagihan Insidental / Urunan Khusus
-                  </option>
-                </select>
+                  options={[
+                    {
+                      value: "TAGIHAN_RUTIN",
+                      label: "Tagihan Rutin Kas Organisasi",
+                      description: "Iuran kas bulanan wajib untuk seluruh anggota",
+                    },
+                    {
+                      value: "TAGIHAN_INSIDENTAL",
+                      label: "Tagihan Insidental / Urunan Khusus",
+                      description: "Urunan perlombaan atau kebutuhan operasional khusus",
+                    },
+                  ]}
+                />
               </div>
 
               <div>
@@ -790,33 +801,39 @@ export function TreasurerPanel({
                 <label className="text-xs font-bold text-ink block mb-1">
                   Kategori Transaksi
                 </label>
-                <select
+                <CustomSelect
                   value={globalCategory}
-                  onChange={(e) =>
-                    setGlobalCategory(e.target.value as TransactionCategory)
+                  onChange={(val) =>
+                    setGlobalCategory(val as TransactionCategory)
                   }
-                  className="w-full h-11 min-h-11 px-3 text-xs bg-surface-container-low rounded-xl border border-edge text-ink focus:outline-hidden focus:ring-1 focus:ring-primary"
-                >
-                  {globalType === "INCOME" ? (
-                    <>
-                      <option value={TransactionCategory.DANUS_SUKARELA}>
-                        Dana Usaha / Pemasukan Sukarela
-                      </option>
-                      <option value={TransactionCategory.SETORAN_MEMBER}>
-                        Pemasukan Kas Umum
-                      </option>
-                    </>
-                  ) : (
-                    <>
-                      <option value={TransactionCategory.OPERASIONAL_ACARA}>
-                        Biaya Operasional Acara / Rapat
-                      </option>
-                      <option value={TransactionCategory.TAGIHAN_INSIDENTAL}>
-                        Pengeluaran Logistik / Kesekretariatan
-                      </option>
-                    </>
-                  )}
-                </select>
+                  options={
+                    globalType === "INCOME"
+                      ? [
+                          {
+                            value: TransactionCategory.DANUS_SUKARELA,
+                            label: "Dana Usaha / Pemasukan Sukarela",
+                            description: "Hasil penjualan danus, merchandise, atau donasi",
+                          },
+                          {
+                            value: TransactionCategory.SETORAN_MEMBER,
+                            label: "Pemasukan Kas Umum",
+                            description: "Pemasukan kas langsung tanpa tagihan personal",
+                          },
+                        ]
+                      : [
+                          {
+                            value: TransactionCategory.OPERASIONAL_ACARA,
+                            label: "Biaya Operasional Acara / Rapat",
+                            description: "Konsumsi, sewa tempat, perlengkapan kegiatan",
+                          },
+                          {
+                            value: TransactionCategory.TAGIHAN_INSIDENTAL,
+                            label: "Pengeluaran Logistik / Kesekretariatan",
+                            description: "ATK, cetak banner, sertifikat, kebutuhan surat",
+                          },
+                        ]
+                  }
+                />
               </div>
 
               <div>

@@ -120,6 +120,17 @@ function getTwoLetterInitials(name: string): string {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
+function formatDivisionLabel(div?: string | null): string {
+  if (!div) return "Anggota";
+  const upper = div.toUpperCase();
+  if (upper.includes("PROG") || upper.includes("WEB")) return "Programming";
+  if (upper.includes("TECHNO")) return "Technopreneur";
+  if (upper.includes("DESAIN") || upper.includes("DESIGN") || upper.includes("UI")) return "Desain";
+  if (upper.includes("FOTO") || upper.includes("PHOTO")) return "Fotografi";
+  if (upper.includes("CINE") || upper.includes("SINE")) return "Cinematografi";
+  return div;
+}
+
 export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -443,7 +454,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                           {champ.name}
                         </h5>
                         <span className="text-xs text-[#A1A1AA] block truncate">
-                          {champ.division || "Anggota"}
+                          {formatDivisionLabel(champ.division)}
                         </span>
                       </div>
                     </div>
@@ -550,7 +561,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                         {wk.title}
                       </h5>
                       <p className="text-xs sm:text-sm text-[#A1A1AA] truncate">
-                        Karya: <strong>{wk.author}</strong> {wk.div ? `• ${wk.div}` : ""}
+                        Karya: <strong>{wk.author}</strong> {wk.div ? `• ${formatDivisionLabel(wk.div)}` : ""}
                       </p>
                     </div>
 
@@ -629,7 +640,7 @@ export function FilmstripFrame({ entry, index, isOperator }: FilmstripFrameProps
                   {selectedChampion.name}
                 </h4>
                 <p className="text-xs text-[#A1A1AA]">
-                  Divisi: {selectedChampion.division || "Anggota Organisasi"}
+                  Divisi: {formatDivisionLabel(selectedChampion.division)}
                 </p>
               </div>
             </div>

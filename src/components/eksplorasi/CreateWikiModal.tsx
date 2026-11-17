@@ -17,6 +17,7 @@ import {
 } from "@/actions/eksplorasi";
 import { WikiArticleData } from "./WikiCard";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 interface CreateWikiModalProps {
   isOpen: boolean;
@@ -164,18 +165,18 @@ export function CreateWikiModal({
               <Tag className="h-3.5 w-3.5 text-emerald-500" />
               <span>Kategori Perpustakaan Digital <span className="text-primary">*</span></span>
             </label>
-            <select
+            <CustomSelect
               value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value as WikiCategory })
+              onChange={(val) =>
+                setFormData({ ...formData, category: val as WikiCategory })
               }
-              className="w-full h-11 min-h-[44px] px-3.5 rounded-xl border border-edge bg-surface text-ink text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all cursor-pointer font-medium"
-            >
-              <option value="SURAT_LPJ">📄 1. Format Surat &amp; LPJ</option>
-              <option value="INFO_LOMBA">🏆 2. Tips &amp; Info Lomba</option>
-              <option value="MODUL_PELATIHAN">📚 3. Modul &amp; Materi Pelatihan</option>
-              <option value="PANDUAN_TEKNIS">🛠️ 4. Panduan Teknis &amp; Alat</option>
-            </select>
+              options={[
+                { value: "SURAT_LPJ", label: "Format Surat & LPJ", description: "Template proposal, surat undangan, LPJ resmi" },
+                { value: "INFO_LOMBA", label: "Tips & Info Lomba", description: "Panduan persiapan lomba & silabus kompetisi" },
+                { value: "MODUL_PELATIHAN", label: "Modul & Materi Pelatihan", description: "Materi belajar rutin divisi dan kurikulum" },
+                { value: "PANDUAN_TEKNIS", label: "Panduan Teknis & Alat", description: "Setup software, inventaris dan SOP alat" },
+              ]}
+            />
           </div>
 
           {/* Isi Konten Panduan */}
