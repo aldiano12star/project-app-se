@@ -34,13 +34,13 @@ export async function POST(req: NextRequest) {
     console.error("[Upload Route Error]:", error);
 
     const isAuthError =
-      error.message?.includes("UNAUTHORIZED") || error.message?.includes("Sesi Anda");
+      error.message?.includes("UNAUTHORIZED") || error.message?.includes("Sesi kamu");
 
     return NextResponse.json(
       {
         success: false,
         message: isAuthError
-          ? "Sesi Anda tidak valid. Silakan masuk terlebih dahulu."
+          ? "Sesi kamu tidak valid. Silakan masuk terlebih dahulu."
           : error.message || "Gagal memproses unggahan gambar.",
       },
       { status: isAuthError ? 401 : 400 }

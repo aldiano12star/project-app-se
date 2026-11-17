@@ -24,6 +24,7 @@ import {
   Coffee,
   Sparkles,
   Trophy,
+  Wallet,
 } from "lucide-react";
 import {
   getJakartaDateParts,
@@ -86,13 +87,14 @@ export default async function DashboardPage() {
   const audienceFilter = buildAudienceFilter(dbUser.role, dbUser.classGrade, dbUser.id);
   const isOfficer = dbUser.role === Role.ADMIN || dbUser.role === Role.OPERATOR;
 
-  // Ambil Top 3 Leaderboard, rapat & acara terdekat, presensi hari ini, tugas panitia, peringkat pribadi, dan analitik kesehatan global
+  // Ambil Top 3 Leaderboard, rapat & acara terdekat, presensi hari ini, tugas panitia, tagihan kas, peringkat pribadi, dan analitik kesehatan global
   const [
     topContributors,
     upcomingMeetings,
     upcomingEvents,
     todayAttendance,
     myAssignedTasks,
+    myUnpaidInvoices,
     higherPointsCount,
     globalHealth,
   ] = await Promise.all([
@@ -163,7 +165,6 @@ export default async function DashboardPage() {
       where: {
         assigneeId: session.user.id,
         status: { not: "DONE" },
-        dueDate: { not: null },
       },
       include: {
         section: {
@@ -179,6 +180,19 @@ export default async function DashboardPage() {
       },
       orderBy: { dueDate: "asc" },
     }),
+    prisma.invoice.findMany({
+      where: {
+        userId: session.user.id,
+        status: "UNPAID",
+      },
+      orderBy: { dueDate: "asc" },
+      select: {
+        id: true,
+        title: true,
+        amount: true,
+        dueDate: true,
+      },
+    }),
     prisma.user.count({
       where: {
         status: "ACTIVE",
@@ -189,6 +203,21 @@ export default async function DashboardPage() {
   ]);
 
   const myRank = higherPointsCount + 1;
+
+  const unpaidInvoicesCount = (myUnpaidInvoices || []).length;
+  const totalUnpaidKasAmount = (myUnpaidInvoices || []).reduce(
+    (sum, inv) => sum + inv.amount,
+    0
+  );
+  const unfinishedTasksCount = (myAssignedTasks || []).length;
+  const hasPendingObligations = unpaidInvoicesCount > 0 || unfinishedTasksCount > 0;
+
+  const nearestTaskWithDueDate = (myAssignedTasks || []).find((t) => t.dueDate);
+  const nearestTaskText = nearestTaskWithDueDate?.dueDate
+    ? `Deadline: ${formatEventSchedule(nearestTaskWithDueDate.dueDate, nearestTaskWithDueDate.dueDate)}`
+    : (myAssignedTasks[0]?.section?.name
+    ? `Seksi ${myAssignedTasks[0].section.name} • ${myAssignedTasks[0].section.event.title}`
+    : "Menunggu diselesaikan");
 
   const nowParts = getJakartaDateParts(new Date());
   const nowDayStart = new Date(
@@ -414,68 +443,83 @@ export default async function DashboardPage() {
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-ink font-display">
               Halo, {dbUser.name.split(" ")[0]} 👋
             </h1>
-            <p className="text-sm sm:text-base text-ink-muted leading-relaxed mt-1">
-              Pusat kendali aktivitas, presensi rapat, dan kepanitiaan organisasi Saba ExploIT.
-            </p>
           </div>
         </section>
 
         {/* ========================================================= */}
-        {/* FLOATING ALERT: PENGINGAT TUGAS MENDESAK (JIKA ADA)       */}
+        {/* KARTU PENGINGAT TUGAS & TAGIHAN PRIBADI (ZEIGARNIK LOOP)  */}
         {/* ========================================================= */}
-        {urgentTasks.length > 0 && (
-          <section className="space-y-2.5">
-            {urgentTasks.map((task) => {
-              const dueParts = getJakartaDateParts(task.dueDate!);
-              const dueDayStart = new Date(
-                `${dueParts.dateString}T00:00:00+07:00`
-              ).getTime();
-              const diffDays = Math.round(
-                (dueDayStart - nowDayStart) / (1000 * 60 * 60 * 24)
-              );
-
-              const isTomorrow = diffDays === 1;
-              const isToday = diffDays === 0;
-              const isOverdue = diffDays < 0;
-
-              return (
-                <div
-                  key={task.id}
-                  className={`p-4 rounded-2xl border text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
-                    isOverdue
-                      ? "bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-300"
-                      : "bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200"
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="h-8 w-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                      <AlertTriangle className="h-4 w-4" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-bold text-ink">
-                        {isOverdue
-                          ? "🚨 Batas Waktu Terlewat: "
-                          : isToday
-                          ? "⏰ Jatuh Tempo Hari Ini: "
-                          : "⚠️ Jatuh Tempo Besok: "}
-                        <span className="font-extrabold">{task.title}</span>
-                      </p>
-                      <p className="text-xs sm:text-sm text-ink-muted truncate mt-0.5">
-                        Seksi {task.section.name} • {task.section.event.title}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/acara/${task.section.event.id}`}
-                    className="h-10 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold text-sm flex items-center justify-center gap-1.5 shrink-0 transition-all self-end sm:self-auto cursor-pointer"
-                  >
-                    <span>Buka Tugas</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
+        {hasPendingObligations && (
+          <section className="space-y-3">
+            <div className="rounded-2xl border border-amber-500/25 dark:border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 p-4 sm:p-5 hairline-border space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                    <Clock className="h-4 w-4" />
+                  </span>
+                  <h2 className="text-sm font-bold tracking-tight text-ink font-display">
+                    Tanggungan Kamu
+                  </h2>
                 </div>
-              );
-            })}
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 font-mono">
+                  {unpaidInvoicesCount + unfinishedTasksCount} Perlu Dituntaskan
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* 1. Tagihan Kas Belum Lunas */}
+                {unpaidInvoicesCount > 0 && (
+                  <Link
+                    href="/kas"
+                    className="p-3.5 rounded-xl bg-card border hairline-border hover:border-amber-500/40 transition-all flex items-center justify-between gap-3 group shadow-2xs"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center shrink-0">
+                        <Wallet className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-ink truncate group-hover:text-primary transition-colors">
+                          {unpaidInvoicesCount} Tagihan Kas Belum Lunas
+                        </p>
+                        <p className="text-xs text-ink-muted tabular-nums">
+                          Total Rp {totalUnpaidKasAmount.toLocaleString("id-ID")}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="h-8 px-3 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 text-xs font-bold inline-flex items-center gap-1 shrink-0 transition-colors">
+                      Bayar
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                )}
+
+                {/* 2. Tugas Kepanitiaan Belum Selesai */}
+                {unfinishedTasksCount > 0 && (
+                  <Link
+                    href={`/acara/${myAssignedTasks[0]?.section?.event?.id || ""}`}
+                    className="p-3.5 rounded-xl bg-card border hairline-border hover:border-amber-500/40 transition-all flex items-center justify-between gap-3 group shadow-2xs"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-ink truncate group-hover:text-primary transition-colors">
+                          {unfinishedTasksCount} Tugas Belum Selesai
+                        </p>
+                        <p className="text-xs text-ink-muted truncate">
+                          {nearestTaskText}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="h-8 px-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold inline-flex items-center gap-1 shrink-0 transition-colors">
+                      Lihat
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                )}
+              </div>
+            </div>
           </section>
         )}
 

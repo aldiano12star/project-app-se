@@ -75,7 +75,7 @@ export async function markNotificationAsRead(id: string): Promise<ActionResponse
     if (!notif || notif.userId !== user.id) {
       return {
         success: false,
-        message: "Notifikasi tidak ditemukan atau bukan milik Anda.",
+        message: "Notifikasi tidak ditemukan atau bukan milik kamu.",
       };
     }
 

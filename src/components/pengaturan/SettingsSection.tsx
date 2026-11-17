@@ -634,7 +634,7 @@ export function SettingsSection({
                 <Users className="w-5 h-5 text-purple-600 dark:text-purple-400 shrink-0" />
                 <div>
                   <span className="text-xs sm:text-sm font-semibold text-ink group-hover:text-primary transition-colors">
-                    Manajemen Akun &amp; Role
+                    Kelola Akun
                   </span>
                   <p className="text-xs text-ink-muted leading-relaxed">
                     Aktivasi akun tamu, filter angkatan dinamis, &amp; kelola role divisi

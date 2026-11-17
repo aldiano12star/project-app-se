@@ -111,12 +111,9 @@ export function AspirasiClientView({
       {/* Top Bar Header & Action Buttons */}
       <div className="flex items-center justify-between pt-1 relative z-10">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-ink">
-            Kotak Suara Hibrida
+          <h1 className="text-xl sm:text-2xl font-extrabold text-ink font-display tracking-tight">
+            Aspirasi
           </h1>
-          <p className="text-xs sm:text-sm text-ink-muted mt-0.5">
-            Papan isu sistem &amp; saluran aspirasi rahasia
-          </p>
         </div>
 
         {canCreate && (

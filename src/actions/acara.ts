@@ -1067,7 +1067,7 @@ export async function markNotulensiRead(meetingId: string): Promise<ActionRespon
     if (existingLog) {
       return {
         success: true,
-        message: "Anda sudah pernah membaca notulensi ini sebelumnya.",
+        message: "Kamu sudah pernah membaca notulensi ini sebelumnya.",
       };
     }
 

@@ -29,12 +29,9 @@ export default async function AspirasiPage() {
       <AppShell user={dbUser}>
         <div className="flex flex-col gap-4 pt-1">
           <section>
-            <h1 className="text-xl font-bold tracking-tight text-ink">
-              Kotak Suara &amp; Aspirasi
+            <h1 className="text-xl font-bold tracking-tight text-ink font-display">
+              Aspirasi
             </h1>
-            <p className="text-xs text-ink-muted mt-0.5">
-              Ruang penyampaian aspirasi, polling keputusan, dan issue tracking organisasi.
-            </p>
           </section>
 
           <GuestLockedView

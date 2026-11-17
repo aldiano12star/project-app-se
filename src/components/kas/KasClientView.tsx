@@ -54,7 +54,7 @@ export function KasClientView({
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink font-display">
-              {isKolaborator ? "Urunan & Dompet Kegiatan" : "Kas & Dompet Digital"}
+              {isKolaborator ? "Urunan" : "Kas"}
             </h1>
             {unpaidInvoicesCount > 0 && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/25 text-xs font-bold font-mono whitespace-nowrap shrink-0">
@@ -62,11 +62,6 @@ export function KasClientView({
               </span>
             )}
           </div>
-          <p className="text-sm text-ink-muted leading-relaxed">
-            {isKolaborator
-              ? "Manajemen kontribusi dana & urunan kepanitiaan bersama"
-              : "Sistem buku kas transparan, mutasi saldo, & pembukuan organisasi."}
-          </p>
         </div>
 
         <div className="h-10 w-10 rounded-2xl bg-surface-container flex items-center justify-center text-ink-muted shrink-0 border hairline-border">

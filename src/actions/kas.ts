@@ -157,7 +157,7 @@ export async function recordDeposit(
     try {
       await sendNotificationToUser(targetUser.id, {
         title: "Setoran Kas Diterima 💰",
-        body: `Bendahara telah mencatat setoran sebesar Rp ${cleanAmount.toLocaleString("id-ID")}. Saldo dompet Anda: Rp ${result.updatedUser.kasBalance.toLocaleString("id-ID")}.`,
+        body: `Bendahara telah mencatat setoran sebesar Rp ${cleanAmount.toLocaleString("id-ID")}. Saldo dompet kamu: Rp ${result.updatedUser.kasBalance.toLocaleString("id-ID")}.`,
         url: "/kas",
         tag: `deposit-${targetUser.id}`,
       });
@@ -274,7 +274,7 @@ export async function createBulkBills(
         data: targetUserIds.map((uid) => ({
           userId: uid,
           title: `Tagihan Baru: ${cleanDescription}`,
-          message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa rincian tagihan kas Anda.`,
+          message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa rincian tagihan kas kamu.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
           createdAt: now,
@@ -294,7 +294,7 @@ export async function createBulkBills(
       await broadcastNotification(
         {
           title: `Tagihan Kas: ${cleanDescription}`,
-          body: `Tagihan kas sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Silakan periksa dompet kas Anda.`,
+          body: `Tagihan kas sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Silakan periksa dompet kas kamu.`,
           url: "/kas",
           tag: `bulk-billing`,
         },

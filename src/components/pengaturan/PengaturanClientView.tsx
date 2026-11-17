@@ -58,7 +58,7 @@ export function PengaturanClientView({
 
         {/* Screen Title */}
         <h1 className="text-sm sm:text-base font-bold text-ink tracking-tight font-display">
-          Profil &amp; Pengaturan
+          Pengaturan
         </h1>
 
         {/* Right Indicator Badge */}

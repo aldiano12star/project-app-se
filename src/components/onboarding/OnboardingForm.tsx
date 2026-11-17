@@ -340,10 +340,10 @@ export function OnboardingForm({
         >
           <div className="space-y-1">
             <h1 className="text-xl sm:text-2xl font-extrabold text-ink tracking-tight font-display">
-              Maksud Kunjungan Anda
+              Maksud Kunjungan Kamu
             </h1>
             <p className="text-xs text-ink-muted leading-relaxed">
-              Pilih orientasi peran untuk membantu pengurus memvalidasi hak akses akun Anda.
+              Pilih orientasi peran untuk membantu pengurus memvalidasi hak akses akun kamu.
             </p>
           </div>
 

@@ -4,7 +4,7 @@ import { Role, MemberStatus } from "@prisma/client";
 export async function assertAuthenticated() {
   const session = await auth();
   if (!session?.user?.id) {
-    throw new Error("UNAUTHORIZED: Sesi Anda tidak valid atau telah kedaluwarsa.");
+    throw new Error("UNAUTHORIZED: Sesi kamu tidak valid atau telah kedaluwarsa.");
   }
   return session.user;
 }
@@ -15,7 +15,7 @@ export async function assertRole(allowedRoles: Role[]) {
   if (user.role === Role.OPERATOR) return user;
 
   if (!allowedRoles.includes(user.role as Role)) {
-    throw new Error("FORBIDDEN: Anda tidak memiliki izin untuk aksi ini.");
+    throw new Error("FORBIDDEN: Kamu tidak memiliki izin untuk aksi ini.");
   }
   return user;
 }
@@ -23,12 +23,12 @@ export async function assertRole(allowedRoles: Role[]) {
 export async function assertActiveMember() {
   const user = await assertAuthenticated();
   if (user.role === Role.BLOCKED) {
-    throw new Error("FORBIDDEN: Akun Anda telah diblokir permanen oleh pengurus organisasi.");
+    throw new Error("FORBIDDEN: Akun kamu telah diblokir permanen oleh pengurus organisasi.");
   }
   if (user.role === Role.OPERATOR) return user;
 
   if (user.role === Role.GUEST) {
-    throw new Error("FORBIDDEN: Akun Anda sedang menunggu verifikasi pengurus.");
+    throw new Error("FORBIDDEN: Akun kamu sedang menunggu verifikasi pengurus.");
   }
 
   if (user.status !== MemberStatus.ACTIVE) {

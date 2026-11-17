@@ -232,7 +232,7 @@ export async function updatePassword(
       if (!currentPassword) {
         return {
           success: false,
-          message: "Masukkan kata sandi lama Anda untuk verifikasi.",
+          message: "Masukkan kata sandi lama kamu untuk verifikasi.",
         };
       }
 
@@ -244,7 +244,7 @@ export async function updatePassword(
       if (!isCurrentValid) {
         return {
           success: false,
-          message: "Kata sandi lama yang Anda masukkan salah.",
+          message: "Kata sandi lama yang kamu masukkan salah.",
         };
       }
     }
@@ -265,7 +265,7 @@ export async function updatePassword(
 
     return {
       success: true,
-      message: "Kata sandi akun Anda berhasil diperbarui secara aman!",
+      message: "Kata sandi akun kamu berhasil diperbarui secara aman!",
     };
   } catch (error) {
     console.error("[Profile Action] updatePassword error:", error);

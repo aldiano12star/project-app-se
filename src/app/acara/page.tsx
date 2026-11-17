@@ -48,12 +48,9 @@ export default async function AcaraPage({ searchParams }: AcaraPageProps) {
       <AppShell user={dbUser}>
         <div className="flex flex-col gap-4 pt-1">
           <section>
-            <h1 className="text-xl font-bold tracking-tight text-ink">
-              Modul Acara &amp; Kepanitiaan
+            <h1 className="text-xl font-bold tracking-tight text-ink font-display">
+              Acara
             </h1>
-            <p className="text-xs text-ink-muted mt-0.5">
-              Pusat kalender agenda, timeline sirkuit terpadu, dan koordinasi kepanitiaan organisasi.
-            </p>
           </section>
 
           <GuestLockedView

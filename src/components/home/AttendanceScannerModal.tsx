@@ -15,6 +15,46 @@ import { recordAttendance } from "@/actions/presensi";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { haptic } from "@/lib/haptic";
 
+function playScanSuccessFeedback() {
+  try {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate([40, 60, 40]);
+    }
+  } catch {
+    // Ignore vibration error on unsupported platforms
+  }
+
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioContextClass) {
+      const ctx = new AudioContextClass();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      // Gentle ascending pop tone: sweep 587Hz (D5) to 880Hz (A5) in 120ms
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.13);
+      setTimeout(() => {
+        ctx.close().catch(() => {});
+      }, 250);
+    }
+  } catch {
+    // Audio context safely ignored if blocked or unsupported
+  }
+}
+
 export interface AttendanceScannerModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -69,6 +109,7 @@ export function AttendanceScannerModal({
       const res = await recordAttendance(meetingId);
       if (res.success) {
         haptic.success();
+        playScanSuccessFeedback();
         setFeedback({
           text: `Presensi Berhasil! Terdaftar pada rapat "${res.data?.meetingTitle || ""}" (+10 XP)`,
           meetingTitle: res.data?.meetingTitle,

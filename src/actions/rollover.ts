@@ -227,14 +227,14 @@ export async function executeRolloverWithCuratedData(
     if (!input.selectedEventIds || input.selectedEventIds.length !== 3) {
       return {
         success: false,
-        message: "Anda wajib memilih tepat 3 Acara / Proker Terbaik periode ini.",
+        message: "Kamu wajib memilih tepat 3 Acara / Proker Terbaik periode ini.",
       };
     }
 
     if (!input.selectedWorkIds || input.selectedWorkIds.length !== 3) {
       return {
         success: false,
-        message: "Anda wajib memilih tepat 3 Karya / Showcase Terbaik periode ini.",
+        message: "Kamu wajib memilih tepat 3 Karya / Showcase Terbaik periode ini.",
       };
     }
 

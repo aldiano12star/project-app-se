@@ -78,7 +78,7 @@ export async function saveOnboardingData(
     if (!asalTujuan) {
       return {
         success: false,
-        message: "Silakan pilih Asal / Tujuan Kunjungan Anda.",
+        message: "Silakan pilih Asal / Tujuan Kunjungan kamu.",
       };
     }
 
@@ -203,7 +203,7 @@ export async function completePhase2Profile(
 
     return {
       success: true,
-      message: `Profil divisi & angkatan berhasil dilengkapi! Anda dialokasikan ke Gen ${genResult.gen} (${genResult.academicYear}).`,
+      message: `Profil divisi & angkatan berhasil dilengkapi! Kamu dialokasikan ke Gen ${genResult.gen} (${genResult.academicYear}).`,
     };
   } catch (error) {
     console.error("[Onboarding] completePhase2Profile error:", error);

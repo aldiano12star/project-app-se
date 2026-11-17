@@ -170,7 +170,7 @@ export async function votePoll(
     if (existingVote) {
       return {
         success: false,
-        message: "Anda sudah pernah memberikan suara pada polling ini.",
+        message: "Kamu sudah pernah memberikan suara pada polling ini.",
       };
     }
 
@@ -198,7 +198,7 @@ export async function votePoll(
 
     return {
       success: true,
-      message: "Suara Anda berhasil tercatat! (+5 XP ditambahkan)",
+      message: "Suara kamu berhasil tercatat! (+5 XP ditambahkan)",
     };
   } catch (error) {
     console.error("Gagal melakukan vote:", error);
@@ -518,7 +518,7 @@ export async function deleteAspiration(
     if (!isPrivileged && !isOwner) {
       return {
         success: false,
-        message: "Anda tidak memiliki wewenang untuk menghapus aspirasi ini.",
+        message: "Kamu tidak memiliki wewenang untuk menghapus aspirasi ini.",
       };
     }
 
@@ -701,7 +701,7 @@ export async function toggleUpvoteIssue(
       success: true,
       message: hasUpvoted
         ? "Upvote dibatalkan."
-        : "Terima kasih! Dukungan Anda tercatat.",
+        : "Terima kasih! Dukungan kamu tercatat.",
       data: {
         upvoted: !hasUpvoted,
         count: updatedIssue._count.upvoters,

@@ -29,6 +29,89 @@ function getTwoLetterInitials(name?: string | null): string {
 }
 
 export function PodiumTop3({ contributors }: PodiumTop3Props) {
+  const hasActivePoints =
+    contributors &&
+    contributors.length > 0 &&
+    contributors.some((c) => (c.totalPoints || 0) > 0);
+
+  if (!hasActivePoints) {
+    return (
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20">
+              <Trophy className="h-4 w-4" />
+            </span>
+            <h2 className="text-sm font-bold tracking-tight text-ink font-display">
+              Klasemen Musim 2025/2026
+            </h2>
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary font-mono">
+            <Sparkles className="h-3 w-3" />
+            Musim Baru
+          </span>
+        </div>
+
+        <div className="apple-card p-5 sm:p-6 rounded-2xl border hairline-border space-y-4 relative overflow-hidden">
+          <div className="relative z-10 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🌱</span>
+              <h3 className="text-base sm:text-lg font-extrabold text-ink font-display">
+                Kepengurusan 2025/2026 Dimulai
+              </h3>
+            </div>
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-md">
+              Hadiri rapat &amp; kumpulkan XP pertama untuk memuncaki klasemen! Seluruh kontributor saat ini berada di garis awal yang sama.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 relative z-10">
+            <div className="p-3 rounded-xl bg-surface-container-low/60 border hairline-border flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xs shrink-0">
+                +10
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-ink">Presensi Rapat</p>
+                <p className="text-xs text-ink-muted truncate">Scan QR tepat waktu</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-surface-container-low/60 border hairline-border flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-xs shrink-0">
+                +50
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-ink">Publikasi Karya</p>
+                <p className="text-xs text-ink-muted truncate">Karya showcase divisi</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-surface-container-low/60 border hairline-border flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-xs shrink-0">
+                +15
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-ink">Tuntas Tugas</p>
+                <p className="text-xs text-ink-muted truncate">Seksi kepanitiaan</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t hairline-border flex items-center justify-between text-xs text-ink-muted relative z-10">
+            <span className="font-medium">Jadilah yang pertama di podium!</span>
+            <Link
+              href="/hall-of-fame"
+              className="inline-flex items-center gap-1 text-primary hover:text-primary-hover font-semibold py-1 px-2 rounded-lg hover:bg-primary/5 transition-all cursor-pointer"
+            >
+              <span>Arsip Hall of Fame</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const rank1 = contributors[0] || null;
   const rank2 = contributors[1] || null;
   const rank3 = contributors[2] || null;

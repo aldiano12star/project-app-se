@@ -257,11 +257,8 @@ export function AcaraClientView({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div className="space-y-1">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight font-display">
-            Acara &amp; Kepanitiaan
+            Acara
           </h2>
-          <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            Pusat kalender agenda, timeline sirkuit terpadu, dan koordinasi kepanitiaan organisasi.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 flex-wrap">

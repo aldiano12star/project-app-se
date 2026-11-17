@@ -457,15 +457,12 @@ export function UserManagementClientView({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-bold text-ink tracking-tight font-display">
-                Manajemen Akun &amp; Role
+                Kelola Akun
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25 uppercase tracking-wider">
                 Operator Control
               </span>
             </div>
-            <p className="text-sm text-ink-muted mt-0.5 leading-relaxed">
-              Pusat aktivasi pengguna, filter angkatan dinamis, &amp; otorisasi sistem
-            </p>
           </div>
         </div>
       </div>

@@ -66,7 +66,8 @@ export function ShowcaseTab({
   return (
     <div className="space-y-4">
       {/* Horizontal Filter Chips (Edge-to-Edge Scroll on Mobile, Tanpa Prefix Angka) */}
-      <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
+      <div className="relative">
+        <div className="-mx-4 px-4 sm:mx-0 sm:px-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 pr-10 sm:pr-0">
         <button
           type="button"
           onClick={() => setSelectedCategory("ALL")}
@@ -154,6 +155,8 @@ export function ShowcaseTab({
           Karya Lainnya
         </button>
       </div>
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-linear-to-l from-background to-transparent sm:hidden" />
+    </div>
 
       {/* Projects Grid / List */}
       {filteredProjects.length === 0 ? (

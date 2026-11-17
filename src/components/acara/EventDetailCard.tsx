@@ -290,30 +290,33 @@ export function EventDetailCard({
 
       {/* Quick Stats Strip Dinamis (Real-Time dari Database) */}
       {totalTasks > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
-            <CheckCircle2 className="h-4 w-4 text-success" />
-            <span className="text-ink-secondary">
-              <strong className="text-ink font-bold font-mono">{terverifikasiCount}</strong>{" "}
-              Terverifikasi PJ
-            </span>
-          </div>
+        <div className="relative">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pr-8 sm:pr-0">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
+              <CheckCircle2 className="h-4 w-4 text-success" />
+              <span className="text-ink-secondary">
+                <strong className="text-ink font-bold font-mono">{terverifikasiCount}</strong>{" "}
+                Terverifikasi PJ
+              </span>
+            </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
-            <Hourglass className="h-4 w-4 text-warning" />
-            <span className="text-ink-secondary">
-              <strong className="text-ink font-bold font-mono">{sedangBerjalanCount}</strong>{" "}
-              Sedang Berjalan
-            </span>
-          </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
+              <Hourglass className="h-4 w-4 text-warning" />
+              <span className="text-ink-secondary">
+                <strong className="text-ink font-bold font-mono">{sedangBerjalanCount}</strong>{" "}
+                Sedang Berjalan
+              </span>
+            </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
-            <UserPlus className="h-4 w-4 text-primary" />
-            <span className="text-ink-secondary">
-              <strong className="text-ink font-bold font-mono">{butuhRelawanCount}</strong>{" "}
-              Butuh Relawan
-            </span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-edge shadow-sm shrink-0 text-sm">
+              <UserPlus className="h-4 w-4 text-primary" />
+              <span className="text-ink-secondary">
+                <strong className="text-ink font-bold font-mono">{butuhRelawanCount}</strong>{" "}
+                Butuh Relawan
+              </span>
+            </div>
           </div>
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-linear-to-l from-background to-transparent sm:hidden" />
         </div>
       )}
     </div>

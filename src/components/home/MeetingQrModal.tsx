@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useTransition } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, X, Loader2, RefreshCw, AlertCircle, Calendar, Sparkles } from "lucide-react";
+import { QrCode, X, Loader2, RefreshCw, AlertCircle, Calendar, Sparkles, Maximize2, Minimize2 } from "lucide-react";
 import {
   getMeetingQrSession,
   getActiveOrCreateMeetingSession,
@@ -30,6 +30,7 @@ export function MeetingQrModal({
     initialSession || null
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const fetchSession = () => {
@@ -53,8 +54,25 @@ export function MeetingQrModal({
     } else {
       setSessionData(null);
       setErrorMsg(null);
+      setIsFullscreen(false);
     }
   }, [isOpen, meetingId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (isFullscreen) {
+          setIsFullscreen(false);
+        } else {
+          onClose();
+        }
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, isFullscreen, onClose]);
 
   if (!isOpen) return null;
 
@@ -157,7 +175,7 @@ export function MeetingQrModal({
               </button>
             </div>
           ) : qrValue ? (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full">
               {/* Bingkai Putih Tajam untuk Kontras Scanner Kamera */}
               <div className="rounded-2xl bg-white p-3.5 shadow-md border border-black/5 flex flex-col items-center">
                 <QRCodeSVG
@@ -168,9 +186,19 @@ export function MeetingQrModal({
                   className="h-auto w-full max-w-[180px]"
                 />
               </div>
-              <p className="text-xs sm:text-sm font-medium text-ink-muted mt-3">
+              <p className="text-xs sm:text-sm font-medium text-ink-muted mt-2.5">
                 Arahkan pemindai aplikasi Saba ke QR ini
               </p>
+
+              {/* Tombol Mode Proyektor Layar Penuh */}
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(true)}
+                className="tactile-btn mt-3.5 inline-flex items-center justify-center gap-2 h-10 px-4 w-full rounded-xl bg-surface-container hover:bg-surface-container-high hairline-border text-xs font-semibold text-ink transition-all cursor-pointer"
+              >
+                <Maximize2 className="h-4 w-4 text-primary" />
+                <span>Tampilkan Layar Penuh (Proyektor)</span>
+              </button>
             </div>
           ) : (
             <div className="flex h-52 w-52 flex-col items-center justify-center rounded-2xl hairline-border bg-surface-container-low/60">
@@ -195,6 +223,72 @@ export function MeetingQrModal({
           </button>
         </div>
       </div>
+
+      {/* ── FULLSCREEN PROJECTOR OVERLAY (CSS-based, iOS Safari & Android Compatible) ── */}
+      {isFullscreen && qrValue && (
+        <div className="fixed inset-0 z-[120] bg-white text-zinc-900 flex flex-col items-center justify-between p-6 sm:p-12 overflow-y-auto animate-in fade-in duration-200">
+          {/* Header Proyektor */}
+          <div className="w-full max-w-3xl flex items-center justify-between border-b border-zinc-200 pb-4">
+            <div className="space-y-1">
+              <span className="text-xs font-mono font-bold tracking-widest text-primary uppercase">
+                Mode Proyektor • Presensi Saba ExploIT
+              </span>
+              <h2 className="text-xl sm:text-3xl font-extrabold text-zinc-900 font-display line-clamp-2">
+                {sessionData?.title || "Presensi Rapat Organisasi"}
+              </h2>
+              {dateFormatted && (
+                <p className="text-xs sm:text-sm text-zinc-500 font-mono">
+                  {dateFormatted}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="tactile-btn flex h-11 items-center gap-2 px-4 rounded-xl bg-zinc-100 hover:bg-zinc-200 active:scale-95 text-zinc-800 text-xs font-bold transition-all cursor-pointer border border-zinc-300 shrink-0"
+              title="Keluar dari layar penuh"
+            >
+              <Minimize2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Keluar Layar Penuh</span>
+            </button>
+          </div>
+
+          {/* Center: High Contrast Giant QR Box */}
+          <div className="my-auto py-8 flex flex-col items-center text-center">
+            <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border-4 border-zinc-200 flex flex-col items-center">
+              <QRCodeSVG
+                value={qrValue}
+                size={280}
+                level="H"
+                includeMargin={false}
+                className="w-56 h-56 sm:w-72 sm:h-72 md:w-84 md:h-84"
+              />
+            </div>
+
+            <div className="mt-6 space-y-1.5 max-w-md">
+              <p className="text-base sm:text-lg font-bold text-zinc-900">
+                Arahkan Kamera HP ke Kode QR di Layar
+              </p>
+              <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+                Buka menu <strong className="text-zinc-800">Scan QR Presensi</strong> di aplikasi Saba ExploIT untuk mencatat kehadiran (+10 XP).
+              </p>
+            </div>
+          </div>
+
+          {/* Footer Proyektor */}
+          <div className="w-full max-w-3xl pt-4 border-t border-zinc-200 flex items-center justify-between text-xs text-zinc-400 font-mono">
+            <span>Saba ExploIT Super App</span>
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="text-zinc-600 hover:text-zinc-900 underline font-semibold cursor-pointer"
+            >
+              Tutup Mode Layar Penuh (ESC)
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

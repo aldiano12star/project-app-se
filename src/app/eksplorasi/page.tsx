@@ -30,12 +30,9 @@ export default async function EksplorasiPage() {
       <AppShell user={dbUser}>
         <div className="flex flex-col gap-4 pt-1">
           <section>
-            <h1 className="text-xl font-bold tracking-tight text-ink">
-              Hub Eksplorasi &amp; Karya
+            <h1 className="text-xl font-bold tracking-tight text-ink font-display">
+              Eksplorasi
             </h1>
-            <p className="text-xs text-ink-muted mt-0.5">
-              Etalase pameran portofolio dan repositori perpustakaan digital organisasi.
-            </p>
           </section>
 
           <GuestLockedView

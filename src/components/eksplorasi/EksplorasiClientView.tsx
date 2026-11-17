@@ -104,12 +104,9 @@ export function EksplorasiClientView({
       {/* Top Bar Header & Action Button (Bersih tanpa badge HUB) */}
       <div className="flex items-center justify-between pt-1 relative z-10">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-ink">
-            Pusat Eksplorasi &amp; Karya
+          <h1 className="text-xl sm:text-2xl font-extrabold text-ink font-display tracking-tight">
+            Eksplorasi
           </h1>
-          <p className="text-xs text-ink-muted mt-0.5">
-            Showcase karya 5 divisi &amp; Perpustakaan Digital Saba ExploIT
-          </p>
         </div>
 
         {activeTab === "SHOWCASE" ? (

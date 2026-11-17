@@ -142,12 +142,12 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
     setErrorMessage(null);
 
     if (!selectedDivision) {
-      setErrorMessage("Silakan pilih Divisi utama Anda.");
+      setErrorMessage("Silakan pilih Divisi utama kamu.");
       return;
     }
 
     if (!selectedGrade) {
-      setErrorMessage("Silakan pilih Tingkat Kelas Anda.");
+      setErrorMessage("Silakan pilih Tingkat Kelas kamu.");
       return;
     }
 
@@ -225,17 +225,17 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
         <div className="p-6 pb-4 text-center border-b border-edge/60 relative z-10 space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 border border-primary/20 text-primary">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Akun Anda Telah Disetujui</span>
+            <span>Akun Kamu Telah Disetujui</span>
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink">
-            Lengkapi Profil {isKolaborator ? "Kolaborator" : "Anggota"} Anda
+            Lengkapi Profil {isKolaborator ? "Kolaborator" : "Anggota"} Kamu
           </h2>
 
           <p className="text-xs sm:text-sm text-ink-muted max-w-sm mx-auto leading-relaxed">
             {isKolaborator
-              ? "Masukkan informasi organisasi atau instansi tempat Anda bernaung untuk memulai kolaborasi proyek."
-              : "Pilih divisi peminatan dan kelas Anda. Sistem kami akan secara otomatis menghitung nomor angkatan (Gen) Anda."}
+              ? "Masukkan informasi organisasi atau instansi tempat kamu bernaung untuk memulai kolaborasi proyek."
+              : "Pilih divisi peminatan dan kelas kamu. Sistem kami akan secara otomatis menghitung nomor angkatan (Gen) kamu."}
           </p>
         </div>
 
@@ -389,7 +389,7 @@ export function CompleteProfileModal({ user }: CompleteProfileModalProps) {
                     className="w-full h-12 px-4 rounded-xl bg-surface border border-edge text-ink text-sm focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary transition-all font-mono"
                   />
                   <p className="text-xs text-ink-muted px-0.5 leading-relaxed">
-                    Digunakan untuk autentikasi sekunder &amp; keamanan akun Anda di perangkat bersama.
+                    Digunakan untuk autentikasi sekunder &amp; keamanan akun kamu di perangkat bersama.
                   </p>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { Role } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Manajemen Akun & Role — Operator Saba ExploIT",
+  title: "Kelola Akun — Operator Saba ExploIT",
   description: "Aktivasi akun tamu, filter angkatan dinamis, dan manajemen role pengguna.",
 };
 

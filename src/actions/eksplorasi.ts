@@ -188,7 +188,7 @@ export async function submitShowcaseProject(
 
     return {
       success: true,
-      message: `Karya berhasil dipublikasikan! (+50 XP untuk Anda${
+      message: `Karya berhasil dipublikasikan! (+50 XP untuk kamu${
         uniqueContributorIds.length > 0
           ? ` & +50 XP untuk ${uniqueContributorIds.length} anggota tim`
           : ""
@@ -266,7 +266,7 @@ export async function updateShowcaseProject(
     if (!isAuthor && !isPrivileged) {
       return {
         success: false,
-        message: "Akses ditolak: Anda bukan pembuat karya ini.",
+        message: "Akses ditolak: Kamu bukan pembuat karya ini.",
       };
     }
 
@@ -386,7 +386,7 @@ export async function deleteShowcaseProject(
     if (!isAuthor && !isPrivileged) {
       return {
         success: false,
-        message: "FORBIDDEN: Anda tidak memiliki izin untuk menghapus karya ini.",
+        message: "FORBIDDEN: Kamu tidak memiliki izin untuk menghapus karya ini.",
       };
     }
 
@@ -650,7 +650,7 @@ export async function deleteWikiArticle(
     if (!isAuthor && !isPrivileged) {
       return {
         success: false,
-        message: "FORBIDDEN: Anda tidak memiliki izin untuk menghapus artikel ini.",
+        message: "FORBIDDEN: Kamu tidak memiliki izin untuk menghapus artikel ini.",
       };
     }
 

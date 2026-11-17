@@ -28,12 +28,9 @@ export default async function KasPage() {
         <div className="flex flex-col gap-4">
           <section className="flex items-center justify-between pt-1">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-ink">
-                Kas Organisasi
+              <h1 className="text-xl font-bold tracking-tight text-ink font-display">
+                Kas
               </h1>
-              <p className="text-xs text-ink-muted">
-                Transparansi pembukuan, dompet personal, &amp; buku besar kas
-              </p>
             </div>
             <Wallet className="h-6 w-6 text-slate-700 dark:text-slate-300" />
           </section>

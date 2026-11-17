@@ -248,7 +248,7 @@ export async function recordAttendance(
       return {
         success: false,
         message:
-          "Akses Ditolak: Anda bukan peserta yang terdaftar untuk sesi rapat ini.",
+          "Akses Ditolak: Kamu bukan peserta yang terdaftar untuk sesi rapat ini.",
       };
     }
 
@@ -265,7 +265,7 @@ export async function recordAttendance(
     if (existingAttendance) {
       return {
         success: false,
-        message: `Anda sudah pernah mencatat presensi untuk rapat "${meeting.title}".`,
+        message: `Kamu sudah pernah mencatat presensi untuk rapat "${meeting.title}".`,
       };
     }
 

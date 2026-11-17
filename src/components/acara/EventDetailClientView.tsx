@@ -140,14 +140,14 @@ export function EventDetailClientView({
             haptic.tap();
             setActiveWorkspaceTab("PANITIA");
           }}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-[100px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
             activeWorkspaceTab === "PANITIA"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <Layers className="h-4 w-4 text-primary" />
-          <span>Kepanitiaan &amp; Seksi</span>
+          <span>Seksi</span>
         </button>
 
         <button
@@ -156,14 +156,14 @@ export function EventDetailClientView({
             haptic.tap();
             setActiveWorkspaceTab("NOTULENSI");
           }}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-[100px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
             activeWorkspaceTab === "NOTULENSI"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <MessageSquare className="h-4 w-4 text-amber-500" />
-          <span>Notulensi Rapat</span>
+          <span>Notulensi</span>
         </button>
 
         <button
@@ -172,14 +172,14 @@ export function EventDetailClientView({
             haptic.tap();
             setActiveWorkspaceTab("RAB");
           }}
-          className={`flex-1 min-w-[130px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`flex-1 min-w-[100px] py-2 px-3 rounded-xl text-sm font-semibold transition-all min-h-[40px] flex items-center justify-center gap-1.5 cursor-pointer ${
             activeWorkspaceTab === "RAB"
               ? "bg-card text-ink shadow-xs border hairline-border font-bold"
               : "text-ink-muted hover:text-ink"
           }`}
         >
           <Folder className="h-4 w-4 text-emerald-500" />
-          <span>RAB Anggaran</span>
+          <span>RAB</span>
         </button>
       </div>
 

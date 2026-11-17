@@ -142,7 +142,7 @@ export async function createInvoice({
           data: {
             userId,
             title: `Tagihan Baru: ${title.trim()}`,
-            message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa dompet kas Anda.`,
+            message: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan. Silakan periksa dompet kas kamu.`,
             type: NotifType.BILLING,
             actionUrl: "/kas",
           },
@@ -158,7 +158,7 @@ export async function createInvoice({
       await broadcastNotification(
         {
           title: `Tagihan Kas: ${title.trim()}`,
-          body: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Cek dompet kas Anda.`,
+          body: `Tagihan sebesar Rp ${cleanAmount.toLocaleString("id-ID")} telah diterbitkan oleh Bendahara. Cek dompet kas kamu.`,
           url: "/kas",
           tag: `billing-invoice`,
         },
@@ -218,7 +218,7 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
     if (invoice.userId !== currentUser.id && !isOfficer) {
       return {
         success: false,
-        message: "Akses ditolak: Anda tidak memiliki izin untuk membayar tagihan ini.",
+        message: "Akses ditolak: Kamu tidak memiliki izin untuk membayar tagihan ini.",
       };
     }
 
@@ -274,7 +274,7 @@ export async function payInvoiceWithWallet(invoiceId: string): Promise<ActionRes
         data: {
           userId: invoice.userId,
           title: "Tagihan Berhasil Dilunasi",
-          message: `Pembayaran "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan melalui dompet Anda.`,
+          message: `Pembayaran "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString("id-ID")} berhasil diselesaikan melalui dompet kamu.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
           createdAt: now,
@@ -466,7 +466,7 @@ export async function quickSettleInvoice(invoiceId: string): Promise<ActionRespo
           title: "Tagihan Berhasil Dilunasi",
           message: `Tagihan "${invoice.title}" sebesar Rp ${invoice.amount.toLocaleString(
             "id-ID"
-          )} telah dilunasi dari dompet Anda dan diverifikasi oleh bendahara.`,
+          )} telah dilunasi dari dompet kamu dan diverifikasi oleh bendahara.`,
           type: NotifType.BILLING,
           actionUrl: "/kas",
           createdAt: now,
