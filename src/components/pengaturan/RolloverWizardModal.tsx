@@ -237,9 +237,9 @@ export function RolloverWizardModal({
           {step !== 5 && (
             <div className="grid grid-cols-4 gap-2 pt-1">
               {[
-                { s: 1, label: "Top Juara" },
-                { s: 2, label: "Acara Pilihan" },
-                { s: 3, label: "Karya Terbaik" },
+                { s: 1, label: "Juara" },
+                { s: 2, label: "Acara" },
+                { s: 3, label: "Karya" },
                 { s: 4, label: "Konfirmasi" },
               ].map((item) => (
                 <div key={item.s} className="space-y-1">
@@ -355,10 +355,10 @@ export function RolloverWizardModal({
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-sky-500 flex items-center gap-1.5">
                     <Calendar className="w-4 h-4" />
-                    Langkah 2: Pilih 3 Acara &amp; Proker Terbaik
+                    Langkah 2: Pilih 3 Acara / Proker Terbaik
                   </span>
                   <p className="text-xs text-ink-muted">
-                    Pilih tepat 3 kegiatan yang paling berkesan untuk dipajang di galeri sejarah.
+                    Pilih tepat 3 program kerja &amp; kegiatan jangka panjang periode aktif ini (sesi rapat rutin otomatis dikecualikan).
                   </p>
                 </div>
                 <span className={`text-xs font-bold px-3 py-1 rounded-full border self-start ${
@@ -436,7 +436,7 @@ export function RolloverWizardModal({
                     Langkah 3: Pilih 3 Karya / Showcase Unggulan
                   </span>
                   <p className="text-xs text-ink-muted">
-                    Pilih tepat 3 karya terbaik hasil keringat anggota untuk diabadikan di Hall of Fame.
+                    Pilih tepat 3 karya terbaik yang dibuat anggota pada periode aktif ini untuk diabadikan di Hall of Fame.
                   </p>
                 </div>
                 <span className={`text-xs font-bold px-3 py-1 rounded-full border self-start ${

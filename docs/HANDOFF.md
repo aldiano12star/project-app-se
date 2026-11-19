@@ -44,7 +44,22 @@
     3. **Garis Luar Kontras `CustomSelect`**: Menegaskan batas dropdown trigger pada [CustomSelect.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/ui/CustomSelect.tsx) dengan `border border-zinc-300 dark:border-white/20 bg-zinc-50 dark:bg-white/[0.04]` dan hover/focus ring yang jelas.
     4. **Single-Line Header XP Pill**: Mengunci badge XP di [TopHeader.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/layout/TopHeader.tsx) agar petir, angka, dan `XP` selalu sejajar horizontal tanpa tertekuk (`whitespace-nowrap shrink-0 inline-flex`).
     5. **Relokasi Kartu Poin Kontribusi**: Menghapus kartu Poin Kontribusi dari Beranda ([dashboard/page.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/app/dashboard/page.tsx)) dan memindahkannya ke dalam ringkasan privat profil di Pengaturan ([PersonalSummarySection.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/PersonalSummarySection.tsx)).
-  - 🏆 **STATUS PROYEK**: **SELURUH 12 FASE OVERHAUL, PENYELARASAN TEMA, PEMANGKASAN UX COPY, ERGONOMI NAVIGASI & FITUR BARU SELESAI 100% (PRODUCTION READY & VERIFIED ZERO-ERROR)**.
+  - ✅ **FASE 13 SELESAI (PRE-LAUNCH PREPARATION & TIME CAPSULE WIZARD HARDENING)**:
+    1. **Backup Lokal & Reset Total Kas & XP ke 0**:
+       * Salinan data lengkap tersimpan di [backups/pre-launch-kas-xp-reset.json](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/backups/pre-launch-kas-xp-reset.json) (48 KB, aman di dalam `.gitignore`).
+       * Hapus seluruh mutasi transaksi kas (`LedgerTransaction` = 0, saldo kas organisasi = Rp 0).
+       * Hapus seluruh tagihan/invoice anggota (`Invoice` = 0, tagihan aktif/belum lunas = 0).
+       * Hapus seluruh notifikasi tagihan lama (`Notification` tipe `BILLING` = 0).
+       * Reset saldo dompet digital (`kasBalance = 0`) dan XP (`monthlyPoints = 0`, `totalPoints = 0`) pada 100% akun `User`.
+       * 8 akun pengguna tetap utuh tanpa ada yang terhapus; periode kepengurusan aktif `2025/2026 (Gen 20)` tetap terjaga.
+    2. **Perbaikan Time Capsule: Rollover Wizard & Penanda Periode Dinamis**:
+       * **Skema Prisma**: Menambahkan field penanda periode `academicYear String @default("2025/2026")` dengan index `@index([academicYear])` pada model `Event`, `ShowcaseProject`, dan `Showcase`. Telah disinkronkan ke PostgreSQL Neon via `npx prisma db push`.
+       * **Auto-Tagging Saat Pembuatan**: Fungsi `createEvent` di [src/actions/acara.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/actions/acara.ts) dan `submitShowcaseProject` di [src/actions/eksplorasi.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/actions/eksplorasi.ts) otomatis menyematkan field `academicYear` sesuai dengan periode kepengurusan aktif melalui helper `getActivePeriodYear()`.
+       * **Auto-Archive Pasca-Rollover**: Transaksi atomik pada [src/actions/rollover.ts](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/actions/rollover.ts) mengunci seluruh acara dan karya periode lama pada label periode asalnya (misal `"2025/2026"`), menonaktifkan periode lama, membuat `OrganizationalPeriod` baru, serta menyinkronkan tabel `AcademicYear` agar tidak pernah muncul lagi sebagai kandidat di periode baru.
+       * **Filter Ketat Acara (Langkah 2)**: Kurasi pada `getRolloverCuratedData()` difilter ketat hanya menampilkan kegiatan jangka panjang / proker periode aktif (`academicYear === currentActivePeriod`), mengecualikan 100% rapat singkat / sesi rapat rutin (penyaringan kata kunci `Rapat`, `Briefing`, `Pertemuan`, `Presensi`, `Sesi`).
+       * **Filter Ketat Karya (Langkah 3)**: Menampilkan karya showcase khusus yang dibuat pada periode aktif yang sedang ditutup.
+       * **Penyederhanaan Step Bar Mobile 390px**: Label tab langkah pada [src/components/pengaturan/RolloverWizardModal.tsx](file:///home/fauzan/Documents/PELAJARAN/Belajar Coding/se_app/src/components/pengaturan/RolloverWizardModal.tsx) diringkas menjadi **`Juara`**, **`Acara`**, **`Karya`**, **`Konfirmasi`** sehingga tampil rapi dan bebas elipsis pada seluruh layar mobile.
+  - 🏆 **STATUS PROYEK**: **SELURUH 13 FASE PRE-LAUNCH & TIME CAPSULE ROLLOVER WIZARD SELESAI 100% (PRODUCTION READY, VERIFIED ZERO-ERROR & READY FOR USER TESTING)**.
 
 ---
 

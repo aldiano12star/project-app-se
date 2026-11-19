@@ -5,6 +5,7 @@ import { assertAuthenticated, assertRole, assertActiveMember } from "@/lib/rbac"
 import { revalidatePath } from "next/cache";
 import { Role, TaskStatus, TargetAudience } from "@prisma/client";
 import { broadcastNotification } from "@/lib/web-push";
+import { getActivePeriodYear } from "@/actions/rollover";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -121,10 +122,13 @@ export async function createEvent(
       };
     }
 
-    // Buat event baru di database
+    const activePeriodYear = await getActivePeriodYear();
+
+    // Buat event baru di database dengan auto-tagging periode kepengurusan aktif
     const newEvent = await prisma.event.create({
       data: {
         academicYearId: academicYear.id,
+        academicYear: activePeriodYear,
         title: input.title.trim(),
         description: input.description?.trim() || null,
         startDate,
@@ -276,7 +280,6 @@ export async function updateEvent(
 
     const existingEvent = await prisma.event.findUnique({
       where: { id: eventId },
-      include: { academicYear: true },
     });
 
     if (!existingEvent) {
@@ -293,9 +296,10 @@ export async function updateEvent(
       const activePeriod = await prisma.organizationalPeriod.findFirst({
         where: { isActive: true },
       });
+      const activePeriodYear = await getActivePeriodYear();
 
       const isArchived =
-        (existingEvent.academicYear && !existingEvent.academicYear.isCurrent) ||
+        existingEvent.academicYear !== activePeriodYear ||
         (activePeriod && existingEvent.createdAt < activePeriod.startDate);
 
       if (isArchived) {
@@ -1207,7 +1211,6 @@ export async function deleteEvent(eventId: string): Promise<ActionResponse> {
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
-        academicYear: true,
         sections: {
           include: {
             tasks: true,
@@ -1231,9 +1234,10 @@ export async function deleteEvent(eventId: string): Promise<ActionResponse> {
       const activePeriod = await prisma.organizationalPeriod.findFirst({
         where: { isActive: true },
       });
+      const activePeriodYear = await getActivePeriodYear();
 
       const isArchived =
-        (event.academicYear && !event.academicYear.isCurrent) ||
+        event.academicYear !== activePeriodYear ||
         (activePeriod && event.createdAt < activePeriod.startDate);
 
       if (isArchived) {

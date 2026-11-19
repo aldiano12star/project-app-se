@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { assertAuthenticated, assertActiveMember } from "@/lib/rbac";
 import { revalidatePath } from "next/cache";
 import { Role } from "@prisma/client";
+import { getActivePeriodYear } from "@/actions/rollover";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -141,8 +142,11 @@ export async function submitShowcaseProject(
       new Set(rawContributorIds.filter((id) => id && id !== user.id))
     ).slice(0, 10);
 
+    const activePeriodYear = await getActivePeriodYear();
+
     const newProject = await prisma.showcaseProject.create({
       data: {
+        academicYear: activePeriodYear,
         title: input.title.trim(),
         description: input.description.trim(),
         category: input.category || "PROGRAMMING",
@@ -274,11 +278,16 @@ export async function updateShowcaseProject(
     // Akun OPERATOR memiliki hak bypass tanpa syarat (unconditional bypass).
     // Regular author atau admin dilarang mengubah karya dari periode yang telah diarsipkan pasca-rollover.
     if (!isOperator) {
+      const activePeriodYear = await getActivePeriodYear();
       const activePeriod = await prisma.organizationalPeriod.findFirst({
         where: { isActive: true },
       });
 
-      if (activePeriod && existingProject.createdAt < activePeriod.startDate) {
+      const isArchived =
+        existingProject.academicYear !== activePeriodYear ||
+        (activePeriod && existingProject.createdAt < activePeriod.startDate);
+
+      if (isArchived) {
         return {
           success: false,
           message:
@@ -369,7 +378,7 @@ export async function deleteShowcaseProject(
 
     const project = await prisma.showcaseProject.findUnique({
       where: { id: projectId },
-      select: { id: true, authorId: true, title: true, createdAt: true },
+      select: { id: true, authorId: true, title: true, createdAt: true, academicYear: true },
     });
 
     if (!project) {
@@ -393,11 +402,16 @@ export async function deleteShowcaseProject(
     // Rollover Boundary Check:
     // Operator memiliki hak bypass tanpa syarat. Regular user/admin dilarang menghapus karya yang telah diarsipkan.
     if (!isOperator) {
+      const activePeriodYear = await getActivePeriodYear();
       const activePeriod = await prisma.organizationalPeriod.findFirst({
         where: { isActive: true },
       });
 
-      if (activePeriod && project.createdAt < activePeriod.startDate) {
+      const isArchived =
+        project.academicYear !== activePeriodYear ||
+        (activePeriod && project.createdAt < activePeriod.startDate);
+
+      if (isArchived) {
         return {
           success: false,
           message:

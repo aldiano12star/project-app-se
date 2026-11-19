@@ -176,6 +176,7 @@ model AcademicYear {
 model Event {
   id             String         @id @default(cuid())
   academicYearId String
+  academicYear   String         @default("2025/2026")
   title          String
   description    String?
   startDate      DateTime
@@ -187,13 +188,14 @@ model Event {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  academicYear AcademicYear      @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy    User              @relation("EventCreator", fields: [createdById], references: [id])
-  sections     EventSection[]
-  budgetItems  EventBudgetItem[]
-  meetings     Meeting[]
-  targetUsers  User[]            @relation("EventTargetUsers")
+  academicYearRef AcademicYear      @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy       User              @relation("EventCreator", fields: [createdById], references: [id])
+  sections        EventSection[]
+  budgetItems     EventBudgetItem[]
+  meetings        Meeting[]
+  targetUsers     User[]            @relation("EventTargetUsers")
 
+  @@index([academicYear])
   @@index([academicYearId])
   @@index([startDate])
   @@index([targetAudience])
@@ -314,6 +316,7 @@ model NotulensiReadLog {
 model Showcase {
   id              String   @id @default(cuid())
   academicYearId  String
+  academicYear    String   @default("2025/2026")
   title           String
   description     String
   primaryDivision Division
@@ -323,10 +326,11 @@ model Showcase {
   createdById     String
   createdAt       DateTime @default(now())
 
-  academicYear AcademicYear          @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
-  createdBy    User                  @relation("ShowcaseCreator", fields: [createdById], references: [id])
-  contributors ShowcaseContributor[]
+  academicYearRef AcademicYear          @relation(fields: [academicYearId], references: [id], onDelete: Restrict)
+  createdBy       User                  @relation("ShowcaseCreator", fields: [createdById], references: [id])
+  contributors    ShowcaseContributor[]
 
+  @@index([academicYear])
   @@index([academicYearId])
   @@index([primaryDivision])
 }
@@ -429,6 +433,7 @@ model ArchiveResource {
 
 model ShowcaseProject {
   id           String        @id @default(cuid())
+  academicYear String        @default("2025/2026")
   title        String
   description  String
   category     String        @default("PROGRAMMING") // "PROGRAMMING", "TECHNOPRENEUR", "DESAIN", "FOTOGRAFI", "SINEMATOGRAFI", "LAINNYA"
@@ -444,6 +449,7 @@ model ShowcaseProject {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
+  @@index([academicYear])
   @@index([category])
   @@index([authorId])
 }

@@ -60,6 +60,27 @@ export interface RolloverResponse {
 }
 
 /**
+ * Mengambil string label tahun ajaran / periode kepengurusan aktif saat ini (contoh: "2025/2026").
+ */
+export async function getActivePeriodYear(): Promise<string> {
+  const activePeriod = await prisma.organizationalPeriod.findFirst({
+    where: { isActive: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (activePeriod) {
+    const currentGenYear = activePeriod.generationYear;
+    return `${2025 + (currentGenYear - 20)}/${2026 + (currentGenYear - 20)}`;
+  }
+
+  const currentAcademicYear = await prisma.academicYear.findFirst({
+    where: { isCurrent: true },
+  });
+
+  return currentAcademicYear?.name || "2025/2026";
+}
+
+/**
  * Mengambil data kurasi otomatis untuk End-of-Year Rollover Wizard (Operator Only).
  */
 export async function getRolloverCuratedData(): Promise<{
@@ -82,9 +103,10 @@ export async function getRolloverCuratedData(): Promise<{
     });
 
     const currentGenYear = activePeriod ? activePeriod.generationYear : 20;
-    const periodNameStr = `Kepengurusan ${2025 + (currentGenYear - 20)}/${2026 + (currentGenYear - 20)} (Gen ${currentGenYear})`;
+    const currentPeriodStr = `${2025 + (currentGenYear - 20)}/${2026 + (currentGenYear - 20)}`;
+    const periodNameStr = `Kepengurusan ${currentPeriodStr} (Gen ${currentGenYear})`;
 
-    // Agregasi kas
+    // Agregasi kas & data terkurasi periode aktif
     const [incomeAgg, expenseAgg, totalMeetings, topUsers, allEvents, allShowcases] =
       await Promise.all([
         prisma.ledgerTransaction.aggregate({
@@ -95,7 +117,13 @@ export async function getRolloverCuratedData(): Promise<{
           where: { type: TransactionType.EXPENSE },
           _sum: { amount: true },
         }),
-        prisma.meeting.count(),
+        prisma.meeting.count({
+          where: {
+            academicYear: {
+              name: currentPeriodStr,
+            },
+          },
+        }),
         prisma.user.findMany({
           where: { status: "ACTIVE" },
           orderBy: [{ totalPoints: "desc" }, { name: "asc" }],
@@ -108,13 +136,26 @@ export async function getRolloverCuratedData(): Promise<{
             totalPoints: true,
             image: true,
             createdShowcaseProjects: {
+              where: {
+                academicYear: currentPeriodStr,
+              },
               select: { id: true },
             },
           },
         }),
         prisma.event.findMany({
+          where: {
+            academicYear: currentPeriodStr,
+            NOT: [
+              { title: { contains: "Rapat", mode: "insensitive" } },
+              { title: { contains: "Briefing", mode: "insensitive" } },
+              { title: { contains: "Pertemuan", mode: "insensitive" } },
+              { title: { contains: "Presensi", mode: "insensitive" } },
+              { title: { contains: "Sesi", mode: "insensitive" } },
+            ],
+          },
           orderBy: { startDate: "desc" },
-          take: 30,
+          take: 50,
           select: {
             id: true,
             title: true,
@@ -125,8 +166,11 @@ export async function getRolloverCuratedData(): Promise<{
           },
         }),
         prisma.showcaseProject.findMany({
+          where: {
+            academicYear: currentPeriodStr,
+          },
           orderBy: [{ likesCount: "desc" }, { createdAt: "desc" }],
-          take: 30,
+          take: 50,
           select: {
             id: true,
             title: true,
@@ -245,10 +289,12 @@ export async function executeRolloverWithCuratedData(
     });
 
     const currentGenYear = activePeriod ? activePeriod.generationYear : 20;
+    const currentPeriodStr = `${2025 + (currentGenYear - 20)}/${2026 + (currentGenYear - 20)}`;
     const nextGenYear = currentGenYear + 1;
-    const periodNameStr = `Kepengurusan ${2025 + (currentGenYear - 20)}/${2026 + (currentGenYear - 20)} (Gen ${currentGenYear})`;
+    const nextPeriodStr = `${2026 + (nextGenYear - 21)}/${2027 + (nextGenYear - 21)}`;
+    const periodNameStr = `Kepengurusan ${currentPeriodStr} (Gen ${currentGenYear})`;
 
-    // Agregasi kas
+    // Agregasi kas & data pilihan periode aktif
     const [incomeAgg, expenseAgg, totalMeetings, topUsers, selectedEvents, selectedWorks] =
       await Promise.all([
         prisma.ledgerTransaction.aggregate({
@@ -259,7 +305,13 @@ export async function executeRolloverWithCuratedData(
           where: { type: TransactionType.EXPENSE },
           _sum: { amount: true },
         }),
-        prisma.meeting.count(),
+        prisma.meeting.count({
+          where: {
+            academicYear: {
+              name: currentPeriodStr,
+            },
+          },
+        }),
         prisma.user.findMany({
           where: { status: "ACTIVE" },
           orderBy: [{ totalPoints: "desc" }, { name: "asc" }],
@@ -270,11 +322,17 @@ export async function executeRolloverWithCuratedData(
             mainDivision: true,
             totalPoints: true,
             image: true,
-            createdShowcaseProjects: { select: { id: true } },
+            createdShowcaseProjects: {
+              where: { academicYear: currentPeriodStr },
+              select: { id: true },
+            },
           },
         }),
         prisma.event.findMany({
-          where: { id: { in: input.selectedEventIds } },
+          where: {
+            id: { in: input.selectedEventIds },
+            academicYear: currentPeriodStr,
+          },
           select: {
             id: true,
             title: true,
@@ -285,7 +343,10 @@ export async function executeRolloverWithCuratedData(
           },
         }),
         prisma.showcaseProject.findMany({
-          where: { id: { in: input.selectedWorkIds } },
+          where: {
+            id: { in: input.selectedWorkIds },
+            academicYear: currentPeriodStr,
+          },
           select: {
             id: true,
             title: true,
@@ -389,7 +450,18 @@ export async function executeRolloverWithCuratedData(
         },
       });
 
-      // 2. Nonaktifkan periode lama
+      // 2. Kunci seluruh acara dan karya periode yang ditutup agar tetap permanen terasosiasi dengan periode lamanya
+      await tx.event.updateMany({
+        where: { academicYear: currentPeriodStr },
+        data: { academicYear: currentPeriodStr },
+      });
+
+      await tx.showcaseProject.updateMany({
+        where: { academicYear: currentPeriodStr },
+        data: { academicYear: currentPeriodStr },
+      });
+
+      // 3. Nonaktifkan periode lama
       if (activePeriod) {
         await tx.organizationalPeriod.update({
           where: { id: activePeriod.id },
@@ -402,8 +474,8 @@ export async function executeRolloverWithCuratedData(
         });
       }
 
-      // 3. Buat OrganizationalPeriod baru
-      const nextPeriodName = `Kepengurusan ${2026 + (nextGenYear - 21)}/${2027 + (nextGenYear - 21)} (Gen ${nextGenYear})`;
+      // 4. Buat OrganizationalPeriod baru
+      const nextPeriodName = `Kepengurusan ${nextPeriodStr} (Gen ${nextGenYear})`;
       await tx.organizationalPeriod.create({
         data: {
           name: nextPeriodName,
@@ -415,7 +487,24 @@ export async function executeRolloverWithCuratedData(
         },
       });
 
-      // 4. Promosikan tingkatan kelas anggota aktif
+      // 5. Sinkronkan tabel AcademicYear untuk tahun ajaran baru
+      await tx.academicYear.updateMany({
+        where: { isCurrent: true },
+        data: { isCurrent: false },
+      });
+
+      await tx.academicYear.upsert({
+        where: { name: nextPeriodStr },
+        update: { isCurrent: true },
+        create: {
+          name: nextPeriodStr,
+          isCurrent: true,
+          startDate: new Date(),
+          endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+        },
+      });
+
+      // 6. Promosikan tingkatan kelas anggota aktif
       // ATURAN KETAT:
       // - Kelas 10 -> Kelas 11
       // - Kelas 11 -> Kelas 12
